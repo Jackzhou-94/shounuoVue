@@ -16,7 +16,15 @@ export default new Router({
       {
           path:'/Home',
           name:'Home',
-          component:require('./components/Home').default
+          component:require('./components/Home').default,
+          children:[
+              {
+                  // 生产计划单
+                  path:'/production',
+                  name:'production',
+                  component:require('./menu/procurement/production').default,
+              }
+          ]
       }
   ]
 })
