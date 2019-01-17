@@ -6,14 +6,22 @@ import './registerServiceWorker'
 import ElementUi from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import './assets/icon/iconfont.css'
+import axios from 'axios'
+
+
+
+Vue.prototype.$axios=axios
 require('./assets/icon/iconfont')
 
 
 Vue.use(ElementUi)
 Vue.config.productionTip = false
 
+
+
+
 new Vue({
-  router,
-  store,
-  render: h => h(App)
+    router,
+    store,
+    render: h => h(App)
 }).$mount('#app')
