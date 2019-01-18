@@ -399,7 +399,7 @@
                 console.log(data)
             }
         }
- 
+
     }
 </script>
 
@@ -413,7 +413,7 @@
     }
 
     .leftmen {
-        width: 15%;
+        width: 12%;
         height: 100%;
         text-align: left;
         border: 1px solid #f8f8f8;
@@ -421,7 +421,7 @@
 
     .rightdata {
         text-align: center;
-        width: 85%;
+        width: 88%;
         height: 100%;
     }
 

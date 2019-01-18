@@ -15,8 +15,16 @@
                     placeholder="密码"
                     type="password"
                     v-model="password"
-                    @keyup.enter.native="login">
+            >
             </el-input>
+            <!--验证码-->
+            <div style="display: flex;justify-content: space-between;margin-top: 2%">
+                <el-input placeholder="请输入验证码" @keyup.enter.native="login" style="width: 45%" v-model="validation"></el-input>
+                <div class="verify-box" @click="refreshCode">
+                    <Sidentify :identifyCode="identifyCode"></Sidentify>
+                </div>
+            </div>
+
 
             <el-button class="user_loginbtn" type="primary" @click="login">登录</el-button>
         </div>
@@ -26,31 +34,64 @@
 </template>
 
 <script>
+    import Sidentify from '../public/identify'
     export default {
         name: "login",
+        components: {Sidentify},
         data() {
             return {
                 username: '',
                 password: '',
+                validation: '',//用户输入验证码
+                identifyCode: '',//生成的验证码
+                identifyCodes: "1234567890ABCDEFGHIJKLMNOPQRSZUVWXYZ",
             }
         },
         methods: {
-            login() {
-                if (this.username=='admin'&&this.password=='admin'){
-                    this.$router.push('Home')
-                }else {
-                    alert('用户名或者密码不正确')
+            randomNum(min, max) {
+                return Math.floor(Math.random() * (max - min) + min)
+            },
+            refreshCode() {
+                this.identifyCode = "";
+                this.makeCode(this.identifyCode, 4)
+            },
+            makeCode(o, l) {
+                for (let i = 0; i < l; i++) {
+                    this.identifyCode += this.identifyCodes[
+                        this.randomNum(0, this.identifyCodes.length)
+                        ]
                 }
-                let formData = new FormData()
-                formData.append('username', this.username)
-                formData.append('password', this.password)
-                console.log(formData)
-                // this.$axios.post(this.$store.state.login,formData).then(res=>{
-                //     console.log(res)
-                // }).catch(err=>{
-                //     console.log(err)
-                // })
+            },
+            login() {
+                // if (this.username=='admin'&&this.password=='admin'){
+                //     this.$router.push('Home')
+                // }else {
+                //     alert('用户名或者密码不正确')
+                // }
+
+                if (this.validation !== this.identifyCode) {
+                    this.$message.error('验证码输入有误')
+                } else {
+                    this.$axios.post(this.$store.state.login, {
+                            username: this.username,
+                            password: this.password
+                        }
+                    ).then(res => {
+                        if (res.data.code != 200) {
+                            return this.$message.error(res.data.msg)
+                        }
+                        this.$router.push('Home')
+                    }).catch(err => {
+                        throw err
+                    })
+                }
+
+
             }
+        },
+        created: function () {
+            this.refreshCode()
+
         }
     }
 </script>
@@ -65,12 +106,12 @@
         width: 100%;
         height: 100%;
         background: url("../../assets/banner.png") no-repeat;
-        background-size: 100%, 100%
+        background-size: cover;
     }
 
     .user {
         width: 20%;
-        height: 25%;
+        height: 30%;
         background-color: rgba(0, 0, 0, 0.2);
         padding: 3%;
         color: #ffffff;
@@ -80,16 +121,17 @@
     }
 
     .user_input {
-        margin-top: 3%
+        margin-top: 2%
     }
 
     .user_loginbtn {
-        margin-top: 3%;
+        margin-top: 2%;
         width: 100%
     }
 
     .userTitle {
         font-weight: bold;
         font-size: 1.2em;
+
     }
 </style>
