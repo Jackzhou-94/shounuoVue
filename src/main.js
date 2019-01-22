@@ -7,6 +7,7 @@ import ElementUi from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import './assets/icon/iconfont.css'
 import axios from 'axios'
+import VueCookies from 'vue-cookies'
 
 
 
@@ -15,10 +16,21 @@ require('./assets/icon/iconfont')
 
 
 Vue.use(ElementUi)
+Vue.use(VueCookies)
 Vue.config.productionTip = false
 
-
-
+/**
+ * 请求拦截
+ * */
+axios.interceptors.request.use(
+    config=>{
+        let token=VueCookies.get('token')
+        if (token!=null){
+            config.headers['token']=token
+        }
+        return config
+    }
+)
 
 new Vue({
     router,

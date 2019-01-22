@@ -19,7 +19,8 @@
             </el-input>
             <!--验证码-->
             <div style="display: flex;justify-content: space-between;margin-top: 2%">
-                <el-input placeholder="请输入验证码" @keyup.enter.native="login" style="width: 45%" v-model="validation"></el-input>
+                <el-input placeholder="请输入验证码" @keyup.enter.native="login" style="width: 45%"
+                          v-model="validation"></el-input>
                 <div class="verify-box" @click="refreshCode">
                     <Sidentify :identifyCode="identifyCode"></Sidentify>
                 </div>
@@ -35,6 +36,7 @@
 
 <script>
     import Sidentify from '../public/identify'
+
     export default {
         name: "login",
         components: {Sidentify},
@@ -80,6 +82,12 @@
                         if (res.data.code != 200) {
                             return this.$message.error(res.data.msg)
                         }
+
+                        /**
+                         * 将用户token，用户权限保存至cookies
+                         * **/
+                        this.$cookies.set('token', res.data.token)
+                        this.$cookies.set('state', res.data.data.state)
                         this.$router.push('Home')
                     }).catch(err => {
                         throw err

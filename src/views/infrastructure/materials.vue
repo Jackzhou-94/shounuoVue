@@ -51,6 +51,7 @@
             <el-table
                     style="width: 100%"
                     border
+                    :data="materialsList"
                     :height="MaxHeight"
                     highlight-current-row
                     @current-change="tablechoose">
@@ -60,71 +61,96 @@
                         sortable
                 ></el-table-column>
                 <el-table-column
-                        label="编号"
+                        label="物料编号"
+                        prop="materialCode"
                         width="180"
                         align="center"
                         sortable
                 ></el-table-column>
                 <el-table-column
-                        label="名称"
+                        label="物料名称"
+                        prop="name"
+                        width="200"
+                        align="center"
+                ></el-table-column>
+                <el-table-column
+                        prop="ingredients"
+                        label="成分规格"
                         width="180"
                         align="center"
                 ></el-table-column>
                 <el-table-column
-                        label="成分规格"
-                        width="150"
-                        align="center"
-                ></el-table-column>
-                <el-table-column
-                        label="类型"
-                        width="150"
+                        label="物料分类"
+                        prop="type"
+                        width="180"
                         align="center"
                 ></el-table-column>
                 <el-table-column
                         label="默认损耗"
-                        width="150"
+                        prop="defaultLoss"
+                        width="160"
                         align="center"
                         sortable
-                ></el-table-column>
-                <el-table-column
-                        label="品牌"
-                        width="150"
-                        align="center"
                 ></el-table-column>
                 <el-table-column
                         label="厂商"
+                        prop="manufacturer"
+                        width="180"
+                        align="center"
+                ></el-table-column>
+                <el-table-column
+                        label="基本计量单位"
+                        prop="unit"
                         width="150"
                         align="center"
+                        sortable
                 ></el-table-column>
+                <!--<el-table-column-->
+                <!--label="起订量"-->
+                <!--width="120"-->
+                <!--align="center"-->
+                <!--sortable-->
+                <!--&gt;</el-table-column>-->
                 <el-table-column
-                        label="基本单位"
-                        width="120"
+                        label="厂商"
+                        prop="manufacturer"
+                        width="180"
                         align="center"
                         sortable
                 ></el-table-column>
                 <el-table-column
-                        label="起订量"
-                        width="120"
-                        align="center"
-                        sortable
-                ></el-table-column>
-                <el-table-column
-                        label="进货价"
+                        label="成本价"
+                        prop="costPrice"
                         width="120"
                         align="center"
                         sortable
                 ></el-table-column>
                 <el-table-column
                         label="备注"
-                        width="120"
+                        prop="note"
+                        width="150"
                         align="center"
                 ></el-table-column>
             </el-table>
-            <el-tag type="info" size="mini">
-                <i :class="openIcon" @click="open"></i>
-            </el-tag>
-        </div>
+            <!--分页-->
+            <el-row  :gutter="24">
+                <el-col :span="8" :offset="8"></el-col>
+                <el-col :span="8" :offset="8">
+                    <el-tag type="info" size="mini">
+                        <i :class="openIcon" @click="open"></i>
+                    </el-tag>
+                </el-col>
+                <el-col :span="8">
+                    <el-pagination
+                            @current-change="handleCurrentChange"
+                            :page-size="pageSize"
+                            layout="prev, pager, next, jumper"
+                            :total="totalRecord">
+                    </el-pagination>
+                </el-col>
 
+            </el-row>
+        </div>
         <!--添加-->
         <el-dialog title="新建物料" :visible.sync="dialogTableVisible">
             <el-form :model="addmaterial" ref="addmaterial" :inline="true" :rules="rules" label-width="120px">
@@ -135,8 +161,8 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item label="物料编码" prop="num">
-                            <el-input size="mini" v-model="addmaterial.num"></el-input>
+                        <el-form-item label="物料编码" prop="materialCode">
+                            <el-input size="mini" v-model="addmaterial.materialCode"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -154,8 +180,9 @@
                     </el-col>
 
                     <el-col :span="12">
-                        <el-form-item label="默认损耗" prop="loss">
-                            <el-input size="mini" type="number" v-model="addmaterial.loss" placeholder="%"></el-input>
+                        <el-form-item label="默认损耗" prop="defaultLoss">
+                            <el-input size="mini" type="number" v-model="addmaterial.defaultLoss"
+                                      placeholder="%"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -163,7 +190,7 @@
                 <el-row>
                     <el-col :span="12">
                         <el-form-item label="厂商">
-                            <el-select size="mini" v-model="value" placeholder="请选择">
+                            <el-select size="mini" v-model="value" placeholder="请选择" @change="selectChange">
                                 <el-option
                                         v-for="item in vendor"
                                         :key="item.value"
@@ -175,7 +202,8 @@
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="成本价" prop="cost">
-                            <el-input size="mini" type="number" v-model="addmaterial.cost" placeholder="元"></el-input>
+                            <el-input size="mini" type="number" v-model="addmaterial.costPrice"
+                                      placeholder="元"></el-input>
                         </el-form-item>
 
                     </el-col>
@@ -183,8 +211,8 @@
 
                 <el-row>
                     <el-col :span="12">
-                        <el-form-item label="基本计量单位" prop="measurement">
-                            <el-input size="mini" v-model="addmaterial.measurement" placeholder="双/盒"></el-input>
+                        <el-form-item label="基本计量单位" prop="unit">
+                            <el-input size="mini" v-model="addmaterial.unit" placeholder="双/盒"></el-input>
                         </el-form-item>
                     </el-col>
 
@@ -224,14 +252,19 @@
         name: "materials",
         data() {
             return {
+                materialsList: [],//原材料数据
+                totalPage: 0,//总页数
+                pageSize: 0,//单页个数
+                totalRecord: 0,//总条数
                 addmaterial: {
                     name: '',
-                    num: '',
-                    materials: [],//物料选择
-                    cost: '',//成本价
-                    loss: '',//损耗
-                    measurement: '',//基本计量单位
+                    materialCode: '',//物料编码
+                    type: '',//物料选择
+                    costPrice: '',//成本价
+                    defaultLoss: '',//损耗
+                    unit: '',//基本计量单位
                     ingredients: '',//成份
+                    manufacturer: '',//厂商
                     note: '',//备注
                     detection: '',//检测
                 },
@@ -240,16 +273,16 @@
                         {required: true, message: '请输入物料名称', trigger: 'blur'},
                         {min: 3, max: 5, message: '长度在3到5个字符之间', trigger: 'blur'}
                     ],
-                    num: [
+                    materialCode: [
                         {required: true, message: '请输入物料编码', trigger: 'blur'},
                     ],
                     materials: [
                         {required: true, message: '请选择物料', trigger: 'change'}
                     ],
-                    loss: [
+                    defaultLoss: [
                         {required: true, message: '请输入默认损耗', trigger: 'blur'}
                     ],
-                    measurement: [
+                    unit: [
                         {required: true, message: '请输入基本计量单位', trigger: 'blur'}
                     ]
                 },
@@ -280,10 +313,10 @@
                     },
                     {
                         label: '名称',
-                        value: 'mingcheng'
+                        value: 'name'
                     },
                     {
-                        value: 'zhinan',
+                        value: 'manufacturer',
                         label: '厂商',
                         children: [{
                             value: 'yizhi',
@@ -302,16 +335,16 @@
                 materialclassification: [
                     {
                         label: '全部',
-                        value: 'bianma',
+                        value: '全部',
                     },
                     {
-                        value: 'fuliao',
+                        value: '辅料',
                         label: '辅料',
                         children: [{
-                            value: 'baozhuang',
+                            value: '包装',
                             label: '包装'
                         }, {
-                            value: 'yibanfuliao',
+                            value: '一般辅料',
                             label: '一般辅料'
                         }]
                     }],//新建物料分类
@@ -332,33 +365,71 @@
                 dialogTableVisible: false,//添加面板
                 vendor: [
                     {
-                        value: '选项1',
+                        value: '黄金糕',
                         label: '黄金糕'
                     }, {
-                        value: '选项2',
+                        value: '双皮奶',
                         label: '双皮奶'
                     }, {
-                        value: '选项3',
+                        value: '蚵仔煎',
                         label: '蚵仔煎'
                     }, {
-                        value: '选项4',
+                        value: '龙须面',
                         label: '龙须面'
                     }, {
-                        value: '选项5',
+                        value: '北京烤鸭',
                         label: '北京烤鸭'
-                    }]//厂商
+                    }],//厂商
+                selsetType:'',//树形控件默认选择原料，辅料，
+                QueryField:'',//查询字段
             }
         },
         methods: {
+            handleCurrentChange(val) {
+                console.log(`当前页: ${val}`);
+                this.queryPage(val, 1,this.selsetType,this.QueryField)
+            },
+            selectChange(val) {
+                /**
+                 * 选择厂商
+                 * */
+                this.addmaterial.manufacturer = val
+                console.log(this.addmaterial)
+            },
             submitForm(addmaterial) {
                 /**
                  * 创建原料
                  * */
                 this.$refs[addmaterial].validate((valid) => {
                     if (valid) {
-                        alert('submit!');
+                        let data = {
+                            name: this.addmaterial.name,
+                            materialCode: this.addmaterial.materialCode,//物料编码
+                            type: this.addmaterial.type,//物料选择
+                            costPrice: this.addmaterial.costPrice,//成本价
+                            defaultLoss: this.addmaterial.defaultLoss,//损耗
+                            unit: this.addmaterial.unit,//基本计量单位
+                            ingredients: this.addmaterial.ingredients,//成份
+                            manufacturer: this.addmaterial.manufacturer,//厂商
+                            note: this.addmaterial.note//备注
+                        }
+                        this.$axios.post(this.$store.state.addmaterial, data).then(res => {
+                            if (res.data.code == 200) {
+                                this.$message({
+                                    message: '添加成功',
+                                    type: 'success'
+                                });
+                                this.dialogTableVisible = false
+                            } else {
+                                this.$message.error('添加失败');
+                            }
+                        })
+
                     } else {
-                        console.log('error submit!!');
+                        this.$message({
+                            message: '数据填写不完全',
+                            type: 'warning'
+                        })
                         return false;
                     }
                 });
@@ -366,38 +437,71 @@
             //展开按钮
             open() {
                 let tableHeight = this.MaxHeight
-                if (tableHeight == 900) {
+                if (tableHeight == 600) {
                     this.openIcon = 'fontFamily hhtx-zhankai'
                     this.MaxHeight = 300
                 } else {
                     this.openIcon = 'fontFamily hhtx-shouqi'
-                    this.MaxHeight = 900
+                    this.MaxHeight = 600
                 }
             },
             addclassification(value) {
                 /**
                  * 新建辅料选择
                  * */
-
-                console.log(value);
-                console.log(this.addmaterial.materials)
+                value.forEach(item => {
+                    this.addmaterial.type += `${item}/`
+                })
+                console.log(this.addmaterial.type);
+                // console.log(this.addmaterial.materials)
             },
             supplierChange(value) {
                 /**
-                 * 供应商选择
+                 * 供应商查询选择
                  * */
-                console.log(value);
+                this.QueryField=value[0]
                 console.log(this.selectedOptions)
 
             },
             //树形空间选中后的回调
             handleNodeClick(data) {
-                console.log(data);
+                this.selsetType=data.label
+                let chooseType=data.label
+                this.queryPage(1,1,chooseType)
+
             },
             //表格选中某行的回调
             tablechoose(data) {
                 console.log(data)
+            },
+            /**
+             * 原材料分页查询
+             * **/
+            queryPage(Num = 1, Size = 10,type='') {
+
+                this.$axios.get(this.$store.state.queryPage, {
+                   params:{
+                       pageNum: Num,
+                       pageSize: Size,
+                       type:type,
+                   }
+                }).then(res => {
+                    // return res.data
+                    console.log(res.data)
+                    this.materialsList = res.data.list
+                    this.totalPage = res.data.totalPage//总页数
+                    this.pageSize = res.data.pageSize//单页个数
+                    this.totalRecord = res.data.totalRecord//总条数
+
+
+                })
+
             }
+        },
+        created: function () {
+           this.queryPage()
+
+
         }
 
     }
