@@ -20,7 +20,7 @@
                     </el-button>
                     <el-button size="mini" class="fontFamily hhtx-qiyong1">启用</el-button>
                     <el-button size="mini" class="fontFamily hhtx-jinyong1">禁用</el-button>
-                    <el-button size="mini" class="fontFamily hhtx-shanchu">删除</el-button>
+                    <el-button size="mini" class="fontFamily hhtx-shanchu" @click="delmaterials">删除</el-button>
                 </div>
 
                 <div class="selsectInput">
@@ -34,7 +34,7 @@
                     <el-input size="mini" v-if="conditions" v-model="Queryconditions"></el-input>
 
 
-                    <el-select size="mini" v-model="value" placeholder="状态">
+                    <el-select size="mini" v-model="value" placeholder="状态" @change="spareSelect">
                         <el-option
                                 v-for="item in state"
                                 :key="item.value"
@@ -42,7 +42,32 @@
                                 :value="item.value">
                         </el-option>
                     </el-select>
-                    <el-button type="primary" icon="el-icon-search" size="mini">查询</el-button>
+                    <el-button type="primary" icon="el-icon-delete" size="mini" @click="reset">重置</el-button>
+                    <el-button type="primary" icon="el-icon-search" size="mini" @click="queryMaterials">查询</el-button>
+                    <el-button type="primary" icon="el-icon-search" size="mini" @click="Settings=true">显示设置</el-button>
+
+
+                    <el-dialog
+                            title="显示设置"
+                            :visible.sync="Settings"
+                            width="30%"
+                    >
+
+                        <el-tree
+                                :data="menu"
+                                show-checkbox
+                                node-key="id"
+                                @check="selectmenu"
+                                :props="defaultProps">
+                        </el-tree>
+
+
+                        <span slot="footer" class="dialog-footer">
+     <el-button @click="Settings = false">取 消</el-button>
+     <el-button type="primary" @click="Settings = false">确 定</el-button>
+    </span>
+                    </el-dialog>
+
 
                 </div>
 
@@ -52,15 +77,19 @@
                     style="width: 100%"
                     border
                     :data="materialsList"
+                    :row-class-name="tableRowClassName"
                     :height="MaxHeight"
                     highlight-current-row
+                    @selection-change="handleSelectionChange"
                     @current-change="tablechoose">
+                <el-table-column type="selection" align="center"></el-table-column>
                 <el-table-column
                         type="index"
                         align="center"
                         sortable
                 ></el-table-column>
                 <el-table-column
+                        v-show="materialCode"
                         label="物料编号"
                         prop="materialCode"
                         width="180"
@@ -68,24 +97,38 @@
                         sortable
                 ></el-table-column>
                 <el-table-column
+                        v-show="name"
                         label="物料名称"
                         prop="name"
                         width="200"
                         align="center"
                 ></el-table-column>
                 <el-table-column
+                        v-show="ingredients"
                         prop="ingredients"
                         label="成分规格"
                         width="180"
                         align="center"
                 ></el-table-column>
                 <el-table-column
+                        v-show="type"
                         label="物料分类"
                         prop="type"
                         width="180"
                         align="center"
                 ></el-table-column>
                 <el-table-column
+                        v-show="zhuangtai"
+                        label="状态"
+                        width="180"
+                        align="center"
+                >
+                    <template slot-scope="scope">
+                        {{scope.row.spare=='01'?'启用':'未启用'}}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        v-show="defaultLoss"
                         label="默认损耗"
                         prop="defaultLoss"
                         width="160"
@@ -93,12 +136,14 @@
                         sortable
                 ></el-table-column>
                 <el-table-column
+                        v-show="manufacturer"
                         label="厂商"
                         prop="manufacturer"
                         width="180"
                         align="center"
                 ></el-table-column>
                 <el-table-column
+                        v-show="unit"
                         label="基本计量单位"
                         prop="unit"
                         width="150"
@@ -112,13 +157,7 @@
                 <!--sortable-->
                 <!--&gt;</el-table-column>-->
                 <el-table-column
-                        label="厂商"
-                        prop="manufacturer"
-                        width="180"
-                        align="center"
-                        sortable
-                ></el-table-column>
-                <el-table-column
+                        v-show="costPrice"
                         label="成本价"
                         prop="costPrice"
                         width="120"
@@ -126,6 +165,7 @@
                         sortable
                 ></el-table-column>
                 <el-table-column
+                        v-show="note"
                         label="备注"
                         prop="note"
                         width="150"
@@ -133,7 +173,7 @@
                 ></el-table-column>
             </el-table>
             <!--分页-->
-            <el-row  :gutter="24">
+            <el-row :gutter="24">
                 <el-col :span="8" :offset="8"></el-col>
                 <el-col :span="8" :offset="8">
                     <el-tag type="info" size="mini">
@@ -252,6 +292,7 @@
         name: "materials",
         data() {
             return {
+
                 materialsList: [],//原材料数据
                 totalPage: 0,//总页数
                 pageSize: 0,//单页个数
@@ -352,14 +393,14 @@
                 classification: [],
                 state: [
                     {
-                        value: '选项1',
+                        value: '02',
                         label: '未启用'
                     }, {
-                        value: '选项2',
+                        value: '01',
                         label: '启用'
                     }],
                 value: '',
-                Queryconditions: '',
+                Queryconditions: '',//查询具体值
                 MaxHeight: 300,//默认表格数据最大高度
                 openIcon: 'fontFamily hhtx-zhankai',//默认为展开的按钮
                 dialogTableVisible: false,//添加面板
@@ -380,14 +421,142 @@
                         value: '北京烤鸭',
                         label: '北京烤鸭'
                     }],//厂商
-                selsetType:'',//树形控件默认选择原料，辅料，
-                QueryField:'',//查询字段
+                selsetType: '全部',//树形控件默认选择原料，辅料，
+                QueryField: '',//查询字段
+                spare: '',//状态
+                materialsIDs: '',//原材料ID
+
+
+                //物料编号
+                materialCode: true,
+                //物料名称
+                name: true,
+                //成分规格
+                ingredients: true,
+                //物料分类
+                type: true,
+                ////状态
+                zhuangtai: true,
+                //默认损耗
+                defaultLoss: true,
+                //厂商
+                manufacturer: true,
+                //基本计量单位
+                unit: true,
+                //成本价
+                costPrice: true,
+                //备注
+                note: true,
+                //设置菜单显示隐藏
+                menu: [
+                    {
+                        id: this.materialCode,
+                        label: '物料编号',
+                    },
+                    {
+                        id: this.name,
+                        label: '物料名称',
+                    },
+                    {
+                        id: this.ingredients,
+                        label: '成分规格',
+                    },
+                    {
+                        id: this.type,
+                        label: '物料分类',
+                    },
+                    {
+                        id: this.zhuangtai,
+                        label: '状态',
+                    }, {
+                        id: this.defaultLoss,
+                        label: '默认损耗',
+                    },
+                    {
+                        id: this.manufacturer,
+                        label: '厂商',
+                    },
+                    {
+                        id: this.unit,
+                        label: '基本计量单位',
+                    },
+                    {
+                        id: this.costPrice,
+                        label: '成本价',
+                    },
+                    {
+                        id: this.note,
+                        label: '备注',
+                    },
+                ],
+
+
+
+                Settings: false,//显示设置面板
             }
         },
         methods: {
+            selectmenu(keys, a) {
+                let data = a.checkedKeys
+               console.log(data)
+                console.log(a)
+                a.checkedKeys[0]=false
+               this.materialCode=false
+                console.log(this.materialCode)
+
+            },
+            delmaterials() {
+                /**
+                 * 根据ID删除原材料信息*/
+                this.$axios.get(this.$store.state.delmaterials, {
+                    params: {ids: this.materialsIDs}
+                }).then(res => {
+                    console.log(res.data)
+                })
+            },
+            handleSelectionChange(val) {
+                /**
+                 * 多选
+                 * */
+                this.materialsIDs = ''
+                val.forEach(item => {
+                    this.materialsIDs += `${item.id},`
+                })
+                let a = this.materialsIDs.length - 1
+                this.materialsIDs = this.materialsIDs.substring(0, a)
+            },
+            //数据未启用高亮颜色
+            tableRowClassName({row, rowIndex}) {
+                if (row.spare == '02') {
+                    return 'success-row';
+                }
+                return ''
+            },
+            spareSelect(val) {
+                /**
+                 * 状态查询
+                 * */
+                this.spare = val
+            },
+            reset() {
+                /**
+                 * 搜索重置
+                 * */
+                this.Queryconditions = ''
+                this.QueryField = ''
+
+            },
+            queryMaterials() {
+                /**
+                 * 查询
+                 * */
+                this.queryPage(1, 10, this.selsetType, this.Queryconditions, this.spare)
+            },
             handleCurrentChange(val) {
-                console.log(`当前页: ${val}`);
-                this.queryPage(val, 1,this.selsetType,this.QueryField)
+                /**
+                 * 分页
+                 * */
+                this.queryPage(val, 10, this.selsetType, this.Queryconditions, this.spare)
             },
             selectChange(val) {
                 /**
@@ -449,6 +618,7 @@
                 /**
                  * 新建辅料选择
                  * */
+                this.addmaterial.type = ''
                 value.forEach(item => {
                     this.addmaterial.type += `${item}/`
                 })
@@ -459,15 +629,17 @@
                 /**
                  * 供应商查询选择
                  * */
-                this.QueryField=value[0]
-                console.log(this.selectedOptions)
-
+                this.QueryField = value[0]
+                if (value[0] != 'bianma' && value[0] != 'name') {
+                    this.conditions = false
+                } else {
+                    this.conditions = true
+                }
             },
             //树形空间选中后的回调
             handleNodeClick(data) {
-                this.selsetType=data.label
-                let chooseType=data.label
-                this.queryPage(1,1,chooseType)
+                this.selsetType = data.label
+                this.queryPage(1, 10, this.selsetType, this.Queryconditions)
 
             },
             //表格选中某行的回调
@@ -477,14 +649,12 @@
             /**
              * 原材料分页查询
              * **/
-            queryPage(Num = 1, Size = 10,type='') {
-
+            queryPage(Num = 1, Size = 10, type = '全部', Queryconditions = '', spare = '03') {
+                let data = {pageNum: Num, pageSize: Size, type: type, spare: spare}
+                data[this.QueryField] = Queryconditions //无法确定查询的字段，将键做活
+                console.log(data)
                 this.$axios.get(this.$store.state.queryPage, {
-                   params:{
-                       pageNum: Num,
-                       pageSize: Size,
-                       type:type,
-                   }
+                    params: data
                 }).then(res => {
                     // return res.data
                     console.log(res.data)
@@ -492,14 +662,15 @@
                     this.totalPage = res.data.totalPage//总页数
                     this.pageSize = res.data.pageSize//单页个数
                     this.totalRecord = res.data.totalRecord//总条数
-
-
                 })
 
             }
         },
         created: function () {
-           this.queryPage()
+            /**
+             * 在组件渲染之前，请求接口
+             * */
+            this.queryPage()
 
 
         }
@@ -507,7 +678,12 @@
     }
 </script>
 
-<style scoped>
+<style>
+
+    .el-table .success-row {
+        background: oldlace;
+    }
+
     .materials {
         width: 98%;
         height: 100%;
