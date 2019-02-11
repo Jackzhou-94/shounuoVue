@@ -8,7 +8,7 @@
                     :props="defaultProps"
                     highlight-current
                     node-key="id"
-                    :default-expanded-keys="[1,1]"
+                    :default-expanded-keys="[1, 3]"
                     @node-click="handleNodeClick"></el-tree>
         </div>
 
@@ -18,8 +18,9 @@
                 <div>
                     <el-button size="mini" class="fontFamily hhtx-icon-test1" @click="dialogTableVisible=true">新建
                     </el-button>
-                    <el-button size="mini" class="fontFamily hhtx-qiyong1">启用</el-button>
+                    <el-button size="mini" class="fontFamily hhtx-qiyong1" @click="Delmateropen">启用</el-button>
                     <el-button size="mini" class="fontFamily hhtx-jinyong1">禁用</el-button>
+                    <el-button size="mini" class="fontFamily hhtx-xiugai1" @click="UpdatableVisible=true">修改</el-button>
                     <el-button size="mini" class="fontFamily hhtx-shanchu" @click="delmaterials">删除</el-button>
                 </div>
 
@@ -44,22 +45,70 @@
                     </el-select>
                     <el-button type="primary" icon="el-icon-delete" size="mini" @click="reset">重置</el-button>
                     <el-button type="primary" icon="el-icon-search" size="mini" @click="queryMaterials">查询</el-button>
-                    <el-button type="primary" icon="el-icon-search" size="mini" @click="Settings=true">显示设置</el-button>
+                    <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
 
 
                     <el-dialog
                             title="显示设置"
                             :visible.sync="Settings"
                             width="30%"
+
                     >
 
-                        <el-tree
-                                :data="menu"
-                                show-checkbox
-                                node-key="id"
-                                @check="selectmenu"
-                                :props="defaultProps">
-                        </el-tree>
+                        <!--<el-tree-->
+                        <!--:data="menu"-->
+                        <!--show-checkbox-->
+                        <!--node-key="id"-->
+                        <!--@check="selectmenu"-->
+                        <!--:props="defaultProps">-->
+                        <!--</el-tree>-->
+                        <div style="text-align: left">
+                            <el-row>
+                                <el-col :span="12">
+                                    <el-checkbox v-model="materialCode">物料编号</el-checkbox>
+                                </el-col>
+
+                                <el-col :span="12">
+                                    <el-checkbox v-model="name">物料名称</el-checkbox>
+                                </el-col>
+                            </el-row>
+
+                            <el-row>
+                                <el-col :span="12">
+                                    <el-checkbox v-model="ingredients">成分规格</el-checkbox>
+                                </el-col>
+                                <el-col :span="12">
+                                    <el-checkbox v-model="type">物料分类</el-checkbox>
+                                </el-col>
+                            </el-row>
+
+                            <el-row>
+                                <el-col :span="12">
+                                    <el-checkbox v-model="zhuangtai">状态</el-checkbox>
+                                </el-col>
+                                <el-col :span="12">
+                                    <el-checkbox v-model="defaultLoss">默认损耗</el-checkbox>
+                                </el-col>
+                            </el-row>
+
+                            <el-row>
+                                <el-col :span="12">
+                                    <el-checkbox v-model="manufacturer">厂商</el-checkbox>
+                                </el-col>
+                                <el-col :span="12">
+                                    <el-checkbox v-model="unit">基本计量单位</el-checkbox>
+                                </el-col>
+                            </el-row>
+
+                            <el-row>
+                                <el-col :span="12">
+                                    <el-checkbox v-model="costPrice">成本价</el-checkbox>
+                                </el-col>
+                            </el-row>
+                            <el-col :span="12">
+                                <el-checkbox v-model="note">备注</el-checkbox>
+                            </el-col>
+                        </div>
 
 
                         <span slot="footer" class="dialog-footer">
@@ -89,7 +138,7 @@
                         sortable
                 ></el-table-column>
                 <el-table-column
-                        v-show="materialCode"
+                        v-if="materialCode"
                         label="物料编号"
                         prop="materialCode"
                         width="180"
@@ -97,28 +146,28 @@
                         sortable
                 ></el-table-column>
                 <el-table-column
-                        v-show="name"
+                        v-if="name"
                         label="物料名称"
                         prop="name"
                         width="200"
                         align="center"
                 ></el-table-column>
                 <el-table-column
-                        v-show="ingredients"
+                        v-if="ingredients"
                         prop="ingredients"
                         label="成分规格"
                         width="180"
                         align="center"
                 ></el-table-column>
                 <el-table-column
-                        v-show="type"
+                        v-if="type"
                         label="物料分类"
                         prop="type"
                         width="180"
                         align="center"
                 ></el-table-column>
                 <el-table-column
-                        v-show="zhuangtai"
+                        v-if="zhuangtai"
                         label="状态"
                         width="180"
                         align="center"
@@ -128,7 +177,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column
-                        v-show="defaultLoss"
+                        v-if="defaultLoss"
                         label="默认损耗"
                         prop="defaultLoss"
                         width="160"
@@ -136,14 +185,14 @@
                         sortable
                 ></el-table-column>
                 <el-table-column
-                        v-show="manufacturer"
+                        v-if="manufacturer"
                         label="厂商"
                         prop="manufacturer"
                         width="180"
                         align="center"
                 ></el-table-column>
                 <el-table-column
-                        v-show="unit"
+                        v-if="unit"
                         label="基本计量单位"
                         prop="unit"
                         width="150"
@@ -157,7 +206,7 @@
                 <!--sortable-->
                 <!--&gt;</el-table-column>-->
                 <el-table-column
-                        v-show="costPrice"
+                        v-if="costPrice"
                         label="成本价"
                         prop="costPrice"
                         width="120"
@@ -165,7 +214,7 @@
                         sortable
                 ></el-table-column>
                 <el-table-column
-                        v-show="note"
+                        v-if="note"
                         label="备注"
                         prop="note"
                         width="150"
@@ -284,6 +333,102 @@
             </el-form>
 
         </el-dialog>
+
+
+        <!--修改-->
+        <el-dialog title="修改物料信息" :visible.sync="UpdatableVisible">
+            <el-form :model="updaData" ref="updaData" :inline="true" :rules="ruless" label-width="120px">
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="物料名称" prop="name">
+                            <el-input size="mini" v-model="updaData.name"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="物料编码" prop="materialCode">
+                            <el-input size="mini" v-model="updaData.materialCode"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="物料分类" prop="materials">
+                            <el-cascader
+                                    size="mini"
+                                    :options="materialclassification"
+                                    v-model="updaData.materials"
+                                    @change="addclassification">
+                            </el-cascader>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="12">
+                        <el-form-item label="默认损耗" prop="defaultLoss">
+                            <el-input size="mini" type="number" v-model="updaData.defaultLoss"
+                                      placeholder="%"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="厂商">
+                            <el-select size="mini" v-model="value" placeholder="请选择" @change="selectChange">
+                                <el-option
+                                        v-for="item in vendor"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="成本价" prop="cost">
+                            <el-input size="mini" type="number" v-model="updaData.costPrice"
+                                      placeholder="元"></el-input>
+                        </el-form-item>
+
+                    </el-col>
+                </el-row>
+
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="基本计量单位" prop="unit">
+                            <el-input size="mini" v-model="updaData.unit" placeholder="双/盒"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="12">
+                        <el-form-item label="成份" prop="ingredients">
+                            <el-input size="mini" v-model="updaData.ingredients"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="备注" prop="note">
+                            <el-input size="mini" v-model="updaData.note"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+                <el-row>
+                    <el-col>
+                        <el-form-item>
+                            <el-button type="primary" @click="upsubmitForm('updaData')">立即修改</el-button>
+                            <el-button size="mini" @click="UpdatableVisible=false">取消</el-button>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+            </el-form>
+        </el-dialog>
+
+
     </div>
 </template>
 
@@ -292,12 +437,13 @@
         name: "materials",
         data() {
             return {
-
+                UpdatableVisible: false,//修改面板
                 materialsList: [],//原材料数据
                 totalPage: 0,//总页数
                 pageSize: 0,//单页个数
                 totalRecord: 0,//总条数
                 addmaterial: {
+                    //新建物料
                     name: '',
                     materialCode: '',//物料编码
                     type: '',//物料选择
@@ -309,7 +455,39 @@
                     note: '',//备注
                     detection: '',//检测
                 },
+                updaData: {
+                    //修改
+                    name: '',
+                    materialCode: '',//物料编码
+                    type: '',//物料选择
+                    costPrice: '',//成本价
+                    defaultLoss: '',//损耗
+                    unit: '',//基本计量单位
+                    ingredients: '',//成份
+                    manufacturer: '',//厂商
+                    note: '',//备注
+                    detection: '',//检测
+                },
+
                 rules: {
+                    name: [
+                        {required: true, message: '请输入物料名称', trigger: 'blur'},
+                        {min: 3, max: 5, message: '长度在3到5个字符之间', trigger: 'blur'}
+                    ],
+                    materialCode: [
+                        {required: true, message: '请输入物料编码', trigger: 'blur'},
+                    ],
+                    materials: [
+                        {required: true, message: '请选择物料', trigger: 'change'}
+                    ],
+                    defaultLoss: [
+                        {required: true, message: '请输入默认损耗', trigger: 'blur'}
+                    ],
+                    unit: [
+                        {required: true, message: '请输入基本计量单位', trigger: 'blur'}
+                    ]
+                },
+                ruless: {
                     name: [
                         {required: true, message: '请输入物料名称', trigger: 'blur'},
                         {min: 3, max: 5, message: '长度在3到5个字符之间', trigger: 'blur'}
@@ -330,15 +508,20 @@
                 conditions: true,//搜索条件
                 data: [{
                     label: '全部',
+                    id: 1,
                     children: [
                         {
+                            id: 2,
                             label: '原材料',
                         },
                         {
+                            id: 3,
                             label: '辅料',
                             children: [{
+                                id: 4,
                                 label: '包装'
                             }, {
+                                id: 5,
                                 label: '一般辅料'
                             }]
                         }]
@@ -401,7 +584,7 @@
                     }],
                 value: '',
                 Queryconditions: '',//查询具体值
-                MaxHeight: 300,//默认表格数据最大高度
+                MaxHeight: 600,//默认表格数据最大高度
                 openIcon: 'fontFamily hhtx-zhankai',//默认为展开的按钮
                 dialogTableVisible: false,//添加面板
                 vendor: [
@@ -489,20 +672,75 @@
                         label: '备注',
                     },
                 ],
-
-
-
                 Settings: false,//显示设置面板
+                delmaterID: [],//原材料启用停用
+
             }
         },
         methods: {
+            //修改原材料信息
+            upsubmitForm(updaData) {
+                this.$refs[updaData].validate((valid) => {
+                    if (valid) {
+                        let data = {
+                            id: this.updaData.id,//原材料ID
+                            name: this.updaData.name,
+                            materialCode: this.updaData.materialCode,//物料编码
+                            type: this.updaData.type,//物料选择
+                            costPrice: this.updaData.costPrice,//成本价
+                            defaultLoss: this.updaData.defaultLoss,//损耗
+                            unit: this.updaData.unit,//基本计量单位
+                            ingredients: this.updaData.ingredients,//成份
+                            manufacturer: this.updaData.manufacturer,//厂商
+                            note: this.updaData.note//备注
+                        }
+                        this.$axios.post(this.$store.state.upmaterial, data).then(res => {
+                            if (res.data.code == 200) {
+                                this.$message({
+                                    message: '修改成功',
+                                    type: 'success'
+                                });
+                                this.UpdatableVisible = false
+                            } else {
+                                this.$message.error('修改失败');
+                            }
+                        })
+
+                    } else {
+                        this.$message({
+                            message: '数据填写不完全',
+                            type: 'warning'
+                        })
+                        return false;
+                    }
+                });
+            },
+            //表格选中某行的回调
+            tablechoose(data) {
+                this.updaData = data
+                console.log(this.updaData)
+            },
+
+            Delmateropen() {
+                /**
+                 * 原材料启用
+                 * */
+                console.log(this.delmaterID)
+                this.$axios.post(this.$store.state.delmateropen, {
+                    ids: this.delmaterID
+                }).then(res => {
+                    console.log(res)
+                })
+            },
             selectmenu(keys, a) {
-                let data = a.checkedKeys
-               console.log(data)
+                console.log(keys)
                 console.log(a)
-                a.checkedKeys[0]=false
-               this.materialCode=false
-                console.log(this.materialCode)
+                //  let data = a.checkedKeys
+                // console.log(data)
+                //  console.log(a)
+                //  a.checkedKeys[0]=false
+                // this.materialCode=false
+                //  console.log(this.materialCode)
 
             },
             delmaterials() {
@@ -518,6 +756,12 @@
                 /**
                  * 多选
                  * */
+                //将每项选择的id保存
+                this.delmaterID.length = 0
+                val.forEach(item => {
+                    this.delmaterID.push(item.id)
+                })
+
                 this.materialsIDs = ''
                 val.forEach(item => {
                     this.materialsIDs += `${item.id},`
@@ -565,7 +809,9 @@
                 this.addmaterial.manufacturer = val
                 console.log(this.addmaterial)
             },
+            //新建物料
             submitForm(addmaterial) {
+
                 /**
                  * 创建原料
                  * */
@@ -603,6 +849,7 @@
                     }
                 });
             },
+
             //展开按钮
             open() {
                 let tableHeight = this.MaxHeight
@@ -625,6 +872,7 @@
                 console.log(this.addmaterial.type);
                 // console.log(this.addmaterial.materials)
             },
+
             supplierChange(value) {
                 /**
                  * 供应商查询选择
@@ -642,10 +890,7 @@
                 this.queryPage(1, 10, this.selsetType, this.Queryconditions)
 
             },
-            //表格选中某行的回调
-            tablechoose(data) {
-                console.log(data)
-            },
+
             /**
              * 原材料分页查询
              * **/
