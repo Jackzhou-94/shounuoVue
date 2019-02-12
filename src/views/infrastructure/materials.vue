@@ -20,7 +20,7 @@
                     </el-button>
                     <el-button size="mini" class="fontFamily hhtx-qiyong1" @click="Delmateropen">启用</el-button>
                     <el-button size="mini" class="fontFamily hhtx-jinyong1">禁用</el-button>
-                    <el-button size="mini" class="fontFamily hhtx-xiugai1" @click="UpdatableVisible=true">修改</el-button>
+                    <el-button size="mini" class="fontFamily hhtx-xiugai1" @click="uppanel">修改</el-button>
                     <el-button size="mini" class="fontFamily hhtx-shanchu" @click="delmaterials">删除</el-button>
                 </div>
 
@@ -116,8 +116,6 @@
      <el-button type="primary" @click="Settings = false">确 定</el-button>
     </span>
                     </el-dialog>
-
-
                 </div>
 
             </div>
@@ -333,8 +331,6 @@
             </el-form>
 
         </el-dialog>
-
-
         <!--修改-->
         <el-dialog title="修改物料信息" :visible.sync="UpdatableVisible">
             <el-form :model="updaData" ref="updaData" :inline="true" :rules="ruless" label-width="120px">
@@ -345,8 +341,8 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item label="物料编码" prop="materialCode">
-                            <el-input size="mini" v-model="updaData.materialCode"></el-input>
+                        <el-form-item label="物料编码"  prop="materialCode">
+                            <el-input size="mini" :disabled="true" v-model="updaData.materialCode"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -359,7 +355,7 @@
                                     size="mini"
                                     :options="materialclassification"
                                     v-model="updaData.materials"
-                                    @change="addclassification">
+                                    @change="upclassification">
                             </el-cascader>
                         </el-form-item>
                     </el-col>
@@ -372,11 +368,10 @@
                     </el-col>
                 </el-row>
 
-
                 <el-row>
                     <el-col :span="12">
                         <el-form-item label="厂商">
-                            <el-select size="mini" v-model="value" placeholder="请选择" @change="selectChange">
+                            <el-select size="mini" v-model="value" placeholder="请选择" @change="upselectChange">
                                 <el-option
                                         v-for="item in vendor"
                                         :key="item.value"
@@ -678,6 +673,16 @@
             }
         },
         methods: {
+            uppanel() {
+                /**
+                 * 修改原材料想信息面板
+                 * */
+                if (this.updaData.name != '') {
+                    this.UpdatableVisible = true
+                } else {
+                    this.$message.error('还未选中某条记录，无法修改');
+                }
+            },
             //修改原材料信息
             upsubmitForm(updaData) {
                 this.$refs[updaData].validate((valid) => {
@@ -726,9 +731,7 @@
                  * 原材料启用
                  * */
                 console.log(this.delmaterID)
-                this.$axios.post(this.$store.state.delmateropen, {
-                    ids: this.delmaterID
-                }).then(res => {
+                this.$axios.post(this.$store.state.delmateropen, this.delmaterID).then(res => {
                     console.log(res)
                 })
             },
@@ -788,7 +791,6 @@
                  * */
                 this.Queryconditions = ''
                 this.QueryField = ''
-
             },
             queryMaterials() {
                 /**
@@ -804,9 +806,16 @@
             },
             selectChange(val) {
                 /**
-                 * 选择厂商
+                 * 新建原材料选择厂商
                  * */
                 this.addmaterial.manufacturer = val
+                console.log(this.addmaterial)
+            },
+            upselectChange(val) {
+                /**
+                 * 修改原材料选择厂商
+                 * */
+                this.updaData.manufacturer = val
                 console.log(this.addmaterial)
             },
             //新建物料
@@ -836,7 +845,7 @@
                                 });
                                 this.dialogTableVisible = false
                             } else {
-                                this.$message.error('添加失败');
+                                this.$message.error(res.data.msg);
                             }
                         })
 
@@ -866,13 +875,23 @@
                  * 新建辅料选择
                  * */
                 this.addmaterial.type = ''
-                value.forEach(item => {
-                    this.addmaterial.type += `${item}/`
-                })
-                console.log(this.addmaterial.type);
-                // console.log(this.addmaterial.materials)
-            },
+                this.addmaterial.type += value[value.length - 1]
+                // value.forEach(item => {
+                //     this.addmaterial.type += `${item}/`
+                // })
 
+
+            },
+            upclassification(value) {
+                /**
+                 * 修改辅料选择
+                 * */
+                this.updaData.type = ''
+                this.updaData.type += value[value.length - 1]
+                // value.forEach(item => {
+                //     this.updaData.type += `${item} `
+                // })
+            },
             supplierChange(value) {
                 /**
                  * 供应商查询选择
