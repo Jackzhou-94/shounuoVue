@@ -19,7 +19,7 @@
                     <el-button size="mini" class="fontFamily hhtx-icon-test1" @click="dialogTableVisible=true">新建
                     </el-button>
                     <el-button size="mini" class="fontFamily hhtx-qiyong1" @click="Delmateropen">启用</el-button>
-                    <el-button size="mini" class="fontFamily hhtx-jinyong1">禁用</el-button>
+                    <el-button size="mini" class="fontFamily hhtx-jinyong1" @click="DelmaterOUT">禁用</el-button>
                     <el-button size="mini" class="fontFamily hhtx-xiugai1" @click="uppanel">修改</el-button>
                     <el-button size="mini" class="fontFamily hhtx-shanchu" @click="delmaterials">删除</el-button>
                 </div>
@@ -35,7 +35,7 @@
                     <el-input size="mini" v-if="conditions" v-model="Queryconditions"></el-input>
 
 
-                    <el-select size="mini" v-model="value" placeholder="状态" @change="spareSelect">
+                    <el-select size="mini" v-model="values" placeholder="状态" @change="spareSelect">
                         <el-option
                                 v-for="item in state"
                                 :key="item.value"
@@ -341,7 +341,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item label="物料编码"  prop="materialCode">
+                        <el-form-item label="物料编码" prop="materialCode">
                             <el-input size="mini" :disabled="true" v-model="updaData.materialCode"></el-input>
                         </el-form-item>
                     </el-col>
@@ -411,11 +411,10 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-
                 <el-row>
                     <el-col>
                         <el-form-item>
-                            <el-button type="primary" @click="upsubmitForm('updaData')">立即修改</el-button>
+                            <el-button type="primary" size="mini" @click="upsubmitForm('updaData')">立即修改</el-button>
                             <el-button size="mini" @click="UpdatableVisible=false">取消</el-button>
                         </el-form-item>
                     </el-col>
@@ -463,7 +462,7 @@
                     note: '',//备注
                     detection: '',//检测
                 },
-
+                querymanufacturer:'',//搜索厂商
                 rules: {
                     name: [
                         {required: true, message: '请输入物料名称', trigger: 'blur'},
@@ -578,6 +577,7 @@
                         label: '启用'
                     }],
                 value: '',
+                values: '',
                 Queryconditions: '',//查询具体值
                 MaxHeight: 600,//默认表格数据最大高度
                 openIcon: 'fontFamily hhtx-zhankai',//默认为展开的按钮
@@ -714,7 +714,8 @@
                     } else {
                         this.$message({
                             message: '数据填写不完全',
-                            type: 'warning'
+                            type: 'warning',
+
                         })
                         return false;
                     }
@@ -730,9 +731,36 @@
                 /**
                  * 原材料启用
                  * */
-                console.log(this.delmaterID)
-                this.$axios.post(this.$store.state.delmateropen, this.delmaterID).then(res => {
-                    console.log(res)
+                this.$axios.post(this.$store.state.delmateropen, {ids: this.delmaterID}).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            onClose() {
+                                location.reload()
+                            }
+                        });
+                    } else {
+                        this.$message.error('操作错误！');
+                    }
+                })
+            },
+            DelmaterOUT() {
+                /**
+                 * 原材料停用
+                 * */
+                this.$axios.post(this.$store.state.delmaterout, {ids: this.delmaterID}).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            onClose() {
+                                location.reload()
+                            }
+                        });
+                    } else {
+                        this.$message.error('操作错误！');
+                    }
                 })
             },
             selectmenu(keys, a) {
@@ -749,10 +777,18 @@
             delmaterials() {
                 /**
                  * 根据ID删除原材料信息*/
-                this.$axios.get(this.$store.state.delmaterials, {
-                    params: {ids: this.materialsIDs}
-                }).then(res => {
-                    console.log(res.data)
+                this.$axios.post(this.$store.state.delmaterials, {ids: this.delmaterID}).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            onClose() {
+                                location.reload()
+                            }
+                        });
+                    } else {
+                        this.$message.error('操作错误！');
+                    }
                 })
             },
             handleSelectionChange(val) {
@@ -896,9 +932,14 @@
                 /**
                  * 供应商查询选择
                  * */
+                // this.querymanufacturer
+                console.log(value)
                 this.QueryField = value[0]
                 if (value[0] != 'bianma' && value[0] != 'name') {
                     this.conditions = false
+
+                    this.Queryconditions=value[value.length-1] //厂商
+
                 } else {
                     this.conditions = true
                 }

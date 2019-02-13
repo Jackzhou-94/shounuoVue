@@ -11,7 +11,8 @@ export default new Vuex.Store({
         queryPage: 'http://192.168.1.199:8099/supplychain/materialmessage/queryPage',//原材料信息分页查询
         delmaterials: 'http://192.168.1.199:8099/supplychain/materialmessage/deleteMaterialmessages',//根据ID删除原材料信息
         delmateropen: 'http://192.168.1.199:8099/supplychain/materialmessage/updateByIdOpen',//根据id启动原材料
-    },
+        delmaterout:'http://192.168.1.199:8099/supplychain/materialmessage/updateByIdOut',//根据id停用原材料
+},
     mutations: {},
     actions: {}
 })
