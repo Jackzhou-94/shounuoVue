@@ -10,7 +10,7 @@
                         <span class="el-dropdown-link headerTitle">基础设置</span>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item>
-                                <div @click="addTab('商品信息')">
+                                <div @click="addTab('商品信息','goods'),$router.push('goods')">
                                     <i class="fontFamily hhtx-shangpin"></i>
                                     <span class="menu">商品信息</span>
                                 </div>
@@ -255,7 +255,6 @@
                         name: newTabName,
                         content:url
                     });
-                    console.log(this.$route.path)
                     this.editableTabsValue2 = newTabName;
                 }
 
@@ -270,9 +269,6 @@
             selected(tab,event) {
                 let url=tab.$attrs.urlTag.content
                 this.$router.push(url)
-                console.log(tab)
-
-
                 //最后选中的选项卡
                 sessionStorage.setItem('index', this.editableTabsValue2)
 
