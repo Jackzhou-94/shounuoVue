@@ -1101,6 +1101,7 @@
             this.materialsNum = ''
             this.materialsName=''
             this.QueryField = ''
+            this.VendorQueries=''
         },
         queryMaterials() {
             /**

@@ -5,7 +5,7 @@
             <div class="menuBox">
                 <div>
                     <el-button size="mini" class="el-icon-plus" @click="addgoods=true">新建</el-button>
-                    <el-button size="mini" class="el-icon-delete">删除</el-button>
+                    <el-button size="mini" class="el-icon-delete" @click="delgoodsfun">删除</el-button>
                     <el-button size="mini" class="el-icon-delete">回收站</el-button>
                 </div>
             </div>
@@ -14,6 +14,7 @@
         <div>
             <el-table
                     :data="quireGoodsData"
+                    @selection-change="goodsSelection"
                     style="width: 100%">
                 <el-table-column
                         align="center"
@@ -124,6 +125,16 @@
                         width="180"
                         label="备注">
                 </el-table-column>
+                <el-table-column
+                        align="center"
+                        width="100"
+                        label="操作"
+                        fixed="right"
+                >
+                    <template slot-scope="scope">
+                        <el-button type="text" @click="upgoodspanel(scope.row)">修改</el-button>
+                    </template>
+                </el-table-column>
             </el-table>
             <!--分页-->
             <el-row>
@@ -150,12 +161,12 @@
                 <el-row>
                     <el-col :span="12">
                         <el-form-item label="商品名称" prop="name">
-                            <el-input v-model="addgoodsForm.name"></el-input>
+                            <el-input size="mini" v-model="addgoodsForm.name"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="盒装SKU" prop="sku">
-                            <el-input v-model="addgoodsForm.sku"></el-input>
+                            <el-input size="mini" v-model="addgoodsForm.sku"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -165,12 +176,12 @@
 
                     <el-col :span="12">
                         <el-form-item label="条形码" prop="barCode">
-                            <el-input v-model="addgoodsForm.barCode"></el-input>
+                            <el-input size="mini" v-model="addgoodsForm.barCode"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="工艺流程" prop="process">
-                            <el-input v-model="addgoodsForm.process"></el-input>
+                            <el-input size="mini" v-model="addgoodsForm.process"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -181,6 +192,7 @@
                     <el-col :span="12">
                         <el-form-item label="分类">
                             <el-cascader
+                                    size="mini"
                                     @change="Classificationchoice"
                                     :options="addgoodsclassification"
                                     :show-all-levels="false"
@@ -189,11 +201,9 @@
                     </el-col>
 
 
-
-
                     <el-col :span="12">
                         <el-form-item label="品牌" prop="brand">
-                            <el-input v-model="addgoodsForm.brand"></el-input>
+                            <el-input size="mini" v-model="addgoodsForm.brand"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -201,12 +211,12 @@
                 <el-row>
                     <el-col :span="12">
                         <el-form-item label="基本单位">
-                            <el-input v-model="addgoodsForm.unit"></el-input>
+                            <el-input size="mini" v-model="addgoodsForm.unit"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="包装材料">
-                            <el-input v-model="addgoodsForm.packag"></el-input>
+                            <el-input size="mini" v-model="addgoodsForm.packag"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -215,12 +225,12 @@
 
                     <el-col :span="12">
                         <el-form-item label="面料成分">
-                            <el-input v-model="addgoodsForm.ingredients"></el-input>
+                            <el-input size="mini" v-model="addgoodsForm.ingredients"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="商品成本">
-                            <el-input v-model="addgoodsForm.costPrice"></el-input>
+                            <el-input size="mini" v-model="addgoodsForm.costPrice"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -230,37 +240,157 @@
 
                     <el-col :span="12">
                         <el-form-item label="工艺标准">
-                            <el-input v-model="addgoodsForm.standard"></el-input>
+                            <el-input size="mini" v-model="addgoodsForm.standard"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="季节">
-                            <el-input v-model="addgoodsForm.season"></el-input>
+                            <el-input size="mini" v-model="addgoodsForm.season"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
                 <el-row>
                     <el-col :span="12">
                         <el-form-item label="备注">
-                            <el-input v-model="addgoodsForm.remark"></el-input>
+                            <el-input size="mini" v-model="addgoodsForm.remark"></el-input>
                         </el-form-item>
                     </el-col>
 
                     <el-col :span="12">
                         <el-form-item label="重量">
-                            <el-input v-model="addgoodsForm.weight"></el-input>
+                            <el-input size="mini" v-model="addgoodsForm.weight"></el-input>
                         </el-form-item>
                     </el-col>
 
                     <el-form-item>
                         <el-button size="mini" type="primary" @click="submitForm('addgoodsForm')">立即创建</el-button>
-                        <el-button size="mini"  @click="addgoods=false">取消</el-button>
+                        <el-button size="mini" @click="addgoods=false">取消</el-button>
                     </el-form-item>
                 </el-row>
             </el-form>
 
         </el-dialog>
+        <!--修改商品信息-->
+        <el-dialog
+                title="修改商品信息"
+                :visible.sync="upgoods"
+                width="60%"
+        >
 
+            <el-form :model="upgoodsForm" ref="upgoodsForm" :rules="upgoodsrules" :inline="true">
+
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="商品名称" prop="name">
+                            <el-input size="mini" v-model="upgoodsForm.name"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="盒装SKU" prop="sku">
+                            <el-input size="mini" v-model="upgoodsForm.sku"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+                <el-row>
+
+
+                    <el-col :span="12">
+                        <el-form-item label="条形码" prop="barCode">
+                            <el-input size="mini" v-model="upgoodsForm.barCode"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="工艺流程" prop="process">
+                            <el-input size="mini" v-model="upgoodsForm.process"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+                <el-row>
+
+
+                    <el-col :span="12">
+                        <el-form-item label="分类">
+                            <el-cascader
+                                    size="mini"
+                                    @change="UPificationchoice"
+                                    :options="upgoodsclassification"
+                                    :show-all-levels="false"
+                            ></el-cascader>
+                        </el-form-item>
+                    </el-col>
+
+
+                    <el-col :span="12">
+                        <el-form-item label="品牌" prop="brand">
+                            <el-input size="mini" v-model="upgoodsForm.brand"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="基本单位">
+                            <el-input size="mini" v-model="upgoodsForm.unit"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="包装材料">
+                            <el-input size="mini" v-model="upgoodsForm.packag"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+                <el-row>
+
+                    <el-col :span="12">
+                        <el-form-item label="面料成分">
+                            <el-input size="mini" v-model="upgoodsForm.ingredients"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="商品成本">
+                            <el-input size="mini" v-model="upgoodsForm.costPrice"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+                <el-row>
+
+
+                    <el-col :span="12">
+                        <el-form-item label="工艺标准">
+                            <el-input size="mini" v-model="upgoodsForm.standard"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="季节">
+                            <el-input size="mini" v-model="upgoodsForm.season"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="备注">
+                            <el-input size="mini" v-model="upgoodsForm.remark"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="12">
+                        <el-form-item label="重量">
+                            <el-input size="mini" v-model="upgoodsForm.weight"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-form-item>
+                        <el-button size="mini" type="primary" @click="upsubmitForm('upgoodsForm')">立即修改</el-button>
+                        <el-button size="mini" @click="upgoods=false">取消</el-button>
+                    </el-form-item>
+                </el-row>
+            </el-form>
+
+        </el-dialog>
 
     </div>
 
@@ -277,6 +407,7 @@
                 quireGoodsData: [],//商品信息
                 totalRecordNum: 0,//总条目数
                 addgoods: false,//新建商品信息面板
+                upgoods: false,//修改商品信息面板
                 addgoodsForm: {
                     //新建商品信息表单数据
                     name: '',
@@ -292,7 +423,7 @@
                     ingredients: '',//面料成分
                     standard: '',//工艺标准
                     remark: '',//备注
-                    type:'',//分类
+                    type: '',//分类
                 },
                 addgoodsrules: {
                     //新建商品信息表单验证
@@ -326,14 +457,21 @@
                     {
                         value: '商务袜',
                         label: '商务袜',
-                        children:[
-                            {value:'中筒',
-                            label:'中筒'},
-                            {value:'短袜',
-                                label:'短袜'},
-                            {value:'隐形袜',
-                                label:'隐形袜'},
-                            {value:'船袜',
+                        children: [
+                            {
+                                value: '中筒',
+                                label: '中筒'
+                            },
+                            {
+                                value: '短袜',
+                                label: '短袜'
+                            },
+                            {
+                                value: '隐形袜',
+                                label: '隐形袜'
+                            },
+                            {
+                                value: '船袜',
                                 label: '船袜'
                             },
                         ]
@@ -341,75 +479,266 @@
                     {
                         value: '168针',
                         label: '168针',
-                        children:[
-                            {value:'中筒',
-                                label:'中筒'},
-                            {value:'短袜',
-                                label:'短袜'},
-                            {value:'隐形袜',
-                                label:'隐形袜'},
-                            {value:'船袜',
+                        children: [
+                            {
+                                value: '中筒',
+                                label: '中筒'
+                            },
+                            {
+                                value: '短袜',
+                                label: '短袜'
+                            },
+                            {
+                                value: '隐形袜',
+                                label: '隐形袜'
+                            },
+                            {
+                                value: '船袜',
                                 label: '船袜'
                             },
                         ]
                     }, {
                         value: '53棉',
                         label: '53棉',
-                        children:[
-                            {value:'中筒',
-                                label:'中筒'},
-                            {value:'短袜',
-                                label:'短袜'},
-                            {value:'隐形袜',
-                                label:'隐形袜'},
-                            {value:'船袜',
+                        children: [
+                            {
+                                value: '中筒',
+                                label: '中筒'
+                            },
+                            {
+                                value: '短袜',
+                                label: '短袜'
+                            },
+                            {
+                                value: '隐形袜',
+                                label: '隐形袜'
+                            },
+                            {
+                                value: '船袜',
                                 label: '船袜'
                             },
                         ]
-                    },{
+                    }, {
                         value: '中筒',
                         label: '中筒',
-                        children:[
-                            {value:'中筒',
-                                label:'中筒'},
-                            {value:'短袜',
-                                label:'短袜'},
-                            {value:'隐形袜',
-                                label:'隐形袜'},
-                            {value:'船袜',
+                        children: [
+                            {
+                                value: '中筒',
+                                label: '中筒'
+                            },
+                            {
+                                value: '短袜',
+                                label: '短袜'
+                            },
+                            {
+                                value: '隐形袜',
+                                label: '隐形袜'
+                            },
+                            {
+                                value: '船袜',
                                 label: '船袜'
                             },
                         ]
                     }
-                ]
+                ],
+
+
+                upgoodsForm: {
+                    //修改商品信息表单数据
+                    name: '',
+                    sku: '',
+                    brand: '',//品牌
+                    process: '',//工艺流程
+                    season: '',//季节
+                    costPrice: '',//成本
+                    unit: '',//基本单位
+                    packag: '',//包装材料
+                    weight: '',//重量
+                    barCode: '',//条形码
+                    ingredients: '',//面料成分
+                    standard: '',//工艺标准
+                    remark: '',//备注
+                    type: '',//分类
+                },
+                upgoodsrules: {
+                    //修改商品信息表单验证
+                    name: [
+                        {required: true, message: '请输入商品名称', trigger: 'blur'},
+                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+                    ],
+                    sku: [
+                        {required: true, message: '请输入盒装SKU', trigger: 'blur'},
+                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+                    ],
+                    brand: [
+                        {required: true, message: '请输入品牌', trigger: 'blur'},
+                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+                    ],
+                    process: [
+                        {required: true, message: '请输入对应工艺流程', trigger: 'blur'},
+                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+                    ],
+                    barCode: [
+                        {required: true, message: '请输入条形码', trigger: 'blur'},
+                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+                    ],
+                    type: [
+                        {required: true, message: '请输入条形码', trigger: 'change'},
+
+                    ]
+                },
+                upgoodsclassification: [
+                    //修改商品信息分类
+                    {
+                        value: '商务袜',
+                        label: '商务袜',
+                        children: [
+                            {
+                                value: '中筒',
+                                label: '中筒'
+                            },
+                            {
+                                value: '短袜',
+                                label: '短袜'
+                            },
+                            {
+                                value: '隐形袜',
+                                label: '隐形袜'
+                            },
+                            {
+                                value: '船袜',
+                                label: '船袜'
+                            },
+                        ]
+                    },
+                    {
+                        value: '168针',
+                        label: '168针',
+                        children: [
+                            {
+                                value: '中筒',
+                                label: '中筒'
+                            },
+                            {
+                                value: '短袜',
+                                label: '短袜'
+                            },
+                            {
+                                value: '隐形袜',
+                                label: '隐形袜'
+                            },
+                            {
+                                value: '船袜',
+                                label: '船袜'
+                            },
+                        ]
+                    }, {
+                        value: '53棉',
+                        label: '53棉',
+                        children: [
+                            {
+                                value: '中筒',
+                                label: '中筒'
+                            },
+                            {
+                                value: '短袜',
+                                label: '短袜'
+                            },
+                            {
+                                value: '隐形袜',
+                                label: '隐形袜'
+                            },
+                            {
+                                value: '船袜',
+                                label: '船袜'
+                            },
+                        ]
+                    }, {
+                        value: '中筒',
+                        label: '中筒',
+                        children: [
+                            {
+                                value: '中筒',
+                                label: '中筒'
+                            },
+                            {
+                                value: '短袜',
+                                label: '短袜'
+                            },
+                            {
+                                value: '隐形袜',
+                                label: '隐形袜'
+                            },
+                            {
+                                value: '船袜',
+                                label: '船袜'
+                            },
+                        ]
+                    }
+                ],
+                goodsids: [],//商品信息id
             }
         },
         methods: {
-            Classificationchoice(val){
-                this.addgoodsForm.type=''
-                val.forEach(item=>{
-                    this.addgoodsForm.type+=item
+            Classificationchoice(val) {
+                //新建商品信息分类选择
+                this.addgoodsForm.type = ''
+                val.forEach(item => {
+                    this.addgoodsForm.type += item
                 })
 
             },
-            //新建商品信息
+            UPificationchoice(val) {
+                //修改商品信息分类选择
+                this.upgoodsForm.type = ''
+                val.forEach(item => {
+                    this.upgoodsForm.type += item
+                })
+
+            },
+            goodsSelection(val) {
+                //商品信息多选
+                this.goodsids.length = 0
+                val.forEach(item => {
+                    this.goodsids.push(item.id)
+                })
+            },
+            delgoodsfun() {
+                //删除商品信息
+                this.$axios.post(this.$store.state.delgoods, {ids: this.goodsids}).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '删除成功',
+                            type: 'success',
+                            onClose() {
+                                location.reload()
+                            }
+                        });
+                    }
+                    else {
+                        this.$message.error('删除失败！');
+                    }
+                })
+            },
+
             submitForm(addgoodsForm) {
+                //新建商品信息
                 this.$refs[addgoodsForm].validate((valid) => {
                     if (valid) {
-                       this.$axios.post(this.$store.state.addgoods,this.addgoodsForm).then(res=>{
+                        this.$axios.post(this.$store.state.addgoods, this.addgoodsForm).then(res => {
                             console.log(res)
-                           if (res.data.code==200){
-                               this.$message({
-                                   message: '添加成功',
-                                   type: 'success',
-                                   onClose() {
-                                       location.reload()
-                                   }
-                               });
-                           }else {
-                               this.$message.error('添加失败！');
-                           }
-                       })
+                            if (res.data.code == 200) {
+                                this.$message({
+                                    message: '添加成功',
+                                    type: 'success',
+                                    onClose() {
+                                        location.reload()
+                                    }
+                                });
+                            } else {
+                                this.$message.error('添加失败！');
+                            }
+                        })
                     } else {
                         this.$message({
                             message: '信息填写不完全',
@@ -418,27 +747,53 @@
                     }
                 });
             },
-            //分类选择
-            // ClassificationChoice(val){
-            //     this.addgoodsForm.type=''
-            //     val.forEach(item=>{
-            //         this.addgoodsForm.type+=item
-            //     })
-            //
-            // },
-            //商品信息分页
+
+            upgoodspanel(data) {
+                //打开修改信息面板
+                this.upgoods = true
+                this.upgoodsForm = data
+
+            },
+
+            upsubmitForm(upgoodsForm) {
+                //修改商品信息
+                this.$refs[upgoodsForm].validate((valid) => {
+                    if (valid) {
+                        this.$axios.post(this.$store.state.upgoods, this.upgoodsForm).then(res => {
+                            if (res.data.code == 200) {
+                                this.$message({
+                                    message: '修改成功',
+                                    type: 'success',
+                                    onClose() {
+                                        location.reload()
+                                    }
+                                });
+                            }
+                            else {
+                                this.$message.error('修改失败！');
+                            }
+                        })
+                    } else {
+                        this.$message({
+                            message: '信息填写不完全',
+                            type: 'warning'
+                        });
+                    }
+                });
+            },
+
             goodslistpag(val) {
-                console.log(val)
+                //商品信息分页
                 this.quireGoodspageNum = val
                 this.queryGoods()
             },
-            //商品信息分页查询
+
             queryGoods() {
+                //商品信息分页查询
                 this.$axios.get(this.$store.state.goodsmessage,
                     {params: {pageSize: this.quireGoodspagesize, pageNum: this.quireGoodspageNum}}).then(res => {
                     this.quireGoodsData = res.data.list
                     this.totalRecordNum = res.data.totalRecord
-                    console.log(res.data)
                 })
             },
 
