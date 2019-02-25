@@ -15,7 +15,7 @@
         <div class="rightdata">
             <!--新建与查询-->
             <div class="menuBox">
-                <div>
+                <div style="display: flex;justify-content: space-around">
                     <el-button size="mini" class="el-icon-plus" @click="dialogTableVisible=true">新建
                     </el-button>
                     <el-button size="mini" class="el-icon-circle-check-outline" @click="Delmateropen">启用</el-button>
@@ -23,6 +23,8 @@
                     <el-button size="mini" class="el-icon-delete" @click="delmaterials">删除</el-button>
                     <el-button size="mini" class="el-icon-delete" @click="recyclepanel">回收站</el-button>
                     <el-button size="mini" class="el-icon-download" @click="exportExcel">导出</el-button>
+                    <el-button  icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
+
                     <!--<el-upload-->
                             <!--class="upload-demo"-->
                             <!--action="http://192.168.1.199:8099/supplychain/importExcel/readExcel"-->
@@ -37,49 +39,45 @@
 
                 </div>
 
-                <div class="selsectInput">
-                    <!--<el-cascader-->
-                            <!--size="mini"-->
-                            <!--:options="options"-->
-                            <!--v-model="selectedOptions"-->
-                            <!--@change="supplierChange">-->
-                    <!--</el-cascader>-->
-                    <!-- 搜索条件-->
+                <div>
 
-                    <el-input placeholder="物料编号"  size="mini"  v-model="materialsNum"></el-input>
-                    <el-input placeholder="物料名称"  size="mini"  v-model="materialsName"></el-input>
+                    <el-row>
+                       <el-col :span="5">
+                           <el-input placeholder="物料编号"  size="mini"  v-model="materialsNum"></el-input>
+                       </el-col>
+                        <el-col :span="5">
+                            <el-input placeholder="物料名称"  size="mini"  v-model="materialsName"></el-input>
+                        </el-col>
 
-
-                    <el-select v-model="VendorQueries" placeholder="厂商" size="mini">
-                        <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value"
+                        <el-col :span="4">
+                            <el-select v-model="VendorQueries" placeholder="厂商" size="mini">
+                                <el-option
+                                        v-for="item in options"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
                                 >
-                        </el-option>
-                    </el-select>
+                                </el-option>
+                            </el-select>
+                        </el-col>
+
+                        <el-col :span="4">
+                            <el-button type="primary" icon="el-icon-delete" size="mini" @click="reset">重置</el-button>
+                        </el-col>
+                        <el-col :span="2">
+                            <el-button type="primary" icon="el-icon-search" size="mini" @click="queryMaterials">查询</el-button>
+                        </el-col>
+                    </el-row>
 
 
-                    <el-button type="primary" icon="el-icon-delete" size="mini" @click="reset">重置</el-button>
-                    <el-button type="primary" icon="el-icon-search" size="mini" @click="queryMaterials">查询</el-button>
-                    <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
 
-
+                    <!--显示设置-->
                     <el-dialog
                             title="显示设置"
                             :visible.sync="Settings"
                             width="30%"
 
                     >
-
-                        <!--<el-tree-->
-                        <!--:data="menu"-->
-                        <!--show-checkbox-->
-                        <!--node-key="id"-->
-                        <!--@check="selectmenu"-->
-                        <!--:props="defaultProps">-->
-                        <!--</el-tree>-->
                         <div style="text-align: left">
                             <el-row>
                                 <el-col :span="12">
@@ -122,17 +120,13 @@
                                 <el-col :span="12">
                                     <el-checkbox v-model="costPrice">成本价</el-checkbox>
                                 </el-col>
+                                <el-col :span="12">
+                                    <el-checkbox v-model="note">备注</el-checkbox>
+                                </el-col>
                             </el-row>
-                            <el-col :span="12">
-                                <el-checkbox v-model="note">备注</el-checkbox>
-                            </el-col>
+
                         </div>
 
-
-                        <span slot="footer" class="dialog-footer">
-     <el-button @click="Settings = false">取 消</el-button>
-     <el-button type="primary" @click="Settings = false">确 定</el-button>
-    </span>
                     </el-dialog>
                 </div>
 
@@ -462,6 +456,10 @@
         >
             <div style="display: flex;justify-content: flex-start;margin-bottom: 0.5em">
                 <el-button size="mini" type="primary" @click="BatchRecovery">批量恢复</el-button>
+                <el-input size="mini" v-model="recycleNum" placeholder="物料编号"></el-input>
+                <el-input size="mini" v-model="recycleName" placeholder="物料名称"></el-input>
+                <el-button size="mini" type="primary" @click="recycleName='',recycleNum=''">重置</el-button>
+                <el-button size="mini" type="primary" @click="recyclingList()">搜索</el-button>
             </div>
 
 
@@ -823,7 +821,8 @@
                 ],
                 Settings: false,//显示设置面板
                 delmaterID: [],//原材料启用停用
-
+                recycleName:'',//回收站搜索名称
+                recycleNum:'',//回收站搜索编号
             }
         },
         methods: {
@@ -939,7 +938,7 @@
              * 回收站数据列表查询
              * **/
             this.$axios.get(this.$store.state.selectRecycle, {
-                params: {pageSize: size, pageNum: page}
+                params: {pageSize: size, pageNum: page,name:this.recycleName,materialCode:this.recycleNum}
             }).then(res => {
                 this.recycleData = res.data.list
                 this.recyctotalRecord = res.data.totalRecord

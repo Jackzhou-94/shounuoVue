@@ -33,6 +33,11 @@ export default new Router({
                     path:'/goods',
                     name:'goods',
                     component:require('./views/infrastructure/goods').default,
+                },{
+                //供应商管理
+                    path:'/supplier',
+                    name:'supplier',
+                    component:require('./views/infrastructure/supplier').default,
                 }
             ]
         }
