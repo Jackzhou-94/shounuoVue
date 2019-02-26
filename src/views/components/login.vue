@@ -65,13 +65,7 @@
                 }
             },
             login() {
-                // if (this.username=='admin'&&this.password=='admin'){
-                //     this.$router.push('Home')
-                // }else {
-                //     alert('用户名或者密码不正确')
-                // }
-
-                if (this.validation !== this.identifyCode) {
+                if (this.validation != this.identifyCode) {
                     this.$message.error('验证码输入有误')
                 } else {
                     this.$axios.post(this.$store.state.login, {

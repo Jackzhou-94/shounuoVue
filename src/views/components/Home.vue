@@ -40,7 +40,7 @@
                                 </div>
                             </el-dropdown-item>
                             <el-dropdown-item>
-                                <div @click="addTab('工厂管理')">
+                                <div @click="addTab('工厂管理','factory'),$router.push('factory')">
                                     <i class="fontFamily hhtx-gongchang"></i>
                                     <span class="menu">工厂管理</span>
                                 </div>

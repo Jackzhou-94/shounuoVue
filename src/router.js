@@ -38,6 +38,11 @@ export default new Router({
                     path:'/supplier',
                     name:'supplier',
                     component:require('./views/infrastructure/supplier').default,
+                },{
+                //工厂管理
+                    path:'/factory',
+                    name:'factory',
+                    component:require('./views/infrastructure/factory').default,
                 }
             ]
         }

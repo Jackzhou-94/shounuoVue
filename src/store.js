@@ -26,7 +26,14 @@ export default new Vuex.Store({
         addSuppier:'http://192.168.1.199:8099/supplychain/suppllier/saveSuppllier' ,//新增供应商
         upSuppier:'http://192.168.1.199:8099/supplychain/suppllier/updateSuppllier',//修改供应商
         delSuppier:'http://192.168.1.199:8099/supplychain/suppllier/deleteSuppllier',//删除供应商信息
-},
+        suppllierSelect:'http://192.168.1.199:8099/supplychain/suppllier/select',//供应商列表信息
+
+        factoryPage:'http://192.168.1.199:8099/supplychain/factory/queryPage',//工厂信息分页查询
+        addfactory:'http://192.168.1.199:8099/supplychain/factory/saveFactory',//新增工厂信息
+        upfactory:'http://192.168.1.199:8099/supplychain/factory/updateFactory',//修改工厂信息
+        delfactory:'http://192.168.1.199:8099/supplychain/factory/deleteFactory',//删除工厂信息
+
+    },
     mutations: {},
     actions: {}
 })

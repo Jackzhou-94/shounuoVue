@@ -693,23 +693,7 @@
                     children: 'children',
                     label: 'label'
                 },
-                options: [
-                    {
-                        value: '黄金糕',
-                        label: '黄金糕'
-                    }, {
-                        value: '双皮奶',
-                        label: '双皮奶'
-                    }, {
-                        value: '蚵仔煎',
-                        label: '蚵仔煎'
-                    }, {
-                        value: '龙须面',
-                        label: '龙须面'
-                    }, {
-                        value: '北京烤鸭',
-                        label: '北京烤鸭'
-                    }],
+                options: [],//供应商查询数据
                 materialclassification: [
                     {
                         label: '全部',
@@ -736,23 +720,7 @@
                 MaxHeight: 650,//默认表格数据最大高度
                 openIcon: 'fontFamily hhtx-zhankai',//默认为展开的按钮
                 dialogTableVisible: false,//添加面板
-                vendor: [
-                    {
-                        value: '黄金糕',
-                        label: '黄金糕'
-                    }, {
-                        value: '双皮奶',
-                        label: '双皮奶'
-                    }, {
-                        value: '蚵仔煎',
-                        label: '蚵仔煎'
-                    }, {
-                        value: '龙须面',
-                        label: '龙须面'
-                    }, {
-                        value: '北京烤鸭',
-                        label: '北京烤鸭'
-                    }],//厂商
+                vendor: [],//新建厂商
                 selsetType: '全部',//树形控件默认选择原料，辅料，
                 QueryField: '',//查询字段
                 spare: '',//状态
@@ -826,6 +794,17 @@
             }
         },
         methods: {
+            supplierQuery(){
+              //供应商列表
+                this.$axios.get(this.$store.state.suppllierSelect).then(res=>{
+                   let data=res.data.data
+                    data.forEach(item=>{
+                        this.options.push({value: item.unitCode, label: `${item.unitName}（${item.className}）`})
+                        this.vendor.push({value: item.unitCode, label: `${item.unitName}（${item.className}）`})
+                    })
+
+                })
+            },
             export4Excel() {
                 /**
                  * 导出
@@ -1106,9 +1085,8 @@
             /**
              * 查询
              * */
+
             this.queryPage(1, 10, this.selsetType, this.materialsNum,this.materialsName)
-            console.log(this.selsetType)
-            console.log(this.spare)
         },
         handleCurrentChange(val) {
             /**
@@ -1121,7 +1099,6 @@
              * 新建原材料选择厂商
              * */
             this.addmaterial.manufacturer = val
-            console.log(this.addmaterial)
         },
         upselectChange(val) {
             /**
@@ -1253,6 +1230,8 @@
          * */
         this.queryPage()
 
+        //供应商列表信息
+        this.supplierQuery()
 
     }
 
