@@ -33,6 +33,8 @@ export default new Vuex.Store({
         upfactory:'http://192.168.1.199:8099/supplychain/factory/updateFactory',//修改工厂信息
         delfactory:'http://192.168.1.199:8099/supplychain/factory/deleteFactory',//删除工厂信息
 
+        purchaseQueryPage:'http://192.168.1.199:8099/supplychain/purchase/queryPage',//采购单分页查询
+
     },
     mutations: {},
     actions: {}

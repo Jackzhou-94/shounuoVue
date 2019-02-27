@@ -85,6 +85,12 @@
                         <span class="el-dropdown-link headerTitle">采购管理</span>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item>
+                                <div @click="addTab('采购订单(物料)','purchase'),$router.push('purchase')">
+                                    <i class="fontFamily hhtx-caigoudingdan"></i>
+                                    <span class="menu">采购订单(物料)</span>
+                                </div>
+                            </el-dropdown-item>
+                            <el-dropdown-item>
                                 <div @click="addTab('生产计划单','production'),$router.push('production')">
                                     <i class="fontFamily hhtx-shengchan"></i>
                                     <span class="menu">生产计划单</span>
@@ -103,12 +109,7 @@
                                     <span class="menu">委外加工订单</span>
                                 </div>
                             </el-dropdown-item>
-                            <el-dropdown-item>
-                                <div @click="addTab('采购订单(物料)')">
-                                    <i class="fontFamily hhtx-caigoudingdan"></i>
-                                    <span class="menu">采购订单(物料)</span>
-                                </div>
-                            </el-dropdown-item>
+
                         </el-dropdown-menu>
                     </el-dropdown>
 
