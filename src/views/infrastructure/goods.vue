@@ -75,6 +75,23 @@
                         width="50">
                 </el-table-column>
                 <el-table-column
+
+                        label="创建时间"
+                        prop="createTime"
+                        v-if="createTime"
+                        width="180"
+                        align="center"
+                        sortable
+                ></el-table-column>
+                <el-table-column
+                        label="修改时间"
+                        prop="updateTime"
+                        v-if="updateTime"
+                        width="180"
+                        align="center"
+                        sortable
+                ></el-table-column>
+                <el-table-column
                         align="center"
                         prop="merchantCode"
                         v-if="merchantCode"
@@ -717,7 +734,15 @@
                         <el-checkbox v-model="remark">备注</el-checkbox>
                     </el-col>
                 </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-checkbox v-model="createTime">创建时间</el-checkbox>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-checkbox v-model="updateTime">修改时间</el-checkbox>
+                    </el-col>
 
+                </el-row>
 
             </div>
 
@@ -1041,7 +1066,8 @@
                 type: true,//分类
                 unit: true,//基本单位
                 weight: true,//重量
-
+                createTime:true,//创建时间
+                updateTime:true,//修改时间
                 querygoodsmerchantCode: '',//回收站查询商家编码
                 querygoodsname: '',//回收站查询商品名称
                 queryspare: '',//回收站查询其他

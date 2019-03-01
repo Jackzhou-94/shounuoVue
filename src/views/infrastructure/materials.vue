@@ -124,7 +124,15 @@
                                     <el-checkbox v-model="note">备注</el-checkbox>
                                 </el-col>
                             </el-row>
+                            <el-row>
+                                <el-col :span="12">
+                                    <el-checkbox v-model="createTime">创建时间</el-checkbox>
+                                </el-col>
+                                <el-col :span="12">
+                                    <el-checkbox v-model="updateTime">修改时间</el-checkbox>
+                                </el-col>
 
+                            </el-row>
                         </div>
 
                     </el-dialog>
@@ -150,12 +158,23 @@
                 <!--createTime-->
                 <el-table-column
 
-                        label="时间"
+                        label="创建时间"
                         prop="createTime"
+                        v-if="createTime"
                         width="180"
                         align="center"
                         sortable
                 ></el-table-column>
+                <el-table-column
+
+                        label="修改时间"
+                        prop="updateTime"
+                        v-if="updateTime"
+                        width="180"
+                        align="center"
+                        sortable
+                ></el-table-column>
+
                 <el-table-column
                         v-if="materialCode"
                         label="物料编号"
@@ -727,6 +746,8 @@
                 materialsIDs: '',//原材料ID
                 //物料编号
                 materialCode: true,
+                createTime:true,//创建时间
+                updateTime:true,//修改时间
                 //物料名称
                 name: true,
                 //成分规格

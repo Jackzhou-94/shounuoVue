@@ -60,6 +60,21 @@
                         width="50">
                 </el-table-column>
                 <el-table-column
+                        label="创建时间"
+                        prop="createTime"
+                        width="180"
+                        align="center"
+                        sortable
+                ></el-table-column>
+                <el-table-column
+                        label="修改时间"
+                        prop="updateTime"
+                        width="180"
+                        align="center"
+                        sortable
+                ></el-table-column>
+
+                <el-table-column
                         align="center"
                         prop="address"
                         label="地址"
@@ -200,7 +215,7 @@
 
         <!--修改厂商信息-->
         <el-dialog
-                title="新建厂商信息"
+                title="修改厂商信息"
                 :visible.sync="upfactory"
                 width="60%"
         >

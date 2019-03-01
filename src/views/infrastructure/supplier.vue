@@ -255,7 +255,7 @@
             </el-dialog>
 
             <!--修改-->
-            <el-dialog title="添加供应商" :visible.sync="upSupplier" width="70%">
+            <el-dialog title="修改供应商" :visible.sync="upSupplier" width="70%">
                 <el-form :inline="true" :model="upSupplierList" :rules="upSupplierRuee" ref="upSupplierList">
                     <el-row>
                         <el-col :span="8">
@@ -566,6 +566,14 @@
                             <el-checkbox v-model="businessTips">下次业务提示</el-checkbox>
                         </el-col>
                     </el-row>
+                    <el-row>
+                        <el-col :span="8">
+                            <el-checkbox v-model="createTime">创建时间</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="updateTime">修改时间</el-checkbox>
+                        </el-col>
+                    </el-row>
                 </div>
 
             </el-dialog>
@@ -584,7 +592,22 @@
                         align="center"
                         sortable
                 ></el-table-column>
-                <!--createTime-->
+                <el-table-column
+                        label="创建时间"
+                        v-if="createTime"
+                        prop="createTime"
+                        width="180"
+                        align="center"
+                        sortable
+                ></el-table-column>
+                <el-table-column
+                        label="修改时间"
+                        v-if="updateTime"
+                        prop="createTime"
+                        width="180"
+                        align="center"
+                        sortable
+                ></el-table-column>
                 <el-table-column
                         v-if="unitCode"
                         label="单位编码"
@@ -940,6 +963,8 @@
                  * 供应商列表字段显示隐藏
                  * **/
                 unitCode: true, //单位编码
+                createTime:true,//创建时间
+                updateTime:true,//修改时间
                 unitName: true, //单位名称
                 mainContact: true,//主联系人
                 classCode: true,//类别代码

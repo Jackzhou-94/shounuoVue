@@ -1429,6 +1429,7 @@
             },
             //地址选择
             handleChange(value) {
+
                 this.numberValidateForm.province = CodeToText[value[0]];
                 this.numberValidateForm.city = CodeToText[value[1]]
                 this.numberValidateForm.county = CodeToText[value[2]]
