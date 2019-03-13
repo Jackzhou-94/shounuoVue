@@ -112,8 +112,8 @@
     }
 
     .user {
-        width: 20%;
-        height: 30%;
+        width: 300px;
+        height: 250px;
         background-color: rgba(0, 0, 0, 0.2);
         padding: 3%;
         color: #ffffff;

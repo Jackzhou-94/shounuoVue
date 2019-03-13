@@ -142,6 +142,7 @@
             <!--右侧表格数据-->
             <el-table
                     style="width: 100%"
+                    height="650px"
                     border
                     id="out-table"
                     :data="materialsList"

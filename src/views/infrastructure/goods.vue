@@ -256,11 +256,7 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-
-
                 <el-row>
-
-
 
                     <el-col :span="8">
                         <el-form-item label="商家编码" prop="merchantCode">
@@ -812,7 +808,8 @@
                         {required: true, message: '请输入条形码', trigger: 'change'},
                     ],
                     merchantCode: [
-                        {required: true, message: '请输入商家编码', trigger: 'change'}
+                        {required: true, message: '请输入商家编码', trigger: 'blur'},
+                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
                     ]
                 },
                 addgoodsclassification: [
@@ -1238,7 +1235,7 @@
                         pageNum: page,
                         merchantCode: this.querygoodsmerchantCode,
                         name: this.querygoodsname,
-                        spare02: this.queryspare
+                        other: this.queryspare
                     }
                 }).then(res => {
                     this.goodsrecycleData = res.data.list
@@ -1256,7 +1253,7 @@
                                 pageSize: this.quireGoodspagesize, pageNum: this.quireGoodspageNum,
                                 name: this.queryname, sku: this.querysku,
                                 itemCode: this.queryitemCode, merchantCode: this.querymerchantCode,
-                                spare02: this.queryother
+                                other: this.queryother
                             }
                     }).then(res => {
                     this.quireGoodsData = res.data.list

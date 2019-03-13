@@ -156,12 +156,12 @@
                 <el-row>
                     <el-col :span="12">
                         <el-form-item label="编码" prop="code">
-                            <el-input size="mini" v-model="addfactoryForm.code"></el-input>
+                            <el-input placeholder="厂商编码" size="mini" v-model="addfactoryForm.code"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item label="名称" prop="name">
-                            <el-input size="mini" v-model="addfactoryForm.name"></el-input>
+                        <el-form-item  label="名称" prop="name">
+                            <el-input placeholder="厂商名称" size="mini" v-model="addfactoryForm.name"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -170,40 +170,56 @@
 
 
                     <el-col :span="12">
-                        <el-form-item label="所属公司" prop="company">
-                            <el-input size="mini" v-model="addfactoryForm.company"></el-input>
+                        <el-form-item  label="所属公司" prop="company">
+                            <el-input placeholder="所属公司" size="mini" v-model="addfactoryForm.company"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item label="地址" prop="address">
-                            <el-input size="mini" v-model="addfactoryForm.address"></el-input>
-                        </el-form-item>
+                        <!--<el-form-item label="地址" prop="address">-->
+                            <!--<el-input size="mini" v-model="addfactoryForm.address"></el-input>-->
+                        <!--</el-form-item>-->
+
+
+                            <el-form-item label="收货城市">
+                                <el-cascader
+                                        placeholder="收货城市"
+                                        size="mini"
+                                        :options="option"
+                                        v-model="address"
+                                        @change="handleChange">
+                                </el-cascader>
+                            </el-form-item>
+
                     </el-col>
                 </el-row>
 
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="收货地址">
+                            <el-input placeholder="收货地址"  size="mini" v-model="addfactoryForm.detailedAddress"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="12">
+                        <el-form-item label="手机号码">
+                            <el-input placeholder="手机号码" size="mini" v-model="addfactoryForm.phoneNumber"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
 
                 <el-row>
                     <el-col :span="12">
                         <el-form-item label="联系人">
-                            <el-input size="mini" v-model="addfactoryForm.contact"></el-input>
+                            <el-input placeholder="联系人" size="mini" v-model="addfactoryForm.contact"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="手机号码">
-                            <el-input size="mini" v-model="addfactoryForm.phoneNumber"></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-
-                <el-row>
-
                     <el-col :span="12">
                         <el-form-item label="备注信息">
-                            <el-input size="mini" v-model="addfactoryForm.remark"></el-input>
+                            <el-input placeholder="备注信息" size="mini" v-model="addfactoryForm.remark"></el-input>
                         </el-form-item>
                     </el-col>
-
                 </el-row>
+
 
                 <el-form-item>
                     <el-button size="mini" type="primary" @click="submitForm('addfactoryForm')">立即创建</el-button>
@@ -225,12 +241,12 @@
                 <el-row>
                     <el-col :span="12">
                         <el-form-item label="编码" prop="code">
-                            <el-input size="mini" v-model="upfactoryForm.code"></el-input>
+                            <el-input placeholder="厂商编码" size="mini" v-model="upfactoryForm.code"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="名称" prop="name">
-                            <el-input size="mini" v-model="upfactoryForm.name"></el-input>
+                            <el-input placeholder="厂商名称" size="mini" v-model="upfactoryForm.name"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -240,39 +256,55 @@
 
                     <el-col :span="12">
                         <el-form-item label="所属公司" prop="company">
-                            <el-input size="mini" v-model="upfactoryForm.company"></el-input>
+                            <el-input placeholder="所属公司" size="mini" v-model="upfactoryForm.company"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item label="地址" prop="address">
-                            <el-input size="mini" v-model="upfactoryForm.address"></el-input>
+                        <!--<el-form-item label="地址" prop="address">-->
+                            <!--<el-input size="mini" v-model="upfactoryForm.address"></el-input>-->
+                        <!--</el-form-item>-->
+
+
+                        <el-form-item label="收货城市">
+                            <el-cascader
+                                    placeholder="收货城市"
+                                    size="mini"
+                                    :options="option"
+                                    v-model="upaddress"
+                                    @change="handleChange">
+                            </el-cascader>
+                        </el-form-item>
+
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="收货地址">
+                            <el-input  placeholder="收货地址" size="mini" v-model="upfactoryForm.detailedAddress"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="12">
+                        <el-form-item label="手机号码">
+                            <el-input placeholder="手机号码" size="mini" v-model="upfactoryForm.phoneNumber"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
-
 
                 <el-row>
                     <el-col :span="12">
                         <el-form-item label="联系人">
-                            <el-input size="mini" v-model="upfactoryForm.contact"></el-input>
+                            <el-input placeholder="联系人" size="mini" v-model="upfactoryForm.contact"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="手机号码">
-                            <el-input size="mini" v-model="upfactoryForm.phoneNumber"></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-
-                <el-row>
-
                     <el-col :span="12">
                         <el-form-item label="备注信息">
-                            <el-input size="mini" v-model="upfactoryForm.remark"></el-input>
+                            <el-input placeholder="备注信息" size="mini" v-model="upfactoryForm.remark"></el-input>
                         </el-form-item>
                     </el-col>
-
                 </el-row>
+
+
 
                 <el-form-item>
                     <el-button size="mini" type="primary" @click="upsubmitForm('upfactoryForm')">立即修改</el-button>
@@ -286,6 +318,7 @@
 </template>
 
 <script>
+    import {regionDataPlus, CodeToText} from 'element-china-area-data'
     export default {
         name: "factory",
         data() {
@@ -303,6 +336,7 @@
                     code: '',//编码
                     company: '',//所属公司
                     address: '',//地址
+                    detailedAddress:'',//详细地址信息
                     contact: '',//联系人
                     phoneNumber: '',//手机号码
                     remark: '',//备注信息
@@ -319,12 +353,16 @@
                         {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
                     ]
                 },
+                option: regionDataPlus,//城市选择
+                address: [],//地址
+                upaddress: [],//修改地址
                 upfactoryForm: {
                     //新建厂商信息表单数据
                     name: '',//名称
                     code: '',//编码
                     company: '',//所属公司
                     address: '',//地址
+                    detailedAddress:'',//详细地址信息
                     contact: '',//联系人
                     phoneNumber: '',//手机号码
                     remark: '',//备注信息
@@ -347,6 +385,15 @@
             }
         },
         methods: {
+            handleChange(value) {
+                //城市选择
+
+                this.addfactoryForm.address = ''
+                this.addfactoryForm.address += `${CodeToText[value[0]]}-${CodeToText[value[1]]}-${CodeToText[value[2]]}`
+
+                this.upfactoryForm.address = ''
+                this.upfactoryForm.address += `${CodeToText[value[0]]}-${CodeToText[value[1]]}-${CodeToText[value[2]]}`
+            },
             submitForm(addfactoryForm) {
                 //新建厂商信息
                 this.$refs[addfactoryForm].validate((valid) => {
