@@ -3,6 +3,7 @@
         <div>
             <!--新建与查询-->
             <div class="menuBox">
+
                 <div style="display: flex;justify-content: space-around">
                     <el-button size="mini" class="el-icon-plus" @click="Newpurchaseorder=true">新建</el-button>
                     <el-button icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
@@ -14,6 +15,7 @@
                         title="显示设置"
                         :visible.sync="Settings"
                         width="30%"
+                        :show-close="false"
 
                 >
                     <div style="text-align: left">
@@ -152,6 +154,7 @@
                 <el-dialog
                         title="新建采购单"
                         :visible.sync="Newpurchaseorder"
+                        :show-close="false"
                         width="80%">
                     <el-form :model="addProcurement" ref="addProcurement" :rules="addProcurements" inline
                              label-width="150">
@@ -209,7 +212,8 @@
                         <el-row>
                             <el-col :span="6">
                                 <el-form-item label="发票" prop="invoice">
-                                    <el-select size="mini" v-model="addProcurement.invoice" placeholder="请选择发票">
+                                    <el-select @change="choose" size="mini" v-model="addProcurement.invoice"
+                                               placeholder="请选择发票">
                                         <el-option
                                                 v-for="item in addinvoice"
                                                 :key="item.value"
@@ -257,8 +261,9 @@
                     </div>
 
                     <el-table
-                            :data="this.addProcurement.goodsList"
+                            :data="addProcurement.goodsList"
                             border
+                            stripe
                             @selection-change="goodsSelection"
                             style="width: 100%">
 
@@ -346,7 +351,8 @@
 
                         >
                             <template slot-scope="scope">
-                                <el-input-number disabled size="mini" v-model="scope.row.taxPrice"
+                                <el-input-number @change="containtax(scope.row)" :disabled="containing" size="mini"
+                                                 v-model="scope.row.taxPrice"
                                                  label="描述文字"></el-input-number>
                             </template>
                         </el-table-column>
@@ -357,7 +363,7 @@
                                 align="center"
                         >
                             <template slot-scope="scope">
-                                <el-input-number size="mini" v-model="scope.row.unitPrice"
+                                <el-input-number :disabled="nocontaining" size="mini" v-model="scope.row.unitPrice"
                                                  @change="addprocure(scope.row)"></el-input-number>
                             </template>
                         </el-table-column>
@@ -370,7 +376,7 @@
                         </el-table-column>
                         <el-table-column
                                 label="不含税总价（元）"
-                                width="120"
+                                width="150"
                                 align="center"
                                 prop="totalPrice"
                         >
@@ -516,6 +522,7 @@
                         <el-table
                                 :data="quireGoodsData"
                                 border
+                                stripe
                                 @selection-change="goodsSelection"
                                 style="width: 100%">
                             <el-table-column
@@ -666,6 +673,7 @@
                         <el-table
                                 :data="quireGoodsDataBox"
                                 border
+                                stripe
                                 @selection-change="goodsSelection"
                                 style="width: 100%">
                             <el-table-column
@@ -694,34 +702,34 @@
                             >
                             </el-table-column>
 
-                            <el-table-column
-                                    label="预计入库时间"
-                                    width="200"
-                                    align="center"
-                            >
-                                <template slot-scope="scope">
-                                    <el-date-picker
-                                            style="width: 180px"
-                                            type="datetime"
-                                            v-model="scope.row.warehouseTime"
-                                            size="mini"
-                                            value-format="yyyy-MM-dd HH:mm:ss"
-                                            placeholder="预计入库时间">
-                                    </el-date-picker>
-                                </template>
-                            </el-table-column>
+                            <!--<el-table-column-->
+                            <!--label="预计入库时间"-->
+                            <!--width="200"-->
+                            <!--align="center"-->
+                            <!--&gt;-->
+                            <!--<template slot-scope="scope">-->
+                            <!--<el-date-picker-->
+                            <!--style="width: 180px"-->
+                            <!--type="datetime"-->
+                            <!--v-model="scope.row.warehouseTime"-->
+                            <!--size="mini"-->
+                            <!--value-format="yyyy-MM-dd HH:mm:ss"-->
+                            <!--placeholder="预计入库时间">-->
+                            <!--</el-date-picker>-->
+                            <!--</template>-->
+                            <!--</el-table-column>-->
 
 
-                            <el-table-column
-                                    align="center"
-                                    label="数量"
-                                    width="200"
-                            >
-                                <template slot-scope="scope">
-                                    <el-input-number size="mini" v-model="scope.row.number" :min="1" :max="100000"
-                                                     label="描述文字"></el-input-number>
-                                </template>
-                            </el-table-column>
+                            <!--<el-table-column-->
+                            <!--align="center"-->
+                            <!--label="数量"-->
+                            <!--width="200"-->
+                            <!--&gt;-->
+                            <!--<template slot-scope="scope">-->
+                            <!--<el-input-number size="mini" v-model="scope.row.number" :min="1" :max="100000"-->
+                            <!--label="描述文字"></el-input-number>-->
+                            <!--</template>-->
+                            <!--</el-table-column>-->
                             <el-table-column
                                     label="操作"
                                     fixed="left"
@@ -740,44 +748,45 @@
                             <!--</el-table-column>-->
 
 
-                            <el-table-column
-                                    label="不含税单价（元）"
-                                    width="200"
-                                    align="center"
-                            >
-                                <template slot-scope="scope">
+                            <!--<el-table-column-->
+                            <!--label="不含税单价（元）"-->
+                            <!--width="200"-->
+                            <!--align="center"-->
+                            <!--&gt;-->
+                            <!--<template slot-scope="scope">-->
 
-                                    <el-input-number :change="CalculationPrice(scope.row)" size="mini"
-                                                     v-model="scope.row.unitPrice" :min="1"
-                                                     :max="100000" label="描述文字"></el-input-number>
+                            <!--<el-input-number :change="CalculationPrice(scope.row)" size="mini"-->
+                            <!--v-model="scope.row.unitPrice" :min="1"-->
+                            <!--:max="100000" label="描述文字"></el-input-number>-->
 
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                    label="含税单价（元）"
-                                    width="200"
-                                    align="center"
+                            <!--</template>-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                            <!--label="含税单价（元）"-->
+                            <!--width="200"-->
+                            <!--align="center"-->
 
-                            >
-                                <template slot-scope="scope">
-                                    <el-input-number disabled size="mini" v-model="scope.row.taxPrice"
-                                                     label="描述文字"></el-input-number>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                    label="含税总价（元）"
-                                    width="120"
-                                    align="center"
-                                    prop="taxTotalPrice"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    label="不含税总价（元）"
-                                    width="150"
-                                    align="center"
-                                    prop="totalPrice"
-                            >
-                            </el-table-column>
+                            <!--&gt;-->
+                            <!--<template slot-scope="scope">-->
+                            <!--<el-input-number disabled size="mini" v-model="scope.row.taxPrice"-->
+                            <!--label="描述文字"></el-input-number>-->
+                            <!--</template>-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                            <!--label="含税总价（元）"-->
+                            <!--width="120"-->
+                            <!--align="center"-->
+                            <!--prop="taxTotalPrice"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                            <!--label="不含税总价（元）"-->
+                            <!--width="150"-->
+                            <!--align="center"-->
+                            <!--prop="totalPrice"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+
                             <el-table-column
 
                                     label="创建时间"
@@ -948,6 +957,7 @@
                 <el-dialog
                         title="修改采购单"
                         :visible.sync="upNewpurchaseorder"
+                        :show-close="false"
                         width="80%">
 
                     <el-form :model="upaddProcurement" :rules="upaddProcurements" label-width="150"
@@ -1010,7 +1020,7 @@
                             <!--invoice: '',//发票-->
                             <el-col :span="6">
                                 <el-form-item label="发票" prop="invoice">
-                                    <el-select size="mini" v-model="upaddProcurement.invoice" placeholder="请选择发票">
+                                    <el-select @change="upchoose" size="mini" v-model="upaddProcurement.invoice" placeholder="请选择发票">
                                         <el-option
                                                 v-for="item in addinvoice"
                                                 :key="item.value"
@@ -1053,8 +1063,9 @@
                     </div>
 
                     <el-table
-                            :data="this.upaddProcurement.goodsList"
+                            :data="upaddProcurement.goodsList"
                             border
+                            stripe
                             @selection-change="upgoodsSelection"
                             style="width: 100%">
 
@@ -1136,6 +1147,17 @@
                         <!--&gt;-->
                         <!--</el-table-column>-->
 
+                        <!--<el-table-column-->
+                                <!--label="含税单价（元）"-->
+                                <!--width="200"-->
+                                <!--align="center"-->
+
+                        <!--&gt;-->
+                            <!--<template slot-scope="scope">-->
+                                <!--<el-input-number disabled size="mini" v-model="scope.row.taxPrice"-->
+                                                 <!--label="描述文字"></el-input-number>-->
+                            <!--</template>-->
+                        <!--</el-table-column>-->
                         <el-table-column
                                 label="含税单价（元）"
                                 width="200"
@@ -1143,11 +1165,11 @@
 
                         >
                             <template slot-scope="scope">
-                                <el-input-number disabled size="mini" v-model="scope.row.taxPrice"
+                                <el-input-number @change="upcontaintax(scope.row)" :disabled="upcontaining" size="mini"
+                                                 v-model="scope.row.taxPrice"
                                                  label="描述文字"></el-input-number>
                             </template>
                         </el-table-column>
-
 
                         <el-table-column
                                 label="不含税单价（元）"
@@ -1156,7 +1178,7 @@
                         >
                             <template slot-scope="scope">
                                 <el-input-number size="mini" v-model="scope.row.unitPrice"
-                                                 @change="upaddprocure(scope.row)"></el-input-number>
+                                                 :disabled="upnocontaining" @change="upaddprocure(scope.row)"></el-input-number>
                             </template>
                         </el-table-column>
                         <el-table-column
@@ -1276,6 +1298,7 @@
                         title="修改采购订单添加商品"
                         :visible.sync="upPurchasingAddGoods"
                         width="80%"
+                        :show-close="false"
 
                 >
                     <!--新建与查询-->
@@ -1314,6 +1337,7 @@
                         <el-table
                                 :data="quireGoodsData"
                                 border
+                                stripe
                                 @selection-change="goodsSelection"
                                 style="width: 100%">
                             <el-table-column
@@ -1461,6 +1485,7 @@
                         <el-table
                                 :data="upquireGoodsDataBox"
                                 border
+                                stripe
                                 @selection-change="goodsSelection"
                                 style="width: 100%">
 
@@ -1489,33 +1514,33 @@
                                     width="150"
                             >
                             </el-table-column>
-                            <el-table-column
-                                    label="预计入库时间"
-                                    width="200"
-                                    align="center"
-                            >
-                                <template slot-scope="scope">
-                                    <el-date-picker
-                                            style="width: 180px"
-                                            v-model="scope.row.warehouseTime"
-                                            size="mini"
-                                            type="datetime"
-                                            value-format="yyyy-MM-dd HH:mm:ss"
-                                            placeholder="预计入库时间">
-                                    </el-date-picker>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    label="数量"
-                                    width="200"
-                            >
-                                <template slot-scope="scope">
+                            <!--<el-table-column-->
+                                    <!--label="预计入库时间"-->
+                                    <!--width="200"-->
+                                    <!--align="center"-->
+                            <!--&gt;-->
+                                <!--<template slot-scope="scope">-->
+                                    <!--<el-date-picker-->
+                                            <!--style="width: 180px"-->
+                                            <!--v-model="scope.row.warehouseTime"-->
+                                            <!--size="mini"-->
+                                            <!--type="datetime"-->
+                                            <!--value-format="yyyy-MM-dd HH:mm:ss"-->
+                                            <!--placeholder="预计入库时间">-->
+                                    <!--</el-date-picker>-->
+                                <!--</template>-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--label="数量"-->
+                                    <!--width="200"-->
+                            <!--&gt;-->
+                                <!--<template slot-scope="scope">-->
 
-                                    <el-input-number size="mini" v-model="scope.row.number" :min="1" :max="100000"
-                                                     label="描述文字"></el-input-number>
-                                </template>
-                            </el-table-column>
+                                    <!--<el-input-number size="mini" v-model="scope.row.number" :min="1" :max="100000"-->
+                                                     <!--label="描述文字"></el-input-number>-->
+                                <!--</template>-->
+                            <!--</el-table-column>-->
                             <el-table-column
                                     label="操作"
                                     fixed="left"
@@ -1529,43 +1554,43 @@
                             </el-table-column>
 
 
-                            <el-table-column
-                                    label="不含税单价（元）"
-                                    width="200"
-                                    align="center"
-                            >
-                                <template slot-scope="scope">
+                            <!--<el-table-column-->
+                                    <!--label="不含税单价（元）"-->
+                                    <!--width="200"-->
+                                    <!--align="center"-->
+                            <!--&gt;-->
+                                <!--<template slot-scope="scope">-->
 
-                                    <el-input-number :change="UPCalculationPrice(scope.row)" size="mini"
-                                                     v-model="scope.row.unitPrice  " :min="1"
-                                                     :max="100000" label="描述文字"></el-input-number>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                    label="含税单价（元）"
-                                    width="200"
-                                    align="center"
-                            >
-                                <template slot-scope="scope">
+                                    <!--<el-input-number :change="UPCalculationPrice(scope.row)" size="mini"-->
+                                                     <!--v-model="scope.row.unitPrice  " :min="1"-->
+                                                     <!--:max="100000" label="描述文字"></el-input-number>-->
+                                <!--</template>-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="含税单价（元）"-->
+                                    <!--width="200"-->
+                                    <!--align="center"-->
+                            <!--&gt;-->
+                                <!--<template slot-scope="scope">-->
 
-                                    <el-input-number disabled size="mini" v-model="scope.row.taxPrice"
-                                                     label="描述文字"></el-input-number>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                    label="含税总价（元）"
-                                    width="120"
-                                    align="center"
-                                    prop="taxTotalPrice"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    label="不含税总价（元）"
-                                    width="120"
-                                    align="center"
-                                    prop="totalPrice"
-                            >
-                            </el-table-column>
+                                    <!--<el-input-number disabled size="mini" v-model="scope.row.taxPrice"-->
+                                                     <!--label="描述文字"></el-input-number>-->
+                                <!--</template>-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="含税总价（元）"-->
+                                    <!--width="120"-->
+                                    <!--align="center"-->
+                                    <!--prop="taxTotalPrice"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="不含税总价（元）"-->
+                                    <!--width="120"-->
+                                    <!--align="center"-->
+                                    <!--prop="totalPrice"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
                             <el-table-column
 
                                     label="创建时间"
@@ -1680,16 +1705,25 @@
 
 
             </div>
+
+            <!--采购明细-->
             <el-dialog
                     title="采购明细"
                     :visible.sync="Purchasedetail"
                     width="80%"
-                >
+                    :show-close="false"
+            >
+                <div style="display: flex;justify-content: space-around">
+                    <el-button icon="el-icon-view" size="mini" @click="detailSettings=true">显示设置</el-button>
+                    <el-button size="mini">通过</el-button>
+                    <el-button size="mini">驳回</el-button>
+                </div>
+
                 <el-table
                         :data="selsectdetailsList"
                         border
+                        stripe
                         style="width: 100%">
-
 
                     <el-table-column
                             align="center"
@@ -1699,12 +1733,14 @@
                     <el-table-column
                             align="center"
                             prop="merchantCode"
+                            v-if="detailmerchantCode"
                             label="商家编码"
                             width="180">
                     </el-table-column>
                     <el-table-column
                             align="center"
                             prop="name"
+                            v-if="detailname"
                             label="商品名称"
                             width="180">
                     </el-table-column>
@@ -1712,6 +1748,7 @@
                     <el-table-column
                             align="center"
                             prop="itemCode"
+                            v-if="detailitemCode"
                             label="货品编号"
                             width="180"
                     >
@@ -1719,6 +1756,7 @@
                     <el-table-column
                             label="预计入库时间"
                             width="200"
+                            v-if="detailwarehouseTime"
                             align="center"
                             prop="warehouseTime"
                     >
@@ -1727,6 +1765,7 @@
                             align="center"
                             label="数量"
                             width="200"
+                            v-if="detailnumber"
                             prop="number"
                     >
                     </el-table-column>
@@ -1744,6 +1783,7 @@
                             label="含税单价（元）"
                             width="200"
                             align="center"
+                            v-if="detailtaxPrice"
                             prop="taxPrice"
 
                     >
@@ -1753,6 +1793,7 @@
                             label="不含税单价（元）"
                             width="200"
                             align="center"
+                            v-if="detailunitPrice"
                             prop="unitPrice"
                     >
                     </el-table-column>
@@ -1760,25 +1801,29 @@
                             label="含税总价（元）"
                             width="120"
                             align="center"
+                            v-if="detailtaxTotalPrice"
                             prop="taxTotalPrice"
                     >
                     </el-table-column>
                     <el-table-column
                             label="不含税总价（元）"
-                            width="120"
+                            width="200"
                             align="center"
+                            v-if="detailtotalPrice"
                             prop="totalPrice"
                     >
                     </el-table-column>
                     <el-table-column
                             align="center"
                             prop="type"
+                            v-if="detailtype"
                             label="分类"
                             width="180">
                     </el-table-column>
                     <el-table-column
                             align="center"
                             prop="sku"
+                            v-if="detailsku"
                             width="180"
                             label="盒装SKU">
 
@@ -1786,66 +1831,77 @@
                     <el-table-column
                             align="center"
                             prop="brand"
+                            v-if="detailbrand"
                             width="180"
                             label="品牌">
                     </el-table-column>
                     <el-table-column
                             align="center"
                             prop="process"
+                            v-if="detailprocess"
                             width="180"
                             label="工艺流程">
                     </el-table-column>
                     <el-table-column
                             align="center"
                             prop="season"
+                            v-if="detailseason"
                             width="180"
                             label="季节">
                     </el-table-column>
                     <el-table-column
                             align="center"
                             prop="costPrice"
+                            v-if="detailcostPrice"
                             width="180"
                             label="商品成本价">
                     </el-table-column>
                     <el-table-column
                             align="center"
                             prop="unit"
+                            v-if="detailunit"
                             width="180"
                             label="基本单位">
                     </el-table-column>
                     <el-table-column
                             align="center"
                             prop="packag"
+                            v-if="detailpackag"
                             width="180"
                             label="包装材料">
                     </el-table-column>
                     <el-table-column
                             align="center"
                             prop="weight"
+                            v-if="detailweight"
                             width="180"
                             label="重量">
                     </el-table-column>
                     <el-table-column
                             align="center"
                             prop="barCode"
+                            v-if="detailbarCode"
                             width="180"
                             label="条形码">
                     </el-table-column>
                     <el-table-column
                             align="center"
                             prop="ingredients"
+                            v-if="detailingredients"
                             width="180"
                             label="面料成份">
                     </el-table-column>
                     <el-table-column
                             align="center"
                             prop="standard"
+                            v-if="detailstandard"
                             width="180"
                             label="执行工艺标准">
                     </el-table-column>
                     <el-table-column
                             align="center"
                             prop="remark"
+                            v-if="detailremark"
                             width="180"
                             label="备注">
                     </el-table-column>
@@ -1853,10 +1909,121 @@
                 </el-table>
 
             </el-dialog>
+
+
+            <!--采购明细显示设置-->
+            <el-dialog
+                    title="显示设置"
+                    :visible.sync="detailSettings"
+                    width="30%"
+                    :show-close="false"
+
+            >
+                <div style="text-align: left">
+
+
+                    <el-row>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailmerchantCode">商家编码</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailname">商品名称</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailitemCode">货品编号</el-checkbox>
+                        </el-col>
+                    </el-row>
+
+
+                    <el-row>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailwarehouseTime">预计入库时间</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailnumber">数量</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailtaxPrice">含税单价</el-checkbox>
+                        </el-col>
+                    </el-row>
+
+                    <el-row>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailunitPrice">不含税单价</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailtaxTotalPrice">含税总价</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailtotalPrice">不含税总价</el-checkbox>
+                        </el-col>
+                    </el-row>
+
+
+                    <el-row>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailtype">分类</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailsku">盒装SKU</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailbrand">品牌</el-checkbox>
+                        </el-col>
+                    </el-row>
+
+
+                    <el-row>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailprocess">工艺流程</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailseason">季节</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailcostPrice">商品成本价</el-checkbox>
+                        </el-col>
+                    </el-row>
+
+                    <el-row>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailunit">基本单位</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailpackag">包装材料</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailweight">重量</el-checkbox>
+                        </el-col>
+                    </el-row>
+
+
+                    <el-row>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailbarCode">条形码</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailingredients">面料成份</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailstandard">执行工艺标准</el-checkbox>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="8">
+                            <el-checkbox v-model="detailremark">备注</el-checkbox>
+                        </el-col>
+                    </el-row>
+
+
+                </div>
+
+            </el-dialog>
             <div>
                 <el-table
                         :data="purchaseList"
                         border
+                        stripe
                         height="700px"
                         @row-dblclick="Purchasedetails"
 
@@ -1900,7 +2067,7 @@
                             label="供应商"
                             prop="supplier"
                             align="center"
-                            width="120"
+                            width="150"
                             v-if="operation"
                     ></el-table-column>
                     <el-table-column
@@ -1908,7 +2075,7 @@
                             prop="purchaseSource"
                             label="采购订单来源"
                             v-if="purchaseSource"
-
+                            width="150"
                     >
                     </el-table-column>
 
@@ -1947,6 +2114,7 @@
                             align="center"
                             prop="invoice"
                             v-if="receiveStatus"
+                            width="120"
                             label="发票">
                     </el-table-column>
                     <el-table-column
@@ -1965,6 +2133,7 @@
                             align="center"
                             prop="frequency"
                             v-if="frequency"
+                            width="120"
                             label="已入库数量">
                     </el-table-column>
                     <el-table-column
@@ -2043,6 +2212,7 @@
                     <el-table-column
                             align="frequency"
                             prop="completeStatus"
+                            width="120"
                             v-if="completeStatus"
                             label="采购完成状态">
                     </el-table-column>
@@ -2341,27 +2511,96 @@
                 upgoodsMoney: 0,//总金额(不含税)
                 uptaxgoodsMoney: 0,//总金额(含税)
 
-                purchaseNum:'',//采购单号
-                selsectdetailsList:[],//采购明细数据
-                Purchasedetail:false,//采购明细面板
+                purchaseNum: '',//采购单号
+                selsectdetailsList: [],//采购明细数据
+                Purchasedetail: false,//采购明细面板
+
+
+                /**
+                 * 采购单商品详情显示设置
+                 * **/
+                detailSettings: false,//明细显示设置面板
+                detailmerchantCode: true,//商家编码
+                detailname: true,//商品名称
+                detailitemCode: true,//货品编号
+                detailwarehouseTime: true,//预计入库时间
+                detailnumber: true,//数量
+                detailtaxPrice: true,//含税单价
+                detailunitPrice: true,//不含税单价
+                detailtaxTotalPrice: true,//含税总价
+                detailtotalPrice: true,//不含税总价
+                detailtype: true,//分类
+                detailsku: true,//盒装SKU
+                detailbrand: true,//品牌
+                detailprocess: true,//工艺流程
+                detailseason: true,//季节
+                detailcostPrice: true,//商品成本价
+                detailunit: true,//基本单位
+                detailpackag: true,//包装材料
+                detailweight: true,//重量
+                detailbarCode: true,//条形码
+                detailingredients: true,//面料成份
+                detailstandard: true,//执行工艺标准
+                detailremark: true,//备注
+
+
+                containing: true,//含税
+                nocontaining: true,//不含税
+
+                upcontaining: true,//修改含税
+                upnocontaining: true,//修改不含税
 
             }
         },
 
         methods: {
-            Purchasedetails(row){
-              //采购明细
-                this.Purchasedetail=true
-                this.purchaseNum=row.purchaseNumber
+            choose(data) {
+                //选择发票回调
+                if (data!='收据') {
+                    this.containing = false;//含税
+                    this.nocontaining = false;//不含税
+                }else {
+                    let list=this.addProcurement.goodsList
+                    list.forEach(item=>{
+                        item.taxTotalPrice=0
+                        item.taxPrice=0
+                    })
+                    this.taxgoodsMoney=0,//总金额(含税)
+                    this.containing = true;//含税
+                    this.nocontaining = false;//不含税
+                }
+
+            },
+            upchoose(data) {
+                //修改选择发票回调
+                if (data!='收据') {
+                    this.upcontaining = false;//含税
+                    this.upnocontaining = false;//不含税
+                }else {
+                    let list=this.upaddProcurement.goodsList
+                    list.forEach(item=>{
+                        item.taxTotalPrice=0
+                        item.taxPrice=0
+                    })
+                    this.uptaxgoodsMoney=0,//总金额(含税)
+                    this.upcontaining = true;//含税
+                    this.upnocontaining = false;//不含税
+                }
+
+            },
+            Purchasedetails(row) {
+                //采购明细
+                this.Purchasedetail = true
+                this.purchaseNum = row.purchaseNumber
                 this.selsectdetails()
             },
-            selsectdetails(){
-              //根据采购单号查询当前采购详情
-                this.$axios.get(this.$store.state.queruPNumber,{
-                    params:{purchaseNumber:this.purchaseNum}
-                }).then(res=>{
+            selsectdetails() {
+                //根据采购单号查询当前采购详情
+                this.$axios.get(this.$store.state.queruPNumber, {
+                    params: {purchaseNumber: this.purchaseNum}
+                }).then(res => {
                     console.log(res)
-                    this.selsectdetailsList=res.data.data
+                    this.selsectdetailsList = res.data.data
                 })
             },
             batchTime() {
@@ -2394,20 +2633,64 @@
                 }
 
             },
-            addprocure(data) {
-                //最后调整单价
-                // data.totalPrice
-                this.goodsMoney = 0//总金额(不含税)
-                this.taxgoodsMoney = 0//总金额(含税)
-                console.log(this.addProcurement.goodsList)
-                let list = this.addProcurement.goodsList
-                list.forEach(item => {
-                    // this.goodsMoney += item.unitPrice //不含税总价
-                    this.goodsMoney += item.unitPrice*item.number
-                    // this.taxgoodsMoney+=item.taxTotalPrice
+            containtax(data) {
+                //最后调整含税单价
 
-                })
-                this.taxgoodsMoney = this.goodsMoney + this.goodsMoney * 0.15
+                    this.nocontaining = true;//不含税
+                    data.unitPrice = data.taxPrice - data.taxPrice*0.15//计算不含税单价
+                    data.totalPrice = data.unitPrice * data.number//不含税总价
+                    data.taxTotalPrice = data.taxPrice * data.number//含税总价
+
+                    this.goodsMoney = 0//总金额(不含税)
+                    this.taxgoodsMoney = 0//总金额(含税)
+                    let list = this.addProcurement.goodsList
+                    console.log(list)
+                    list.forEach(item => {
+                        // this.goodsMoney += item.unitPrice //不含税总价
+                        this.goodsMoney += item.unitPrice * item.number
+                        this.taxgoodsMoney += item.taxTotalPrice
+                        console.log(item.taxTotalPrice)
+                    })
+                    this.taxgoodsMoney = this.goodsMoney + this.goodsMoney * 0.15
+
+
+
+
+
+
+
+            },
+            addprocure(data) {
+                //最后调整不含税单价
+                // data.totalPrice
+
+                    if (this.addProcurement.invoice!='收据'){
+                        this.containing = true;//含税
+                        data.taxPrice = data.unitPrice + data.unitPrice * 0.15
+                        data.totalPrice = data.unitPrice * data.number//不含税总价
+                        data.taxTotalPrice = data.taxPrice * data.number//含税总价
+
+                        this.goodsMoney = 0//总金额(不含税)
+                        this.taxgoodsMoney = 0//总金额(含税)
+                        console.log(this.addProcurement.goodsList)
+                        let list = this.addProcurement.goodsList
+                        list.forEach(item => {
+                            // this.goodsMoney += item.unitPrice //不含税总价
+                            this.goodsMoney += item.unitPrice * item.number
+                            this.taxgoodsMoney += item.taxTotalPrice
+                        })
+                        this.taxgoodsMoney = this.goodsMoney + this.goodsMoney * 0.15
+                    } else {
+                        data.totalPrice = data.unitPrice * data.number//不含税总价
+                        this.goodsMoney = 0//总金额(不含税)
+                        let list = this.addProcurement.goodsList
+                        list.forEach(item => {
+                            this.goodsMoney += item.unitPrice * item.number
+                        })
+
+                    }
+
+
 
                 // data.taxPrice = data.unitPrice + data.unitPrice * 0.15
                 // // data.totalPrice=data.unitPrice*data.number
@@ -2419,16 +2702,73 @@
                 // this.goodsMoney = data.totalPrice
                 // console.log(data)
             },
-            upaddprocure(data) {
-                //最后调整单价
+            upcontaintax(data) {
+                //修改最后调整含税单价
+
+                this.upnocontaining = true;//不含税
+                data.unitPrice = data.taxPrice - data.taxPrice * 0.15 //计算不含税单价
+                data.totalPrice = data.unitPrice * data.number//不含税总价
+                data.taxTotalPrice = data.taxPrice * data.number//含税总价
+
                 this.upgoodsMoney = 0//总金额(不含税)
                 this.uptaxgoodsMoney = 0//总金额(含税)
-
                 let list = this.upaddProcurement.goodsList
+                console.log(list)
                 list.forEach(item => {
-                    this.upgoodsMoney += item.unitPrice*item.number//不含税总价
+
+                    this.upgoodsMoney += item.unitPrice * item.number
+                    this.uptaxgoodsMoney += item.taxTotalPrice
+
+
+
                 })
                 this.uptaxgoodsMoney = this.upgoodsMoney + this.upgoodsMoney * 0.15
+
+            },
+            upaddprocure(data) {
+                //修改最后调整单价
+
+                if (this.upaddProcurement.invoice!='收据'){
+                    this.upcontaining = true;//含税
+                    data.taxPrice = data.unitPrice + data.unitPrice * 0.15
+                    data.totalPrice = data.unitPrice * data.number//不含税总价
+                    data.taxTotalPrice = data.taxPrice * data.number//含税总价
+
+                    this.upgoodsMoney = 0//总金额(不含税)
+                    this.uptaxgoodsMoney = 0//总金额(含税)
+                    console.log(this.addProcurement.goodsList)
+                    let list = this.upaddProcurement.goodsList
+                    list.forEach(item => {
+                        // this.goodsMoney += item.unitPrice //不含税总价
+                        this.upgoodsMoney += item.unitPrice * item.number
+                        this.uptaxgoodsMoney += item.taxTotalPrice
+                    })
+                    this.uptaxgoodsMoney = this.upgoodsMoney + this.upgoodsMoney * 0.15
+                } else {
+                    data.totalPrice = data.unitPrice * data.number//不含税总价
+                    this.upgoodsMoney = 0//总金额(不含税)
+                    let list = this.upaddProcurement.goodsList
+                    list.forEach(item => {
+                        this.upgoodsMoney += item.unitPrice * item.number
+                    })
+
+                }
+
+
+
+
+
+
+
+
+                // this.upgoodsMoney = 0//总金额(不含税)
+                // this.uptaxgoodsMoney = 0//总金额(含税)
+                //
+                // let list = this.upaddProcurement.goodsList
+                // list.forEach(item => {
+                //     this.upgoodsMoney += item.unitPrice * item.number//不含税总价
+                // })
+                // this.uptaxgoodsMoney = this.upgoodsMoney + this.upgoodsMoney * 0.15
 
 
                 // data.taxPrice = data.unitPrice + data.unitPrice * 0.15
@@ -2476,7 +2816,7 @@
 
                 //最后调整数量
                 this.upgoodsNum = 0,//总数量,
-                this.upgoodsMoney = 0//总金额(不含税)
+                    this.upgoodsMoney = 0//总金额(不含税)
                 this.uptaxgoodsMoney = 0//总金额(含税)
                 let list = this.upaddProcurement.goodsList
                 list.forEach(item => {
@@ -2584,27 +2924,28 @@
                 //保存商品信息
                 this.addProcurement.goodsList = this.quireGoodsDataBox
                 this.goodsNum = 0;
-                this.goodsMoney = 0
-                this.taxgoodsMoney = 0;
+                // this.goodsMoney = 0
+                // this.taxgoodsMoney = 0;
                 this.quireGoodsDataBox.forEach(item => {
                     this.goodsNum += item.number//总数量
-                    this.goodsMoney += item.number * item.unitPrice  //总金额
+                    // this.goodsMoney += item.number * item.unitPrice  //总金额
                 })
-                this.taxgoodsMoney = this.goodsMoney + this.goodsMoney * 0.15
-                console.log(this.addProcurement.goodsList)
+                console.log(this.quireGoodsDataBox)
+                // this.taxgoodsMoney = this.goodsMoney + this.goodsMoney * 0.15
+                // console.log(this.addProcurement.goodsList)
                 this.PurchasingAddGoods = false
             },
             upPreservationGoods() {
                 //保存商品信息
                 //   goodsList
                 this.upgoodsNum = 0;
-                this.upgoodsMoney = 0
+                // this.upgoodsMoney = 0
                 this.upaddProcurement.goodsList = this.upquireGoodsDataBox
                 this.upquireGoodsDataBox.forEach(item => {
                     this.upgoodsNum += item.number//总数量
-                    this.upgoodsMoney += item.number * item.unitPrice//总金额(不含税)
+                    // this.upgoodsMoney += item.number * item.unitPrice//总金额(不含税)
                 })
-                this.uptaxgoodsMoney = this.upgoodsMoney + this.upgoodsMoney * 0.15//总金额(含税)
+                // this.uptaxgoodsMoney = this.upgoodsMoney + this.upgoodsMoney * 0.15//总金额(含税)
                 this.upPurchasingAddGoods = false
             },
             delpruchase(data) {
@@ -2614,14 +2955,20 @@
             },
             addgoodsTopurchase(data) {
                 //添加商品信息至备选数组
-                let a = JSON.stringify(this.quireGoodsDataBox).indexOf(JSON.stringify(data))
-                if (a != -1) {
-                    data.number++
-                } else {
+                // this.quireGoodsDataBox.push(data)
+                if (this.quireGoodsDataBox.indexOf(data) == -1) {
                     this.quireGoodsDataBox.push(data)
                     data.number = 1
                 }
-                data.unitPrice = 1 //不含税单价
+
+                // let a = JSON.stringify(this.quireGoodsDataBox).indexOf(JSON.stringify(data))
+                // if (a != -1) {
+                //     data.number++
+                // } else {
+                //     this.quireGoodsDataBox.push(data)
+                //     data.number = 1
+                // }
+                // data.unitPrice = 1 //不含税单价
 
             },
             upaddgoodsTopurchase(data) {
@@ -2739,7 +3086,7 @@
         align-items: center;
     }
 
-    .el-dialog {
+    .el-dialog .el-dialog__body {
         margin: 0;
         padding: 0;
     }

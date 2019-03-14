@@ -62,7 +62,7 @@
             </div>
 
             <!--添加-->
-            <el-dialog title="添加供应商" :visible.sync="addSupplier" width="70%">
+            <el-dialog title="添加供应商"  :visible.sync="addSupplier" width="70%"  :show-close="false">
                 <el-form :inline="true" :model="addSupplierList" :rules="addSupplierRuee" ref="addSupplierList">
                     <el-row>
                         <el-col :span="8">
@@ -255,7 +255,7 @@
             </el-dialog>
 
             <!--修改-->
-            <el-dialog title="修改供应商" :visible.sync="upSupplier" width="70%">
+            <el-dialog  :show-close="false" title="修改供应商" :visible.sync="upSupplier" width="70%">
                 <el-form :inline="true" :model="upSupplierList" :rules="upSupplierRuee" ref="upSupplierList">
                     <el-row>
                         <el-col :span="8">
@@ -454,7 +454,7 @@
                     title="显示设置"
                     :visible.sync="Settings"
                     width="30%"
-
+                    :show-close="false"
             >
                 <div style="text-align: left">
                     <el-row>
@@ -581,6 +581,7 @@
             <el-table
                     style="width: 100%"
                     border
+                    stripe
                     :data="supplierList"
                     highlight-current-row
                     @selection-change="supplierSelection"

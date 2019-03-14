@@ -76,7 +76,7 @@
                             title="显示设置"
                             :visible.sync="Settings"
                             width="30%"
-
+                            :show-close="false"
                     >
                         <div style="text-align: left">
                             <el-row>
@@ -144,6 +144,7 @@
                     style="width: 100%"
                     height="650px"
                     border
+                    stripe
                     id="out-table"
                     :data="materialsList"
                     :row-class-name="tableRowClassName"
@@ -286,7 +287,7 @@
             </el-row>
         </div>
         <!--添加-->
-        <el-dialog title="新建物料" :visible.sync="dialogTableVisible">
+        <el-dialog title="新建物料" :visible.sync="dialogTableVisible"  :show-close="false">
             <el-form :model="addmaterial" ref="addmaterial" :inline="true" :rules="rules" label-width="120px">
                 <el-row>
                     <el-col :span="12">
@@ -379,7 +380,7 @@
 
         </el-dialog>
         <!--修改-->
-        <el-dialog title="修改物料信息" :visible.sync="UpdatableVisible">
+        <el-dialog title="修改物料信息" :visible.sync="UpdatableVisible"  :show-close="false">
             <el-form :model="updaData" ref="updaData" :inline="true" :rules="ruless" label-width="120px">
                 <el-row>
                     <el-col :span="12">
@@ -472,6 +473,7 @@
         <el-dialog
                 title="回收站"
                 :visible.sync="recycle"
+                :show-close="false"
                 width="80%"
         >
             <div style="display: flex;justify-content: flex-start;margin-bottom: 0.5em">
@@ -486,6 +488,7 @@
             <el-table
                     style="width: 100%"
                     border
+                    stripe
                     :data="recycleData"
                     highlight-current-row
                     @selection-change="recyclingSelectionChange"

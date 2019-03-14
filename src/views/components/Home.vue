@@ -211,7 +211,7 @@
                 <!--内容-->
                 <el-main>
                     <div class="tabsPane">
-                        <el-tabs v-model="editableTabsValue2" type="card" tab-position="top" closable
+                        <el-tabs v-model="editableTabsValue2" type="border-card" tab-position="top" closable
                                  @tab-remove="removeTab" @tab-click="selected">
                             <el-tab-pane
                                     v-for="item in editableTabs2"
@@ -278,7 +278,6 @@
                 this.$router.push(url)
                 //最后选中的选项卡
                 sessionStorage.setItem('index', this.editableTabsValue2)
-
 
 
             },

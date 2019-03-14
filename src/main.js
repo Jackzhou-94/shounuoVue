@@ -8,6 +8,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import './assets/icon/iconfont.css'
 import axios from 'axios'
 import VueCookies from 'vue-cookies'
+import './less/Style.less'
 
 
 

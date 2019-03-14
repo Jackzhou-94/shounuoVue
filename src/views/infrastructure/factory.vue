@@ -46,6 +46,7 @@
             <el-table
                     :data="factoryList"
                     border
+                    stripe
                     @selection-change="factorySelection"
                     style="width: 100%">
                 <el-table-column
@@ -147,6 +148,7 @@
         <!--新建厂商信息-->
         <el-dialog
                 title="新建厂商信息"
+                :show-close="false"
                 :visible.sync="addfactory"
                 width="60%"
         >
@@ -233,6 +235,7 @@
         <el-dialog
                 title="修改厂商信息"
                 :visible.sync="upfactory"
+                :show-close="false"
                 width="60%"
         >
 

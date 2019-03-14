@@ -61,6 +61,7 @@
                     id="aaa"
                     :data="quireGoodsData"
                     border
+                    stripe
                     @selection-change="goodsSelection"
                     style="width: 100%">
                 <el-table-column
@@ -234,6 +235,7 @@
                 title="新建商品信息"
                 :visible.sync="addgoods"
                 width="60%"
+                :show-close="false"
         >
 
             <el-form :model="addgoodsForm" ref="addgoodsForm" :rules="addgoodsrules" :inline="true">
@@ -360,6 +362,7 @@
                 title="修改商品信息"
                 :visible.sync="upgoods"
                 width="60%"
+                :show-close="false"
         >
             <el-form :model="upgoodsForm" ref="upgoodsForm" :rules="upgoodsrules" :inline="true">
 
@@ -489,6 +492,7 @@
                 title="回收站"
                 :visible.sync="goodsrecycle"
                 width="80%"
+                :show-close="false"
         >
             <div style="display: flex;justify-content: flex-start;margin-bottom: 0.5em">
                 <el-button size="mini" type="primary" @click="batchgoods">批量恢复</el-button>
@@ -505,6 +509,7 @@
             <el-table
                     :border="true"
                     :data="goodsrecycleData"
+                    stripe
                     @selection-change="goodsSelection"
                     style="width: 100%">
                 <el-table-column
@@ -651,6 +656,7 @@
                 title="显示设置"
                 :visible.sync="Settings"
                 width="30%"
+                :show-close="false"
 
         >
             <div style="text-align: left">
