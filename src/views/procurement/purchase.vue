@@ -11,8 +11,8 @@
                     <el-button size="mini">提交审核</el-button>
                     <el-button size="mini" :disabled="submitStatusBut">审核通过</el-button>
                     <el-button size="mini" :disabled="submitStatusBut">审核驳回</el-button>
-                    <el-button size="mini">导入</el-button>
-                    <el-button size="mini">导出</el-button>
+                    <el-button size="mini" @click="delpurchaseList()">批量删除</el-button>
+                    <!--<el-button size="mini">导出</el-button>-->
                 </div>
                 <div style="display: flex;justify-content: space-around">
 
@@ -236,7 +236,6 @@
                                     <el-select size="mini" filterable clearable v-model="addProcurement.supplier"
                                                placeholder="供应商">
                                         <el-option
-
                                                 v-for="item in options"
                                                 :key="item.value"
                                                 :label="item.label"
@@ -979,11 +978,10 @@
                                 <el-form-item
                                         label="供应商"
                                         clearable
-                                        prop="supplierName"
+                                        prop="supplier"
                                 >
-
                                     <!--供应商选择-->
-                                    <el-select size="mini" filterable clearable v-model="upaddProcurement.supplierName"
+                                    <el-select size="mini" filterable clearable v-model="upaddProcurement.supplier"
                                                placeholder="供应商">
                                         <el-option
                                                 v-for="item in options"
@@ -1178,7 +1176,7 @@
 
                         >
                             <template slot-scope="scope">
-                                <el-input-number @change="upcontaintax(scope.row)" :disabled="upcontaining" size="mini"
+                                <el-input-number @change="upcontaintax(scope.row)" :mini="1"  :disabled="upcontaining" size="mini"
                                                  v-model="scope.row.taxPrice"
                                                  label="描述文字"></el-input-number>
                             </template>
@@ -1191,7 +1189,7 @@
                         >
                             <template slot-scope="scope">
                                 <el-input-number size="mini" v-model="scope.row.unitPrice"
-                                                 :disabled="upnocontaining"
+                                                 :disabled="upnocontaining" :mini="1"
                                                  @change="upaddprocure(scope.row)"></el-input-number>
                             </template>
                         </el-table-column>
@@ -1201,13 +1199,20 @@
                                 align="center"
                                 prop="taxTotalPrice"
                         >
+                            <template slot-scope="scope">
+                                {{scope.row.taxTotalPrice.toFixed(2)}}
+                            </template>
                         </el-table-column>
+
                         <el-table-column
                                 label="不含税总价（元）"
                                 width="120"
                                 align="center"
                                 prop="totalPrice"
                         >
+                            <template slot-scope="scope">
+                                {{scope.row.totalPrice.toFixed(2)}}
+                            </template>
                         </el-table-column>
 
                         <el-table-column
@@ -2101,7 +2106,7 @@
                             v-if="submitStatus"
                     >
                         <template slot-scope="scope">
-                            <span>{{scope.row.submitStatus='tj01'?'已提交':'未提交'}}</span>
+                            <span>{{scope.row.submitStatus=='tj01'?'已提交':'未提交'}}</span>
                         </template>
                     </el-table-column>
 
@@ -2120,7 +2125,7 @@
                             v-if="auditStatus"
                     >
                         <template slot-scope="scope">
-                            <span>{{scope.row.auditStatus='sh01'?'已审核':'未审核'}}</span>
+                            <span>{{scope.row.auditStatus=='sh01'?'已审核':'未审核'}}</span>
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -2296,7 +2301,7 @@
                     >
                         <template slot-scope="scope">
                             <el-button type="text" @click="updata(scope.row)">修改</el-button>
-                            <el-button type="text">删除</el-button>
+                            <el-button type="text" @click="delpurchase(scope.row)">删除</el-button>
                         </template>
 
                     </el-table-column>
@@ -2487,7 +2492,7 @@
                 },
                 upaddProcurement: {
                     //修改采购单
-                    supplierName: '',//供应商选择信息
+                    supplier: '',//供应商选择信息
                     factoryName: '',//工厂选择信息
                     address: '',//收货城市
                     freightTransportation: '',//货运方式
@@ -2501,7 +2506,7 @@
                 },
                 upaddProcurements: {
                     //修改采购单表单验证
-                    supplierName: [
+                    supplier: [
                         {required: true, message: '请选择供应商', trigger: 'change'},
                     ],
                     factoryName: [
@@ -2581,6 +2586,7 @@
                 detailingredients: true,//面料成份
                 detailstandard: true,//执行工艺标准
                 detailremark: true,//备注
+                purchaseIds: [],//商品信息多选id
 
 
                 containing: true,//含税
@@ -2594,8 +2600,13 @@
 
         methods: {
             Multipleselection(data) {
+                this.purchaseIds.length = 0
+                data.forEach(item => {
+                    this.purchaseIds.push(item.id)
+                })
+
                 //采购单多选
-                if (data.length==0) {
+                if (data.length == 0) {
                     this.submitStatusBut = true
                 } else {
                     let list = data.map(item => {
@@ -2756,9 +2767,9 @@
                 //修改最后调整含税单价
 
                 this.upnocontaining = true;//不含税
-                data.unitPrice = (data.taxPrice / (1 + 0.15)).toFixed(2)//计算不含税单价
-                data.totalPrice = (data.unitPrice * data.number).toFixed(2)//不含税总价
-                data.taxTotalPrice = (data.taxPrice * data.number).toFixed(2)//含税总价
+                data.unitPrice = (data.taxPrice / (1 + 0.15))//计算不含税单价
+                data.totalPrice = (data.unitPrice * data.number)//不含税总价
+                data.taxTotalPrice = (data.taxPrice * data.number)//含税总价
 
 
                 this.upgoodsMoney = 0//总金额(不含税)
@@ -2779,9 +2790,9 @@
 
                 if (this.upaddProcurement.invoice != '收据') {
                     this.upcontaining = true;//含税
-                    data.taxPrice = (data.unitPrice + data.unitPrice * 0.15).toFixed(2)
-                    data.totalPrice = (data.unitPrice * data.number).toFixed(2)//不含税总价
-                    data.taxTotalPrice = (data.taxPrice * data.number).toFixed(2)//含税总价
+                    data.taxPrice = (data.unitPrice + data.unitPrice * 0.15)
+                    data.totalPrice = (data.unitPrice * data.number)//不含税总价
+                    data.taxTotalPrice = (data.taxPrice * data.number)//含税总价
 
 
                     this.upgoodsMoney = 0//总金额(不含税)
@@ -2793,7 +2804,7 @@
                         this.upgoodsMoney += item.unitPrice * item.number
                         this.uptaxgoodsMoney += item.taxTotalPrice
                     })
-                    this.uptaxgoodsMoney = this.upgoodsMoney + this.upgoodsMoney * 0.15
+                    // this.uptaxgoodsMoney = this.upgoodsMoney + this.upgoodsMoney * 0.15
                 } else {
                     data.totalPrice = data.unitPrice * data.number//不含税总价
                     this.upgoodsMoney = 0//总金额(不含税)
@@ -2897,9 +2908,20 @@
 
             updata(data) {
                 //修改采购单信息
+                this.upgoodsNum = 0
+                this.upgoodsMoney=0
+                this.uptaxgoodsMoney=0
+                // upgoodsNum: 0,//总数量,
+                //     upgoodsMoney: 0,//总金额(不含税)
+                //     uptaxgoodsMoney: 0,//总金额(含税)
                 this.upNewpurchaseorder = true
                 this.upaddProcurement = data
-                console.log(this.upaddProcurement)
+                console.log(data)
+                data.goodsList.forEach(item => {
+                    this.upgoodsNum += item.number
+                    this.upgoodsMoney += item.totalPrice
+                    this.uptaxgoodsMoney += item.taxTotalPrice
+                })
 
             },
             SubmissionPurchase(formName) {
@@ -2933,7 +2955,7 @@
                         this.upaddProcurement.distanceDate = this.updistanceDate//预计入库时间
                         console.log(this.upaddProcurement)
 
-                        this.$axios.post(this.$store.state.upaddsavePurchase,this.upaddProcurement).then(res=>{
+                        this.$axios.post(this.$store.state.upaddsavePurchase, this.upaddProcurement).then(res => {
                             if (res.data.code == 200) {
                                 this.$message({
                                     message: '修改成功',
@@ -2955,32 +2977,57 @@
                 // this.distanceDate
 
             },
+            delpurchase(data) {
+                //删除采购单信息
+                this.purchaseIds.length = 0
+                this.purchaseIds.push(data.id)
+                this.delpurchaseList();
+            },
+            delpurchaseList() {
+                //删除采购单
+                this.$axios.post(this.$store.state.deletepur, {
+                    ids: this.purchaseIds
+                }).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '删除成功',
+                            type: 'success',
+                            onClose() {
+                                location.reload()
+                            }
+                        });
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+            },
             deltetPurchase(data) {
                 //删除from表单数组中信息
                 let a = this.addProcurement.goodsList.indexOf(data)
                 console.log(data)
                 this.quireGoodsDataBox.splice(a, 1)
-                alert()
                 // goodsNum:0,//总数量,
                 //     goodsMoney:0,//总金额
                 // this.goodsNum = this.goodsNum - data.spare02
                 // this.goodsMoney = this.goodsMoney - (data.spare02 * data.spare04)
 
-                this.goodsNum = this.goodsNum - data.spare02
-                this.goodsMoney = this.goodsMoney - (data.spare02 * data.spare04)
+                this.goodsNum = this.goodsNum - data.number
+                this.goodsMoney = this.goodsMoney - (data.number * data.unitPrice)
+                this.taxgoodsMoney=this.taxgoodsMoney - (data.number * data.taxPrice)
             },
             updeltetPurchase(data) {
                 //删除from表单数组中信息
                 let a = this.upaddProcurement.goodsList.indexOf(data)
-                console.log(data)
-                this.upquireGoodsDataBox.splice(a, 1)
-
+                this.upaddProcurement.goodsList.splice(a, 1)
+                //     upgoodsMoney: 0,//总金额(不含税)
+                //     uptaxgoodsMoney: 0,//总金额(含税)
                 // goodsNum:0,//总数量,
                 //     goodsMoney:0,//总金额
 
 
-                this.upgoodsNum = this.upgoodsNum - data.spare02
-                this.upgoodsMoney = this.upgoodsMoney - (data.spare02 * data.spare04)
+                this.upgoodsNum = this.upgoodsNum - data.number
+                this.upgoodsMoney = this.upgoodsMoney - (data.number * data.unitPrice)
+                this.uptaxgoodsMoney=this.uptaxgoodsMoney - (data.number * data.taxPrice)
             },
             PreservationGoods() {
                 //保存商品信息
@@ -3002,7 +3049,11 @@
                 //   goodsList
                 this.upgoodsNum = 0;
                 // this.upgoodsMoney = 0
-                this.upaddProcurement.goodsList = this.upquireGoodsDataBox
+                // this.upaddProcurement.goodsList = this.upquireGoodsDataBox
+                this.upquireGoodsDataBox.forEach(item => {
+                    this.upaddProcurement.goodsList.push(item)
+                })
+
                 this.upquireGoodsDataBox.forEach(item => {
                     this.upgoodsNum += item.number//总数量
                     // this.upgoodsMoney += item.number * item.unitPrice//总金额(不含税)
@@ -3118,7 +3169,6 @@
                     startTime: this.purchaseTime[0], endTime: this.purchaseTime[1]
                 }
 
-                console.log(querydata)
                 this.$axios.get(this.$store.state.purchaseQueryPage, {
                     params: querydata
 

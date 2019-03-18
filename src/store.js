@@ -35,10 +35,10 @@ export default new Vuex.Store({
         factoryselect: 'http://192.168.1.199:8099/supplychain/factory/select',//工厂列表信息
 
         purchaseQueryPage: 'http://192.168.1.199:8099/supplychain/purchase/queryPage',//采购单分页查询
-        addsavePurchase:'http://192.168.1.199:8099/supplychain/purchase/savePurchase',//添加采购单
-        upaddsavePurchase:'http://192.168.1.199:8099/supplychain/purchase/update',//修改采购单
-        queruPNumber:'http://192.168.1.199:8099/supplychain/purchasedetail/selectByPNumber',//根据采购单号查询当前批次信息
-
+        addsavePurchase: 'http://192.168.1.199:8099/supplychain/purchase/save',//添加采购单
+        upaddsavePurchase: 'http://192.168.1.199:8099/supplychain/purchase/update',//修改采购单
+        queruPNumber: 'http://192.168.1.199:8099/supplychain/purchasedetail/selectByPNumber',//根据采购单号查询当前批次信息
+        deletepur: 'http://192.168.1.199:8099/supplychain/purchase/delete',//根据ids删除采购单信息
     },
     mutations: {},
     actions: {}
