@@ -173,10 +173,19 @@
 
                 </div>
 
-
                 <div>
-                    Main
+
+                    <el-dropdown>
+  <span class="el-dropdown-link" style="color: #d1e3f6">
+     {{headernickname}}<i class="el-icon-arrow-down el-icon--right"></i>
+  </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item><span @click="outLogin">退出</span></el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
                 </div>
+
+
             </el-header>
 
             <el-container>
@@ -242,11 +251,18 @@
                 editableTabsValue2: '',//默认选中第几个标签
                 editableTabs2: [],//所有标签信息
                 tabIndex: 0,//索引，当新增的时候从哪里开始递增
+                headernickname: '',//登录账号
             }
         },
         methods: {
+            outLogin() {
+                //退出登录
+                this.$router.push('/')
+                sessionStorage.clear()
+                this.$cookies.remove('nickname')
+            },
             //新增选项卡
-            addTab(targetName,url) {
+            addTab(targetName, url) {
                 let num
                 let select = this.editableTabs2.some((item, index) => {
                     num = index + 1
@@ -260,7 +276,7 @@
                     this.editableTabs2.push({
                         title: targetName,
                         name: newTabName,
-                        content:url
+                        content: url
                     });
                     this.editableTabsValue2 = newTabName;
                 }
@@ -273,8 +289,8 @@
 
             },
             //选中选项卡
-            selected(tab,event) {
-                let url=tab.$attrs.urlTag.content
+            selected(tab, event) {
+                let url = tab.$attrs.urlTag.content
                 this.$router.push(url)
                 //最后选中的选项卡
                 sessionStorage.setItem('index', this.editableTabsValue2)
@@ -307,6 +323,7 @@
             },
             //页面加载后恢复之前记录的选项卡
             PageLoad() {
+                this.headernickname = this.$cookies.get('nickname')
                 let menu = JSON.parse(sessionStorage.getItem('menu'))
                 if (menu != null) {
                     menu.forEach(item => {
@@ -319,6 +336,7 @@
 
         },
         created: function () {
+
             this.PageLoad()
 
         }
@@ -374,6 +392,9 @@
         padding: 0;
         margin: 0;
     }
+
     /*.tabsPane{height: 5%}*/
-    .el-tabs{height: 100%}
+    .el-tabs {
+        height: 100%
+    }
 </style>

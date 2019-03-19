@@ -2,20 +2,19 @@
     <div class="purchase">
         <div>
             <!--新建与查询-->
-            <div class="menuBox">
+            <div style="padding: 0.5em">
 
 
-                <div style="display: flex;flex-direction: row;margin: 0.5em">
-                    <el-button size="mini" class="el-icon-plus" @click="Newpurchaseorder=true">新建</el-button>
-                    <el-button icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
-                    <el-button size="mini">提交审核</el-button>
-                    <el-button size="mini" :disabled="submitStatusBut">审核通过</el-button>
-                    <el-button size="mini" :disabled="submitStatusBut">审核驳回</el-button>
-                    <el-button size="mini" @click="delpurchaseList()">批量删除</el-button>
+                <div style="text-align: left;margin-bottom: 0.5em">
+                    <el-button size="mini" type="primary" class="el-icon-plus" @click="Newpurchaseorder=true">新建</el-button>
+                    <el-button icon="el-icon-view" type="primary" size="mini" @click="Settings=true">显示设置</el-button>
+                    <el-button size="mini" type="primary" :disabled="auditStatusBut">提交审核</el-button>
+                    <el-button size="mini" type="primary" :disabled="submitStatusBut">审核通过</el-button>
+                    <el-button size="mini" type="primary" :disabled="submitStatusBut">审核驳回</el-button>
+                    <el-button size="mini" type="danger" @click="delpurchaseList()">批量删除</el-button>
                     <!--<el-button size="mini">导出</el-button>-->
                 </div>
-                <div style="display: flex;justify-content: space-around">
-
+                <div style="display: flex;justify-content:space-between">
 
                     <el-select size="mini" v-model="TimeType" placeholder="时间类型">
                         <el-option
@@ -25,7 +24,6 @@
                                 :value="item.value">
                         </el-option>
                     </el-select>
-
                     <el-date-picker
                             size="mini"
                             v-model="purchaseTime"
@@ -37,10 +35,17 @@
                             end-placeholder="结束日期">
                     </el-date-picker>
 
-
                     <el-select size="mini" clearable v-model="AuditStatuss" placeholder="审核状态">
                         <el-option
                                 v-for="item in Audit"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
+                    <el-select size="mini" clearable v-model="Submitstate" placeholder="提交状态">
+                        <el-option
+                                v-for="item in Submit"
                                 :key="item.value"
                                 :label="item.label"
                                 :value="item.value">
@@ -60,7 +65,7 @@
                     <el-input size="mini" style="width: 200px" placeholder="采购单号" clearable
                               v-model="purchaseNumbers"></el-input>
 
-                    <el-button type="primary" size="mini"
+                    <el-button type="primary" size="mini" icon="el-icon-edit"
                                @click="purchaseNumbers='',ReceivingStatus='',AuditStatuss='',purchaseTime='',TimeType=''">
                         重置
                     </el-button>
@@ -185,10 +190,10 @@
                                 <el-checkbox v-model="taxAmount">税额</el-checkbox>
                             </el-col>
                             <el-col :span="8">
-                                <el-checkbox v-model="nonInvoice">不开票金额</el-checkbox>
+                                <el-checkbox v-model="distanceDates">距离下单时间</el-checkbox>
                             </el-col>
                             <el-col :span="8">
-                                <el-checkbox v-model="invoiceAmount">开票金额</el-checkbox>
+                                <el-checkbox v-model="submitStatus">提交状态</el-checkbox>
                             </el-col>
                         </el-row>
                         <el-row>
@@ -204,15 +209,7 @@
                             </el-col>
 
                         </el-row>
-                        <el-row>
-                            <el-col :span="8">
-                                <el-checkbox v-model="distanceDates">距离下单时间</el-checkbox>
-                            </el-col>
-                            <el-col :span="8">
-                                <el-checkbox v-model="submitStatus">提交状态</el-checkbox>
-                            </el-col>
 
-                        </el-row>
                     </div>
 
                 </el-dialog>
@@ -1732,10 +1729,8 @@
                     width="80%"
                     :show-close="false"
             >
-                <div style="display: flex;justify-content: space-around">
+                <div style="display: flex;justify-content: space-between;padding: 0.5em">
                     <el-button icon="el-icon-view" size="mini" @click="detailSettings=true">显示设置</el-button>
-                    <el-button size="mini">通过</el-button>
-                    <el-button size="mini">驳回</el-button>
                 </div>
 
                 <el-table
@@ -1926,7 +1921,12 @@
                     </el-table-column>
 
                 </el-table>
+                <div style="text-align: left;margin-top: 0.5em">
+                    总数量:{{detailsNumber}},
+                    总金额（含税）:{{detailstaxgoodsMoney.toFixed(4)}},
+                    总金额（不含税）:{{detailsgoodsMoney.toFixed(4)}}
 
+                </div>
             </el-dialog>
 
 
@@ -2141,7 +2141,9 @@
                             prop="receiveStatus"
                             v-if="receiveStatus"
                             label="收货状态">
-
+                        <template slot-scope="scope">
+                            <span>{{scope.row.receiveStatus=='sh01'?'已收货':(scope.row.receiveStatus=='sh02'?'部分收货':'未收货')}}</span>
+                        </template>
                     </el-table-column>
                     <el-table-column
                             align="center"
@@ -2188,6 +2190,7 @@
                             align="center"
                             prop="receiveAddress"
                             label="收货地址"
+                            width="180"
                             v-if="receiveAddress"
                     >
                     </el-table-column>
@@ -2241,7 +2244,7 @@
                             label="总金额(含税)">
                     </el-table-column>
                     <el-table-column
-                            align="commodityType"
+                            align="center"
                             label="总数量"
                             v-if="totalQuantity"
                             width="120"
@@ -2250,25 +2253,11 @@
                     </el-table-column>
 
                     <el-table-column
-                            align="frequency"
+                            align="center"
                             prop="completeStatus"
                             width="120"
                             v-if="completeStatus"
                             label="采购完成状态">
-                    </el-table-column>
-                    <el-table-column
-                            align="center"
-                            prop="invoiceAmount"
-                            width="100"
-                            v-if="invoiceAmount"
-                            label="开票金额">
-                    </el-table-column>
-                    <el-table-column
-                            align="center"
-                            prop="nonInvoice"
-                            width="100"
-                            v-if="nonInvoice"
-                            label="不开票金额">
                     </el-table-column>
                     <el-table-column
                             align="center"
@@ -2402,13 +2391,24 @@
                     /**
                      * 审核状态
                      * **/
-                    value: '已审核',
+                    value: 'sh01',
                     label: '已审核'
                 }, {
-                    value: '未审核',
+                    value: 'sh02',
                     label: '未审核'
                 }],
+                Submit:[{
+                    /**
+                     * 提交状态
+                     * **/
+                    value: 'tj01',
+                    label: '已提交'
+                },{
+                    value: 'tj02',
+                    label: '未提交'
+                }],
                 AuditStatuss: '',//审核状态
+                Submitstate:'',//提交状态
                 purchaseTime: '',//查询时间
                 purchasePageNum: 1,//采购单默认显示页数
                 purchasePageSize: 10,//采购单默认显示条目数
@@ -2447,14 +2447,13 @@
                 distanceDates: true,//"距离下单时间",
                 taxRate: true,//税率
                 taxAmount: true,//税额
-                nonInvoice: true,//不开票金额
-                invoiceAmount: true,//开票金额
                 remark: true,//备注
                 Settings: false,//显示设置面板
                 Newpurchaseorder: false,//新建采购单面板
                 upNewpurchaseorder: false,//修改采购单面板
                 options: [],//供应商查询数据
                 submitStatusBut: true,//审核按钮
+                auditStatusBut:true,//提交按钮
 
 
                 factorylist: [],//工厂查询数据
@@ -2555,6 +2554,10 @@
                 upgoodsMoney: 0,//总金额(不含税)
                 uptaxgoodsMoney: 0,//总金额(含税)
 
+                detailsNumber:0,//明细总数量,
+                detailsgoodsMoney: 0,//明细总金额(不含税)
+                detailstaxgoodsMoney: 0,//明细总金额(含税)
+
                 purchaseNum: '',//采购单号
                 selsectdetailsList: [],//采购明细数据
                 Purchasedetail: false,//采购明细面板
@@ -2608,15 +2611,19 @@
                 //采购单多选
                 if (data.length == 0) {
                     this.submitStatusBut = true
+                    this.auditStatusBut=true
                 } else {
                     let list = data.map(item => {
                         return item.submitStatus
                     })
                     let num = list.indexOf('tj02')
+                    let nums = list.indexOf('sh02')
                     if (num == -1) {
                         this.submitStatusBut = false
+                        this.auditStatusBut=true
                     } else if (num != -1) {
                         this.submitStatusBut = true
+                        this.auditStatusBut=false
                     }
                 }
 
@@ -2655,25 +2662,27 @@
                 }
 
             },
-            Purchasedetails(row) {
-                //采购明细
-                this.Purchasedetail = true
-                this.purchaseNum = row.purchaseNumber
-                this.selsectdetails()
-            },
             selsectdetails() {
                 //根据采购单号查询当前采购详情
                 this.$axios.get(this.$store.state.queruPNumber, {
                     params: {purchaseNumber: this.purchaseNum}
                 }).then(res => {
-                    console.log(res)
                     this.selsectdetailsList = res.data.data
                 })
             },
+            Purchasedetails(row) {
+                //采购明细
+                this.Purchasedetail = true
+                this.purchaseNum = row.purchaseNumber
+                this.detailsgoodsMoney=row.totalSum//明细总金额(不含税),
+                this.detailsNumber=row.totalQuantity//明细总数量
+                this.detailstaxgoodsMoney=row.taxTotalSum//明细总金额(含税)
+                this.selsectdetails()
+            },
+
             batchTime() {
                 //批量添加入库时间
                 // this.timeData
-                console.log(this.batchTimelist)
                 if (this.timeData == '') {
                     this.$message.error('请先选择批量添加的时间');
                 } else if (this.batchTimelist.length == 0) {
@@ -2688,7 +2697,6 @@
             upbatchTime() {
                 //批量添加入库时间
                 // this.timeData
-                console.log(this.batchTimelist)
                 if (this.uptimeData == '') {
                     this.$message.error('请先选择批量添加的时间');
                 } else if (this.upbatchTimelist.length == 0) {
@@ -2711,12 +2719,11 @@
                 this.goodsMoney = 0//总金额(不含税)
                 this.taxgoodsMoney = 0//总金额(含税)
                 let list = this.addProcurement.goodsList
-                console.log(list)
+
                 list.forEach(item => {
                     // this.goodsMoney += item.unitPrice //不含税总价
                     this.goodsMoney += item.unitPrice * item.number
                     // this.taxgoodsMoney += item.taxTotalPrice
-                    console.log(item.taxTotalPrice)
                 })
 
                 this.taxgoodsMoney = this.goodsMoney + this.goodsMoney * 0.15
@@ -3120,12 +3127,10 @@
             },
             goodsSelection(val) {
                 //商品信息多选
-                console.log(val)
                 this.batchTimelist = val
             },
             upgoodsSelection(val) {
                 //修改商品信息多选
-                console.log(val)
                 this.upbatchTimelist = val
             },
             handleChange(value) {
@@ -3164,7 +3169,7 @@
                 //采购订单分页查询
                 let querydata = {
                     pageNum: this.purchasePageNum, pageSize: this.purchasePageSize,
-                    auditStatus: this.AuditStatuss, receiveStatus: this.ReceivingStatus,
+                    auditStatus: this.AuditStatuss, submitStatus:this.Submitstate,receiveStatus: this.ReceivingStatus,
                     purchaseNumber: this.purchaseNumbers, typeTime: this.TimeType,
                     startTime: this.purchaseTime[0], endTime: this.purchaseTime[1]
                 }

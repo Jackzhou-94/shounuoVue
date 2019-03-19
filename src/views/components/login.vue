@@ -46,7 +46,7 @@
                 password: '',
                 validation: '',//用户输入验证码
                 identifyCode: '',//生成的验证码
-                identifyCodes: "1234567890ABCDEFGHIJKLMNOPQRSZUVWXYZ",
+                identifyCodes: "1234567890",
             }
         },
         methods: {
@@ -80,6 +80,8 @@
                         /**
                          * 将用户token，用户权限保存至cookies
                          * **/
+                        console.log(res)
+                        this.$cookies.set('nickname',res.data.data.nickname)
                         this.$cookies.set('token', res.data.token)
                         this.$cookies.set('state', res.data.data.state)
                         this.$router.push('Home')
