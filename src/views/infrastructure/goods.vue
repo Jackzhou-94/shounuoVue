@@ -5,15 +5,11 @@
             <div class="menuBox">
                 <div style="display: flex;justify-content: space-around">
 
-                    <el-button size="mini" class="el-icon-plus" @click="addgoods=true">新建</el-button>
-
-                    <el-button size="mini" class="el-icon-delete" @click="delgoodsfun">删除</el-button>
-
-                    <el-button size="mini" class="el-icon-delete" @click="goodsrecycleopen">回收站</el-button>
-
-                    <el-button icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
-
-                    <el-button size="mini" @click="printContent">打印</el-button>
+                    <el-button size="mini" type="primary" class="el-icon-plus" @click="addgoods=true">新建</el-button>
+                    <el-button icon="el-icon-view" type="primary" size="mini" @click="Settings=true">显示设置</el-button>
+                    <el-button size="mini" type="primary"  @click="printContent">打印</el-button>
+                    <el-button size="mini" type="danger"  @click="delgoodsfun">移入回收站</el-button>
+                    <el-button size="mini" type="info"  @click="goodsrecycleopen">回收站</el-button>
                 </div>
 
 
@@ -62,6 +58,7 @@
                     :data="quireGoodsData"
                     border
                     stripe
+                    height="700px"
                     @selection-change="goodsSelection"
                     style="width: 100%">
                 <el-table-column

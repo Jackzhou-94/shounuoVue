@@ -85,9 +85,9 @@
                         <span class="el-dropdown-link headerTitle">采购管理</span>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item>
-                                <div @click="addTab('采购订单(物料)','purchase'),$router.push('purchase')">
+                                <div @click="addTab('采购订单','purchase'),$router.push('purchase')">
                                     <i class="fontFamily hhtx-caigoudingdan"></i>
-                                    <span class="menu">采购订单(物料)</span>
+                                    <span class="menu">采购订单</span>
                                 </div>
                             </el-dropdown-item>
                             <el-dropdown-item>
@@ -220,7 +220,7 @@
                 <!--内容-->
                 <el-main>
                     <div class="tabsPane">
-                        <el-tabs v-model="editableTabsValue2" type="card" tab-position="top" closable
+                        <el-tabs v-model="editableTabsValue2"  type="border-card" tab-position="top" closable
                                  @tab-remove="removeTab" @tab-click="selected">
                             <el-tab-pane
                                     v-for="item in editableTabs2"
@@ -228,12 +228,14 @@
                                     :label="item.title"
                                     :name="item.name"
                                     :urlTag="item"
-                            ></el-tab-pane>
+                            >
+                                <router-view></router-view>
+                            </el-tab-pane>
                         </el-tabs>
                     </div>
 
 
-                    <router-view></router-view>
+
 
                 </el-main>
             </el-container>

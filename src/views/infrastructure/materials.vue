@@ -142,7 +142,7 @@
             <!--右侧表格数据-->
             <el-table
                     style="width: 100%"
-                    height="650px"
+                    height="700px"
                     border
                     stripe
                     id="out-table"
@@ -324,6 +324,11 @@
 
                 <el-row>
                     <el-col :span="12">
+                        <el-form-item label="品牌" prop="brand">
+                            <el-input size="mini" v-model="addmaterial.brand"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
                         <el-form-item label="厂商">
                             <el-select size="mini" v-model="value" placeholder="请选择" @change="selectChange">
                                 <el-option
@@ -334,13 +339,6 @@
                                 </el-option>
                             </el-select>
                         </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="成本价" prop="cost">
-                            <el-input size="mini" type="number" v-model="addmaterial.costPrice"
-                                      placeholder="元"></el-input>
-                        </el-form-item>
-
                     </el-col>
                 </el-row>
 
@@ -359,6 +357,12 @@
                 </el-row>
 
                 <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="成本价" prop="cost">
+                            <el-input size="mini" type="number" v-model="addmaterial.costPrice"
+                                      placeholder="元"></el-input>
+                        </el-form-item>
+                    </el-col>
                     <el-col :span="12">
                         <el-form-item label="备注" prop="note">
                             <el-input size="mini" v-model="addmaterial.note"></el-input>
@@ -417,6 +421,12 @@
                 </el-row>
 
                 <el-row>
+
+                    <el-col :span="12">
+                        <el-form-item label="品牌" prop="brand">
+                            <el-input size="mini" v-model="updaData.brand"></el-input>
+                        </el-form-item>
+                    </el-col>
                     <el-col :span="12">
                         <el-form-item label="厂商">
                             <el-select size="mini" v-model="value" placeholder="请选择" @change="upselectChange">
@@ -429,13 +439,7 @@
                             </el-select>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="成本价" prop="cost">
-                            <el-input size="mini" type="number" v-model="updaData.costPrice"
-                                      placeholder="元"></el-input>
-                        </el-form-item>
 
-                    </el-col>
                 </el-row>
 
                 <el-row>
@@ -453,6 +457,13 @@
                 </el-row>
 
                 <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="成本价" prop="cost">
+                            <el-input size="mini" type="number" v-model="updaData.costPrice"
+                                      placeholder="元"></el-input>
+                        </el-form-item>
+
+                    </el-col>
                     <el-col :span="12">
                         <el-form-item label="备注" prop="note">
                             <el-input size="mini" v-model="updaData.note"></el-input>
@@ -639,11 +650,14 @@
                     ingredients: '',//成份
                     manufacturer: '',//厂商
                     note: '',//备注
+
                     detection: '',//检测
+                    brand:'',//品牌
                 },
                 updaData: {
                     //修改
                     name: '',
+
                     materialCode: '',//物料编码
                     type: '',//物料选择
                     costPrice: '',//成本价
@@ -653,6 +667,7 @@
                     manufacturer: '',//厂商
                     note: '',//备注
                     detection: '',//检测
+                    brand:'',//品牌
                 },
                 querymanufacturer: '',//搜索厂商
                 rules: {
@@ -671,7 +686,10 @@
                     ],
                     unit: [
                         {required: true, message: '请输入基本计量单位', trigger: 'blur'}
-                    ]
+                    ],
+                    brand:[{
+                        required:true, message: '请输入品牌', trigger: 'blur'
+                    }]
                 },
                 ruless: {
                     name: [
@@ -689,7 +707,10 @@
                     ],
                     unit: [
                         {required: true, message: '请输入基本计量单位', trigger: 'blur'}
-                    ]
+                    ],
+                    brand:[{
+                        required:true, message: '请输入品牌', trigger: 'blur'
+                    }]
                 },
                 conditions: true,//搜索条件
                 data: [{

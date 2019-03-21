@@ -20,6 +20,7 @@ Vue.use(ElementUi)
 Vue.use(VueCookies)
 Vue.config.productionTip = false
 
+// axios.defaults.timeout = 10;//全局请求超时
 /**
  * 请求拦截
  * */

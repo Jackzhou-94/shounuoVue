@@ -582,6 +582,7 @@
                     style="width: 100%"
                     border
                     stripe
+                    height="700px"
                     :data="supplierList"
                     highlight-current-row
                     @selection-change="supplierSelection"
