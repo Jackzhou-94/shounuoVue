@@ -19,7 +19,7 @@
                         </div>
                         <div style="display: flex;justify-content:space-between">
 
-                            <el-select size="mini" v-model="TimeType" placeholder="时间类型">
+                            <el-select size="mini" v-model="materTimeType" placeholder="时间类型">
                                 <el-option
                                         v-for="item in TimeTypelist"
                                         :key="item.value"
@@ -29,7 +29,7 @@
                             </el-select>
                             <el-date-picker
                                     size="mini"
-                                    v-model="purchaseTime"
+                                    v-model="materpurchaseTime"
                                     type="daterange"
                                     range-separator="至"
                                     format="yyyy 年 MM 月 dd 日"
@@ -38,7 +38,7 @@
                                     end-placeholder="结束日期">
                             </el-date-picker>
 
-                            <el-select size="mini" clearable v-model="AuditStatuss" placeholder="审核状态">
+                            <el-select size="mini" clearable v-model="materAuditStatuss" placeholder="审核状态">
                                 <el-option
                                         v-for="item in Audit"
                                         :key="item.value"
@@ -46,7 +46,7 @@
                                         :value="item.value">
                                 </el-option>
                             </el-select>
-                            <el-select size="mini" clearable v-model="Submitstate" placeholder="提交状态">
+                            <el-select size="mini" clearable v-model="materSubmitstate" placeholder="提交状态">
                                 <el-option
                                         v-for="item in Submit"
                                         :key="item.value"
@@ -55,7 +55,7 @@
                                 </el-option>
                             </el-select>
 
-                            <el-select size="mini" clearable v-model="ReceivingStatus" placeholder="收货状态">
+                            <el-select size="mini" clearable v-model="materReceivingStatus" placeholder="收货状态">
                                 <el-option
                                         v-for="item in Receiving"
                                         :key="item.value"
@@ -66,14 +66,14 @@
 
 
                             <el-input size="mini" style="width: 200px" placeholder="采购单号" clearable
-                                      v-model="purchaseNumbers"></el-input>
+                                      v-model="materpurchaseNumbers"></el-input>
 
                             <el-button type="primary" size="mini" icon="el-icon-edit"
-                                       @click="purchaseNumbers='',ReceivingStatus='',AuditStatuss='',purchaseTime='',TimeType=''">
+                                       @click="materpurchaseNumbers='',materSubmitstate='',materReceivingStatus='',materAuditStatuss='',materpurchaseTime='',materTimeType=''">
                                 重置
                             </el-button>
 
-                            <el-button type="primary" size="mini" icon="el-icon-search" @click="purchaseQueryPage()">查询
+                            <el-button type="primary" size="mini" icon="el-icon-search" @click="materialQueryPage()">查询
                             </el-button>
 
                         </div>
@@ -1465,11 +1465,11 @@
                             :show-close="false"
                     >
                         <div style="display: flex;justify-content: space-between;padding: 0.5em">
-                            <el-button icon="el-icon-view" size="mini" @click="detailSettings=true">显示设置</el-button>
+                            <el-button icon="el-icon-view" size="mini" @click="detailSettingsmater=true">显示设置</el-button>
                         </div>
 
                         <el-table
-                                :data="selsectdetailsList"
+                                :data="selsectdetailsListmater"
                                 border
                                 stripe
                                 style="width: 100%">
@@ -1480,180 +1480,163 @@
                                     width="50">
                             </el-table-column>
                             <el-table-column
-                                    align="center"
-                                    prop="merchantCode"
-                                    v-if="detailmerchantCode"
-                                    label="商家编码"
-                                    width="180">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="name"
-                                    v-if="detailname"
-                                    label="商品名称"
-                                    width="180">
-                            </el-table-column>
-
-                            <el-table-column
-                                    align="center"
-                                    prop="itemCode"
-                                    v-if="detailitemCode"
-                                    label="货品编号"
-                                    width="180"
-                            >
-                            </el-table-column>
-                            <el-table-column
                                     label="预计入库时间"
                                     width="200"
-                                    v-if="detailwarehouseTime"
+                                    v-if="warehouseTimemater"
                                     align="center"
                                     prop="warehouseTime"
                             >
+
                             </el-table-column>
                             <el-table-column
                                     align="center"
                                     label="数量"
                                     width="200"
-                                    v-if="detailnumber"
+                                    v-if="numbermater"
                                     prop="number"
                             >
                             </el-table-column>
 
-                            <!--<el-table-column-->
-                            <!--label="含税单价（元）"-->
-                            <!--width="120"-->
-                            <!--prop="taxPrice"-->
-                            <!--align="center"-->
-                            <!--&gt;-->
-                            <!--</el-table-column>-->
 
 
                             <el-table-column
-                                    label="含税单价（元）"
-                                    width="200"
+                                    label="创建时间"
+                                    prop="createTime"
+                                    width="180"
+                                    v-if="createTimemater"
                                     align="center"
-                                    v-if="detailtaxPrice"
+                                    sortable
+                            ></el-table-column>
+                            <el-table-column
+
+                                    label="修改时间"
+                                    prop="updateTime"
+                                    width="180"
+                                    v-if="updateTimemater"
+                                    align="center"
+                                    sortable
+                            ></el-table-column>
+
+                            <el-table-column
+                                    label="含税单价（元）"
+                                    width="150"
+                                    align="center"
                                     prop="taxPrice"
+                                    v-if="taxPricemater"
 
                             >
                             </el-table-column>
 
                             <el-table-column
                                     label="不含税单价（元）"
-                                    width="200"
+                                    width="150"
+                                    v-if="unitPricemater"
                                     align="center"
-                                    v-if="detailunitPrice"
                                     prop="unitPrice"
                             >
                             </el-table-column>
                             <el-table-column
                                     label="含税总价（元）"
-                                    width="120"
+                                    width="150"
                                     align="center"
-                                    v-if="detailtaxTotalPrice"
+                                    v-if="taxTotalPricemater"
                                     prop="taxTotalPrice"
                             >
                             </el-table-column>
                             <el-table-column
                                     label="不含税总价（元）"
-                                    width="200"
+                                    width="150"
                                     align="center"
-                                    v-if="detailtotalPrice"
+                                    v-if="totalPricemater"
                                     prop="totalPrice"
                             >
                             </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="type"
-                                    v-if="detailtype"
-                                    label="分类"
-                                    width="180">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="sku"
-                                    v-if="detailsku"
-                                    width="180"
-                                    label="盒装SKU">
 
-                            </el-table-column>
+
                             <el-table-column
-                                    align="center"
-                                    prop="brand"
-                                    v-if="detailbrand"
+                                    label="物料编号"
+                                    prop="materialCode"
                                     width="180"
-                                    label="品牌">
-                            </el-table-column>
-                            <el-table-column
+                                    v-if="materialCodemater"
                                     align="center"
-                                    prop="process"
-                                    v-if="detailprocess"
-                                    width="180"
-                                    label="工艺流程">
-                            </el-table-column>
+                                    sortable
+                            ></el-table-column>
                             <el-table-column
+                                    label="物料名称"
+                                    prop="name"
+                                    v-if="namemater"
+                                    width="200"
                                     align="center"
-                                    prop="season"
-                                    v-if="detailseason"
-                                    width="180"
-                                    label="季节">
-                            </el-table-column>
+                            ></el-table-column>
                             <el-table-column
-                                    align="center"
-                                    prop="costPrice"
-                                    v-if="detailcostPrice"
-                                    width="180"
-                                    label="商品成本价">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="unit"
-                                    v-if="detailunit"
-                                    width="180"
-                                    label="基本单位">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="packag"
-                                    v-if="detailpackag"
-                                    width="180"
-                                    label="包装材料">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="weight"
-                                    v-if="detailweight"
-                                    width="180"
-                                    label="重量">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="barCode"
-                                    v-if="detailbarCode"
-                                    width="180"
-                                    label="条形码">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
                                     prop="ingredients"
-                                    v-if="detailingredients"
+                                    label="成分规格"
+                                    v-if="ingredientsmater"
                                     width="180"
-                                    label="面料成份">
+                                    align="center"
+                            ></el-table-column>
+                            <el-table-column
+                                    label="物料分类"
+                                    prop="type"
+                                    v-if="typemater"
+                                    width="180"
+                                    align="center"
+                            ></el-table-column>
+                            <el-table-column
+                                    label="品牌"
+                                    prop="brand"
+                                    v-if="brandmater"
+                                    width="120"
+                                    align="center"
+                            ></el-table-column>
+                            <el-table-column
+                                    label="状态"
+                                    width="180"
+                                    v-if="sparemater"
+                                    align="center"
+                            >
+                                <template slot-scope="scope">
+                                    {{scope.row.spare=='01'?'启用':'未启用'}}
+                                </template>
                             </el-table-column>
                             <el-table-column
+                                    label="默认损耗"
+                                    prop="defaultLoss"
+                                    width="160"
+                                    v-if="defaultLossmater"
                                     align="center"
-                                    prop="standard"
-                                    v-if="detailstandard"
-                                    width="180"
-                                    label="执行工艺标准">
-                            </el-table-column>
+                                    sortable
+                            ></el-table-column>
                             <el-table-column
-                                    align="center"
-                                    prop="remark"
-                                    v-if="detailremark"
+                                    label="厂商"
+                                    prop="manufacturer"
+                                    v-if="manufacturermater"
                                     width="180"
-                                    label="备注">
-                            </el-table-column>
+                                    align="center"
+                            ></el-table-column>
+                            <el-table-column
+                                    label="基本计量单位"
+                                    prop="unit"
+                                    width="150"
+                                    v-if="unitmater"
+                                    align="center"
+                                    sortable
+                            ></el-table-column>
+                            <el-table-column
+                                    label="成本价"
+                                    prop="costPrice"
+                                    v-if="costPricemater"
+                                    width="120"
+                                    align="center"
+                                    sortable
+                            ></el-table-column>
+                            <el-table-column
+                                    label="备注"
+                                    prop="note"
+                                    v-if="notemater"
+                                    width="150"
+                                    align="center"
+                            ></el-table-column>
 
                         </el-table>
                         <div style="text-align: left;margin-top: 0.5em">
@@ -1670,7 +1653,7 @@
                     <!--采购明细显示设置-->
                     <el-dialog
                             title="显示设置"
-                            :visible.sync="detailSettings"
+                            :visible.sync="detailSettingsmater"
                             width="30%"
                             :show-close="false"
 
@@ -1678,97 +1661,85 @@
                         <div style="text-align: left">
 
 
+
+
                             <el-row>
                                 <el-col :span="8">
-                                    <el-checkbox v-model="detailmerchantCode">商家编码</el-checkbox>
+                                    <el-checkbox v-model="warehouseTimemater">预计入库时间</el-checkbox>
                                 </el-col>
                                 <el-col :span="8">
-                                    <el-checkbox v-model="detailname">商品名称</el-checkbox>
+                                    <el-checkbox v-model="numbermater">数量</el-checkbox>
                                 </el-col>
                                 <el-col :span="8">
-                                    <el-checkbox v-model="detailitemCode">货品编号</el-checkbox>
+                                    <el-checkbox v-model="createTimemater">创建时间</el-checkbox>
                                 </el-col>
                             </el-row>
 
 
                             <el-row>
                                 <el-col :span="8">
-                                    <el-checkbox v-model="detailwarehouseTime">预计入库时间</el-checkbox>
+                                    <el-checkbox v-model="updateTimemater">修改时间</el-checkbox>
                                 </el-col>
                                 <el-col :span="8">
-                                    <el-checkbox v-model="detailnumber">数量</el-checkbox>
+                                    <el-checkbox v-model="taxPricemater">含税单价</el-checkbox>
                                 </el-col>
                                 <el-col :span="8">
-                                    <el-checkbox v-model="detailtaxPrice">含税单价</el-checkbox>
-                                </el-col>
-                            </el-row>
-
-                            <el-row>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailunitPrice">不含税单价</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailtaxTotalPrice">含税总价</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailtotalPrice">不含税总价</el-checkbox>
+                                    <el-checkbox v-model="taxTotalPricemater">含税总价</el-checkbox>
                                 </el-col>
                             </el-row>
 
 
+
                             <el-row>
                                 <el-col :span="8">
-                                    <el-checkbox v-model="detailtype">分类</el-checkbox>
+                                    <el-checkbox v-model="totalPricemater">不含税总价</el-checkbox>
                                 </el-col>
                                 <el-col :span="8">
-                                    <el-checkbox v-model="detailsku">盒装SKU</el-checkbox>
+                                    <el-checkbox v-model="namemater">物料名称</el-checkbox>
                                 </el-col>
                                 <el-col :span="8">
-                                    <el-checkbox v-model="detailbrand">品牌</el-checkbox>
+                                    <el-checkbox v-model="ingredientsmater">成分规格</el-checkbox>
                                 </el-col>
                             </el-row>
 
 
-                            <el-row>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailprocess">工艺流程</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailseason">季节</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailcostPrice">商品成本价</el-checkbox>
-                                </el-col>
-                            </el-row>
 
                             <el-row>
                                 <el-col :span="8">
-                                    <el-checkbox v-model="detailunit">基本单位</el-checkbox>
+                                    <el-checkbox v-model="typemater">物料分类</el-checkbox>
                                 </el-col>
                                 <el-col :span="8">
-                                    <el-checkbox v-model="detailpackag">包装材料</el-checkbox>
+                                    <el-checkbox v-model="brandmater">品牌</el-checkbox>
                                 </el-col>
                                 <el-col :span="8">
-                                    <el-checkbox v-model="detailweight">重量</el-checkbox>
+                                    <el-checkbox v-model="sparemater">状态</el-checkbox>
                                 </el-col>
                             </el-row>
 
 
                             <el-row>
                                 <el-col :span="8">
-                                    <el-checkbox v-model="detailbarCode">条形码</el-checkbox>
+                                    <el-checkbox v-model="defaultLossmater">默认损耗</el-checkbox>
                                 </el-col>
                                 <el-col :span="8">
-                                    <el-checkbox v-model="detailingredients">面料成份</el-checkbox>
+                                    <el-checkbox v-model="manufacturermater">厂商</el-checkbox>
                                 </el-col>
                                 <el-col :span="8">
-                                    <el-checkbox v-model="detailstandard">执行工艺标准</el-checkbox>
+                                    <el-checkbox v-model="unitmater">基本计量单位</el-checkbox>
                                 </el-col>
                             </el-row>
+
                             <el-row>
                                 <el-col :span="8">
-                                    <el-checkbox v-model="detailremark">备注</el-checkbox>
+                                    <el-checkbox v-model="materialCodemater">物料编号</el-checkbox>
                                 </el-col>
+                                <el-col :span="8">
+                                    <el-checkbox v-model="costPricemater">成本价</el-checkbox>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-checkbox v-model="notemater">备注</el-checkbox>
+                                </el-col>
+
                             </el-row>
 
 
@@ -1776,8 +1747,9 @@
 
                     </el-dialog>
                     <div>
+
                         <el-table
-                                :data="purchaseList"
+                                :data="materpurchaseList"
                                 border
                                 stripe
                                 height="700px"
@@ -2036,7 +2008,7 @@
                         <el-row>
                             <el-col :span="10" :offset="14">
                                 <el-pagination
-                                        @current-change="factorylistpag"
+                                        @current-change="materfactorylistpag"
                                         :page-size="10"
                                         layout="prev, pager, next, jumper"
                                         :total="totalRecordNum">
@@ -4382,13 +4354,13 @@
                     /**
                      * 收货状态
                      * **/
-                    value: '未收货',
+                    value: 'sh03',
                     label: '未收货'
                 }, {
-                    value: '部分收货',
+                    value: 'sh02',
                     label: '部分收货'
                 }, {
-                    value: '已收货',
+                    value: 'sh01',
                     label: '已收货'
                 }],
                 TimeTypelist: [
@@ -4410,7 +4382,8 @@
                     }
 
                 ],
-                TimeType: '',//时间类型状态
+                TimeType: '',//时间类型状态(商品)
+                materTimeType:'',//时间类型状态(商品)
                 ReceivingStatus: '',//收货状态
                 purchaseNumbers: '',//采购单号
                 Audit: [{
@@ -4436,10 +4409,11 @@
                 AuditStatuss: '',//审核状态
                 Submitstate: '',//提交状态
                 purchaseTime: '',//查询时间
-                purchasePageNum: 1,//采购单默认显示页数
+                purchasePageNum: 1,//采购单默认显示页数(商品)
                 purchasePageSize: 10,//采购单默认显示条目数
-                purchaseList: [],//采购订单列表信息
+                purchaseList: [],//采购订单列表信息(商品)
                 totalRecordNum: 0,
+                matertotalRecordNum: 0,
                 /**
                  * 显示设置
                  * **/
@@ -4586,7 +4560,8 @@
 
                 purchaseNum: '',//采购单号
                 purchaseNummater: '',//采购单号(原材料)
-                selsectdetailsList: [],//采购明细数据
+                selsectdetailsList: [],//采购明细数据(商品)
+                selsectdetailsListmater: [],//采购明细数据(原材料)
                 Purchasedetail: false,//采购明细面板
 
 
@@ -4659,11 +4634,51 @@
                 detailsgoodsMoneymater: 0,//明细总金额(不含税)
                 detailstaxgoodsMoneymater: 0,//明细总金额(含税)
 
+
+
+
+
+
+
+                /**
+                 * 采购明细显示设置(物料)
+                 * */
+                warehouseTimemater:true,//预计入库时间
+                numbermater:true,//数量
+                createTimemater:true,//创建时间
+                updateTimemater:true,//修改时间
+                taxPricemater:true,//含税单价
+                unitPricemater:true,//不含税单价
+                taxTotalPricemater:true,//含税总价
+                totalPricemater:true,//不含税总价
+                materialCodemater:true,//物料编号
+                namemater:true,//物料名称
+                ingredientsmater:true,//成分规格
+                typemater:true,//物料分类
+                brandmater:true,//品牌
+                sparemater:true,//状态
+                defaultLossmater:true,//默认损耗
+                manufacturermater:true,//厂商
+                unitmater:true,//基本计量单位
+                costPricemater:true,//成本价
+                notemater:true,//备注
+
                 upPurchasingAddmaterial_material: false,//添加原料面板
                 upNewpurchaseorder_mater: false,//新建采购单面板
 
                 quiremateDataBox: [],//选中的物料信息
                 upquiremateDataBox: [],//修改选中的物料信息
+
+
+                materAuditStatuss: '',//审核状态(原材料)
+                materpurchaseNumbers:'',//采购单号(原材料)
+                materSubmitstate: '',//提交状态(原材料)
+                materpurchaseTime: '',//查询时间(原材料)
+                materpurchasePageNum: 1,//采购单默认显示页数
+                materpurchasePageSize: 10,//采购单默认显示条目数
+                materpurchaseList: [],//采购订单列表信息(原材料)
+                materReceivingStatus:'',//采购订单列表信息(原材料)
+                detailSettingsmater:false,//显示设置（原材料明细）
 
                 addProcurementMater: {
                     //新建采购单(原材料)
@@ -4869,22 +4884,24 @@
                 this.detailsgoodsMoney = row.totalSum//明细总金额(不含税),
                 this.detailsNumber = row.totalQuantity//明细总数量
                 this.detailstaxgoodsMoney = row.taxTotalSum//明细总金额(含税)
-                this.selsectdetails()
+                // this.selsectdetails()
+                this.selsectdetailsList=row.goodsList
             },
             Purchasedetailsmater(row){
 
-
-                // detailsNumbermater: 0,//明细总数量,
-                //     detailsgoodsMoneymater: 0,//明细总金额(不含税)
-                //     detailstaxgoodsMoneymater: 0,//明细总金额(含税)
-                    console.log(row)
                 //采购明细(原材料)
+
+                console.log(row)
 
                 this.Purchasedetailmater = true
                 this.purchaseNummater = row.purchaseNumber
                 this.detailsgoodsMoneymater = row.totalSum//明细总金额(不含税),
                 this.detailsNumbermater = row.totalQuantity//明细总数量
                 this.detailstaxgoodsMoneymater = row.taxTotalSum//明细总金额(含税)
+                this.selsectdetailsListmater=row.goodsList
+
+
+
 
             },
             batchTime() {
@@ -5543,12 +5560,18 @@
                 })
             },
             factorylistpag(val) {
-                //采购信息分页
+                //采购信息分页(商品)
                 this.purchasePageNum = val
                 this.purchaseQueryPage()
             },
+            materfactorylistpag(val) {
+                //采购信息分页（原材料）
+                this.materpurchasePageNum = val
+                this.materialQueryPage()
+            },
+
             purchaseQueryPage() {
-                //采购订单分页查询
+                //采购订单分页查询(商品)
                 let querydata = {
                     pageNum: this.purchasePageNum, pageSize: this.purchasePageSize,
                     auditStatus: this.AuditStatuss, submitStatus: this.Submitstate, receiveStatus: this.ReceivingStatus,
@@ -5564,14 +5587,43 @@
                     console.log(res.data.list)
 
                 })
+            },
+            materialQueryPage() {
+                //采购订单分页查询(原材料)
+
+                // materAuditStatuss: '',//审核状态
+                //     materSubmitstate: '',//提交状态
+                //     materpurchaseTime: '',//查询时间
+                //     materpurchasePageNum: 1,//采购单默认显示页数
+                //     materpurchasePageSize: 10,//采购单默认显示条目数
+                //     materpurchaseList: [],//采购订单列表信息(商品)
+                let querydata = {
+                    pageNum: this.materpurchasePageNum, pageSize: this.materpurchasePageSize,
+                    auditStatus: this.materAuditStatuss, submitStatus: this.materSubmitstate, receiveStatus: this.materReceivingStatus,
+                    purchaseNumber: this.materpurchaseNumbers, typeTime: this.materTimeType,
+                    startTime: this.materpurchaseTime[0], endTime: this.materpurchaseTime[1]
+
+                }
+
+                this.$axios.get(this.$store.state.materialqueryPage, {
+                    params: querydata,
+                }).then(res => {
+                    this.materpurchaseList = res.data.list
+                    this.matertotalRecordNum = res.data.totalRecord
+                    console.log(res.data.list)
+
+                })
             }
         },
         created: function () {
-            this.purchaseQueryPage()//分页
+            // materialqueryPage
+            this.purchaseQueryPage()//分页(商品)
             this.supplierQuery()//供应商列表
             this.factoryQuery()//工厂列表
             this.queryGoods()//商品信息查询
             this.queryPage()//原材料信息查询
+
+            this.materialQueryPage()//分页(原材料)
         }
     }
 </script>
