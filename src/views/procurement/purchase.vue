@@ -1,6 +1,6 @@
 <template>
     <div class="purchase">
-        <el-tabs v-model="activeName2"  tabPosition="left">
+        <el-tabs v-model="activeName2" tabPosition="left">
             <el-tab-pane label="原材料采购" name="second">
                 <div>
                     <!--新建与查询-->
@@ -10,11 +10,11 @@
                             <el-button size="mini" type="primary" class="el-icon-plus"
                                        @click="Newpurchaseorder_mater=true">新建
                             </el-button>
-                            <!--<el-button icon="el-icon-view" type="primary" size="mini" @click="Settings=true">显示设置</el-button>-->
+                            <el-button icon="el-icon-view" type="primary" size="mini" @click="SettingsMater=true">显示设置</el-button>
                             <el-button size="mini" type="primary" :disabled="auditStatusBut">提交审核</el-button>
                             <el-button size="mini" type="primary" :disabled="submitStatusBut">审核通过</el-button>
                             <el-button size="mini" type="primary" :disabled="submitStatusBut">审核驳回</el-button>
-                            <el-button size="mini" type="danger" @click="delpurchaseList()">批量删除</el-button>
+                            <el-button size="mini" type="danger" @click="delMaterPur()">批量删除</el-button>
                             <!--<el-button size="mini">导出</el-button>-->
                         </div>
                         <div style="display: flex;justify-content:space-between">
@@ -80,7 +80,7 @@
                         <!--显示设置-->
                         <el-dialog
                                 title="显示设置"
-                                :visible.sync="Settings"
+                                :visible.sync="SettingsMater"
                                 width="30%"
                                 :show-close="false"
 
@@ -90,126 +90,125 @@
 
                                 <el-row>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="purchaseNumber">采购单号</el-checkbox>
+                                        <el-checkbox v-model="purchaseNumbermaterSet">采购单号</el-checkbox>
                                     </el-col>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="purchaseSource">采购订单来源</el-checkbox>
+                                        <el-checkbox v-model="purchaseSourcematerSet">采购订单来源</el-checkbox>
                                     </el-col>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="frequency">入库次数</el-checkbox>
+                                        <el-checkbox v-model="frequencymaterSet">入库次数</el-checkbox>
                                     </el-col>
                                 </el-row>
 
 
                                 <el-row>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="auditStatus">审核状态</el-checkbox>
+                                        <el-checkbox v-model="auditStatusmaterSet">审核状态</el-checkbox>
                                     </el-col>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="receiveStatus">收货状态</el-checkbox>
+                                        <el-checkbox v-model="receiveStatusmaterSet">收货状态</el-checkbox>
                                     </el-col>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="type">采购订单类型</el-checkbox>
+                                        <el-checkbox v-model="typematerSet">采购订单类型</el-checkbox>
                                     </el-col>
                                 </el-row>
 
                                 <el-row>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="commodityType">商品类型</el-checkbox>
+                                        <el-checkbox v-model="commodityTypematerSet">商品类型</el-checkbox>
                                     </el-col>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="receiveAddress">收货地址</el-checkbox>
+                                        <el-checkbox v-model="receiveAddressmaterSet">收货地址</el-checkbox>
                                     </el-col>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="submitter">提交人</el-checkbox>
-                                    </el-col>
-                                </el-row>
-
-
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="contractTerm">合同条款</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="singlePerson">制单人</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="financialJudge">财审人</el-checkbox>
+                                        <el-checkbox v-model="submittermaterSet">提交人</el-checkbox>
                                     </el-col>
                                 </el-row>
 
 
                                 <el-row>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="auditor">审核人</el-checkbox>
+                                        <el-checkbox v-model="contractTermmaterSet">合同条款</el-checkbox>
                                     </el-col>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="totalSum">总金额(不含税)</el-checkbox>
+                                        <el-checkbox v-model="singlePersonmaterSet">制单人</el-checkbox>
                                     </el-col>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="taxTotalSum">总金额（含税）</el-checkbox>
-                                    </el-col>
-
-                                </el-row>
-
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="totalQuantity">总数量</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="completeStatus">采购完成状态</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="remark">备注</el-checkbox>
+                                        <el-checkbox v-model="financialJudgematerSet">财审人</el-checkbox>
                                     </el-col>
                                 </el-row>
 
 
                                 <el-row>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="createTime">创建时间</el-checkbox>
+                                        <el-checkbox v-model="auditormaterSet">审核人</el-checkbox>
                                     </el-col>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="updateTime">修改时间</el-checkbox>
+                                        <el-checkbox v-model="totalSummaterSet">总金额(不含税)</el-checkbox>
                                     </el-col>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="freight">运费</el-checkbox>
+                                        <el-checkbox v-model="taxTotalSummaterSet">总金额（含税）</el-checkbox>
+                                    </el-col>
+
+                                </el-row>
+
+                                <el-row>
+                                    <el-col :span="8">
+                                        <el-checkbox v-model="totalQuantitymaterSet">总数量</el-checkbox>
+                                    </el-col>
+                                    <el-col :span="8">
+                                        <el-checkbox v-model="completeStatusmaterSet">采购完成状态</el-checkbox>
+                                    </el-col>
+                                    <el-col :span="8">
+                                        <el-checkbox v-model="remarkmaterSet">备注</el-checkbox>
+                                    </el-col>
+                                </el-row>
+
+
+                                <el-row>
+                                    <el-col :span="8">
+                                        <el-checkbox v-model="createTimematerSet">创建时间</el-checkbox>
+                                    </el-col>
+                                    <el-col :span="8">
+                                        <el-checkbox v-model="updateTimematermaterSet">修改时间</el-checkbox>
+                                    </el-col>
+                                    <el-col :span="8">
+                                        <el-checkbox v-model="freightmaterSet">运费</el-checkbox>
                                     </el-col>
                                 </el-row>
                                 <el-row>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="invoice">发票</el-checkbox>
+
+                                        <el-checkbox v-model="invoicematerSet">发票</el-checkbox>
                                     </el-col>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="freightTransportation">货运方式</el-checkbox>
+                                        <el-checkbox v-model="freightTransportationmaterSet">货运方式</el-checkbox>
                                     </el-col>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="taxRate">税率</el-checkbox>
+                                        <el-checkbox v-model="taxRatematerSet">税率</el-checkbox>
                                     </el-col>
                                 </el-row>
 
                                 <el-row>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="taxAmount">税额</el-checkbox>
+                                        <el-checkbox v-model="taxAmountmaterSet">税额</el-checkbox>
                                     </el-col>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="distanceDates">距离下单时间</el-checkbox>
+                                        <el-checkbox v-model="operationmaterSet">供应商</el-checkbox>
                                     </el-col>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="submitStatus">提交状态</el-checkbox>
+                                        <el-checkbox v-model="submitStatusmaterSet">提交状态</el-checkbox>
                                     </el-col>
                                 </el-row>
                                 <el-row>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="submitTime">提交时间</el-checkbox>
+                                        <el-checkbox v-model="submitTimematerSet">提交时间</el-checkbox>
                                     </el-col>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="auditTime">审核时间</el-checkbox>
+                                        <el-checkbox v-model="auditTimematerSet">审核时间</el-checkbox>
                                     </el-col>
 
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="operation">供应商</el-checkbox>
-                                    </el-col>
+
 
                                 </el-row>
 
@@ -283,7 +282,7 @@
                                 <el-row>
                                     <el-col :span="6">
                                         <el-form-item label="发票" prop="invoice">
-                                            <el-select @change="choose" size="mini"
+                                            <el-select @change="materchoose" size="mini"
                                                        v-model="addProcurementMater.invoice"
                                                        placeholder="请选择发票">
                                                 <el-option
@@ -327,6 +326,7 @@
                                 <el-date-picker
                                         size="mini"
                                         v-model="timematerData"
+                                        value-format="yyyy-MM-dd HH:mm:ss"
                                         type="datetime"
                                         placeholder="批量添加预计入库时间">
                                 </el-date-picker>
@@ -412,7 +412,9 @@
 
                                 >
                                     <template slot-scope="scope">
-                                        <el-input-number :min="0" @change="matercontaintax(scope.row)" :disabled="containing"
+
+                                        <el-input-number :min="0" @change="matercontaintax(scope.row)"
+                                                         :disabled="matercontaining"
                                                          size="mini"
                                                          v-model="scope.row.taxPrice"
                                                          label="描述文字"></el-input-number>
@@ -425,7 +427,7 @@
                                         align="center"
                                 >
                                     <template slot-scope="scope">
-                                        <el-input-number :min="0" :disabled="nocontaining" size="mini"
+                                        <el-input-number :min="0" :disabled="maternocontaining" size="mini"
                                                          v-model="scope.row.unitPrice"
                                                          @change="materaddprocure(scope.row)"></el-input-number>
                                     </template>
@@ -533,7 +535,8 @@
 
                                 </div>
                                 <div>
-                                    <el-button type="primary" size="mini" @click="SubmissionMater('addProcurementMater')">
+                                    <el-button type="primary" size="mini"
+                                               @click="SubmissionMater('addProcurementMater')">
                                         保存
                                     </el-button>
                                     <el-button size="mini" @click="Newpurchaseorder_mater=false">取消</el-button>
@@ -592,7 +595,6 @@
                                         :data="materialsList"
                                         highlight-current-row
                                 >
-                                    <el-table-column type="selection" align="center"></el-table-column>
                                     <el-table-column
                                             align="center"
                                             label="操作"
@@ -721,7 +723,6 @@
                                         stripe
                                         @selection-change="goodsSelection"
                                         style="width: 100%">
-                                    <el-table-column type="selection" align="center"></el-table-column>
 
                                     <el-table-column
                                             type="index"
@@ -834,7 +835,7 @@
                                 </el-table>
                                 <div style="text-align: right;margin: 0.2em">
                                     <el-button type="primary" size="mini" @click="PreservationMater">保存</el-button>
-                                    <el-button size="mini" @click="PurchasingAddGoods=false">取消</el-button>
+                                    <el-button size="mini" @click="PurchasingAddmaterial_material=false">取消</el-button>
                                 </div>
 
                             </div>
@@ -908,7 +909,7 @@
                                 <el-row>
                                     <el-col :span="6">
                                         <el-form-item label="发票" prop="invoice">
-                                            <el-select @change="choose" size="mini"
+                                            <el-select @change="upmaterupchoose" size="mini"
                                                        v-model="upaddProcurementMater.invoice"
                                                        placeholder="请选择发票">
                                                 <el-option
@@ -1023,7 +1024,8 @@
 
                                 >
                                     <template slot-scope="scope">
-                                        <el-input-number :min="0" @change="matercontaintax(scope.row)" :disabled="containing"
+                                        <el-input-number :min="0" @change="upmatercontaintax(scope.row)"
+                                                         :disabled="upmatercontaining"
                                                          size="mini"
                                                          v-model="scope.row.taxPrice"
                                                          label="描述文字"></el-input-number>
@@ -1036,9 +1038,9 @@
                                         align="center"
                                 >
                                     <template slot-scope="scope">
-                                        <el-input-number :min="0" :disabled="nocontaining" size="mini"
+                                        <el-input-number :min="0" :disabled="upmaternocontaining" size="mini"
                                                          v-model="scope.row.unitPrice"
-                                                         @change="materaddprocure(scope.row)"></el-input-number>
+                                                         @change="upmateraddprocure(scope.row)"></el-input-number>
                                     </template>
                                 </el-table-column>
                                 <el-table-column
@@ -1144,7 +1146,8 @@
 
                                 </div>
                                 <div>
-                                    <el-button type="primary" size="mini" @click="upSubmissionMater('upaddProcurementMater')">
+                                    <el-button type="primary" size="mini"
+                                               @click="upSubmissionMater('upaddProcurementMater')">
                                         保存
                                     </el-button>
                                     <el-button size="mini" @click="upNewpurchaseorder_mater=false">取消</el-button>
@@ -1465,7 +1468,8 @@
                             :show-close="false"
                     >
                         <div style="display: flex;justify-content: space-between;padding: 0.5em">
-                            <el-button icon="el-icon-view" size="mini" @click="detailSettingsmater=true">显示设置</el-button>
+                            <el-button icon="el-icon-view" size="mini" @click="detailSettingsmater=true">显示设置
+                            </el-button>
                         </div>
 
                         <el-table
@@ -1496,7 +1500,6 @@
                                     prop="number"
                             >
                             </el-table-column>
-
 
 
                             <el-table-column
@@ -1661,8 +1664,6 @@
                         <div style="text-align: left">
 
 
-
-
                             <el-row>
                                 <el-col :span="8">
                                     <el-checkbox v-model="warehouseTimemater">预计入库时间</el-checkbox>
@@ -1689,7 +1690,6 @@
                             </el-row>
 
 
-
                             <el-row>
                                 <el-col :span="8">
                                     <el-checkbox v-model="totalPricemater">不含税总价</el-checkbox>
@@ -1701,7 +1701,6 @@
                                     <el-checkbox v-model="ingredientsmater">成分规格</el-checkbox>
                                 </el-col>
                             </el-row>
-
 
 
                             <el-row>
@@ -1771,7 +1770,7 @@
                             <el-table-column
                                     label="创建时间"
                                     prop="createTime"
-                                    v-if="createTime"
+                                    v-if="createTimematerSet"
                                     width="180"
                                     align="center"
                                     sortable
@@ -1779,7 +1778,7 @@
                             <el-table-column
                                     label="修改时间"
                                     prop="updateTime"
-                                    v-if="updateTime"
+                                    v-if="updateTimematermaterSet"
                                     width="180"
                                     align="center"
                                     sortable
@@ -1789,7 +1788,7 @@
                                     prop="purchaseNumber"
                                     label="采购单号"
                                     width="200"
-                                    v-if="purchaseNumber"
+                                    v-if="purchaseNumbermaterSet"
                             >
                             </el-table-column>
                             <el-table-column
@@ -1797,13 +1796,13 @@
                                     prop="supplier"
                                     align="center"
                                     width="150"
-                                    v-if="operation"
+                                    v-if="operationmaterSet"
                             ></el-table-column>
                             <el-table-column
                                     align="center"
                                     prop="purchaseSource"
                                     label="采购订单来源"
-                                    v-if="purchaseSource"
+                                    v-if="purchaseSourcematerSet"
                                     width="150"
                             >
                             </el-table-column>
@@ -1812,7 +1811,7 @@
                                     prop="submitStatus"
                                     label="提交状态"
                                     width="150"
-                                    v-if="submitStatus"
+                                    v-if="submitStatusmaterSet"
                             >
                                 <template slot-scope="scope">
                                     <span>{{scope.row.submitStatus=='tj01'?'已提交':'未提交'}}</span>
@@ -1824,14 +1823,14 @@
                                     prop="submitTime"
                                     label="提交时间"
                                     width="150"
-                                    v-if="submitTime"
+                                    v-if="submitTimematerSet"
                             >
                             </el-table-column>
                             <el-table-column
                                     align="center"
                                     prop="auditStatus"
                                     label="审核状态"
-                                    v-if="auditStatus"
+                                    v-if="auditStatusmaterSet"
                             >
                                 <template slot-scope="scope">
                                     <span>{{scope.row.auditStatus=='sh01'?'已审核':'未审核'}}</span>
@@ -1842,13 +1841,13 @@
                                     prop="auditTime"
                                     label="审核时间"
                                     width="150"
-                                    v-if="auditTime"
+                                    v-if="auditTimematerSet"
                             >
                             </el-table-column>
                             <el-table-column
                                     align="center"
                                     prop="receiveStatus"
-                                    v-if="receiveStatus"
+                                    v-if="receiveStatusmaterSet"
                                     label="收货状态">
                                 <template slot-scope="scope">
                                     <span>{{scope.row.receiveStatus=='sh01'?'已收货':(scope.row.receiveStatus=='sh02'?'部分收货':'未收货')}}</span>
@@ -1857,26 +1856,26 @@
                             <el-table-column
                                     align="center"
                                     prop="invoice"
-                                    v-if="receiveStatus"
+                                    v-if="invoicematerSet"
                                     width="120"
                                     label="发票">
                             </el-table-column>
                             <el-table-column
                                     align="center"
                                     prop="freight"
-                                    v-if="freight"
+                                    v-if="freightmaterSet"
                                     label="运费">
                             </el-table-column>
                             <el-table-column
                                     align="center"
                                     prop="freightTransportation"
-                                    v-if="freightTransportation"
+                                    v-if="freightTransportationmaterSet"
                                     label="货运方式">
                             </el-table-column>
                             <el-table-column
                                     align="center"
                                     prop="frequency"
-                                    v-if="frequency"
+                                    v-if="frequencymaterSet"
                                     width="120"
                                     label="已入库数量">
                             </el-table-column>
@@ -1884,7 +1883,7 @@
                                     align="center"
                                     prop="type"
                                     width="180"
-                                    v-if="type"
+                                    v-if="typematerSet"
                                     label="采购订单类型">
                             </el-table-column>
                             <el-table-column
@@ -1892,7 +1891,7 @@
                                     label="商品类型"
                                     align="center"
                                     width="120"
-                                    v-if="commodityType"
+                                    v-if="commodityTypematerSet"
                             >
                             </el-table-column>
                             <el-table-column
@@ -1900,21 +1899,21 @@
                                     prop="receiveAddress"
                                     label="收货地址"
                                     width="180"
-                                    v-if="receiveAddress"
+                                    v-if="receiveAddressmaterSet"
                             >
                             </el-table-column>
                             <el-table-column
                                     align="center"
                                     prop="contractTerm"
                                     label="合同条款"
-                                    v-if="contractTerm"
+                                    v-if="contractTermmaterSet"
                             >
                             </el-table-column>
                             <el-table-column
                                     align="center"
                                     prop="singlePerson"
                                     label="制单人"
-                                    v-if="singlePerson"
+                                    v-if="singlePersonmaterSet"
 
                             >
                             </el-table-column>
@@ -1922,40 +1921,40 @@
                                     align="center"
                                     prop="submitter"
                                     label="提交人"
-                                    v-if="submitter"
+                                    v-if="submittermaterSet"
                             >
                             </el-table-column>
                             <el-table-column
                                     align="center"
                                     prop="financialJudge"
-                                    v-if="financialJudge"
+                                    v-if="financialJudgematerSet"
                                     label="财审人">
 
                             </el-table-column>
                             <el-table-column
                                     align="frequency"
                                     prop="auditor"
-                                    v-if="auditor"
+                                    v-if="auditormaterSet"
                                     label="审核人">
                             </el-table-column>
                             <el-table-column
                                     align="center"
                                     prop="totalSum"
                                     width="180"
-                                    v-if="totalSum"
+                                    v-if="totalSummaterSet"
                                     label="总金额(不含税)">
                             </el-table-column>
                             <el-table-column
                                     align="center"
                                     prop="taxTotalSum"
                                     width="180"
-                                    v-if="taxTotalSum"
+                                    v-if="taxTotalSummaterSet"
                                     label="总金额(含税)">
                             </el-table-column>
                             <el-table-column
                                     align="center"
                                     label="总数量"
-                                    v-if="totalQuantity"
+                                    v-if="totalQuantitymaterSet"
                                     width="120"
                                     prop="totalQuantity"
                             >
@@ -1965,28 +1964,28 @@
                                     align="center"
                                     prop="completeStatus"
                                     width="120"
-                                    v-if="completeStatus"
+                                    v-if="completeStatusmaterSet"
                                     label="采购完成状态">
                             </el-table-column>
                             <el-table-column
                                     align="center"
                                     prop="taxAmount"
                                     width="100"
-                                    v-if="taxAmount"
+                                    v-if="taxAmountmaterSet"
                                     label="税额">
                             </el-table-column>
                             <el-table-column
                                     align="center"
                                     prop="taxRate"
                                     width="100"
-                                    v-if="taxRate"
+                                    v-if="taxRatematerSet"
                                     label="税率">
                             </el-table-column>
                             <el-table-column
                                     label="备注"
                                     align="center"
                                     width="120"
-                                    v-if="remark"
+                                    v-if="remarkmaterSet"
                                     prop="remark"
                             >
                             </el-table-column>
@@ -1999,7 +1998,7 @@
                             >
                                 <template slot-scope="scope">
                                     <el-button type="text" @click="updatamater(scope.row)">修改</el-button>
-                                    <el-button type="text" @click="delpurchase(scope.row)">删除</el-button>
+                                    <el-button type="text" @click="delpurMaterList(scope.row)">删除</el-button>
                                 </template>
 
                             </el-table-column>
@@ -2212,7 +2211,7 @@
                                         <el-checkbox v-model="taxAmount">税额</el-checkbox>
                                     </el-col>
                                     <el-col :span="8">
-                                        <el-checkbox v-model="distanceDates">距离下单时间</el-checkbox>
+                                        <el-checkbox v-model="operation">供应商</el-checkbox>
                                     </el-col>
                                     <el-col :span="8">
                                         <el-checkbox v-model="submitStatus">提交状态</el-checkbox>
@@ -2226,9 +2225,7 @@
                                         <el-checkbox v-model="auditTime">审核时间</el-checkbox>
                                     </el-col>
 
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="operation">供应商</el-checkbox>
-                                    </el-col>
+
 
                                 </el-row>
 
@@ -3197,7 +3194,6 @@
                                 </el-table-column>
 
 
-
                                 <el-table-column
                                         label="含税单价（元）"
                                         width="200"
@@ -4141,7 +4137,7 @@
                             <el-table-column
                                     align="center"
                                     prop="invoice"
-                                    v-if="receiveStatus"
+                                    v-if="invoice"
                                     width="120"
                                     label="发票">
                             </el-table-column>
@@ -4383,7 +4379,7 @@
 
                 ],
                 TimeType: '',//时间类型状态(商品)
-                materTimeType:'',//时间类型状态(商品)
+                materTimeType: '',//时间类型状态(商品)
                 ReceivingStatus: '',//收货状态
                 purchaseNumbers: '',//采购单号
                 Audit: [{
@@ -4415,7 +4411,7 @@
                 totalRecordNum: 0,
                 matertotalRecordNum: 0,
                 /**
-                 * 显示设置
+                 * 显示设置(商品)
                  * **/
                 purchaseCode: true,//"采购编码",
                 operation: true,//"供应商",
@@ -4448,12 +4444,72 @@
                 taxRate: true,//税率
                 taxAmount: true,//税额
                 remark: true,//备注
-                Settings: false,//显示设置面板
+                Settings: false,//显示设置面板（商品）
+                SettingsMater: false,//显示设置面板（原材料）
                 Newpurchaseorder: false,//新建采购单面板
                 upNewpurchaseorder: false,//修改采购单面板
                 options: [],//供应商查询数据
                 submitStatusBut: true,//审核按钮
                 auditStatusBut: true,//提交按钮
+
+
+
+
+
+
+
+                /**
+                 * 显示设置(原材料)
+                 * **/
+                purchaseCodematerSet : true,//"采购编码",
+                operationmaterSet: true,//"供应商",
+                purchaseNumbermaterSet: true,//"采购单号",
+                updateTimematermaterSet: true,//修改时间
+                createTimematerSet: true,//创建时间
+                purchaseSourcematerSet: true,//"采购订单来源",
+                submitTimematerSet: true,//提交时间
+                submitStatusmaterSet: true,//提交状态
+                auditStatusmaterSet: true,//"审核状态",
+                auditTimematerSet: true,//审核时间
+                receiveStatusmaterSet: true,//"收货状态",
+                invoicematerSet: true,//发票
+                freightTransportationmaterSet: true,//货运方式
+                freightmaterSet: true,//运费
+                frequencymaterSet: true,//"入库次数",
+                typematerSet: true,//"采购订单类型",
+                commodityTypematerSet: true,// "商品类型",
+                receiveAddressmaterSet: true,//"收货地址",
+                contractTermmaterSet: true,//"合同条款",
+                singlePersonmaterSet: true,//"制单人",
+                submittermaterSet: true,//"提交人",
+                financialJudgematerSet: true,//"财审人",
+                auditormaterSet: true,//"审核人",
+                totalSummaterSet: true,//"总金额（不含税）",
+                taxTotalSummaterSet: true,//总金额（含税）
+                totalQuantitymaterSet: true,//"总数量",
+                completeStatusmaterSet: true,//"采购完成状态",
+                distanceDatesmaterSet: true,//"距离下单时间",
+                taxRatematerSet: true,//税率
+                taxAmountmaterSet: true,//税额
+                remarkmaterSet: true,//备注
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
                 factorylist: [],//工厂查询数据
@@ -4591,14 +4647,17 @@
                 detailingredients: true,//面料成份
                 detailstandard: true,//执行工艺标准
                 detailremark: true,//备注
-                purchaseIds: [],//商品信息多选id
-
+                purchaseIds: [],//采购单信息多选id（商品）
+                purchasematerIds: [],//采购单信息多选id（原材料）
 
                 containing: true,//含税
                 nocontaining: true,//不含税
 
                 matercontaining: true,//含税(原材料)
                 maternocontaining: true,//不含税(原材料)
+
+                upmatercontaining: true,//修改含税(原材料)
+                upmaternocontaining: true,//修改不含税(原材料)
 
                 upcontaining: true,//修改含税
                 upnocontaining: true,//修改不含税
@@ -4628,40 +4687,35 @@
                 PurchasingAddmaterial: false,//采购单添加原料面板
                 PurchasingAddmaterial_material: false,//添加原料面板
                 Newpurchaseorder_mater: false,//新建采购单面板
-                Purchasedetailmater:false,//原材料采购明细
+                Purchasedetailmater: false,//原材料采购明细
 
                 detailsNumbermater: 0,//明细总数量,
                 detailsgoodsMoneymater: 0,//明细总金额(不含税)
                 detailstaxgoodsMoneymater: 0,//明细总金额(含税)
 
 
-
-
-
-
-
                 /**
                  * 采购明细显示设置(物料)
                  * */
-                warehouseTimemater:true,//预计入库时间
-                numbermater:true,//数量
-                createTimemater:true,//创建时间
-                updateTimemater:true,//修改时间
-                taxPricemater:true,//含税单价
-                unitPricemater:true,//不含税单价
-                taxTotalPricemater:true,//含税总价
-                totalPricemater:true,//不含税总价
-                materialCodemater:true,//物料编号
-                namemater:true,//物料名称
-                ingredientsmater:true,//成分规格
-                typemater:true,//物料分类
-                brandmater:true,//品牌
-                sparemater:true,//状态
-                defaultLossmater:true,//默认损耗
-                manufacturermater:true,//厂商
-                unitmater:true,//基本计量单位
-                costPricemater:true,//成本价
-                notemater:true,//备注
+                warehouseTimemater: true,//预计入库时间
+                numbermater: true,//数量
+                createTimemater: true,//创建时间
+                updateTimemater: true,//修改时间
+                taxPricemater: true,//含税单价
+                unitPricemater: true,//不含税单价
+                taxTotalPricemater: true,//含税总价
+                totalPricemater: true,//不含税总价
+                materialCodemater: true,//物料编号
+                namemater: true,//物料名称
+                ingredientsmater: true,//成分规格
+                typemater: true,//物料分类
+                brandmater: true,//品牌
+                sparemater: true,//状态
+                defaultLossmater: true,//默认损耗
+                manufacturermater: true,//厂商
+                unitmater: true,//基本计量单位
+                costPricemater: true,//成本价
+                notemater: true,//备注
 
                 upPurchasingAddmaterial_material: false,//添加原料面板
                 upNewpurchaseorder_mater: false,//新建采购单面板
@@ -4671,14 +4725,14 @@
 
 
                 materAuditStatuss: '',//审核状态(原材料)
-                materpurchaseNumbers:'',//采购单号(原材料)
+                materpurchaseNumbers: '',//采购单号(原材料)
                 materSubmitstate: '',//提交状态(原材料)
                 materpurchaseTime: '',//查询时间(原材料)
                 materpurchasePageNum: 1,//采购单默认显示页数
                 materpurchasePageSize: 10,//采购单默认显示条目数
                 materpurchaseList: [],//采购订单列表信息(原材料)
-                materReceivingStatus:'',//采购订单列表信息(原材料)
-                detailSettingsmater:false,//显示设置（原材料明细）
+                materReceivingStatus: '',//采购订单列表信息(原材料)
+                detailSettingsmater: false,//显示设置（原材料明细）
 
                 addProcurementMater: {
                     //新建采购单(原材料)
@@ -4747,6 +4801,30 @@
         },
 
         methods: {
+            delpurMaterList(data) {
+                //批量删除采购单信息（原材料）
+                this.purchasematerIds.length = 0
+                this.purchasematerIds.push(data.id)
+                this.delMaterPur()
+            },
+            delMaterPur() {
+                //删除采购单信息
+                this.$axios.post(this.$store.state.delmater, {
+                    ids: this.purchasematerIds
+                }).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '删除',
+                            type: 'success',
+                            onClose() {
+                                location.reload()
+                            }
+                        });
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+            },
             updata(data) {
                 //修改采购单信息
                 this.upgoodsNum = 0
@@ -4811,9 +4889,12 @@
             },
             Multipleselection(data) {
                 this.purchaseIds.length = 0
+                this.purchasematerIds.length = 0
                 data.forEach(item => {
                     this.purchaseIds.push(item.id)
+                    this.purchasematerIds.push(item.id)
                 })
+
 
                 //采购单多选
                 if (data.length == 0) {
@@ -4869,6 +4950,46 @@
                 }
 
             },
+            materchoose(data) {
+                //选择发票回调
+                // matercontaining: true,//含税(原材料)
+                //     maternocontaining: true,//不含税(原材料)
+                if (data != '收据') {
+                    this.matercontaining = false;//含税
+                    this.maternocontaining = false;//不含税
+                } else {
+                    let list = this.addProcurementMater.goodsList
+                    list.forEach(item => {
+                        item.taxTotalPrice = 0
+                        item.taxPrice = 0
+                    })
+                    this.matergoodsMoney = 0,//总金额(含税)
+                        this.matercontaining = true;//含税
+                    this.maternocontaining = false;//不含税
+
+                }
+
+            },
+            upmaterupchoose(data) {
+                //修改选择发票回调
+                if (data != '收据') {
+                    this.upmatercontaining = false;//含税
+                    this.upmaternocontaining = false;//不含税
+                } else {
+                    let list = this.upaddProcurementMater.goodsList
+                    list.forEach(item => {
+                        item.taxTotalPrice = 0
+                        item.taxPrice = 0
+                    })
+                    //
+                    // upmatercontaining: true,//修改含税(原材料)
+                    //     upmaternocontaining: true,//修改不含税(原材料)
+                    this.upmatertaxgoodsMoney = 0,//总金额(含税)
+                        this.upmatercontaining = true;//含税
+                    this.upmaternocontaining = false;//不含税
+                }
+
+            },
             selsectdetails() {
                 //根据采购单号查询当前采购详情
                 this.$axios.get(this.$store.state.queruPNumber, {
@@ -4885,22 +5006,17 @@
                 this.detailsNumber = row.totalQuantity//明细总数量
                 this.detailstaxgoodsMoney = row.taxTotalSum//明细总金额(含税)
                 // this.selsectdetails()
-                this.selsectdetailsList=row.goodsList
+                this.selsectdetailsList = row.goodsList
             },
-            Purchasedetailsmater(row){
-
+            Purchasedetailsmater(row) {
                 //采购明细(原材料)
-
-                console.log(row)
 
                 this.Purchasedetailmater = true
                 this.purchaseNummater = row.purchaseNumber
                 this.detailsgoodsMoneymater = row.totalSum//明细总金额(不含税),
                 this.detailsNumbermater = row.totalQuantity//明细总数量
                 this.detailstaxgoodsMoneymater = row.taxTotalSum//明细总金额(含税)
-                this.selsectdetailsListmater=row.goodsList
-
-
+                this.selsectdetailsListmater = row.goodsList
 
 
             },
@@ -5017,19 +5133,10 @@
                 }
 
 
-                // data.taxPrice = data.unitPrice + data.unitPrice * 0.15
-                // // data.totalPrice=data.unitPrice*data.number
-                // data.totalPrice = data.number * data.unitPrice //不含税总价
-                // data.taxTotalPrice = data.number * data.taxPrice//含税总价
-                //
-                //
-                // this.taxgoodsMoney = data.taxTotalPrice
-                // this.goodsMoney = data.totalPrice
-                // console.log(data)
             },
             matercontaintax(data) {
                 //最后调整含税单价(原材料)
-                this.matercontaining = true;//不含税
+                this.maternocontaining = true;//不含税
                 data.unitPrice = (data.taxPrice / (1 + 0.15)).toFixed(2)//计算不含税单价
 
                 data.totalPrice = (data.unitPrice * data.number).toFixed(2)//不含税总价
@@ -5045,12 +5152,14 @@
                     // this.taxgoodsMoney += item.taxTotalPrice
                 })
 
-                this.matertaxgoodsMoney = this.matergoodsMoney * (1+ 0.15)
+                this.matertaxgoodsMoney = this.matergoodsMoney * (1 + 0.15)
 
             },
             materaddprocure(data) {
                 //最后调整不含税单价(原材料)
 
+                // matercontaining: true,//含税(原材料)
+                //     maternocontaining: true,//不含税(原材料)
                 if (this.addProcurementMater.invoice != '收据') {
                     this.matercontaining = true;//含税
                     data.taxPrice = (data.unitPrice + data.unitPrice * 0.15).toFixed(2)
@@ -5066,7 +5175,7 @@
                         this.matergoodsMoney += item.unitPrice * item.number
                         // this.taxgoodsMoney += item.taxTotalPrice
                     })
-                    this.matertaxgoodsMoney = this.matergoodsMoney * (1+ 0.15)
+                    this.matertaxgoodsMoney = this.matergoodsMoney * (1 + 0.15)
                 } else {
                     data.totalPrice = data.unitPrice * data.number//不含税总价
                     this.matergoodsMoney = 0//总金额(不含税)
@@ -5078,8 +5187,66 @@
                 }
 
 
+            },
+
+            upmatercontaintax(data) {
+                //修改最后调整含税单价(原材料)
+                // upmatercontaining: true,//修改含税(原材料)
+                //     upmaternocontaining: true,//修改不含税(原材料)
+
+                this.upmaternocontaining = true;//不含税
+                data.unitPrice = (data.taxPrice / (1 + 0.15))//计算不含税单价
+                data.totalPrice = (data.unitPrice * data.number)//不含税总价
+                data.taxTotalPrice = (data.taxPrice * data.number)//含税总价
+
+
+                this.upmatergoodsMoney = 0//总金额(不含税)
+                this.upmatertaxgoodsMoney = 0//总金额(含税)
+                let list = this.upaddProcurementMater.goodsList
+                console.log(list)
+                list.forEach(item => {
+
+                    this.upmatergoodsMoney += item.unitPrice * item.number
+                    this.upmatertaxgoodsMoney += item.taxTotalPrice
+
+                })
+
 
             },
+            upmateraddprocure(data) {
+                //修改最后调整单价(原材料)
+
+                if (this.upaddProcurementMater.invoice != '收据') {
+                    this.upmatercontaining = true;//含税
+                    data.taxPrice = (data.unitPrice + data.unitPrice * 0.15)
+                    data.totalPrice = (data.unitPrice * data.number)//不含税总价
+                    data.taxTotalPrice = (data.taxPrice * data.number)//含税总价
+
+
+                    this.upmatergoodsMoney = 0//总金额(不含税)
+                    this.upmatertaxgoodsMoney = 0//总金额(含税)
+                    console.log(this.addProcurement.goodsList)
+                    let list = this.upaddProcurement.goodsList
+                    list.forEach(item => {
+                        // this.goodsMoney += item.unitPrice //不含税总价
+                        this.upmatergoodsMoney += item.unitPrice * item.number
+                        this.upmatertaxgoodsMoney += item.taxTotalPrice
+                    })
+                    // this.uptaxgoodsMoney = this.upgoodsMoney + this.upgoodsMoney * 0.15
+                } else {
+                    data.totalPrice = data.unitPrice * data.number//不含税总价
+                    this.upmatergoodsMoney = 0//总金额(不含税)
+                    let list = this.upaddProcurementMater.goodsList
+                    list.forEach(item => {
+                        this.upgoodsMoney += item.unitPrice * item.number
+                    })
+
+                }
+
+
+            },
+
+
             upcontaintax(data) {
                 //修改最后调整含税单价
 
@@ -5152,6 +5319,7 @@
                 // this.upgoodsMoney = data.totalPrice
                 // console.log(data)
             },
+
             addprocureNumber(data) {
                 //最后调整数量
                 this.goodsNum = 0,//总数量,
@@ -5239,8 +5407,6 @@
                 data.taxTotalPrice = data.number * data.taxPrice//含税总价
 
             },
-
-
             SubmissionPurchase(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
@@ -5264,11 +5430,25 @@
                     }
                 });
             },
-            SubmissionMater(formName){
+            SubmissionMater(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         //提交采购单数据（原材料）
 
+                        this.$axios.post(this.$store.state.addmaterPurchase, this.addProcurementMater).then(res => {
+                            if (res.data.code == 200) {
+                                this.$message({
+                                    message: '添加成功',
+                                    type: 'success',
+                                    onClose() {
+                                        location.reload()
+                                    }
+                                });
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+
+                        })
                         console.log(this.addProcurementMater)
                     } else {
                         console.log('error submit!!');
@@ -5276,11 +5456,23 @@
                     }
                 });
             },
-            upSubmissionMater(formName){
+            upSubmissionMater(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         //提交采购单数据(原材料 修改)
-
+                            this.$axios.post(this.$store.state.upmaterPurchase,this.upaddProcurementMater).then(res=>{
+                                if (res.data.code == 200) {
+                                    this.$message({
+                                        message: '修改成功',
+                                        type: 'success',
+                                        onClose() {
+                                            location.reload()
+                                        }
+                                    });
+                                } else {
+                                    this.$message.error(res.data.msg);
+                                }
+                            })
                         console.log(this.upaddProcurementMater)
                     } else {
                         console.log('error submit!!');
@@ -5591,17 +5783,16 @@
             materialQueryPage() {
                 //采购订单分页查询(原材料)
 
-                // materAuditStatuss: '',//审核状态
-                //     materSubmitstate: '',//提交状态
-                //     materpurchaseTime: '',//查询时间
-                //     materpurchasePageNum: 1,//采购单默认显示页数
-                //     materpurchasePageSize: 10,//采购单默认显示条目数
-                //     materpurchaseList: [],//采购订单列表信息(商品)
                 let querydata = {
-                    pageNum: this.materpurchasePageNum, pageSize: this.materpurchasePageSize,
-                    auditStatus: this.materAuditStatuss, submitStatus: this.materSubmitstate, receiveStatus: this.materReceivingStatus,
-                    purchaseNumber: this.materpurchaseNumbers, typeTime: this.materTimeType,
-                    startTime: this.materpurchaseTime[0], endTime: this.materpurchaseTime[1]
+                    pageNum: this.materpurchasePageNum,
+                    pageSize: this.materpurchasePageSize,
+                    auditStatus: this.materAuditStatuss,
+                    submitStatus: this.materSubmitstate,
+                    receiveStatus: this.materReceivingStatus,
+                    purchaseNumber: this.materpurchaseNumbers,
+                    typeTime: this.materTimeType,
+                    startTime: this.materpurchaseTime[0],
+                    endTime: this.materpurchaseTime[1]
 
                 }
 

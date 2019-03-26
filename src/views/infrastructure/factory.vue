@@ -47,6 +47,7 @@
                     :data="factoryList"
                     border
                     stripe
+                    height="760px"
                     @selection-change="factorySelection"
                     style="width: 100%">
                 <el-table-column
@@ -59,6 +60,19 @@
                         align="center"
                         type="index"
                         width="50">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="name"
+                        width="150"
+                        label="名称">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="code"
+                        label="编码"
+                        width="100"
+                >
                 </el-table-column>
                 <el-table-column
                         label="创建时间"
@@ -78,15 +92,18 @@
                 <el-table-column
                         align="center"
                         prop="address"
-                        label="地址"
+                        label="城市"
+                        width="180"
                 >
                 </el-table-column>
                 <el-table-column
                         align="center"
-                        prop="code"
-                        label="编码"
+                        prop="detailedAddress"
+                        label="详细地址"
+                        width="180"
                 >
                 </el-table-column>
+
                 <el-table-column
                         align="center"
                         prop="company"
@@ -100,23 +117,17 @@
                         label="联系人"
                 >
                 </el-table-column>
-                <el-table-column
-                        align="center"
-                        prop="name"
 
-                        label="名称">
-
-                </el-table-column>
                 <el-table-column
                         align="center"
                         prop="phoneNumber"
-
+                        width="150"
                         label="手机号码">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         prop="remark"
-                        width="180"
+                        width="100"
                         label="备注信息">
                 </el-table-column>
                 <el-table-column
@@ -169,36 +180,33 @@
                 </el-row>
 
                 <el-row>
+                    <el-col :span="12">
 
+                        <el-form-item label="收货城市" prop="address">
+                            <el-cascader
+                                    placeholder="收货城市"
+                                    size="mini"
+                                    :options="option"
+                                    v-model="address"
+                                    @change="handleChange">
+                            </el-cascader>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="收货地址" prop="detailedAddress">
+                            <el-input placeholder="收货地址"  size="mini" v-model="addfactoryForm.detailedAddress"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+
+                </el-row>
+
+                <el-row>
 
                     <el-col :span="12">
                         <el-form-item  label="所属公司" prop="company">
                             <el-input placeholder="所属公司" size="mini" v-model="addfactoryForm.company"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <!--<el-form-item label="地址" prop="address">-->
-                            <!--<el-input size="mini" v-model="addfactoryForm.address"></el-input>-->
-                        <!--</el-form-item>-->
-
-
-                            <el-form-item label="收货城市">
-                                <el-cascader
-                                        placeholder="收货城市"
-                                        size="mini"
-                                        :options="option"
-                                        v-model="address"
-                                        @change="handleChange">
-                                </el-cascader>
-                            </el-form-item>
-
-                    </el-col>
-                </el-row>
-
-                <el-row>
-                    <el-col :span="12">
-                        <el-form-item label="收货地址">
-                            <el-input placeholder="收货地址"  size="mini" v-model="addfactoryForm.detailedAddress"></el-input>
                         </el-form-item>
                     </el-col>
 
@@ -257,18 +265,14 @@
                 <el-row>
 
 
-                    <el-col :span="12">
-                        <el-form-item label="所属公司" prop="company">
-                            <el-input placeholder="所属公司" size="mini" v-model="upfactoryForm.company"></el-input>
-                        </el-form-item>
-                    </el-col>
+
                     <el-col :span="12">
                         <!--<el-form-item label="地址" prop="address">-->
                             <!--<el-input size="mini" v-model="upfactoryForm.address"></el-input>-->
                         <!--</el-form-item>-->
 
 
-                        <el-form-item label="收货城市">
+                        <el-form-item label="收货城市" prop="address">
                             <el-cascader
                                     placeholder="收货城市"
                                     size="mini"
@@ -279,11 +283,16 @@
                         </el-form-item>
 
                     </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="收货地址" prop="detailedAddress">
+                            <el-input  placeholder="收货地址" size="mini" v-model="upfactoryForm.detailedAddress"></el-input>
+                        </el-form-item>
+                    </el-col>
                 </el-row>
                 <el-row>
                     <el-col :span="12">
-                        <el-form-item label="收货地址">
-                            <el-input  placeholder="收货地址" size="mini" v-model="upfactoryForm.detailedAddress"></el-input>
+                        <el-form-item label="所属公司" prop="company">
+                            <el-input placeholder="所属公司" size="mini" v-model="upfactoryForm.company"></el-input>
                         </el-form-item>
                     </el-col>
 
@@ -321,7 +330,7 @@
 </template>
 
 <script>
-    import {regionDataPlus, CodeToText} from 'element-china-area-data'
+    import {regionData,CodeToText,TextToCode} from 'element-china-area-data'
     export default {
         name: "factory",
         data() {
@@ -354,9 +363,15 @@
                     code: [
                         {required: true, message: '请输入厂商编码', trigger: 'blur'},
                         {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+                    ],
+                    address:[
+                        {required:true,message:'请选择收货城市',trigger:'blur'}
+                    ],
+                    detailedAddress:[
+                        {required:true,message:'收货地址不能为空',trigger:'blur'}
                     ]
                 },
-                option: regionDataPlus,//城市选择
+                option: regionData,//城市选择
                 address: [],//地址
                 upaddress: [],//修改地址
                 upfactoryForm: {
@@ -380,6 +395,12 @@
                     code: [
                         {required: true, message: '请输入厂商编码', trigger: 'blur'},
                         {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+                    ],
+                    address:[
+                        {required:true,message:'请选择收货城市',trigger:'blur'}
+                    ],
+                    detailedAddress:[
+                        {required:true,message:'收货地址不能为空',trigger:'blur'}
                     ]
                 },
                 queryspare01: '',//查询其他
@@ -390,7 +411,7 @@
         methods: {
             handleChange(value) {
                 //城市选择
-
+                console.log(value)
                 this.addfactoryForm.address = ''
                 this.addfactoryForm.address += `${CodeToText[value[0]]}-${CodeToText[value[1]]}-${CodeToText[value[2]]}`
 
@@ -411,7 +432,7 @@
                                     }
                                 });
                             } else {
-                                this.$message.error('添加失败！');
+                                this.$message.error(res.data.msg);
                             }
                         })
                     } else {
@@ -436,7 +457,7 @@
                                     }
                                 });
                             } else {
-                                this.$message.error('修改失败！');
+                                this.$message.error(res.data.msg);
                             }
                         })
                     } else {
@@ -451,6 +472,16 @@
                 //打开修改信息面板
                 this.upfactory = true
                 this.upfactoryForm = data
+                this.upaddress.length=0
+                // TextToCode
+
+                let cti=data.address.split('-')
+                let county =TextToCode[cti[0]][cti[1]][cti[2]].code //县市
+                let provinces =`${county.substring(0,3)}000`   //省份
+                let city =`${county.substring(0,4)}00`      //辖区
+                this.upaddress.splice(0,0,provinces)
+                this.upaddress.splice(1,0,city)
+                this.upaddress.splice(2,0,county)
 
             },
             delfactory() {
