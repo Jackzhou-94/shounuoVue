@@ -48,6 +48,11 @@ export default new Router({
                     path: '/purchase',
                     name: 'purchase',
                     component: require('./views/procurement/purchase').default,
+                }, {
+                    //入库管理
+                    path: '/storage',
+                    name: 'storage',
+                    component: require('./views/Warehouse/storage').default,
                 }
             ]
         }

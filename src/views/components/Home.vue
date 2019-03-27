@@ -118,7 +118,7 @@
                         <span class="el-dropdown-link headerTitle">仓库管理</span>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item>
-                                <div @click="addTab('入库管理')">
+                                <div @click="addTab('入库管理','storage'),$router.push('storage')">
                                     <i class="fontFamily hhtx-ruku"></i>
                                     <span class="menu">入库管理</span>
                                 </div>
