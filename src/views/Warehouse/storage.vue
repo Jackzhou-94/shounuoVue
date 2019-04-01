@@ -2,16 +2,48 @@
     <div class="storage">
         <div style="text-align: left;margin-bottom: 0.5em">
             <el-button size="mini" type="primary" class="el-icon-plus" @click="Newpurchaseorder=true">新建</el-button>
-            <el-button size="mini" type="primary" class="el-icon-plus" @click="upNewpurchaseorder=true">修改</el-button>
             <el-button icon="el-icon-view" type="primary" size="mini" @click="Settings=true">显示设置
             </el-button>
-            <!--<el-button size="mini" type="primary" :disabled="auditStatusBut">提交审核</el-button>-->
-            <!--<el-button size="mini" type="primary" :disabled="submitStatusBut">审核通过</el-button>-->
-            <!--<el-button size="mini" type="primary" :disabled="submitStatusBut">审核驳回</el-button>-->
-            <!--<el-button size="mini" type="danger" @click="delpurchaseList()">批量删除</el-button>-->
+            <el-button size="mini" type="primary" :disabled="auditStatusBut">提交审核</el-button>
+            <el-button size="mini" type="primary" :disabled="submitStatusBut">审核通过</el-button>
+            <el-button size="mini" type="primary" :disabled="submitStatusBut">审核驳回</el-button>
+            <el-button size="mini" type="danger" :disabled="delStatusBut" @click="delStorage()">批量删除</el-button>
             <!--<el-button size="mini">导出</el-button>-->
         </div>
+        <div style="display: flex;justify-content:space-between;margin-bottom: 0.5em">
 
+            <div>
+                <el-select v-model="factoryName" size="mini" placeholder="仓库">
+                    <el-option
+                            v-for="item in factorylist"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                    </el-option>
+                </el-select>
+                <el-select v-model="categorys" size="mini" placeholder="入库类别">
+                    <el-option
+                            v-for="item in category"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                    </el-option>
+                </el-select>
+                <el-input size="mini" style="width: 200px" placeholder="入库单号" clearable
+                          v-model="oddNumber"></el-input>
+            </div>
+
+            <div>
+                <el-button type="primary" size="mini" icon="el-icon-edit" @click="factoryName='',categorys='',oddNumber=''">
+                    重置
+                </el-button>
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="storageQuery()">查询
+                </el-button>
+
+            </div>
+
+
+        </div>
         <!--入库开单-->
         <el-dialog
                 title="入库开单"
@@ -120,12 +152,14 @@
                             </el-select>
                         </el-form-item>
                         <el-form-item label="其他费用">
-                            <el-input size="mini" :disabled="expensesInput" @blur="OtherfreightIn" v-model="NewWarehousing.expenses"></el-input>
+                            <el-input size="mini" :disabled="expensesInput" @blur="OtherfreightIn"
+                                      v-model="NewWarehousing.expenses"></el-input>
                         </el-form-item>
                     </div>
 
                 </div>
             </el-form>
+
 
             <el-table
                     :data="NewWarehousing.goodsList"
@@ -199,12 +233,17 @@
                                  align="center"
                 >
                     <template slot-scope="scope">
-                        <el-input type="number" size="mini" @blur="OtherFreightallocation(scope.row)" :disabled="expensesShow"
+                        <el-input type="number" size="mini" @blur="OtherFreightallocation(scope.row)"
+                                  :disabled="expensesShow"
                                   v-model="scope.row.expenses"></el-input>
                     </template>
                 </el-table-column>
             </el-table>
-            <el-button size="mini" @click="submitForm('NewWarehousing')">提交</el-button>
+            <div style="margin: 0.5em;text-align: right">
+                <el-button type="primary" size="mini" @click="submitForm('NewWarehousing')">保存</el-button>
+                <el-button size="mini" @click="Newpurchaseorder=false">取消</el-button>
+            </div>
+
 
         </el-dialog>
 
@@ -232,6 +271,7 @@
                     border
                     stripe
                     highlight-current-row
+                    @row-dblclick="DobleIn"
                     @current-change="Multipleselection"
             >
                 <el-table-column
@@ -585,7 +625,8 @@
                             </el-select>
                         </el-form-item>
                         <el-form-item label="其他费用">
-                            <el-input size="mini" :disabled="expensesInput" @blur="upOtherfreightIn" v-model="upNewWarehousing.expenses"></el-input>
+                            <el-input size="mini" :disabled="expensesInput" @blur="upOtherfreightIn"
+                                      v-model="upNewWarehousing.expenses"></el-input>
                         </el-form-item>
                     </div>
 
@@ -664,12 +705,17 @@
                                  align="center"
                 >
                     <template slot-scope="scope">
-                        <el-input type="number" size="mini" @blur="upOtherFreightallocation(scope.row)" :disabled="upexpensesShow"
+                        <el-input type="number" size="mini" @blur="upOtherFreightallocation(scope.row)"
+                                  :disabled="upexpensesShow"
                                   v-model="scope.row.expenses"></el-input>
                     </template>
                 </el-table-column>
             </el-table>
-            <el-button size="mini" @click="upsubmitForm('upNewWarehousing')">提交</el-button>
+            <div style="margin: 0.5em;text-align: right">
+                <el-button size="mini" type="primary" @click="upsubmitForm('upNewWarehousing')">提交</el-button>
+                <el-button size="mini" @click="upNewpurchaseorder=false">取消</el-button>
+            </div>
+
 
         </el-dialog>
 
@@ -696,6 +742,8 @@
                     border
                     stripe
                     highlight-current-row
+
+                    @row-dblclick="upDobleIn"
                     @current-change="upMultipleselection"
             >
                 <el-table-column
@@ -941,13 +989,11 @@
         </el-dialog>
 
 
-
-
         <!--显示设置-->
         <el-dialog
                 title="显示设置"
                 :visible.sync="Settings"
-                width="30%"
+                width="40%"
                 :show-close="false"
 
         >
@@ -957,7 +1003,7 @@
                         <el-checkbox v-model="NumbersShow">入库单号</el-checkbox>
                     </el-col>
                     <el-col :span="8">
-                        <el-checkbox v-model="stateShow">入库单状态</el-checkbox>
+                        <el-checkbox v-model="stateShow">入库单提交状态</el-checkbox>
                     </el-col>
                     <el-col :span="8">
                         <el-checkbox v-model="categoryShow">入库类别</el-checkbox>
@@ -984,7 +1030,7 @@
                         <el-checkbox v-model="ReceiptShow">已入库数量</el-checkbox>
                     </el-col>
                     <el-col :span="8">
-                        <el-checkbox v-model="TotalShow">入库货品总数</el-checkbox>
+                        <el-checkbox v-model="TotalShow">入库种类总数</el-checkbox>
                     </el-col>
                 </el-row>
 
@@ -1011,13 +1057,115 @@
                         <el-checkbox v-model="NowarehousingShow">未入库数量</el-checkbox>
                     </el-col>
                 </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        <el-checkbox v-model="expensesModeShow">分摊方式(其他费用)</el-checkbox>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-checkbox v-model="expenses_shareShow">分摊运费(其他用费)</el-checkbox>
+                    </el-col>
 
+                    <el-col :span="8">
+                        <el-checkbox v-model="modeShow">分摊方式(运费)</el-checkbox>
+                    </el-col>
+                </el-row>
+                <el-row>
+
+                    <el-col :span="8">
+                        <el-checkbox v-model="freightShareShow">分摊运费</el-checkbox>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-checkbox v-model="warehouseNumberShow">入库总数量</el-checkbox>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-checkbox v-model="stateShowAudit">入库单审核状态</el-checkbox>
+                    </el-col>
+                </el-row>
             </div>
 
         </el-dialog>
+
+
+        <!--入库明细-->
+        <el-dialog
+                title="入库明细"
+                :visible.sync="Details_warehousing"
+                width="80%"
+                :show-close="false"
+
+        >
+            <el-table
+                    :data="warehousingGoodsList"
+                    border
+                    stripe
+            >
+                <el-table-column
+                        align="center"
+                        type="index"
+                ></el-table-column>
+                <el-table-column label="编号"
+                                 align="center"
+                                 prop="itemCode"
+                ></el-table-column>
+                <el-table-column label="货品名称"
+                                 align="center"
+                                 prop="name"
+                                 width="150"
+                ></el-table-column>
+                <el-table-column label="品牌"
+                                 align="center"
+                                 prop="brand"
+                ></el-table-column>
+                <el-table-column label="条形码"
+                                 align="center"
+                                 prop="barCode"
+                ></el-table-column>
+                <el-table-column label="数量"
+                                 align="center"
+                                 prop="number"
+                ></el-table-column>
+                <el-table-column label="入库数量"
+                                 align="center"
+                                 width="100"
+                                 prop="warehouseNumber"
+                ></el-table-column>
+                <el-table-column label="入库单位"
+                                 align="center"
+                                 prop="unit"
+                ></el-table-column>
+                <el-table-column label="入库金额"
+                                 align="center"
+                                 width="120"
+                                 prop="totalPrice"
+                ></el-table-column>
+                <el-table-column label="入库金额(税)"
+                                 align="center"
+                                 width="120"
+                                 prop="taxTotalPrice"
+                ></el-table-column>
+                <el-table-column label="运费分摊"
+                                 align="center"
+                                 width="130"
+                                 prop="freightShare"
+                ></el-table-column>
+                <el-table-column label="其他费用总分摊"
+                                 width="130"
+                                 align="center"
+                                 prop="expenses"
+                >
+                </el-table-column>
+            </el-table>
+
+        </el-dialog>
+
+
         <el-table
+                :data="WarehouseReceipt"
                 style="width: 100%"
                 border
+                stripe
+                @row-dblclick="doubleClickStorage"
+                @selection-change="handleStorage"
                 height="720"
         >
             <el-table-column type="selection" align="center"></el-table-column>
@@ -1025,34 +1173,91 @@
             <el-table-column
                     label="入库单号"
                     align="center"
-                    width="150"
+                    width="160"
+                    prop="oddNumber"
                     v-if="NumbersShow"
             ></el-table-column>
             <el-table-column
-                    label="入库单状态"
+                    label="入库单提交状态"
                     align="center"
-                    width="100"
+                    width="120"
                     v-if="stateShow"
-            ></el-table-column>
+            >
+                <template slot-scope="scope">
+                    <span>{{scope.row.submitStatus=='tj01'?'已提交':'未提交'}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    label="入库单审核状态"
+                    align="center"
+                    width="120"
+                    v-if="stateShowAudit"
+            >
+                <template slot-scope="scope">
+                    <span>{{scope.row.auditStatus=='sh01'?'已审核':'未审核'}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    label="入库状态"
+                    align="center"
+                    width="120"
+                    v-if="stateShowAudit"
+            >
+                <template slot-scope="scope">
+                    <span>{{scope.row.warehouseStatus=='ru01'?'已入库':scope.row.warehouseStatus=='ru02'?'未入库':'部分入库'}}</span>
+                </template>
+            </el-table-column>
             <el-table-column
                     label="入库类别"
                     align="center"
+                    prop="category"
+                    width="110"
                     v-if="categoryShow"
             ></el-table-column>
             <el-table-column
-                    label="经办人"
+                label="分摊方式(运费)"
+                prop="mode"
+                v-if="modeShow"
+                align="center"
+                width="120"
+            >
+            </el-table-column>
+            <el-table-column
+                    label="分摊运费"
+                    prop="freightShare"
+                    v-if="freightShareShow"
                     align="center"
-                    v-if="personShow"
-            ></el-table-column>
+                    width="120"
+            >
+            </el-table-column>
+            <el-table-column
+                    label="分摊方式(其他费用)"
+                    prop="expensesMode"
+                    v-if="expensesModeShow"
+                    align="center"
+                    width="150"
+            >
+            </el-table-column>
+            <el-table-column
+                    label="分摊其他费用"
+                    prop="expenses_share"
+                    v-if="expenses_shareShow"
+                    align="center"
+                    width="120"
+            >
+            </el-table-column>
+
             <el-table-column
                     label="仓库"
                     align="center"
                     width="180"
+                    prop="factoryName"
                     v-if="WarehouseShow"
             ></el-table-column>
             <el-table-column
                     label="物流公司"
                     align="center"
+                    prop="company"
                     width="180"
                     v-if="LogisticscompanyShow"
             ></el-table-column>
@@ -1060,42 +1265,56 @@
                     label="物流单号"
                     align="center"
                     width="180"
+                    prop="logisticsNumber"
                     v-if="LogisticsnumberShow"
             ></el-table-column>
             <el-table-column
                     label="已入库数量"
                     align="center"
                     width="100"
+                    prop="warehouseNumber1"
                     v-if="ReceiptShow"
             ></el-table-column>
             <el-table-column
                     label="未入库数量"
                     align="center"
                     width="100"
+                    prop="warehouseNumber2"
                     v-if="NowarehousingShow"
             ></el-table-column>
             <el-table-column
-                    label="入库货品总数"
+                    label="入库总数量"
                     align="center"
                     width="150"
+                    prop="warehouseNumber"
+                    v-if="warehouseNumberShow"
+            ></el-table-column>
+            <el-table-column
+                    label="入库种类总数"
+                    align="center"
+                    width="150"
+                    prop="goodQuality"
                     v-if="TotalShow"
             ></el-table-column>
             <el-table-column
                     label="入库金额"
                     align="center"
                     width="150"
+                    prop="warehouseAmount"
                     v-if="moneyShowTAX"
             ></el-table-column>
             <el-table-column
                     label="入库金额（税）"
                     align="center"
                     width="180"
+                    prop="warehouseTaxamount"
                     v-if="moneyShow"
             ></el-table-column>
             <el-table-column
                     label="入库时间"
                     align="center"
                     width="180"
+                    prop="createTime"
                     v-if="WarehousingtimeShow"
             ></el-table-column>
             <el-table-column
@@ -1105,12 +1324,40 @@
                     v-if="examineShow"
             ></el-table-column>
             <el-table-column
+                    label="经办人"
+                    align="center"
+                    v-if="personShow"
+                    prop="personCharge"
+            ></el-table-column>
+            <el-table-column
                     label="备注"
                     align="center"
                     width="100"
                     v-if="RemarksShow"
             ></el-table-column>
+            <el-table-column
+                    label="操作"
+                    align="center"
+                    width="120"
+                    fixed="right"
+            >
+                <template slot-scope="scope">
+                    <el-button type="text" @click="upStorage(scope.row)">修改</el-button>
+                    <el-button type="text" @click="delStoresingle(scope.row)">删除</el-button>
+                </template>
+            </el-table-column>
         </el-table>
+        <!--分页-->
+        <el-row>
+            <el-col :span="10" :offset="14">
+                <el-pagination
+                        @current-change="factorylistpags"
+                        :page-size="10"
+                        layout="prev, pager, next, jumper"
+                        :total="StoraRecordNum">
+                </el-pagination>
+            </el-col>
+        </el-row>
 
     </div>
 </template>
@@ -1125,17 +1372,25 @@
                  * **/
                 Settings: false,//显示设置面板
                 NumbersShow: true,//入库单号
-                stateShow: true,//入库单状态
+                stateShow: true,//入库单状态（提交状态）
+                stateShowAudit:true,//入库单审核状态
                 categoryShow: true,//入库类别
                 personShow: true,//经办人
                 WarehouseShow: true,//仓库
+
+                modeShow:true,//分摊方式(运费)
+                expensesModeShow:true,//分摊方式其他费用)
+                freightShareShow:true,// 分摊运费
+                expenses_shareShow:true,//分摊运费(其他用费)
+
                 LogisticscompanyShow: true,//物流公司
                 LogisticsnumberShow: true,//物流单号
                 ReceiptShow: true,//入库数量
-                NowarehousingShow:true,//未入库数量
-                TotalShow: true,//入库货品总数
+                NowarehousingShow: true,//未入库数量
+                TotalShow: true,//入库货品总数（货品类别数量）
+                warehouseNumberShow:true,//入库总量
                 moneyShow: true,//入库金额（税)
-                moneyShowTAX:true,//入库金额
+                moneyShowTAX: true,//入库金额
                 WarehousingtimeShow: true,//入库时间
                 examineShow: true,//审核时间
                 RemarksShow: true,//备注
@@ -1152,8 +1407,8 @@
                     logisticsNumbe: '',//物流单号
                     freight: 0,//运费
                     expenses: 0,//其它费用
-                    expensesMode:'',//分摊方式(其他费用)
-                    warehouseNumber: '',//入库数量
+                    expensesMode: '',//分摊方式(其他费用)
+                    warehouseNumber: 0,//入库数量
                     warehouseAmount: 0,//入库金额
                     warehouseTaxamount: 0,//入库金额(税)
                     mode: '',//分摊方式（运费）
@@ -1189,7 +1444,7 @@
                     logisticsNumbe: '',//物流单号
                     freight: 0,//运费
                     expenses: 0,//其它费用
-                    expensesMode:'',//分摊方式(其他费用)
+                    expensesMode: '',//分摊方式(其他费用)
                     warehouseNumber: '',//入库数量
                     warehouseAmount: 0,//入库金额
                     warehouseTaxamount: 0,//入库金额(税)
@@ -1286,9 +1541,6 @@
                 ],
 
 
-
-
-
                 factorylist: [],//工厂查询数据
                 options: [],//供应商查询数据
                 purchaseList: [],//商品信息列表
@@ -1339,18 +1591,17 @@
                 alternativeList: [],//引入单号数据
 
 
-
                 goodsShow: true,//显示条形码
                 freightShow: true,//运费分摊
                 freightInput: true,//运费文本框
 
-                expensesInput:true,//其他费用文本框
+                expensesInput: true,//其他费用文本框
                 expensesShow: true,//其他费用分摊
 
 
-                    /**
-                     * 修改
-                     * **/
+                /**
+                 * 修改
+                 * **/
                 upWarehousingCategory: '',//入库类别具体类别
                 upshowIntrodw: true,//引入单号按钮可用不可用
                 upalternativeList: [],//引入单号数据
@@ -1358,10 +1609,8 @@
                 upfreightShow: true,//运费分摊
                 upfreightInput: true,//运费文本框
 
-                upexpensesInput:true,//其他费用文本框
+                upexpensesInput: true,//其他费用文本框
                 upexpensesShow: true,//其他费用分摊
-
-
 
 
                 /**
@@ -1399,13 +1648,116 @@
                 uptaxAmount: true,//税额
                 upremark: true,//备注
 
+                storageQueryPageNum: 1,//入库单分页查询默认页数
+                PurchaseOrder: '',//采购单号
+                WarehouseReceipt: [],//入库单数据
+                submitStatusBut: true,//审核按钮
+                auditStatusBut: true,//提交按钮
+                delStatusBut:true,//删除按钮
+                StoraRecordNum: 0,//入库单列表总条目数
+                factoryName: '',//仓库查询
+                categorys: '',//入库类别
+                oddNumber: '',//入库单号
+                StorageIds:[],//入库单ID
+                Details_warehousing:false,//入库明细面板
+                warehousingGoodsList:[],//入库明细详情
 
             }
         },
         methods: {
-            upFreightallocation(data){
+            DobleIn(data){
+
+                //双击引入
+                console.log(data)
+                this.alternativeList.length = 0
+                this.NewWarehousing.introduceNumber = data.purchaseNumber
+                this.NewWarehousing.warehouseNumber=0
+
+                data.goodsList.forEach(item => {
+                    this.alternativeList.push(item)
+                    this.NewWarehousing.warehouseNumber+=item.number
+                })
+                this.NewWarehousing.goodsList = this.alternativeList
+                this.introductionNumber = false
+
+            },
+            upDobleIn(data){
+                //修改引入单双击引入
+                console.log(data)
+                this.upalternativeList.length = 0
+                this.upNewWarehousing.introduceNumber = data.purchaseNumber
+                this.NewWarehousing.warehouseNumber=0
+                data.goodsList.forEach(item => {
+                    this.upalternativeList.push(item)
+                    this.upNewWarehousing.warehouseNumber+=item.number
+                })
+                this.upNewWarehousing.goodsList = this.upalternativeList
+                this.upintroductionNumber = false
+                // Multipleselection,alternative
+            },
+            delStoresingle(data){
+              //删除入库单（单个删除）
+                this.StorageIds.length=0;
+                this.StorageIds.push(data.id)
+                this.delStorage()
+            },
+            doubleClickStorage(data){
+              //双击表格
+                this.Details_warehousing=true
+                this.warehousingGoodsList=data.goodsList
+                console.log(data)
+            },
+            handleStorage(data){
+              //入库单列表多选
+                console.log(data)
+                data.forEach(item=>{
+                    this.StorageIds.push(item.id)
+                })
+
+                //采购单多选
+                if (data.length == 0) {
+                    this.submitStatusBut = true
+                    this.auditStatusBut = true
+                    this.delStatusBut=true
+                } else {
+                    this.delStatusBut=false
+                    let list = data.map(item => {
+                        return item.submitStatus
+                    })
+                    let num = list.indexOf('tj02')
+                    let nums = list.indexOf('sh02')
+                    if (num == -1) {
+                        this.submitStatusBut = false
+                        this.auditStatusBut = true
+                    } else if (num != -1) {
+                        this.submitStatusBut = true
+                        this.auditStatusBut = false
+                    }
+                }
+
+
+
+            },
+            factorylistpags(val) {
+                //入库单分页查询
+                this.storageQueryPageNum = val
+                this.storageQuery()
+            },
+            upStorage(data) {
+                //修改入库单
+                this.NewWarehousing.warehouseNumber=0
+                this.upNewpurchaseorder = true
+                this.upNewWarehousing = data
+                data.goodsList.forEach(item=>{
+                    this.upNewWarehousing.warehouseNumber+=item.warehouseNumber
+                })
+
+
+
+            },
+            upFreightallocation(data) {
                 //商品明细运费分摊文本框离开焦点事件
-                this.upNewWarehousing.freight+=Number(data.freightShare)
+                this.upNewWarehousing.freight += Number(data.freightShare)
             },
             upfreightIn() {
                 //运费输入框文本框离开焦点事件
@@ -1427,18 +1779,18 @@
                     this.upNewWarehousing.freight = 0
                 }
             },
-            upOtherFreightallocation(data){
+            upOtherFreightallocation(data) {
                 //商品明细运费分摊文本框离开焦点事件
                 console.log(data)
                 console.log(data.expenses)
-                this.upNewWarehousing.expenses+=Number(data.expenses)
+                this.upNewWarehousing.expenses += Number(data.expenses)
             },
             upOtherfreightIn() {
                 //其他费用输入框文本框离开焦点事件
                 let data = this.upNewWarehousing.goodsList //具体货品数据
                 let freight = this.upNewWarehousing.expenses//其他费用
                 data.forEach(item => {
-                    item.expenses= freight / data.length
+                    item.expenses = freight / data.length
                 })
 
             },
@@ -1473,6 +1825,19 @@
                 this.$refs[upNewWarehousing].validate((valid) => {
                     if (valid) {
                         console.log(this.upNewWarehousing)
+                        this.$axios.post(this.$store.state.Upstorage, this.upNewWarehousing).then(res => {
+                            if (res.data.code == 200) {
+                                this.$message({
+                                    message: '修改成功',
+                                    type: 'success',
+                                    onClose() {
+                                        location.reload()
+                                    }
+                                });
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+                        })
                     } else {
                         console.log('error submit!!');
                         return false;
@@ -1485,16 +1850,22 @@
                 this.upintroductionNumber = false
                 console.log(this.NewWarehousing)
 
+                this.upNewWarehousing.warehouseNumber=0
+                // this.NewWarehousing.warehouseNumber
+                this.upalternativeList.forEach(item=>{
+                    this.upNewWarehousing.warehouseNumber+=item.number
+                })
+
+
             },
             upMultipleselection(data) {
                 //修改引入单号单选
                 this.upNewWarehousing.introduceNumber = data.purchaseNumber
-                this.upalternativeList.length=0
+                this.upalternativeList.length = 0
                 data.goodsList.forEach(item => {
                     this.upalternativeList.push(item)
                 })
 
-                console.log(data)
             },
             upWareSelect(data) {
                 //修改入库类别选择
@@ -1510,32 +1881,9 @@
 
             },
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            Freightallocation(data){
-              //商品明细运费分摊文本框离开焦点事件
-                this.NewWarehousing.freight+=Number(data.freightShare)
+            Freightallocation(data) {
+                //商品明细运费分摊文本框离开焦点事件
+                this.NewWarehousing.freight += Number(data.freightShare)
             },
             freightIn() {
                 //运费输入框文本框离开焦点事件
@@ -1557,18 +1905,18 @@
                     this.NewWarehousing.freight = 0
                 }
             },
-            OtherFreightallocation(data){
+            OtherFreightallocation(data) {
                 //商品明细运费分摊文本框离开焦点事件
                 console.log(data)
                 console.log(data.expenses)
-                this.NewWarehousing.expenses+=Number(data.expenses)
+                this.NewWarehousing.expenses += Number(data.expenses)
             },
             OtherfreightIn() {
                 //其他费用输入框文本框离开焦点事件
                 let data = this.NewWarehousing.goodsList //具体货品数据
                 let freight = this.NewWarehousing.expenses//其他费用
                 data.forEach(item => {
-                    item.expenses= freight / data.length
+                    item.expenses = freight / data.length
                 })
 
             },
@@ -1603,6 +1951,21 @@
                 this.$refs[NewWarehousing].validate((valid) => {
                     if (valid) {
                         console.log(this.NewWarehousing)
+                        this.$axios.post(this.$store.state.Addstorage, this.NewWarehousing).then(res => {
+                            if (res.data.code == 200) {
+                                this.$message({
+                                    message: '添加成功',
+                                    type: 'success',
+                                    onClose() {
+                                        location.reload()
+                                    }
+                                });
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+                        })
+
+
                     } else {
                         console.log('error submit!!');
                         return false;
@@ -1613,18 +1976,23 @@
                 //将选择的数据添加到表单
                 this.NewWarehousing.goodsList = this.alternativeList
                 this.introductionNumber = false
+                this.NewWarehousing.warehouseNumber=0
+                // this.NewWarehousing.warehouseNumber
+                this.alternativeList.forEach(item=>{
+                    this.NewWarehousing.warehouseNumber+=item.number
+                })
+                console.log(this.alternativeList)
                 console.log(this.NewWarehousing)
 
             },
             Multipleselection(data) {
                 //引入单号单选
-                this.alternativeList.length=0
+                this.alternativeList.length = 0
                 this.NewWarehousing.introduceNumber = data.purchaseNumber
                 data.goodsList.forEach(item => {
                     this.alternativeList.push(item)
                 })
 
-                console.log(data)
             },
             factorylistpag(val) {
                 //采购信息分页(商品)
@@ -1692,6 +2060,24 @@
                 })
             },
 
+            delStorage(){
+              //删除入库单
+              this.$axios.post(this.$store.state.deleteStorage,{
+                  ids:this.StorageIds
+              }).then(res=>{
+                  if (res.data.code == 200) {
+                      this.$message({
+                          message: '删除成功',
+                          type: 'success',
+                          onClose() {
+                              location.reload()
+                          }
+                      });
+                  } else {
+                      this.$message.error(res.data.msg);
+                  }
+              })
+            },
             factoryQuery() {
                 //工厂列表
                 this.$axios.get(this.$store.state.factoryselect).then(res => {
@@ -1711,11 +2097,28 @@
 
                 })
             },
+            storageQuery() {
+                //入库单分页查询
+                this.$axios.get(this.$store.state.storageQuery, {
+                    params: {
+                        pageSize: 10,
+                        pageNum: this.storageQueryPageNum,
+                        factoryName: this.factoryName,
+                        category: this.categorys, oddNumber: this.oddNumber
+                    }
+                }).then(res => {
+                    console.log(res)
+                    this.WarehouseReceipt = res.data.list
+                    this.StoraRecordNum = res.data.totalRecord
+                })
+            },
 
         },
         created: function () {
             this.factoryQuery()//工厂列表查询
             this.supplierQuery()//供应商列表查询
+
+            this.storageQuery() //分页列表入库单查询
 
         }
     }

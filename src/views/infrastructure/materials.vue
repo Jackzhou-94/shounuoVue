@@ -16,15 +16,14 @@
             <!--新建与查询-->
             <div class="menuBox">
                 <div style="display: flex;justify-content: space-around">
-                    <el-button size="mini" class="el-icon-plus" @click="dialogTableVisible=true">新建
+                    <el-button type="primary" size="mini" class="el-icon-plus" @click="dialogTableVisible=true">新建
                     </el-button>
-                    <el-button size="mini" class="el-icon-circle-check-outline" @click="Delmateropen">启用</el-button>
-                    <el-button size="mini" class="el-icon-circle-close-outline" @click="DelmaterOUT">禁用</el-button>
-                    <el-button size="mini" class="el-icon-delete" @click="delmaterials">删除</el-button>
-                    <el-button size="mini" class="el-icon-delete" @click="recyclepanel">回收站</el-button>
-                    <el-button size="mini" class="el-icon-download" @click="exportExcel">导出</el-button>
-                    <el-button  icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
-
+                    <el-button  type="primary" size="mini" class="el-icon-circle-check-outline" @click="Delmateropen">启用</el-button>
+                    <el-button  type="primary" size="mini" class="el-icon-circle-close-outline" @click="DelmaterOUT">禁用</el-button>
+                    <el-button  type="primary" size="mini" class="el-icon-download" @click="exportExcel">导出</el-button>
+                    <el-button  type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
+                    <el-button  type="danger" size="mini" class="el-icon-delete" :disabled="delStatusButGoods" @click="delmaterials">批量删除</el-button>
+                    <el-button  type="info" size="mini" class="el-icon-delete" @click="recyclepanel">回收站</el-button>
                     <!--<el-upload-->
                             <!--class="upload-demo"-->
                             <!--action="http://192.168.1.199:8099/supplychain/importExcel/readExcel"-->
@@ -43,7 +42,7 @@
 
                     <el-row>
                        <el-col :span="5">
-                           <el-input placeholder="物料编号"  size="mini"  v-model="materialsNum"></el-input>
+                           <el-input placeholder="物料编号"   size="mini"  v-model="materialsNum"></el-input>
                        </el-col>
                         <el-col :span="5">
                             <el-input placeholder="物料名称"  size="mini"  v-model="materialsName"></el-input>
@@ -264,11 +263,13 @@
                         label="操作"
                         align="center"
                         fixed="right"
+                        width="120"
                 >
                     <template
                             slot-scope="scope"
                     >
                         <el-button type="text" size="small" @click="uppanel(scope.row)">修改</el-button>
+                        <el-button type="text" size="small" @click="delpanel(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -297,7 +298,7 @@
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="物料编码" prop="materialCode">
-                            <el-input size="mini" v-model="addmaterial.materialCode"></el-input>
+                            <el-input size="mini" @blur="itemCodeCopy" v-model="addmaterial.materialCode"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -394,7 +395,7 @@
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="物料编码" prop="materialCode">
-                            <el-input size="mini" :disabled="true" v-model="updaData.materialCode"></el-input>
+                            <el-input size="mini" @blur="itemCodeCopy" :disabled="true" v-model="updaData.materialCode"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -650,14 +651,14 @@
                     ingredients: '',//成份
                     manufacturer: '',//厂商
                     note: '',//备注
-
+                    itemCode:'',
                     detection: '',//检测
                     brand:'',//品牌
                 },
                 updaData: {
                     //修改
                     name: '',
-
+                    itemCode:'',
                     materialCode: '',//物料编码
                     type: '',//物料选择
                     costPrice: '',//成本价
@@ -769,6 +770,8 @@
                 QueryField: '',//查询字段
                 spare: '',//状态
                 materialsIDs: '',//原材料ID
+
+                delStatusButGoods:true,//删除按钮
                 //物料编号
                 materialCode: true,
                 createTime:true,//创建时间
@@ -840,6 +843,11 @@
             }
         },
         methods: {
+            itemCodeCopy(){
+              //物料编码赋值
+                this.addmaterial.itemCode=this.addmaterial.materialCode
+                this.updaData.itemCode=this.updaData.materialCode
+            },
             supplierQuery(){
               //供应商列表
                 this.$axios.get(this.$store.state.suppllierSelect).then(res=>{
@@ -1071,6 +1079,12 @@
             //  console.log(this.materialCode)
 
         },
+            delpanel(val){
+              //单条删除
+                this.delmaterID.length=0;
+                this.delmaterID.push(val.id);
+                this.delmaterials();
+            },
         delmaterials() {
             /**
              * 根据ID移除原材料信息*/
@@ -1104,6 +1118,11 @@
             })
             let a = this.materialsIDs.length - 1
             this.materialsIDs = this.materialsIDs.substring(0, a)
+            if (val.length==0){
+                this.delStatusButGoods=true
+            } else {
+                this.delStatusButGoods=false
+            }
         },
         //数据未启用高亮颜色
         tableRowClassName({row, rowIndex}) {
@@ -1164,6 +1183,7 @@
                     let data = {
                         name: this.addmaterial.name,
                         materialCode: this.addmaterial.materialCode,//物料编码
+                        itemCode: this.addmaterial.materialCode,//物料编码
                         type: this.addmaterial.type,//物料选择
                         costPrice: this.addmaterial.costPrice,//成本价
                         defaultLoss: this.addmaterial.defaultLoss,//损耗

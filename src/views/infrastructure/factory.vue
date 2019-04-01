@@ -5,10 +5,10 @@
             <div class="menuBox">
                 <div style="display: flex;justify-content: space-around">
 
-                    <el-button size="mini" class="el-icon-plus" @click="addfactory=true">新建</el-button>
+                    <el-button size="mini" type="primary" class="el-icon-plus" @click="addfactory=true">新建</el-button>
 
-                    <el-button size="mini" class="el-icon-delete" @click="delfactory">删除</el-button>
-                    <el-button size="mini">打印</el-button>
+                    <el-button type="danger" size="mini" class="el-icon-delete" :disabled="delStatusButGoods" @click="delfactory">批量删除</el-button>
+                    <!--<el-button type="primary" size="mini">打印</el-button>-->
                 </div>
 
                 <div>
@@ -137,6 +137,7 @@
                 >
                     <template slot-scope="scope">
                         <el-button type="text" @click="upfactoryspanel(scope.row)">修改</el-button>
+                        <el-button type="text" @click="delfactoryspanel(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
 
@@ -340,6 +341,7 @@
                 factoryIds: [],//工厂信息ID
                 totalRecordNum: 0,
                 addfactory: false,//新建厂商面板
+                delStatusButGoods:true,//删除按钮
                 upfactory: false,//修改厂商面板
                 addfactoryForm: {
                     //新建厂商信息表单数据
@@ -483,6 +485,12 @@
                 this.upaddress.splice(2,0,county)
 
             },
+            delfactoryspanel(val){
+              //删除单条工厂信息
+                this.factoryIds.length=0
+                this.factoryIds.push(val.id)
+                this.delfactory()
+            },
             delfactory() {
                 //删除工厂信息
                 this.$axios.post(this.$store.state.delfactory, {ids: this.factoryIds}).then(res => {
@@ -511,7 +519,11 @@
                 val.forEach(item => {
                     this.factoryIds.push(item.id)
                 })
-                console.log(this.factoryIds)
+                if (val.length==0){
+                    this.delStatusButGoods=true
+                } else {
+                    this.delStatusButGoods=false
+                }
             },
             factoryquery() {
                 //工厂信息分页查询

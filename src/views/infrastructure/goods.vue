@@ -8,7 +8,7 @@
                     <el-button size="mini" type="primary" class="el-icon-plus" @click="addgoods=true">新建</el-button>
                     <el-button icon="el-icon-view" type="primary" size="mini" @click="Settings=true">显示设置</el-button>
                     <el-button size="mini" type="primary"  @click="printContent">打印</el-button>
-                    <el-button size="mini" type="danger"  @click="delgoodsfun">移入回收站</el-button>
+                    <el-button size="mini" type="danger" :disabled="delStatusButGoods"  @click="delgoodsfun">移入回收站</el-button>
                     <el-button size="mini" type="info"  @click="goodsrecycleopen">回收站</el-button>
                 </div>
 
@@ -211,6 +211,7 @@
                 >
                     <template slot-scope="scope">
                         <el-button type="text" @click="upgoodspanel(scope.row)">修改</el-button>
+                        <el-button type="text" @click="delGoods(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -1047,6 +1048,7 @@
                 recyctotalRecord: 0,//回收站总条目数
                 recycpageSize: 0,//回收站单页个数
                 Settings: false,//显示设置面板
+                delStatusButGoods:true,//删除按钮
                 /**
                  * 显示字段设置
                  * **/
@@ -1137,6 +1139,11 @@
                 val.forEach(item => {
                     this.goodsids.push(item.id)
                 })
+                if (val.length==0){
+                    this.delStatusButGoods=true
+                } else {
+                    this.delStatusButGoods=false
+                }
                 console.log(this.goodsids)
             },
             delgoodsfun() {
@@ -1190,7 +1197,12 @@
                 this.upgoodsForm = data
 
             },
-
+            delGoods(val){
+              //删除单条商品信息
+                this.goodsids.length=0
+                this.goodsids.push(val.id)
+                this.delgoodsfun()
+            },
             upsubmitForm(upgoodsForm) {
                 //修改商品信息
                 this.$refs[upgoodsForm].validate((valid) => {

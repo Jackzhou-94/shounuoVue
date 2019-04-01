@@ -17,10 +17,10 @@
             <div class="menuBox">
                 <div style="display: flex;justify-content: space-between">
                     <div>
-                        <el-button size="mini" class="el-icon-plus" @click="addSupplier=true">新建</el-button>
-                        <el-button size="mini" class="el-icon-delete" @click="delSupplier">删除</el-button>
-                        <el-button size="mini" class="el-icon-delete">回收站</el-button>
-                        <el-button icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
+                        <el-button type="primary" size="mini" class="el-icon-plus" @click="addSupplier=true">新建</el-button>
+                        <el-button type="primary" size="mini" class="el-icon-delete">回收站</el-button>
+                        <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
+                        <el-button type="danger"  size="mini" class="el-icon-delete" :disabled="delStatusButGoods"  @click="delSupplier">批量删除</el-button>
                     </div>
 
 
@@ -246,8 +246,8 @@
                         </el-col>
                     </el-row>
                     <el-form-item>
-                        <el-button size="mini" @click="addSupplier=false">取消</el-button>
                         <el-button size="mini" type="primary" @click="addsubmitForm('addSupplierList')">添加</el-button>
+                        <el-button size="mini" @click="addSupplier=false">取消</el-button>
                     </el-form-item>
 
                 </el-form>
@@ -439,8 +439,8 @@
                         </el-col>
                     </el-row>
                     <el-form-item>
-                        <el-button size="mini" @click="upSupplier=false">取消</el-button>
                         <el-button size="mini" type="primary" @click="upsubmitForm('upSupplierList')">修改</el-button>
+                        <el-button size="mini" @click="upSupplier=false">取消</el-button>
                     </el-form-item>
 
                 </el-form>
@@ -822,11 +822,13 @@
                         label="操作"
                         align="center"
                         fixed="right"
+                        width="120"
                 >
                     <template
                             slot-scope="scope"
                     >
                         <el-button type="text" size="small" @click="upgoodspanel(scope.row)">修改</el-button>
+                        <el-button type="text" size="small" @click="delgoodspanel(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -998,6 +1000,7 @@
                 totalRecord: 0,//总条数
                 classType: '全部',//供应商分类查询
                 Settings: false,//显示设置
+                delStatusButGoods:true,//删除按钮
                 supplierids: [],//供应商ID
                 queryspare01: '',//查询其他字段
                 queryname: '',//查询名称
@@ -1015,6 +1018,11 @@
                 val.forEach(item => {
                     this.supplierids.push(item.id)
                 })
+                if (val.length==0){
+                    this.delStatusButGoods=true
+                } else {
+                    this.delStatusButGoods=false
+                }
             },
             addsubmitForm(formName) {
                 //新建供应商
@@ -1075,6 +1083,12 @@
                 this.upSupplier = true
                 this.upSupplierList = data
 
+            },
+            delgoodspanel(val){
+              //单条删除供应商信息
+                this.supplierids.length=0
+                this.supplierids.push(val.id)
+                this.delSupplier()
             },
             delSupplier() {
                 //删除供应商信息
