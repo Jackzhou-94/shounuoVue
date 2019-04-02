@@ -63,97 +63,101 @@
 
             <!--添加-->
             <el-dialog title="添加供应商"  :visible.sync="addSupplier" width="70%"  :show-close="false">
-                <el-form :inline="true" :model="addSupplierList" :rules="addSupplierRuee" ref="addSupplierList">
+                <el-form label-width="100px" label-position="right"  :model="addSupplierList" :rules="addSupplierRuee" ref="addSupplierList">
                     <el-row>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="单位名称" prop="unitName">
                                 <el-input size="mini" v-model="addSupplierList.unitName"></el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="单位编码" prop="unitCode">
                                 <el-input size="mini" v-model="addSupplierList.unitCode"></el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="主联系人">
                                 <el-input size="mini" v-model="addSupplierList.mainContact"></el-input>
                             </el-form-item>
                         </el-col>
-                    </el-row>
-
-                    <el-row>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="类别代码">
                                 <el-input size="mini" v-model="addSupplierList.classCode"></el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
+                    </el-row>
+
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item label="经营范围">
+                                <el-input size="mini" v-model="addSupplierList.businessScope"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
                             <el-form-item label="类别名称">
                                 <el-input size="mini" v-model="addSupplierList.className"></el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="手机号码">
                                 <el-input size="mini" v-model="addSupplierList.phoneNumber"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item label="所属地区">
+                                <el-input size="mini" v-model="addSupplierList.region"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
 
                     <el-row>
-                        <el-col :span="8">
-                            <el-form-item label="所属地区">
-                                <el-input size="mini" v-model="addSupplierList.region"></el-input>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
+
+                        <el-col :span="6">
                             <el-form-item label="银行账号">
                                 <el-input size="mini" v-model="addSupplierList.bankAccount"></el-input>
                             </el-form-item>
                         </el-col>
 
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="法人代表">
                                 <el-input size="mini" v-model="addSupplierList.corporateRepresentative"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item label="传真">
+                                <el-input size="mini" v-model="addSupplierList.fax"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item label="邮箱">
+                                <el-input size="mini" v-model="addSupplierList.mailbox"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
 
 
-                    <el-row>
-                        <el-col :span="8">
-                            <el-form-item label="传真">
-                                <el-input size="mini" v-model="addSupplierList.fax"></el-input>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
 
-                            <el-form-item label="邮箱">
-                                <el-input size="mini" v-model="addSupplierList.mailbox"></el-input>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
+
+
+                    <el-row>
+                        <el-col :span="6">
                             <el-form-item label="全称">
                                 <el-input size="mini" v-model="addSupplierList.fullName"></el-input>
                             </el-form-item>
 
                         </el-col>
-                    </el-row>
-
-
-                    <el-row>
-                        <el-col :span="8">
+                        <el-col :span="6">
 
                             <el-form-item label="税号">
                                 <el-input size="mini" v-model="addSupplierList.tax"></el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="银行">
                                 <el-input size="mini" v-model="addSupplierList.bank"></el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="地址">
                                 <el-input size="mini" v-model="addSupplierList.address"></el-input>
                             </el-form-item>
@@ -163,83 +167,78 @@
 
                     <el-row>
 
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="邮编">
                                 <el-input size="mini" v-model="addSupplierList.zipCode"></el-input>
                             </el-form-item>
                         </el-col>
 
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="网址">
                                 <el-input size="mini" v-model="addSupplierList.website"></el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="生日">
                                 <el-input size="mini" v-model="addSupplierList.birthday"></el-input>
                             </el-form-item>
                         </el-col>
-                    </el-row>
-
-
-                    <el-row>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="开票信息3">
                                 <el-input size="mini" v-model="addSupplierList.invoice02"></el-input>
                             </el-form-item>
 
                         </el-col>
-                        <el-col :span="8">
+                    </el-row>
+
+
+
+
+
+                    <el-row>
+                        <el-col :span="6">
                             <el-form-item label="开票地址">
                                 <el-input size="mini" v-model="addSupplierList.billAddress"></el-input>
                             </el-form-item>
                         </el-col>
 
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="备注信息">
                                 <el-input size="mini" v-model="addSupplierList.remark"></el-input>
                             </el-form-item>
                         </el-col>
-                    </el-row>
-
-
-                    <el-row>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="信用额度">
                                 <el-input size="mini" v-model="addSupplierList.lineCredit"></el-input>
                             </el-form-item>
                         </el-col>
 
 
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="开票信息2">
                                 <el-input size="mini" v-model="addSupplierList.invoice01"></el-input>
                             </el-form-item>
                         </el-col>
 
-                        <el-col :span="8">
+
+                    </el-row>
+
+
+                    <el-row>
+                        <el-col :span="6">
 
                             <el-form-item label="业务员">
                                 <el-input size="mini" v-model="addSupplierList.salesman"></el-input>
                             </el-form-item>
                         </el-col>
-                    </el-row>
-
-
-                    <el-row>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="公司名称">
                                 <el-input size="mini" v-model="addSupplierList.company"></el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
 
-                            <el-form-item label="经营范围">
-                                <el-input size="mini" v-model="addSupplierList.businessScope"></el-input>
-                            </el-form-item>
-                        </el-col>
 
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="下次业务提示">
                                 <el-input size="mini" v-model="addSupplierList.businessTips"></el-input>
                             </el-form-item>
@@ -255,196 +254,373 @@
             </el-dialog>
 
             <!--修改-->
-            <el-dialog  :show-close="false" title="修改供应商" :visible.sync="upSupplier" width="70%">
-                <el-form :inline="true" :model="upSupplierList" :rules="upSupplierRuee" ref="upSupplierList">
+            <el-dialog  :show-close="false" title="修改供应商"  :visible.sync="upSupplier" width="70%">
+                <el-form  label-width="100px" label-position="right" :model="upSupplierList" :rules="upSupplierRuee" ref="upSupplierList">
                     <el-row>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="单位名称" prop="unitName">
                                 <el-input size="mini" v-model="upSupplierList.unitName"></el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="单位编码" prop="unitCode">
                                 <el-input size="mini" v-model="upSupplierList.unitCode"></el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="主联系人">
                                 <el-input size="mini" v-model="upSupplierList.mainContact"></el-input>
                             </el-form-item>
                         </el-col>
-                    </el-row>
-
-                    <el-row>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="类别代码">
                                 <el-input size="mini" v-model="upSupplierList.classCode"></el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
+                    </el-row>
+
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item label="经营范围">
+                                <el-input size="mini" v-model="upSupplierList.businessScope"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
                             <el-form-item label="类别名称">
                                 <el-input size="mini" v-model="upSupplierList.className"></el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="手机号码">
                                 <el-input size="mini" v-model="upSupplierList.phoneNumber"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item label="所属地区">
+                                <el-input size="mini" v-model="upSupplierList.region"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
 
                     <el-row>
-                        <el-col :span="8">
-                            <el-form-item label="所属地区">
-                                <el-input size="mini" v-model="upSupplierList.region"></el-input>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
+
+                        <el-col :span="6">
                             <el-form-item label="银行账号">
                                 <el-input size="mini" v-model="upSupplierList.bankAccount"></el-input>
                             </el-form-item>
                         </el-col>
 
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="法人代表">
                                 <el-input size="mini" v-model="upSupplierList.corporateRepresentative"></el-input>
                             </el-form-item>
                         </el-col>
-                    </el-row>
-
-
-                    <el-row>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="传真">
                                 <el-input size="mini" v-model="upSupplierList.fax"></el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
-
+                        <el-col :span="6">
                             <el-form-item label="邮箱">
                                 <el-input size="mini" v-model="upSupplierList.mailbox"></el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
+                    </el-row>
+
+                    <el-row>
+                        <el-col :span="6">
                             <el-form-item label="全称">
                                 <el-input size="mini" v-model="upSupplierList.fullName"></el-input>
                             </el-form-item>
 
                         </el-col>
-                    </el-row>
-
-
-                    <el-row>
-                        <el-col :span="8">
+                        <el-col :span="6">
 
                             <el-form-item label="税号">
                                 <el-input size="mini" v-model="upSupplierList.tax"></el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="银行">
                                 <el-input size="mini" v-model="upSupplierList.bank"></el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="地址">
                                 <el-input size="mini" v-model="upSupplierList.address"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
 
-
                     <el-row>
 
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="邮编">
                                 <el-input size="mini" v-model="upSupplierList.zipCode"></el-input>
                             </el-form-item>
                         </el-col>
 
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="网址">
                                 <el-input size="mini" v-model="upSupplierList.website"></el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="生日">
                                 <el-input size="mini" v-model="upSupplierList.birthday"></el-input>
                             </el-form-item>
                         </el-col>
-                    </el-row>
-
-
-                    <el-row>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="开票信息3">
                                 <el-input size="mini" v-model="upSupplierList.invoice02"></el-input>
                             </el-form-item>
 
                         </el-col>
-                        <el-col :span="8">
+                    </el-row>
+
+
+
+                    <el-row>
+                        <el-col :span="6">
                             <el-form-item label="开票地址">
                                 <el-input size="mini" v-model="upSupplierList.billAddress"></el-input>
                             </el-form-item>
                         </el-col>
 
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="备注信息">
                                 <el-input size="mini" v-model="upSupplierList.remark"></el-input>
                             </el-form-item>
                         </el-col>
-                    </el-row>
-
-
-                    <el-row>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="信用额度">
                                 <el-input size="mini" v-model="upSupplierList.lineCredit"></el-input>
                             </el-form-item>
                         </el-col>
 
 
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="开票信息2">
                                 <el-input size="mini" v-model="upSupplierList.invoice01"></el-input>
                             </el-form-item>
                         </el-col>
 
-                        <el-col :span="8">
+
+                    </el-row>
+
+
+                    <el-row>
+                        <el-col :span="6">
 
                             <el-form-item label="业务员">
                                 <el-input size="mini" v-model="upSupplierList.salesman"></el-input>
                             </el-form-item>
                         </el-col>
-                    </el-row>
-
-
-                    <el-row>
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="公司名称">
                                 <el-input size="mini" v-model="upSupplierList.company"></el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
 
-                            <el-form-item label="经营范围">
-                                <el-input size="mini" v-model="upSupplierList.businessScope"></el-input>
-                            </el-form-item>
-                        </el-col>
 
-                        <el-col :span="8">
+                        <el-col :span="6">
                             <el-form-item label="下次业务提示">
                                 <el-input size="mini" v-model="upSupplierList.businessTips"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
-                    <el-form-item>
-                        <el-button size="mini" type="primary" @click="upsubmitForm('upSupplierList')">修改</el-button>
-                        <el-button size="mini" @click="upSupplier=false">取消</el-button>
-                    </el-form-item>
 
                 </el-form>
+                <!--<el-form :inline="true" :model="upSupplierList" :rules="upSupplierRuee" ref="upSupplierList">-->
+                    <!--<el-row>-->
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="单位名称" prop="unitName">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.unitName"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="单位编码" prop="unitCode">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.unitCode"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="主联系人">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.mainContact"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+                    <!--</el-row>-->
 
+                    <!--<el-row>-->
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="类别代码">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.classCode"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="类别名称">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.className"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="手机号码">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.phoneNumber"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+                    <!--</el-row>-->
+
+                    <!--<el-row>-->
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="所属地区">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.region"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="银行账号">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.bankAccount"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="法人代表">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.corporateRepresentative"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+                    <!--</el-row>-->
+
+
+                    <!--<el-row>-->
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="传真">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.fax"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+                        <!--<el-col :span="8">-->
+
+                            <!--<el-form-item label="邮箱">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.mailbox"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="全称">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.fullName"></el-input>-->
+                            <!--</el-form-item>-->
+
+                        <!--</el-col>-->
+                    <!--</el-row>-->
+
+
+                    <!--<el-row>-->
+                        <!--<el-col :span="8">-->
+
+                            <!--<el-form-item label="税号">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.tax"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="银行">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.bank"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="地址">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.address"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+                    <!--</el-row>-->
+
+
+                    <!--<el-row>-->
+
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="邮编">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.zipCode"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="网址">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.website"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="生日">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.birthday"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+                    <!--</el-row>-->
+
+
+                    <!--<el-row>-->
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="开票信息3">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.invoice02"></el-input>-->
+                            <!--</el-form-item>-->
+
+                        <!--</el-col>-->
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="开票地址">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.billAddress"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="备注信息">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.remark"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+                    <!--</el-row>-->
+
+
+                    <!--<el-row>-->
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="信用额度">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.lineCredit"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+
+
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="开票信息2">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.invoice01"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+
+                        <!--<el-col :span="8">-->
+
+                            <!--<el-form-item label="业务员">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.salesman"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+                    <!--</el-row>-->
+
+
+                    <!--<el-row>-->
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="公司名称">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.company"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+                        <!--<el-col :span="8">-->
+
+                            <!--<el-form-item label="经营范围">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.businessScope"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+
+                        <!--<el-col :span="8">-->
+                            <!--<el-form-item label="下次业务提示">-->
+                                <!--<el-input size="mini" v-model="upSupplierList.businessTips"></el-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-col>-->
+                    <!--</el-row>-->
+                    <!--<el-form-item>-->
+                        <!--<el-button size="mini" type="primary" @click="upsubmitForm('upSupplierList')">修改</el-button>-->
+                        <!--<el-button size="mini" @click="upSupplier=false">取消</el-button>-->
+                    <!--</el-form-item>-->
+
+                <!--</el-form>-->
+                <el-button size="mini" type="primary" @click="upsubmitForm('upSupplierList')">修改</el-button>
+                <el-button size="mini" @click="upSupplier=false">取消</el-button>
             </el-dialog>
 
 

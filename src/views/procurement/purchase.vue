@@ -223,13 +223,14 @@
                                 title="新建采购单(原材料)"
                                 :visible.sync="Newpurchaseorder_mater"
                                 :show-close="false"
-                                width="80%">
+                                width="85%">
                             <el-form :model="addProcurementMater" ref="addProcurementMater"
-                                     :rules="addProcurementsMater" inline
-                                     label-width="150">
+                                     :rules="addProcurementsMater" label-width="100px" label-position="right"
+                                     >
 
 
-                                <div class="formitem">
+                                <el-row>
+                                    <el-col :span="6">
                                     <el-form-item
                                             label="供应商"
                                             prop="supplier"
@@ -246,8 +247,8 @@
                                             </el-option>
                                         </el-select>
                                     </el-form-item>
-
-
+                                    </el-col>
+                                    <el-col :span="6">
                                     <el-form-item
                                             label="工厂"
                                             prop="factoryName"
@@ -264,12 +265,9 @@
                                             </el-option>
                                         </el-select>
                                     </el-form-item>
+                                    </el-col>
 
-
-                                    <el-form-item label="运费" prop="freight">
-                                        <el-input size="mini" v-model="addProcurementMater.freight"></el-input>
-                                    </el-form-item>
-
+                                    <el-col :span="6">
                                     <el-form-item label="发票" prop="invoice">
                                         <el-select @change="materchoose" size="mini"
                                                    v-model="addProcurementMater.invoice"
@@ -282,35 +280,32 @@
                                             </el-option>
                                         </el-select>
                                     </el-form-item>
+                                    </el-col>
 
-                                    <el-form-item label="货运方式" prop="freightTransportation">
-                                        <el-input size="mini" placeholder="货运方式"
-                                                  v-model="addProcurementMater.freightTransportation"></el-input>
-                                    </el-form-item>
+                                    <el-col :span="6">
+                                        <el-form-item label="货运方式" prop="freightTransportation">
+                                            <el-input size="mini" placeholder="货运方式"
+                                                      v-model="addProcurementMater.freightTransportation"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="6">
+                                        <el-form-item label="运费" prop="freight">
+                                            <el-input size="mini" v-model="addProcurementMater.freight"></el-input>
+                                        </el-form-item>
+                                    </el-col>
 
+
+                                    <el-col :span="6">
                                     <el-form-item label="备注">
                                         <el-input size="mini" placeholder="备注"
                                                   v-model="addProcurementMater.remark"></el-input>
                                     </el-form-item>
+                                    </el-col>
+                                </el-row>
 
 
-                                </div>
-
-
-                                <!--<el-col :span="6">-->
-                                <!--<el-form-item label="预计入库" prop="distanceDate">-->
-                                <!--&lt;!&ndash;<el-input size="mini" placeholder="合同条款"&ndash;&gt;-->
-                                <!--&lt;!&ndash;v-model="addProcurement.contract"></el-input>&ndash;&gt;-->
-                                <!--<el-date-picker-->
-                                <!--style="width: 180px"-->
-                                <!--v-model="distanceDate"-->
-                                <!--size="mini"-->
-                                <!--type="datetime"-->
-                                <!--value-format="yyyy-MM-dd HH:mm:ss"-->
-                                <!--placeholder="预计入库时间">-->
-                                <!--</el-date-picker>-->
-                                <!--</el-form-item>-->
-                                <!--</el-col>-->
 
 
                             </el-form>
@@ -844,8 +839,9 @@
                                 :show-close="false"
                                 width="80%">
                             <el-form :model="upaddProcurementMater" ref="upaddProcurementMater"
-                                     :rules="upaddProcurementsMater" inline
-                                     label-width="150">
+                                     :rules="upaddProcurementsMater"
+                                     label-position="right"
+                                     label-width="100px">
                                 <el-row>
                                     <el-col :span="6">
                                         <el-form-item
@@ -2234,8 +2230,8 @@
                                 :visible.sync="Newpurchaseorder"
                                 :show-close="false"
                                 width="80%">
-                            <el-form :model="addProcurement" ref="addProcurement" :rules="addProcurements" inline
-                                     label-width="150">
+                            <el-form :model="addProcurement" ref="addProcurement" :rules="addProcurements" label-position="right"
+                                     label-width="100px">
                                 <el-row>
                                     <el-col :span="6">
                                         <el-form-item
@@ -3006,8 +3002,8 @@
                                 :show-close="false"
                                 width="80%">
 
-                            <el-form :model="upaddProcurement" :rules="upaddProcurements" label-width="150"
-                                     ref="upaddProcurement" inline>
+                            <el-form :model="upaddProcurement" :rules="upaddProcurements" label-width="100px"
+                                     ref="upaddProcurement" label-position="right">
                                 <el-row>
                                     <el-col :span="6">
                                         <el-form-item
@@ -5846,10 +5842,5 @@
         padding: 0;
     }
 
-    .formitem {
-        display: flex;
-        /*justify-content: space-between;*/
-        flex-wrap: wrap;
-    
-    }
+
 </style>

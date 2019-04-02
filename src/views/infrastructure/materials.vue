@@ -18,21 +18,26 @@
                 <div style="display: flex;justify-content: space-around">
                     <el-button type="primary" size="mini" class="el-icon-plus" @click="dialogTableVisible=true">新建
                     </el-button>
-                    <el-button  type="primary" size="mini" class="el-icon-circle-check-outline" @click="Delmateropen">启用</el-button>
-                    <el-button  type="primary" size="mini" class="el-icon-circle-close-outline" @click="DelmaterOUT">禁用</el-button>
-                    <el-button  type="primary" size="mini" class="el-icon-download" @click="exportExcel">导出</el-button>
-                    <el-button  type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
-                    <el-button  type="danger" size="mini" class="el-icon-delete" :disabled="delStatusButGoods" @click="delmaterials">批量删除</el-button>
-                    <el-button  type="info" size="mini" class="el-icon-delete" @click="recyclepanel">回收站</el-button>
+                    <el-button type="primary" size="mini" class="el-icon-circle-check-outline" @click="Delmateropen">
+                        启用
+                    </el-button>
+                    <el-button type="primary" size="mini" class="el-icon-circle-close-outline" @click="DelmaterOUT">禁用
+                    </el-button>
+                    <el-button type="primary" size="mini" class="el-icon-download" @click="exportExcel">导出</el-button>
+                    <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
+                    <el-button type="danger" size="mini" class="el-icon-delete" :disabled="delStatusButGoods"
+                               @click="delmaterials">批量删除
+                    </el-button>
+                    <el-button type="info" size="mini" class="el-icon-delete" @click="recyclepanel">回收站</el-button>
                     <!--<el-upload-->
-                            <!--class="upload-demo"-->
-                            <!--action="http://192.168.1.199:8099/supplychain/importExcel/readExcel"-->
-                            <!--:multiple="false"-->
-                            <!--:on-success="upfile"-->
-                            <!--name="file"-->
-                            <!--accept=".xlsx,.xls"-->
+                    <!--class="upload-demo"-->
+                    <!--action="http://192.168.1.199:8099/supplychain/importExcel/readExcel"-->
+                    <!--:multiple="false"-->
+                    <!--:on-success="upfile"-->
+                    <!--name="file"-->
+                    <!--accept=".xlsx,.xls"-->
                     <!--&gt;-->
-                        <!--<el-button size="small" type="primary">导入</el-button>-->
+                    <!--<el-button size="small" type="primary">导入</el-button>-->
                     <!--</el-upload>-->
 
 
@@ -41,11 +46,11 @@
                 <div>
 
                     <el-row>
-                       <el-col :span="5">
-                           <el-input placeholder="物料编号"   size="mini"  v-model="materialsNum"></el-input>
-                       </el-col>
                         <el-col :span="5">
-                            <el-input placeholder="物料名称"  size="mini"  v-model="materialsName"></el-input>
+                            <el-input placeholder="物料编号" size="mini" v-model="materialsNum"></el-input>
+                        </el-col>
+                        <el-col :span="5">
+                            <el-input placeholder="物料名称" size="mini" v-model="materialsName"></el-input>
                         </el-col>
 
                         <el-col :span="4">
@@ -64,10 +69,10 @@
                             <el-button type="primary" icon="el-icon-delete" size="mini" @click="reset">重置</el-button>
                         </el-col>
                         <el-col :span="2">
-                            <el-button type="primary" icon="el-icon-search" size="mini" @click="queryMaterials">查询</el-button>
+                            <el-button type="primary" icon="el-icon-search" size="mini" @click="queryMaterials">查询
+                            </el-button>
                         </el-col>
                     </el-row>
-
 
 
                     <!--显示设置-->
@@ -288,23 +293,23 @@
             </el-row>
         </div>
         <!--添加-->
-        <el-dialog title="新建物料" :visible.sync="dialogTableVisible"  :show-close="false">
-            <el-form :model="addmaterial" ref="addmaterial" :inline="true" :rules="rules" label-width="120px">
+        <el-dialog title="新建物料" :visible.sync="dialogTableVisible" width="50%" :show-close="false">
+            <el-form style="text-align: left" :model="addmaterial" ref="addmaterial" :rules="rules"
+                     label-width="100px" label-position="right">
+
                 <el-row>
-                    <el-col :span="12">
+
+                    <el-col :span="8">
                         <el-form-item label="物料名称" prop="name">
                             <el-input size="mini" v-model="addmaterial.name"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="物料编码" prop="materialCode">
                             <el-input size="mini" @blur="itemCodeCopy" v-model="addmaterial.materialCode"></el-input>
                         </el-form-item>
                     </el-col>
-                </el-row>
-
-                <el-row>
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="物料分类" prop="materials">
                             <el-cascader
                                     size="mini"
@@ -314,22 +319,21 @@
                             </el-cascader>
                         </el-form-item>
                     </el-col>
+                </el-row>
 
-                    <el-col :span="12">
+                <el-row>
+                    <el-col :span="8">
                         <el-form-item label="默认损耗" prop="defaultLoss">
                             <el-input size="mini" type="number" v-model="addmaterial.defaultLoss"
                                       placeholder="%"></el-input>
                         </el-form-item>
                     </el-col>
-                </el-row>
-
-                <el-row>
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="品牌" prop="brand">
                             <el-input size="mini" v-model="addmaterial.brand"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="厂商">
                             <el-select size="mini" v-model="value" placeholder="请选择" @change="selectChange">
                                 <el-option
@@ -344,65 +348,55 @@
                 </el-row>
 
                 <el-row>
-                    <el-col :span="12">
-                        <el-form-item label="基本计量单位" prop="unit">
+                    <el-col :span="8">
+                        <el-form-item label="计量单位" prop="unit">
                             <el-input size="mini" v-model="addmaterial.unit" placeholder="双/盒"></el-input>
                         </el-form-item>
                     </el-col>
-
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="成份" prop="ingredients">
                             <el-input size="mini" v-model="addmaterial.ingredients"></el-input>
                         </el-form-item>
                     </el-col>
-                </el-row>
-
-                <el-row>
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="成本价" prop="cost">
                             <el-input size="mini" type="number" v-model="addmaterial.costPrice"
                                       placeholder="元"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
                         <el-form-item label="备注" prop="note">
                             <el-input size="mini" v-model="addmaterial.note"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
 
-                <el-row>
-                    <el-col>
-                        <el-form-item>
-                            <el-button type="primary" size="mini" @click="submitForm('addmaterial')">立即创建</el-button>
-                            <el-button size="mini" @click="dialogTableVisible=false">取消</el-button>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-
-
             </el-form>
+
+            <el-button type="primary" size="mini" @click="submitForm('addmaterial')">立即创建</el-button>
+            <el-button size="mini" @click="dialogTableVisible=false">取消</el-button>
 
         </el-dialog>
         <!--修改-->
-        <el-dialog title="修改物料信息" :visible.sync="UpdatableVisible"  :show-close="false">
-            <el-form :model="updaData" ref="updaData" :inline="true" :rules="ruless" label-width="120px">
+        <el-dialog title="修改物料信息" :visible.sync="UpdatableVisible" width="50%" :show-close="false">
+            <el-form :model="updaData" ref="updaData" :rules="ruless"
+                     label-width="100px" label-position="right">
                 <el-row>
-                    <el-col :span="12">
+
+                    <el-col :span="8">
                         <el-form-item label="物料名称" prop="name">
                             <el-input size="mini" v-model="updaData.name"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="物料编码" prop="materialCode">
-                            <el-input size="mini" @blur="itemCodeCopy" :disabled="true" v-model="updaData.materialCode"></el-input>
+                            <el-input size="mini" @blur="itemCodeCopy" :disabled="true"
+                                      v-model="updaData.materialCode"></el-input>
                         </el-form-item>
                     </el-col>
-                </el-row>
-
-
-                <el-row>
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="物料分类" prop="materials">
                             <el-cascader
                                     size="mini"
@@ -412,23 +406,21 @@
                             </el-cascader>
                         </el-form-item>
                     </el-col>
+                </el-row>
 
-                    <el-col :span="12">
+                <el-row>
+                    <el-col :span="8">
                         <el-form-item label="默认损耗" prop="defaultLoss">
                             <el-input size="mini" type="number" v-model="updaData.defaultLoss"
                                       placeholder="%"></el-input>
                         </el-form-item>
                     </el-col>
-                </el-row>
-
-                <el-row>
-
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="品牌" prop="brand">
                             <el-input size="mini" v-model="updaData.brand"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="厂商">
                             <el-select size="mini" v-model="value" placeholder="请选择" @change="upselectChange">
                                 <el-option
@@ -440,46 +432,41 @@
                             </el-select>
                         </el-form-item>
                     </el-col>
-
                 </el-row>
 
                 <el-row>
-                    <el-col :span="12">
-                        <el-form-item label="基本计量单位" prop="unit">
+
+                    <el-col :span="8">
+                        <el-form-item label="计量单位" prop="unit">
                             <el-input size="mini" v-model="updaData.unit" placeholder="双/盒"></el-input>
                         </el-form-item>
                     </el-col>
 
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="成份" prop="ingredients">
                             <el-input size="mini" v-model="updaData.ingredients"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="8">
+                        <el-form-item label="成本价" prop="cost">
+                            <el-input size="mini" type="number" v-model="updaData.costPrice"
+                                      placeholder="元"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
 
                 <el-row>
-                    <el-col :span="12">
-                        <el-form-item label="成本价" prop="cost">
-                            <el-input size="mini" type="number" v-model="updaData.costPrice"
-                                      placeholder="元"></el-input>
-                        </el-form-item>
-
-                    </el-col>
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="备注" prop="note">
                             <el-input size="mini" v-model="updaData.note"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-row>
-                    <el-col>
-                        <el-form-item>
-                            <el-button type="primary" size="mini" @click="upsubmitForm('updaData')">立即修改</el-button>
-                            <el-button size="mini" @click="UpdatableVisible=false">取消</el-button>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
+
             </el-form>
+            <el-button type="primary" size="mini" @click="upsubmitForm('updaData')">立即修改</el-button>
+            <el-button size="mini" @click="UpdatableVisible=false">取消</el-button>
         </el-dialog>
         <!--回收站-->
         <el-dialog
@@ -651,14 +638,14 @@
                     ingredients: '',//成份
                     manufacturer: '',//厂商
                     note: '',//备注
-                    itemCode:'',
+                    itemCode: '',
                     detection: '',//检测
-                    brand:'',//品牌
+                    brand: '',//品牌
                 },
                 updaData: {
                     //修改
                     name: '',
-                    itemCode:'',
+                    itemCode: '',
                     materialCode: '',//物料编码
                     type: '',//物料选择
                     costPrice: '',//成本价
@@ -668,7 +655,7 @@
                     manufacturer: '',//厂商
                     note: '',//备注
                     detection: '',//检测
-                    brand:'',//品牌
+                    brand: '',//品牌
                 },
                 querymanufacturer: '',//搜索厂商
                 rules: {
@@ -688,8 +675,8 @@
                     unit: [
                         {required: true, message: '请输入基本计量单位', trigger: 'blur'}
                     ],
-                    brand:[{
-                        required:true, message: '请输入品牌', trigger: 'blur'
+                    brand: [{
+                        required: true, message: '请输入品牌', trigger: 'blur'
                     }]
                 },
                 ruless: {
@@ -709,8 +696,8 @@
                     unit: [
                         {required: true, message: '请输入基本计量单位', trigger: 'blur'}
                     ],
-                    brand:[{
-                        required:true, message: '请输入品牌', trigger: 'blur'
+                    brand: [{
+                        required: true, message: '请输入品牌', trigger: 'blur'
                     }]
                 },
                 conditions: true,//搜索条件
@@ -760,8 +747,8 @@
                 value: '',
                 values: '',
                 materialsNum: '',//物料编码
-                materialsName:'',//物料名称
-                VendorQueries:'',//厂商查询
+                materialsName: '',//物料名称
+                VendorQueries: '',//厂商查询
                 MaxHeight: 650,//默认表格数据最大高度
                 openIcon: 'fontFamily hhtx-zhankai',//默认为展开的按钮
                 dialogTableVisible: false,//添加面板
@@ -771,11 +758,11 @@
                 spare: '',//状态
                 materialsIDs: '',//原材料ID
 
-                delStatusButGoods:true,//删除按钮
+                delStatusButGoods: true,//删除按钮
                 //物料编号
                 materialCode: true,
-                createTime:true,//创建时间
-                updateTime:true,//修改时间
+                createTime: true,//创建时间
+                updateTime: true,//修改时间
                 //物料名称
                 name: true,
                 //成分规格
@@ -838,21 +825,21 @@
                 ],
                 Settings: false,//显示设置面板
                 delmaterID: [],//原材料启用停用
-                recycleName:'',//回收站搜索名称
-                recycleNum:'',//回收站搜索编号
+                recycleName: '',//回收站搜索名称
+                recycleNum: '',//回收站搜索编号
             }
         },
         methods: {
-            itemCodeCopy(){
-              //物料编码赋值
-                this.addmaterial.itemCode=this.addmaterial.materialCode
-                this.updaData.itemCode=this.updaData.materialCode
+            itemCodeCopy() {
+                //物料编码赋值
+                this.addmaterial.itemCode = this.addmaterial.materialCode
+                this.updaData.itemCode = this.updaData.materialCode
             },
-            supplierQuery(){
-              //供应商列表
-                this.$axios.get(this.$store.state.suppllierSelect).then(res=>{
-                   let data=res.data.data
-                    data.forEach(item=>{
+            supplierQuery() {
+                //供应商列表
+                this.$axios.get(this.$store.state.suppllierSelect).then(res => {
+                    let data = res.data.data
+                    data.forEach(item => {
                         this.options.push({value: item.unitCode, label: `${item.unitName}（${item.className}）`})
                         this.vendor.push({value: item.unitCode, label: `${item.unitName}（${item.className}）`})
                     })
@@ -903,403 +890,405 @@
                 }
                 return wbout;
 
-        },
+            },
 
 
-        upfile(file, fileList) {
-            /**
-             * 导入
-             * **/
-            console.log(file)
-            console.log(fileList)
-        },
-        recyclepanel() {
-            /**
-             * 回收站面板
-             * **/
-            this.recycle = true;
-            this.recyclingList();
-        },
-        recyclingSelectionChange(val) {
-            /**
-             * 回收站多选
-             * **/
-            this.recycleDataID.length = 0;
-            val.forEach(item => {
-                this.recycleDataID.push(item.id)
-            })
-        },
-        restoreDatasingle(data) {
-            /**
-             * 回收站单条恢复
-             * **/
-            this.recycleDataID.length = 0;
-            this.recycleDataID.push(data.id)
-            this.restoreData(this.recycleDataID)
-        },
-        BatchRecovery() {
-            /**
-             * 回收站批量恢复
-             * **/
-            this.restoreData(this.recycleDataID)
-        },
-        restoreData(ids) {
-            /**
-             * 恢复
-             * */
-            this.$axios.post(this.$store.state.updateByOpen, {
-                ids: ids
-            }).then(res => {
-                if (res.data.code == 200) {
-                    this.$message({
-                        message: '操作成功',
-                        type: 'success',
-                        onClose() {
-                            location.reload()
-                        }
-                    });
-                } else {
-                    this.$message.error('操作错误！');
-                }
-            })
-
-
-        },
-
-        recyclingList(size = 6, page = 1) {
-            /***
-             * 回收站数据列表查询
-             * **/
-            this.$axios.get(this.$store.state.selectRecycle, {
-                params: {pageSize: size, pageNum: page,name:this.recycleName,materialCode:this.recycleNum}
-            }).then(res => {
-                this.recycleData = res.data.list
-                this.recyctotalRecord = res.data.totalRecord
-                this.recycpageSize = res.data.pageSize
-
-            })
-        },
-        recycCurrentChange(val) {
-            /**
-             * 回收站分页
-             * */
-            this.recyclingList(6, val)
-        },
-
-        uppanel(data) {
-            /**
-             * 修改原材料想信息面板
-             * */
-            this.UpdatableVisible = true
-            this.updaData = data
-
-        },
-        //修改原材料信息
-        upsubmitForm(updaData) {
-            this.$refs[updaData].validate((valid) => {
-                if (valid) {
-                    let data = {
-                        id: this.updaData.id,//原材料ID
-                        name: this.updaData.name,
-                        materialCode: this.updaData.materialCode,//物料编码
-                        type: this.updaData.type,//物料选择
-                        costPrice: this.updaData.costPrice,//成本价
-                        defaultLoss: this.updaData.defaultLoss,//损耗
-                        unit: this.updaData.unit,//基本计量单位
-                        ingredients: this.updaData.ingredients,//成份
-                        manufacturer: this.updaData.manufacturer,//厂商
-                        note: this.updaData.note//备注
+            upfile(file, fileList) {
+                /**
+                 * 导入
+                 * **/
+                console.log(file)
+                console.log(fileList)
+            },
+            recyclepanel() {
+                /**
+                 * 回收站面板
+                 * **/
+                this.recycle = true;
+                this.recyclingList();
+            },
+            recyclingSelectionChange(val) {
+                /**
+                 * 回收站多选
+                 * **/
+                this.recycleDataID.length = 0;
+                val.forEach(item => {
+                    this.recycleDataID.push(item.id)
+                })
+            },
+            restoreDatasingle(data) {
+                /**
+                 * 回收站单条恢复
+                 * **/
+                this.recycleDataID.length = 0;
+                this.recycleDataID.push(data.id)
+                this.restoreData(this.recycleDataID)
+            },
+            BatchRecovery() {
+                /**
+                 * 回收站批量恢复
+                 * **/
+                this.restoreData(this.recycleDataID)
+            },
+            restoreData(ids) {
+                /**
+                 * 恢复
+                 * */
+                this.$axios.post(this.$store.state.updateByOpen, {
+                    ids: ids
+                }).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            onClose() {
+                                location.reload()
+                            }
+                        });
+                    } else {
+                        this.$message.error('操作错误！');
                     }
-                    this.$axios.post(this.$store.state.upmaterial, data).then(res => {
-                        if (res.data.code == 200) {
-                            this.$message({
-                                message: '修改成功',
-                                type: 'success'
-                            });
-                            this.UpdatableVisible = false
-                        } else {
-                            this.$message.error('修改失败');
-                        }
-                    })
+                })
 
-                } else {
-                    this.$message({
-                        message: '数据填写不完全',
-                        type: 'warning',
 
-                    })
-                    return false;
-                }
-            });
-        },
-        Delmateropen() {
-            /**
-             * 原材料启用
-             * */
-            this.$axios.post(this.$store.state.delmateropen, {ids: this.delmaterID}).then(res => {
-                if (res.data.code == 200) {
-                    this.$message({
-                        message: '操作成功',
-                        type: 'success',
-                        onClose() {
-                            location.reload()
-                        }
-                    });
-                } else {
-                    this.$message.error('操作错误！');
-                }
-            })
-        },
-        DelmaterOUT() {
-            /**
-             * 原材料停用
-             * */
-            this.$axios.post(this.$store.state.delmaterout, {ids: this.delmaterID}).then(res => {
-                if (res.data.code == 200) {
-                    this.$message({
-                        message: '操作成功',
-                        type: 'success',
-                        onClose() {
-                            location.reload()
-                        }
-                    });
-                } else {
-                    this.$message.error('操作错误！');
-                }
-            })
-        },
-        selectmenu(keys, a) {
-            console.log(keys)
-            console.log(a)
-            //  let data = a.checkedKeys
-            // console.log(data)
-            //  console.log(a)
-            //  a.checkedKeys[0]=false
-            // this.materialCode=false
-            //  console.log(this.materialCode)
+            },
 
-        },
-            delpanel(val){
-              //单条删除
-                this.delmaterID.length=0;
+            recyclingList(size = 6, page = 1) {
+                /***
+                 * 回收站数据列表查询
+                 * **/
+                this.$axios.get(this.$store.state.selectRecycle, {
+                    params: {pageSize: size, pageNum: page, name: this.recycleName, materialCode: this.recycleNum}
+                }).then(res => {
+                    this.recycleData = res.data.list
+                    this.recyctotalRecord = res.data.totalRecord
+                    this.recycpageSize = res.data.pageSize
+
+                })
+            },
+            recycCurrentChange(val) {
+                /**
+                 * 回收站分页
+                 * */
+                this.recyclingList(6, val)
+            },
+
+            uppanel(data) {
+                /**
+                 * 修改原材料想信息面板
+                 * */
+                this.UpdatableVisible = true
+                this.updaData = data
+
+            },
+            //修改原材料信息
+            upsubmitForm(updaData) {
+                this.$refs[updaData].validate((valid) => {
+                    if (valid) {
+                        let data = {
+                            id: this.updaData.id,//原材料ID
+                            name: this.updaData.name,
+                            materialCode: this.updaData.materialCode,//物料编码
+                            type: this.updaData.type,//物料选择
+                            costPrice: this.updaData.costPrice,//成本价
+                            defaultLoss: this.updaData.defaultLoss,//损耗
+                            unit: this.updaData.unit,//基本计量单位
+                            ingredients: this.updaData.ingredients,//成份
+                            manufacturer: this.updaData.manufacturer,//厂商
+                            note: this.updaData.note//备注
+                        }
+                        this.$axios.post(this.$store.state.upmaterial, data).then(res => {
+                            if (res.data.code == 200) {
+                                this.$message({
+                                    message: '修改成功',
+                                    type: 'success'
+                                });
+                                this.UpdatableVisible = false
+                            } else {
+                                this.$message.error('修改失败');
+                            }
+                        })
+
+                    } else {
+                        this.$message({
+                            message: '数据填写不完全',
+                            type: 'warning',
+
+                        })
+                        return false;
+                    }
+                });
+            },
+            Delmateropen() {
+                /**
+                 * 原材料启用
+                 * */
+                this.$axios.post(this.$store.state.delmateropen, {ids: this.delmaterID}).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            onClose() {
+                                location.reload()
+                            }
+                        });
+                    } else {
+                        this.$message.error('操作错误！');
+                    }
+                })
+            },
+            DelmaterOUT() {
+                /**
+                 * 原材料停用
+                 * */
+                this.$axios.post(this.$store.state.delmaterout, {ids: this.delmaterID}).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            onClose() {
+                                location.reload()
+                            }
+                        });
+                    } else {
+                        this.$message.error('操作错误！');
+                    }
+                })
+            },
+            selectmenu(keys, a) {
+                console.log(keys)
+                console.log(a)
+                //  let data = a.checkedKeys
+                // console.log(data)
+                //  console.log(a)
+                //  a.checkedKeys[0]=false
+                // this.materialCode=false
+                //  console.log(this.materialCode)
+
+            },
+            delpanel(val) {
+                //单条删除
+                this.delmaterID.length = 0;
                 this.delmaterID.push(val.id);
                 this.delmaterials();
             },
-        delmaterials() {
-            /**
-             * 根据ID移除原材料信息*/
-            this.$axios.post(this.$store.state.delmaterials, {ids: this.delmaterID}).then(res => {
-                if (res.data.code == 200) {
-                    this.$message({
-                        message: '操作成功，请至回收站查看',
-                        type: 'success',
-                        onClose() {
-                            location.reload()
-                        }
-                    });
-                } else {
-                    this.$message.error('操作错误！');
-                }
-            })
-        },
-        handleSelectionChange(val) {
-            /**
-             * 多选
-             * */
-            //将每项选择的id保存
-            this.delmaterID.length = 0
-            val.forEach(item => {
-                this.delmaterID.push(item.id)
-            })
-
-            this.materialsIDs = ''
-            val.forEach(item => {
-                this.materialsIDs += `${item.id},`
-            })
-            let a = this.materialsIDs.length - 1
-            this.materialsIDs = this.materialsIDs.substring(0, a)
-            if (val.length==0){
-                this.delStatusButGoods=true
-            } else {
-                this.delStatusButGoods=false
-            }
-        },
-        //数据未启用高亮颜色
-        tableRowClassName({row, rowIndex}) {
-            if (row.spare == '02') {
-                return 'success-row';
-            }
-            return ''
-        },
-        spareSelect(val) {
-            /**
-             * 状态查询
-             * */
-            this.spare = val
-        },
-        reset() {
-            /**
-             * 搜索重置
-             * */
-            this.materialsNum = ''
-            this.materialsName=''
-            this.QueryField = ''
-            this.VendorQueries=''
-        },
-        queryMaterials() {
-            /**
-             * 查询
-             * */
-
-            this.queryPage(1, 10, this.selsetType, this.materialsNum,this.materialsName)
-        },
-        handleCurrentChange(val) {
-            /**
-             * 分页
-             * */
-            this.queryPage(val, 10, this.selsetType)
-        },
-        selectChange(val) {
-            /**
-             * 新建原材料选择厂商
-             * */
-            this.addmaterial.manufacturer = val
-        },
-        upselectChange(val) {
-            /**
-             * 修改原材料选择厂商
-             * */
-            this.updaData.manufacturer = val
-            console.log(this.addmaterial)
-        },
-        //新建物料
-        submitForm(addmaterial) {
-
-            /**
-             * 创建原料
-             * */
-            this.$refs[addmaterial].validate((valid) => {
-                if (valid) {
-                    let data = {
-                        name: this.addmaterial.name,
-                        materialCode: this.addmaterial.materialCode,//物料编码
-                        itemCode: this.addmaterial.materialCode,//物料编码
-                        type: this.addmaterial.type,//物料选择
-                        costPrice: this.addmaterial.costPrice,//成本价
-                        defaultLoss: this.addmaterial.defaultLoss,//损耗
-                        unit: this.addmaterial.unit,//基本计量单位
-                        ingredients: this.addmaterial.ingredients,//成份
-                        manufacturer: this.addmaterial.manufacturer,//厂商
-                        note: this.addmaterial.note//备注
+            delmaterials() {
+                /**
+                 * 根据ID移除原材料信息*/
+                this.$axios.post(this.$store.state.delmaterials, {ids: this.delmaterID}).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功，请至回收站查看',
+                            type: 'success',
+                            onClose() {
+                                location.reload()
+                            }
+                        });
+                    } else {
+                        this.$message.error('操作错误！');
                     }
-                    this.$axios.post(this.$store.state.addmaterial, data).then(res => {
-                        if (res.data.code == 200) {
-                            this.$message({
-                                message: '添加成功',
-                                type: 'success'
-                            });
-                            this.dialogTableVisible = false
-                        } else {
-                            this.$message.error(res.data.msg);
-                        }
-                    })
+                })
+            },
+            handleSelectionChange(val) {
+                /**
+                 * 多选
+                 * */
+                //将每项选择的id保存
+                this.delmaterID.length = 0
+                val.forEach(item => {
+                    this.delmaterID.push(item.id)
+                })
 
+                this.materialsIDs = ''
+                val.forEach(item => {
+                    this.materialsIDs += `${item.id},`
+                })
+                let a = this.materialsIDs.length - 1
+                this.materialsIDs = this.materialsIDs.substring(0, a)
+                if (val.length == 0) {
+                    this.delStatusButGoods = true
                 } else {
-                    this.$message({
-                        message: '数据填写不完全',
-                        type: 'warning'
-                    })
-                    return false;
+                    this.delStatusButGoods = false
                 }
-            });
-        },
+            },
+            //数据未启用高亮颜色
+            tableRowClassName({row, rowIndex}) {
+                if (row.spare == '02') {
+                    return 'success-row';
+                }
+                return ''
+            },
+            spareSelect(val) {
+                /**
+                 * 状态查询
+                 * */
+                this.spare = val
+            },
+            reset() {
+                /**
+                 * 搜索重置
+                 * */
+                this.materialsNum = ''
+                this.materialsName = ''
+                this.QueryField = ''
+                this.VendorQueries = ''
+            },
+            queryMaterials() {
+                /**
+                 * 查询
+                 * */
 
-        //展开按钮
-        open() {
-            let tableHeight = this.MaxHeight
-            if (tableHeight == 600) {
-                this.openIcon = 'fontFamily hhtx-zhankai'
-                this.MaxHeight = 300
-            } else {
-                this.openIcon = 'fontFamily hhtx-shouqi'
-                this.MaxHeight = 600
+                this.queryPage(1, 10, this.selsetType, this.materialsNum, this.materialsName)
+            },
+            handleCurrentChange(val) {
+                /**
+                 * 分页
+                 * */
+                this.queryPage(val, 10, this.selsetType)
+            },
+            selectChange(val) {
+                /**
+                 * 新建原材料选择厂商
+                 * */
+                this.addmaterial.manufacturer = val
+            },
+            upselectChange(val) {
+                /**
+                 * 修改原材料选择厂商
+                 * */
+                this.updaData.manufacturer = val
+                console.log(this.addmaterial)
+            },
+            //新建物料
+            submitForm(addmaterial) {
+
+                /**
+                 * 创建原料
+                 * */
+                this.$refs[addmaterial].validate((valid) => {
+                    if (valid) {
+                        let data = {
+                            name: this.addmaterial.name,
+                            materialCode: this.addmaterial.materialCode,//物料编码
+                            itemCode: this.addmaterial.materialCode,//物料编码
+                            type: this.addmaterial.type,//物料选择
+                            costPrice: this.addmaterial.costPrice,//成本价
+                            defaultLoss: this.addmaterial.defaultLoss,//损耗
+                            unit: this.addmaterial.unit,//基本计量单位
+                            ingredients: this.addmaterial.ingredients,//成份
+                            manufacturer: this.addmaterial.manufacturer,//厂商
+                            note: this.addmaterial.note//备注
+                        }
+                        this.$axios.post(this.$store.state.addmaterial, data).then(res => {
+                            if (res.data.code == 200) {
+                                this.$message({
+                                    message: '添加成功',
+                                    type: 'success'
+                                });
+                                this.dialogTableVisible = false
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+                        })
+
+                    } else {
+                        this.$message({
+                            message: '数据填写不完全',
+                            type: 'warning'
+                        })
+                        return false;
+                    }
+                });
+            },
+
+            //展开按钮
+            open() {
+                let tableHeight = this.MaxHeight
+                if (tableHeight == 600) {
+                    this.openIcon = 'fontFamily hhtx-zhankai'
+                    this.MaxHeight = 300
+                } else {
+                    this.openIcon = 'fontFamily hhtx-shouqi'
+                    this.MaxHeight = 600
+                }
+            },
+            addclassification(value) {
+                /**
+                 * 新建辅料选择
+                 * */
+                this.addmaterial.type = ''
+                this.addmaterial.type += value[value.length - 1]
+                // value.forEach(item => {
+                //     this.addmaterial.type += `${item}/`
+                // })
+
+
+            },
+            upclassification(value) {
+                /**
+                 * 修改辅料选择
+                 * */
+                this.updaData.type = ''
+                this.updaData.type += value[value.length - 1]
+                // value.forEach(item => {
+                //     this.updaData.type += `${item} `
+                // })
+            },
+            // supplierChange(value) {
+            //     /**
+            //      * 供应商查询选择
+            //      * */
+            //     this.QueryField = value[0]
+            //     if (value[0] != 'materialCode' && value[0] != 'name') {
+            //         this.conditions = false
+            //         this.Queryconditions = value[value.length - 1] //厂商
+            //     } else {
+            //         this.conditions = true
+            //         this.Queryconditions = ''
+            //
+            //     }
+            // },
+            //树形空间选中后的回调
+            handleNodeClick(data) {
+                this.selsetType = data.label
+                this.queryPage(1, 10, this.selsetType)
+
+            },
+
+            /**
+             * 原材料分页查询
+             * **/
+            queryPage(Num = 1, Size = 10, type = '全部') {
+                let data = {
+                    pageNum: Num, pageSize: Size, type: type,
+                    materialCode: this.materialsNum, name: this.materialsName,
+                    manufacturer: this.VendorQueries
+                }
+
+                console.log(data)
+                this.$axios.get(this.$store.state.queryPage, {
+                    params: data
+                }).then(res => {
+                    console.log(res.data)
+                    this.materialsList = res.data.list
+                    this.totalPage = res.data.totalPage//总页数
+                    this.pageSize = res.data.pageSize//单页个数
+                    this.totalRecord = res.data.totalRecord//总条数
+                })
+
             }
-        },
-        addclassification(value) {
+        }
+        ,
+        created: function () {
             /**
-             * 新建辅料选择
+             * 在组件渲染之前，请求接口
              * */
-            this.addmaterial.type = ''
-            this.addmaterial.type += value[value.length - 1]
-            // value.forEach(item => {
-            //     this.addmaterial.type += `${item}/`
-            // })
+            this.queryPage()
 
-
-        },
-        upclassification(value) {
-            /**
-             * 修改辅料选择
-             * */
-            this.updaData.type = ''
-            this.updaData.type += value[value.length - 1]
-            // value.forEach(item => {
-            //     this.updaData.type += `${item} `
-            // })
-        },
-        // supplierChange(value) {
-        //     /**
-        //      * 供应商查询选择
-        //      * */
-        //     this.QueryField = value[0]
-        //     if (value[0] != 'materialCode' && value[0] != 'name') {
-        //         this.conditions = false
-        //         this.Queryconditions = value[value.length - 1] //厂商
-        //     } else {
-        //         this.conditions = true
-        //         this.Queryconditions = ''
-        //
-        //     }
-        // },
-        //树形空间选中后的回调
-        handleNodeClick(data) {
-            this.selsetType = data.label
-            this.queryPage(1, 10, this.selsetType)
-
-        },
-
-        /**
-         * 原材料分页查询
-         * **/
-        queryPage(Num = 1, Size = 10, type = '全部') {
-            let data = {pageNum: Num, pageSize: Size, type: type,
-                materialCode:this.materialsNum,name:this.materialsName,
-                manufacturer:this.VendorQueries}
-
-            console.log(data)
-            this.$axios.get(this.$store.state.queryPage, {
-                params: data
-            }).then(res => {
-                console.log(res.data)
-                this.materialsList = res.data.list
-                this.totalPage = res.data.totalPage//总页数
-                this.pageSize = res.data.pageSize//单页个数
-                this.totalRecord = res.data.totalRecord//总条数
-            })
+            //供应商列表信息
+            this.supplierQuery()
 
         }
-    }
-    ,
-    created: function () {
-        /**
-         * 在组件渲染之前，请求接口
-         * */
-        this.queryPage()
-
-        //供应商列表信息
-        this.supplierQuery()
-
-    }
 
     }
 </script>

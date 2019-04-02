@@ -164,23 +164,20 @@
                 width="60%"
         >
 
-            <el-form :model="addfactoryForm" ref="addfactoryForm" :rules="addfactorysrules" :inline="true">
+            <el-form :model="addfactoryForm" ref="addfactoryForm" :rules="addfactorysrules" label-width="100px" label-position="right">
 
                 <el-row>
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="编码" prop="code">
                             <el-input placeholder="厂商编码" size="mini" v-model="addfactoryForm.code"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item  label="名称" prop="name">
                             <el-input placeholder="厂商名称" size="mini" v-model="addfactoryForm.name"></el-input>
                         </el-form-item>
                     </el-col>
-                </el-row>
-
-                <el-row>
-                    <el-col :span="12">
+                    <el-col :span="8">
 
                         <el-form-item label="收货城市" prop="address">
                             <el-cascader
@@ -193,24 +190,22 @@
                         </el-form-item>
 
                     </el-col>
-                    <el-col :span="12">
+                </el-row>
+
+
+                <el-row>
+                    <el-col :span="8">
                         <el-form-item label="收货地址" prop="detailedAddress">
                             <el-input placeholder="收货地址"  size="mini" v-model="addfactoryForm.detailedAddress"></el-input>
                         </el-form-item>
                     </el-col>
-
-
-                </el-row>
-
-                <el-row>
-
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item  label="所属公司" prop="company">
                             <el-input placeholder="所属公司" size="mini" v-model="addfactoryForm.company"></el-input>
                         </el-form-item>
                     </el-col>
 
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="手机号码">
                             <el-input placeholder="手机号码" size="mini" v-model="addfactoryForm.phoneNumber"></el-input>
                         </el-form-item>
@@ -218,12 +213,12 @@
                 </el-row>
 
                 <el-row>
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="联系人">
                             <el-input placeholder="联系人" size="mini" v-model="addfactoryForm.contact"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="备注信息">
                             <el-input placeholder="备注信息" size="mini" v-model="addfactoryForm.remark"></el-input>
                         </el-form-item>
@@ -247,28 +242,22 @@
                 width="60%"
         >
 
-            <el-form :model="upfactoryForm" ref="upfactoryForm" :rules="upfactorysrules" :inline="true">
+            <el-form :model="upfactoryForm" ref="upfactoryForm" :rules="upfactorysrules" label-width="100px" label-position="right">
 
                 <el-row>
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="编码" prop="code">
                             <el-input placeholder="厂商编码" size="mini" v-model="upfactoryForm.code"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="名称" prop="name">
                             <el-input placeholder="厂商名称" size="mini" v-model="upfactoryForm.name"></el-input>
                         </el-form-item>
                     </el-col>
-                </el-row>
-
-                <el-row>
-
-
-
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <!--<el-form-item label="地址" prop="address">-->
-                            <!--<el-input size="mini" v-model="upfactoryForm.address"></el-input>-->
+                        <!--<el-input size="mini" v-model="upfactoryForm.address"></el-input>-->
                         <!--</el-form-item>-->
 
 
@@ -283,20 +272,22 @@
                         </el-form-item>
 
                     </el-col>
-                    <el-col :span="12">
+                </el-row>
+
+
+                <el-row>
+                    <el-col :span="8">
                         <el-form-item label="收货地址" prop="detailedAddress">
                             <el-input  placeholder="收货地址" size="mini" v-model="upfactoryForm.detailedAddress"></el-input>
                         </el-form-item>
                     </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="所属公司" prop="company">
                             <el-input placeholder="所属公司" size="mini" v-model="upfactoryForm.company"></el-input>
                         </el-form-item>
                     </el-col>
 
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="手机号码">
                             <el-input placeholder="手机号码" size="mini" v-model="upfactoryForm.phoneNumber"></el-input>
                         </el-form-item>
@@ -304,12 +295,12 @@
                 </el-row>
 
                 <el-row>
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="联系人">
                             <el-input placeholder="联系人" size="mini" v-model="upfactoryForm.contact"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="备注信息">
                             <el-input placeholder="备注信息" size="mini" v-model="upfactoryForm.remark"></el-input>
                         </el-form-item>

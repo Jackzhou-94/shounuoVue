@@ -194,13 +194,13 @@
 
                     <el-tooltip class="item" effect="dark" content="商品信息" placement="right">
 
-                        <p @click="addTab('商品信息')"><i class="fontFamily hhtx-shangpin"></i></p>
+                        <p @click="addTab('商品信息','goods'),$router.push('goods')"><i class="fontFamily hhtx-shangpin"></i></p>
 
                     </el-tooltip>
 
 
-                    <el-tooltip class="item" effect="dark" content="仓库信息" placement="right">
-                        <p @click="addTab('仓库信息')"><i class="fontFamily hhtx-cangku"></i></p>
+                    <el-tooltip class="item" effect="dark" content="工厂管理" placement="right">
+                        <p @click="addTab('工厂管理','factory'),$router.push('factory')"><i class="fontFamily hhtx-cangku"></i></p>
                     </el-tooltip>
 
                     <el-tooltip class="item" effect="dark" content="工艺管理" placement="right">
@@ -209,11 +209,11 @@
 
 
                     <el-tooltip class="item" effect="dark" content="原材料信息" placement="right">
-                        <p @click="addTab('原材料信息')"><i class="fontFamily hhtx-yuancailiao"></i></p>
+                        <p @click="addTab('原材料信息','materials'),$router.push('materials')"><i class="fontFamily hhtx-yuancailiao"></i></p>
                     </el-tooltip>
 
                     <el-tooltip class="item" effect="dark" content="供应商管理" placement="right">
-                        <p @click="addTab('供应商管理')"><i class="fontFamily hhtx-icon-p_gongyingshang"></i></p>
+                        <p @click="addTab('供应商管理','supplier'),$router.push('supplier')"><i class="fontFamily hhtx-icon-p_gongyingshang"></i></p>
                     </el-tooltip>
                 </el-aside>
 

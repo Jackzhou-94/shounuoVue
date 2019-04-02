@@ -7,9 +7,10 @@
 
                     <el-button size="mini" type="primary" class="el-icon-plus" @click="addgoods=true">新建</el-button>
                     <el-button icon="el-icon-view" type="primary" size="mini" @click="Settings=true">显示设置</el-button>
-                    <el-button size="mini" type="primary"  @click="printContent">打印</el-button>
-                    <el-button size="mini" type="danger" :disabled="delStatusButGoods"  @click="delgoodsfun">移入回收站</el-button>
-                    <el-button size="mini" type="info"  @click="goodsrecycleopen">回收站</el-button>
+                    <el-button size="mini" type="primary" @click="printContent">打印</el-button>
+                    <el-button size="mini" type="danger" :disabled="delStatusButGoods" @click="delgoodsfun">移入回收站
+                    </el-button>
+                    <el-button size="mini" type="info" @click="goodsrecycleopen">回收站</el-button>
                 </div>
 
 
@@ -232,11 +233,13 @@
         <el-dialog
                 title="新建商品信息"
                 :visible.sync="addgoods"
-                width="60%"
+                width="75%"
                 :show-close="false"
         >
 
-            <el-form :model="addgoodsForm" ref="addgoodsForm" :rules="addgoodsrules" :inline="true">
+            <el-form :model="addgoodsForm" ref="addgoodsForm"  :rules="addgoodsrules"
+                     label-position="right"
+                     label-width="100px">
 
                 <el-row>
                     <el-col :span="8">
@@ -249,22 +252,19 @@
                             <el-input size="mini" v-model="addgoodsForm.sku"></el-input>
                         </el-form-item>
                     </el-col>
-
                     <el-col :span="8">
                         <el-form-item label="条形码" prop="barCode">
                             <el-input size="mini" v-model="addgoodsForm.barCode"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-row>
 
+                <el-row>
                     <el-col :span="8">
                         <el-form-item label="商家编码" prop="merchantCode">
                             <el-input size="mini" v-model="addgoodsForm.merchantCode"></el-input>
                         </el-form-item>
                     </el-col>
-
-
                     <el-col :span="8">
                         <el-form-item label="工艺流程" prop="process">
                             <el-input size="mini" v-model="addgoodsForm.process"></el-input>
@@ -296,6 +296,30 @@
                 </el-row>
 
                 <el-row>
+
+                    <el-col :span="8">
+                        <el-form-item label="重量">
+                            <el-input size="mini" v-model="addgoodsForm.weight"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="商品成本">
+                            <el-input size="mini" v-model="addgoodsForm.costPrice"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="工艺标准">
+                            <el-input size="mini" v-model="addgoodsForm.standard"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="季节">
+                            <el-input size="mini" v-model="addgoodsForm.season"></el-input>
+                        </el-form-item>
+                    </el-col>
                     <el-col :span="8">
                         <el-form-item label="分类">
                             <el-cascader
@@ -306,54 +330,16 @@
                             ></el-cascader>
                         </el-form-item>
                     </el-col>
-
-
-                    <el-col :span="8">
-                        <el-form-item label="重量">
-                            <el-input size="mini" v-model="addgoodsForm.weight"></el-input>
-                        </el-form-item>
-
-                    </el-col>
-
-                    <el-col :span="8">
-                        <el-form-item label="商品成本">
-                            <el-input size="mini" v-model="addgoodsForm.costPrice"></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-
-                <el-row>
-
-
-                    <el-col :span="8">
-                        <el-form-item label="工艺标准">
-                            <el-input size="mini" v-model="addgoodsForm.standard"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="季节">
-                            <el-input size="mini" v-model="addgoodsForm.season"></el-input>
-                        </el-form-item>
-                    </el-col>
                     <el-col :span="8">
                         <el-form-item label="备注">
                             <el-input size="mini" v-model="addgoodsForm.remark"></el-input>
                         </el-form-item>
-
                     </el-col>
                 </el-row>
-                <el-row>
 
-
-
-
-                    <el-form-item>
-                        <el-button size="mini" type="primary" @click="submitForm('addgoodsForm')">立即创建</el-button>
-                        <el-button size="mini" @click="addgoods=false">取消</el-button>
-                    </el-form-item>
-                </el-row>
             </el-form>
-
+            <el-button size="mini" type="primary" @click="submitForm('addgoodsForm')">立即创建</el-button>
+            <el-button size="mini" @click="addgoods=false">取消</el-button>
         </el-dialog>
         <!--修改商品信息-->
         <el-dialog
@@ -362,9 +348,11 @@
                 width="60%"
                 :show-close="false"
         >
-            <el-form :model="upgoodsForm" ref="upgoodsForm" :rules="upgoodsrules" :inline="true">
+            <el-form :model="upgoodsForm" label-position="right"
+                     label-width="100px" ref="upgoodsForm" :rules="upgoodsrules">
 
                 <el-row>
+
                     <el-col :span="8">
                         <el-form-item label="商品名称" prop="name">
                             <el-input size="mini" v-model="upgoodsForm.name"></el-input>
@@ -375,7 +363,6 @@
                             <el-input size="mini" v-model="upgoodsForm.sku"></el-input>
                         </el-form-item>
                     </el-col>
-
                     <el-col :span="8">
                         <el-form-item label="条形码" prop="barCode">
                             <el-input size="mini" v-model="upgoodsForm.barCode"></el-input>
@@ -385,16 +372,11 @@
 
 
                 <el-row>
-
-
-
                     <el-col :span="8">
                         <el-form-item label="商家编码" prop="merchantCode">
                             <el-input size="mini" v-model="upgoodsForm.merchantCode"></el-input>
                         </el-form-item>
                     </el-col>
-
-
                     <el-col :span="8">
                         <el-form-item label="工艺流程" prop="process">
                             <el-input size="mini" v-model="upgoodsForm.process"></el-input>
@@ -425,6 +407,7 @@
                     </el-col>
                 </el-row>
 
+
                 <el-row>
                     <el-col :span="8">
                         <el-form-item label="分类">
@@ -436,15 +419,11 @@
                             ></el-cascader>
                         </el-form-item>
                     </el-col>
-
-
                     <el-col :span="8">
                         <el-form-item label="重量">
                             <el-input size="mini" v-model="upgoodsForm.weight"></el-input>
                         </el-form-item>
-
                     </el-col>
-
                     <el-col :span="8">
                         <el-form-item label="商品成本">
                             <el-input size="mini" v-model="upgoodsForm.costPrice"></el-input>
@@ -453,8 +432,6 @@
                 </el-row>
 
                 <el-row>
-
-
                     <el-col :span="8">
                         <el-form-item label="工艺标准">
                             <el-input size="mini" v-model="upgoodsForm.standard"></el-input>
@@ -469,19 +446,12 @@
                         <el-form-item label="备注">
                             <el-input size="mini" v-model="upgoodsForm.remark"></el-input>
                         </el-form-item>
-
                     </el-col>
                 </el-row>
-                <el-row>
 
-
-
-
-                    <el-button size="mini" type="primary" @click="upsubmitForm('upgoodsForm')">立即修改</el-button>
-                    <el-button size="mini" @click="upgoods=false">取消</el-button>
-                </el-row>
             </el-form>
-
+            <el-button size="mini" type="primary" @click="upsubmitForm('upgoodsForm')">立即修改</el-button>
+            <el-button size="mini" @click="upgoods=false">取消</el-button>
 
         </el-dialog>
 
@@ -1048,7 +1018,7 @@
                 recyctotalRecord: 0,//回收站总条目数
                 recycpageSize: 0,//回收站单页个数
                 Settings: false,//显示设置面板
-                delStatusButGoods:true,//删除按钮
+                delStatusButGoods: true,//删除按钮
                 /**
                  * 显示字段设置
                  * **/
@@ -1068,8 +1038,8 @@
                 type: true,//分类
                 unit: true,//基本单位
                 weight: true,//重量
-                createTime:true,//创建时间
-                updateTime:true,//修改时间
+                createTime: true,//创建时间
+                updateTime: true,//修改时间
                 querygoodsmerchantCode: '',//回收站查询商家编码
                 querygoodsname: '',//回收站查询商品名称
                 queryspare: '',//回收站查询其他
@@ -1139,10 +1109,10 @@
                 val.forEach(item => {
                     this.goodsids.push(item.id)
                 })
-                if (val.length==0){
-                    this.delStatusButGoods=true
+                if (val.length == 0) {
+                    this.delStatusButGoods = true
                 } else {
-                    this.delStatusButGoods=false
+                    this.delStatusButGoods = false
                 }
                 console.log(this.goodsids)
             },
@@ -1197,9 +1167,9 @@
                 this.upgoodsForm = data
 
             },
-            delGoods(val){
-              //删除单条商品信息
-                this.goodsids.length=0
+            delGoods(val) {
+                //删除单条商品信息
+                this.goodsids.length = 0
                 this.goodsids.push(val.id)
                 this.delgoodsfun()
             },

@@ -34,7 +34,8 @@
             </div>
 
             <div>
-                <el-button type="primary" size="mini" icon="el-icon-edit" @click="factoryName='',categorys='',oddNumber=''">
+                <el-button type="primary" size="mini" icon="el-icon-edit"
+                           @click="factoryName='',categorys='',oddNumber=''">
                     重置
                 </el-button>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="storageQuery()">查询
@@ -49,100 +50,123 @@
                 title="入库开单"
                 :visible.sync="Newpurchaseorder"
                 :show-close="false"
-                width="80%">
-            <el-form :model="NewWarehousing" ref="NewWarehousing" inline label-width="150" :rules="rules">
+                width="85%">
+            <el-form :model="NewWarehousing" ref="NewWarehousing" label-width="130px" :rules="rules"
+                     label-position="right">
 
-                <div class="formitem">
-                    <el-form-item label="入库类别" prop="category">
-                        <el-select v-model="NewWarehousing.category" @change="WareSelect" size="mini">
-                            <el-option
-                                    v-for="item in category"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
+                <el-row>
+                    <el-col :span="6">
+                        <el-form-item label="入库类别" prop="category">
+                            <el-select v-model="NewWarehousing.category" @change="WareSelect" size="mini">
+                                <el-option
+                                        v-for="item in category"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="引入单号" prop="introduceNumber">
+                            <el-input size="mini" v-model="NewWarehousing.introduceNumber" :disabled="showIntrodw"
+                                      @focus="introduction"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="入库工厂" prop="factoryName">
+                            <el-select v-model="NewWarehousing.factoryName" size="mini">
+                                <el-option
+                                        v-for="item in factorylist"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item
+                                label="供应商"
+                                prop="supplier"
+                        >
+                            <!--供应商选择-->
+                            <el-select size="mini" filterable clearable
+                                       v-model="NewWarehousing.supplier"
+                                       placeholder="供应商">
+                                <el-option
+                                        v-for="item in options"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
 
-                    <el-form-item label="引入单号" prop="introduceNumber">
-                        <el-input size="mini" v-model="NewWarehousing.introduceNumber" :disabled="showIntrodw"
-                                  @focus="introduction"></el-input>
-                    </el-form-item>
-
-                    <el-form-item label="入库工厂" prop="factoryName">
-                        <el-select v-model="NewWarehousing.factoryName" size="mini">
-                            <el-option
-                                    v-for="item in factorylist"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
+                </el-row>
 
 
-                    <el-form-item
-                            label="供应商"
-                            prop="supplier"
-                    >
-                        <!--供应商选择-->
-                        <el-select size="mini" filterable clearable
-                                   v-model="NewWarehousing.supplier"
-                                   placeholder="供应商">
-                            <el-option
-                                    v-for="item in options"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
+                <el-row>
+
+                    <el-col :span="6">
+                        <el-form-item label="物流公司">
+                            <el-input size="mini" v-model="NewWarehousing.company"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="物流单号">
+                            <el-input size="mini" type="number" v-model="NewWarehousing.logisticsNumbe"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="分摊方式（运费）">
+                            <el-select v-model="NewWarehousing.mode" size="mini" @change="freightBut" placeholder="运费">
+                                <el-option
+                                        v-for="item in Share_way"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="运费">
+                            <el-input size="mini" @blur="freightIn" :disabled="freightInput"
+                                      v-model="NewWarehousing.freight"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
 
 
-                </div>
-                <div class="formitem">
+                <el-row>
+                    <el-col :span="6">
+                        <el-form-item label="入库数量">
+                            <el-input size="mini" disabled v-model="NewWarehousing.warehouseNumber"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="入库金额">
+                            <el-input size="mini" disabled v-model="NewWarehousing.warehouseAmount"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="入库金额（税）">
+                            <el-input size="mini" disabled v-model="NewWarehousing.warehouseTaxamount"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="备注">
+                            <el-input size="mini" v-model="NewWarehousing.remark"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
 
-                    <el-form-item label="物流公司">
-                        <el-input size="mini" v-model="NewWarehousing.company"></el-input>
-                    </el-form-item>
-                    <el-form-item label="物流单号">
-                        <el-input size="mini" type="number" v-model="NewWarehousing.logisticsNumbe"></el-input>
-                    </el-form-item>
-                    <el-form-item label="分摊方式（运费）">
-                        <el-select v-model="NewWarehousing.mode" size="mini" @change="freightBut">
-                            <el-option
-                                    v-for="item in Share_way"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="运费">
-                        <el-input size="mini" @blur="freightIn" :disabled="freightInput"
-                                  v-model="NewWarehousing.freight"></el-input>
-                    </el-form-item>
-
-                </div>
-                <div class="formitem">
-
-                    <el-form-item label="入库数量">
-                        <el-input size="mini" disabled v-model="NewWarehousing.warehouseNumber"></el-input>
-                    </el-form-item>
-                    <el-form-item label="入库金额">
-                        <el-input size="mini" disabled v-model="NewWarehousing.warehouseAmount"></el-input>
-                    </el-form-item>
-                    <el-form-item label="入库金额（税）">
-                        <el-input size="mini" disabled v-model="NewWarehousing.warehouseTaxamount"></el-input>
-                    </el-form-item>
-                    <el-form-item label="备注">
-                        <el-input size="mini" v-model="NewWarehousing.remark"></el-input>
-                    </el-form-item>
-                </div>
-                <div class="formitem">
-                    <div>
-                        <el-form-item label="分摊方式（其他费用）">
-                            <el-select @change="OtherfreightBut" v-model="NewWarehousing.expensesMode" size="mini">
+                <el-row>
+                    <el-col :span="6">
+                        <el-form-item label="分摊方式（其他）">
+                            <el-select @change="OtherfreightBut" v-model="NewWarehousing.expensesMode" size="mini" placeholder="其他费用">
                                 <el-option
                                         v-for="item in Apportionment_method"
                                         :key="item.value"
@@ -151,13 +175,15 @@
                                 </el-option>
                             </el-select>
                         </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
                         <el-form-item label="其他费用">
                             <el-input size="mini" :disabled="expensesInput" @blur="OtherfreightIn"
                                       v-model="NewWarehousing.expenses"></el-input>
                         </el-form-item>
-                    </div>
+                    </el-col>
 
-                </div>
+                </el-row>
             </el-form>
 
 
@@ -523,99 +549,123 @@
                 :visible.sync="upNewpurchaseorder"
                 :show-close="false"
                 width="80%">
-            <el-form :model="upNewWarehousing" ref="upNewWarehousing" inline label-width="150" :rules="uprules">
+            <el-form :model="upNewWarehousing" ref="upNewWarehousing" label-position="right" label-width="130px"
+                     :rules="uprules">
 
-                <div class="formitem">
-                    <el-form-item label="入库类别" prop="category">
-                        <el-select v-model="upNewWarehousing.category" @change="upWareSelect" size="mini">
-                            <el-option
-                                    v-for="item in upcategory"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
+                <el-row>
+                    <el-col :span="6">
+                        <el-form-item label="入库类别" prop="category">
+                            <el-select v-model="upNewWarehousing.category" @change="upWareSelect" size="mini">
+                                <el-option
+                                        v-for="item in upcategory"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="引入单号" prop="introduceNumber">
+                            <el-input size="mini" v-model="upNewWarehousing.introduceNumber" :disabled="upshowIntrodw"
+                                      @focus="upintroduction"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="入库工厂" prop="factoryName">
+                            <el-select v-model="upNewWarehousing.factoryName" size="mini">
+                                <el-option
+                                        v-for="item in factorylist"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item
+                                label="供应商"
+                                prop="supplier"
+                        >
+                            <!--供应商选择-->
+                            <el-select size="mini" filterable clearable
+                                       v-model="upNewWarehousing.supplier"
+                                       placeholder="供应商">
+                                <el-option
+                                        v-for="item in options"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
 
-                    <el-form-item label="引入单号" prop="introduceNumber">
-                        <el-input size="mini" v-model="upNewWarehousing.introduceNumber" :disabled="upshowIntrodw"
-                                  @focus="upintroduction"></el-input>
-                    </el-form-item>
-
-                    <el-form-item label="入库工厂" prop="factoryName">
-                        <el-select v-model="upNewWarehousing.factoryName" size="mini">
-                            <el-option
-                                    v-for="item in factorylist"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
+                </el-row>
 
 
-                    <el-form-item
-                            label="供应商"
-                            prop="supplier"
-                    >
-                        <!--供应商选择-->
-                        <el-select size="mini" filterable clearable
-                                   v-model="upNewWarehousing.supplier"
-                                   placeholder="供应商">
-                            <el-option
-                                    v-for="item in options"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
+                <el-row>
+                    <el-col :span="6">
+                        <el-form-item label="物流公司">
+                            <el-input size="mini" v-model="upNewWarehousing.company"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="物流单号">
+                            <el-input size="mini" type="number" v-model="upNewWarehousing.logisticsNumbe"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="分摊方式（运费）">
+                            <el-select v-model="upNewWarehousing.mode" size="mini" @change="upfreightBut" placeholder="运费">
+                                <el-option
+                                        v-for="item in upShare_way"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="运费">
+                            <el-input size="mini" @blur="upfreightIn" :disabled="freightInput"
+                                      v-model="upNewWarehousing.freight"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
 
 
-                </div>
-                <div class="formitem">
+                <el-row>
+                    <el-col :span="6">
+                        <el-form-item label="入库数量">
+                            <el-input size="mini" disabled v-model="upNewWarehousing.warehouseNumber"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="入库金额">
+                            <el-input size="mini" disabled v-model="upNewWarehousing.warehouseAmount"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
 
-                    <el-form-item label="物流公司">
-                        <el-input size="mini" v-model="upNewWarehousing.company"></el-input>
-                    </el-form-item>
-                    <el-form-item label="物流单号">
-                        <el-input size="mini" type="number" v-model="upNewWarehousing.logisticsNumbe"></el-input>
-                    </el-form-item>
-                    <el-form-item label="分摊方式（运费）">
-                        <el-select v-model="upNewWarehousing.mode" size="mini" @change="upfreightBut">
-                            <el-option
-                                    v-for="item in upShare_way"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="运费">
-                        <el-input size="mini" @blur="upfreightIn" :disabled="freightInput"
-                                  v-model="upNewWarehousing.freight"></el-input>
-                    </el-form-item>
+                        <el-form-item label="入库金额（税）">
+                            <el-input size="mini" disabled v-model="upNewWarehousing.warehouseTaxamount"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="备注">
+                            <el-input size="mini" v-model="upNewWarehousing.remark"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
 
-                </div>
-                <div class="formitem">
 
-                    <el-form-item label="入库数量">
-                        <el-input size="mini" disabled v-model="upNewWarehousing.warehouseNumber"></el-input>
-                    </el-form-item>
-                    <el-form-item label="入库金额">
-                        <el-input size="mini" disabled v-model="upNewWarehousing.warehouseAmount"></el-input>
-                    </el-form-item>
-                    <el-form-item label="入库金额（税）">
-                        <el-input size="mini" disabled v-model="upNewWarehousing.warehouseTaxamount"></el-input>
-                    </el-form-item>
-                    <el-form-item label="备注">
-                        <el-input size="mini" v-model="upNewWarehousing.remark"></el-input>
-                    </el-form-item>
-                </div>
-                <div class="formitem">
-                    <div>
-                        <el-form-item label="分摊方式（其他费用）">
-                            <el-select @change="upOtherfreightBut" v-model="upNewWarehousing.expensesMode" size="mini">
+                <el-row>
+                    <el-col :span="6">
+                        <el-form-item label="分摊方式（其他）">
+                            <el-select @change="upOtherfreightBut" v-model="upNewWarehousing.expensesMode" size="mini" placeholder="其他费用">
                                 <el-option
                                         v-for="item in Apportionment_method"
                                         :key="item.value"
@@ -624,13 +674,14 @@
                                 </el-option>
                             </el-select>
                         </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
                         <el-form-item label="其他费用">
                             <el-input size="mini" :disabled="expensesInput" @blur="upOtherfreightIn"
                                       v-model="upNewWarehousing.expenses"></el-input>
                         </el-form-item>
-                    </div>
-
-                </div>
+                    </el-col>
+                </el-row>
             </el-form>
 
             <el-table
@@ -1215,11 +1266,11 @@
                     v-if="categoryShow"
             ></el-table-column>
             <el-table-column
-                label="分摊方式(运费)"
-                prop="mode"
-                v-if="modeShow"
-                align="center"
-                width="120"
+                    label="分摊方式(运费)"
+                    prop="mode"
+                    v-if="modeShow"
+                    align="center"
+                    width="120"
             >
             </el-table-column>
             <el-table-column
@@ -1359,7 +1410,7 @@
             </el-col>
         </el-row>
 
-    </div>
+        </div>
 </template>
 
 <script>
@@ -1373,22 +1424,22 @@
                 Settings: false,//显示设置面板
                 NumbersShow: true,//入库单号
                 stateShow: true,//入库单状态（提交状态）
-                stateShowAudit:true,//入库单审核状态
+                stateShowAudit: true,//入库单审核状态
                 categoryShow: true,//入库类别
                 personShow: true,//经办人
                 WarehouseShow: true,//仓库
 
-                modeShow:true,//分摊方式(运费)
-                expensesModeShow:true,//分摊方式其他费用)
-                freightShareShow:true,// 分摊运费
-                expenses_shareShow:true,//分摊运费(其他用费)
+                modeShow: true,//分摊方式(运费)
+                expensesModeShow: true,//分摊方式其他费用)
+                freightShareShow: true,// 分摊运费
+                expenses_shareShow: true,//分摊运费(其他用费)
 
                 LogisticscompanyShow: true,//物流公司
                 LogisticsnumberShow: true,//物流单号
                 ReceiptShow: true,//入库数量
                 NowarehousingShow: true,//未入库数量
                 TotalShow: true,//入库货品总数（货品类别数量）
-                warehouseNumberShow:true,//入库总量
+                warehouseNumberShow: true,//入库总量
                 moneyShow: true,//入库金额（税)
                 moneyShowTAX: true,//入库金额
                 WarehousingtimeShow: true,//入库时间
@@ -1653,64 +1704,64 @@
                 WarehouseReceipt: [],//入库单数据
                 submitStatusBut: true,//审核按钮
                 auditStatusBut: true,//提交按钮
-                delStatusBut:true,//删除按钮
+                delStatusBut: true,//删除按钮
                 StoraRecordNum: 0,//入库单列表总条目数
                 factoryName: '',//仓库查询
                 categorys: '',//入库类别
                 oddNumber: '',//入库单号
-                StorageIds:[],//入库单ID
-                Details_warehousing:false,//入库明细面板
-                warehousingGoodsList:[],//入库明细详情
+                StorageIds: [],//入库单ID
+                Details_warehousing: false,//入库明细面板
+                warehousingGoodsList: [],//入库明细详情
 
             }
         },
         methods: {
-            DobleIn(data){
+            DobleIn(data) {
 
                 //双击引入
                 console.log(data)
                 this.alternativeList.length = 0
                 this.NewWarehousing.introduceNumber = data.purchaseNumber
-                this.NewWarehousing.warehouseNumber=0
+                this.NewWarehousing.warehouseNumber = 0
 
                 data.goodsList.forEach(item => {
                     this.alternativeList.push(item)
-                    this.NewWarehousing.warehouseNumber+=item.number
+                    this.NewWarehousing.warehouseNumber += item.number
                 })
                 this.NewWarehousing.goodsList = this.alternativeList
                 this.introductionNumber = false
 
             },
-            upDobleIn(data){
+            upDobleIn(data) {
                 //修改引入单双击引入
                 console.log(data)
                 this.upalternativeList.length = 0
                 this.upNewWarehousing.introduceNumber = data.purchaseNumber
-                this.NewWarehousing.warehouseNumber=0
+                this.NewWarehousing.warehouseNumber = 0
                 data.goodsList.forEach(item => {
                     this.upalternativeList.push(item)
-                    this.upNewWarehousing.warehouseNumber+=item.number
+                    this.upNewWarehousing.warehouseNumber += item.number
                 })
                 this.upNewWarehousing.goodsList = this.upalternativeList
                 this.upintroductionNumber = false
                 // Multipleselection,alternative
             },
-            delStoresingle(data){
-              //删除入库单（单个删除）
-                this.StorageIds.length=0;
+            delStoresingle(data) {
+                //删除入库单（单个删除）
+                this.StorageIds.length = 0;
                 this.StorageIds.push(data.id)
                 this.delStorage()
             },
-            doubleClickStorage(data){
-              //双击表格
-                this.Details_warehousing=true
-                this.warehousingGoodsList=data.goodsList
+            doubleClickStorage(data) {
+                //双击表格
+                this.Details_warehousing = true
+                this.warehousingGoodsList = data.goodsList
                 console.log(data)
             },
-            handleStorage(data){
-              //入库单列表多选
+            handleStorage(data) {
+                //入库单列表多选
                 console.log(data)
-                data.forEach(item=>{
+                data.forEach(item => {
                     this.StorageIds.push(item.id)
                 })
 
@@ -1718,9 +1769,9 @@
                 if (data.length == 0) {
                     this.submitStatusBut = true
                     this.auditStatusBut = true
-                    this.delStatusBut=true
+                    this.delStatusBut = true
                 } else {
-                    this.delStatusBut=false
+                    this.delStatusBut = false
                     let list = data.map(item => {
                         return item.submitStatus
                     })
@@ -1736,7 +1787,6 @@
                 }
 
 
-
             },
             factorylistpags(val) {
                 //入库单分页查询
@@ -1745,13 +1795,12 @@
             },
             upStorage(data) {
                 //修改入库单
-                this.NewWarehousing.warehouseNumber=0
+                this.NewWarehousing.warehouseNumber = 0
                 this.upNewpurchaseorder = true
                 this.upNewWarehousing = data
-                data.goodsList.forEach(item=>{
-                    this.upNewWarehousing.warehouseNumber+=item.warehouseNumber
+                data.goodsList.forEach(item => {
+                    this.upNewWarehousing.warehouseNumber += item.warehouseNumber
                 })
-
 
 
             },
@@ -1850,10 +1899,10 @@
                 this.upintroductionNumber = false
                 console.log(this.NewWarehousing)
 
-                this.upNewWarehousing.warehouseNumber=0
+                this.upNewWarehousing.warehouseNumber = 0
                 // this.NewWarehousing.warehouseNumber
-                this.upalternativeList.forEach(item=>{
-                    this.upNewWarehousing.warehouseNumber+=item.number
+                this.upalternativeList.forEach(item => {
+                    this.upNewWarehousing.warehouseNumber += item.number
                 })
 
 
@@ -1976,10 +2025,10 @@
                 //将选择的数据添加到表单
                 this.NewWarehousing.goodsList = this.alternativeList
                 this.introductionNumber = false
-                this.NewWarehousing.warehouseNumber=0
+                this.NewWarehousing.warehouseNumber = 0
                 // this.NewWarehousing.warehouseNumber
-                this.alternativeList.forEach(item=>{
-                    this.NewWarehousing.warehouseNumber+=item.number
+                this.alternativeList.forEach(item => {
+                    this.NewWarehousing.warehouseNumber += item.number
                 })
                 console.log(this.alternativeList)
                 console.log(this.NewWarehousing)
@@ -2060,23 +2109,23 @@
                 })
             },
 
-            delStorage(){
-              //删除入库单
-              this.$axios.post(this.$store.state.deleteStorage,{
-                  ids:this.StorageIds
-              }).then(res=>{
-                  if (res.data.code == 200) {
-                      this.$message({
-                          message: '删除成功',
-                          type: 'success',
-                          onClose() {
-                              location.reload()
-                          }
-                      });
-                  } else {
-                      this.$message.error(res.data.msg);
-                  }
-              })
+            delStorage() {
+                //删除入库单
+                this.$axios.post(this.$store.state.deleteStorage, {
+                    ids: this.StorageIds
+                }).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '删除成功',
+                            type: 'success',
+                            onClose() {
+                                location.reload()
+                            }
+                        });
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
             },
             factoryQuery() {
                 //工厂列表
