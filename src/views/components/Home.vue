@@ -130,7 +130,7 @@
                                 </div>
                             </el-dropdown-item>
                             <el-dropdown-item>
-                                <div @click="addTab('库存查询')">
+                                <div @click="addTab('库存查询','Stock'),$router.push('Stock')">
                                     <i class="fontFamily hhtx-kucun"></i>
                                     <span class="menu">库存查询</span>
                                 </div>

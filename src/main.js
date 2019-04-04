@@ -10,8 +10,9 @@ import axios from 'axios'
 import VueCookies from 'vue-cookies'
 import './less/Style.less'
 import {Loading} from 'element-ui'
+import md5 from 'js-md5'
 
-
+Vue.prototype.$md5=md5
 Vue.prototype.$axios = axios
 require('./assets/icon/iconfont')
 
@@ -52,8 +53,9 @@ axios.interceptors.response.use(response => {
     // 处理响应失败
     setTimeout(function () {
         if (error) {
-            alert(error)
+            alert('网络错误')
             loadingInstance.close();
+            throw error
         }
     }, 5000)
     return Promise.reject(error);

@@ -2159,6 +2159,8 @@
                     console.log(res)
                     this.WarehouseReceipt = res.data.list
                     this.StoraRecordNum = res.data.totalRecord
+                }).catch(err=>{
+                    throw err
                 })
             },
 

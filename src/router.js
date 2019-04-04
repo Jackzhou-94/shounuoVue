@@ -53,6 +53,12 @@ export default new Router({
                     path: '/storage',
                     name: 'storage',
                     component: require('./views/Warehouse/storage').default,
+                },
+                {
+                    //库存查询
+                    path:'/Stock',
+                    name:'Stock',
+                    component:require('./views/Warehouse/Stock').default,
                 }
             ]
         }
