@@ -44,11 +44,17 @@ export default new Vuex.Store({
         addmaterPurchase: 'http://192.168.1.199:8099/supplychain/purchase/material/save',//采购新建（原材料）
         delmater: 'http://192.168.1.199:8099/supplychain/purchase/material/delete',//删除采购单（原料）
         upmaterPurchase: 'http://192.168.1.199:8099/supplychain/purchase/material/update',//修改采购单(原料)
+        ProcurAudit:'http://192.168.1.199:8099/supplychain/purchase/material/updateSubmit',//采购单提交审核
+        ProcurementAudit:'http://192.168.1.199:8099/supplychain/purchase/material/updateAudit',//采购单审核通过
+        RejectMater:'http://192.168.1.199:8099/supplychain/purchase/material/updateUnaudit',//审核驳回
+
 
         storageQuery:'http://192.168.1.199:8099/supplychain/warehouse/material/queryPage',//入库单分页查询
         Addstorage:'http://192.168.1.199:8099/supplychain/warehouse/material/save',//添加入库单
         Upstorage:'http://192.168.1.199:8099/supplychain/warehouse/material/update',//修改入库单
         deleteStorage:'http://192.168.1.199:8099/supplychain/warehouse/material/delete',//删除入库单
+
+        stockQuery:'http://192.168.1.199:8099/supplychain/stock/material/queryPage',//库存分页查询
     },
     mutations: {},
     actions: {}

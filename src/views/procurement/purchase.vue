@@ -12,9 +12,9 @@
                             </el-button>
                             <el-button icon="el-icon-view" type="primary" size="mini" @click="SettingsMater=true">显示设置
                             </el-button>
-                            <el-button size="mini" type="primary" :disabled="auditStatusBut">提交审核</el-button>
-                            <el-button size="mini" type="primary" :disabled="submitStatusBut">审核通过</el-button>
-                            <el-button size="mini" type="primary" :disabled="submitStatusBut">审核驳回</el-button>
+                            <el-button size="mini" type="primary" :disabled="auditStatusBut" @click="SubmitAudit">提交审核</el-button>
+                            <el-button size="mini" type="primary" :disabled="submitStatusBut" @click="AuditPass">审核通过</el-button>
+                            <el-button size="mini" type="primary" :disabled="submitStatusBut" @click="AuditReject">审核驳回</el-button>
                             <el-button size="mini" type="danger" :disabled="delStatusBut" @click="delMaterPur()">批量删除
                             </el-button>
                             <!--<el-button size="mini">导出</el-button>-->
@@ -1811,7 +1811,7 @@
                                     align="center"
                                     prop="submitTime"
                                     label="提交时间"
-                                    width="150"
+                                    width="160"
                                     v-if="submitTimematerSet"
                             >
                             </el-table-column>
@@ -1822,14 +1822,14 @@
                                     v-if="auditStatusmaterSet"
                             >
                                 <template slot-scope="scope">
-                                    <span>{{scope.row.auditStatus=='sh01'?'已审核':'未审核'}}</span>
+                                    <span>{{scope.row.auditStatus=='sh01'?'已审核':scope.row.auditStatus=='sh02'?'未审核':'审核驳回'}}</span>
                                 </template>
                             </el-table-column>
                             <el-table-column
                                     align="center"
                                     prop="auditTime"
                                     label="审核时间"
-                                    width="150"
+                                    width="160"
                                     v-if="auditTimematerSet"
                             >
                             </el-table-column>
@@ -2018,7 +2018,7 @@
                             </el-button>
                             <el-button icon="el-icon-view" type="primary" size="mini" @click="Settings=true">显示设置
                             </el-button>
-                            <el-button size="mini" type="primary" :disabled="auditStatusButGoods">提交审核</el-button>
+                            <el-button size="mini" type="primary" :disabled="auditStatusButGoods" >提交审核</el-button>
                             <el-button size="mini" type="primary" :disabled="submitStatusButGoods">审核通过</el-button>
                             <el-button size="mini" type="primary" :disabled="submitStatusButGoods">审核驳回</el-button>
                             <el-button size="mini" type="danger" :disabled="delStatusButGoods"
@@ -4104,7 +4104,7 @@
                                     v-if="auditStatus"
                             >
                                 <template slot-scope="scope">
-                                    <span>{{scope.row.auditStatus=='sh01'?'已审核':'未审核'}}</span>
+                                    <span>{{scope.row.auditStatus=='sh01'?'已审核':scope.row.auditStatus=='sh02'?'未审核':'审核驳回'}}</span>
                                 </template>
                             </el-table-column>
                             <el-table-column
@@ -4774,6 +4774,62 @@
         },
 
         methods: {
+            SubmitAudit(){
+             //原材料提交审核
+                this.$axios.post(this.$store.state.ProcurAudit,{
+                    ids:this.purchasematerIds
+                }).then(res=>{
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '提交成功',
+                            type: 'success',
+                            onClose() {
+                                location.reload()
+                            }
+                        });
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+                console.log(this.purchasematerIds)
+            },
+
+            AuditPass(){
+                // 原材料采购审核通过
+                this.$axios.post(this.$store.state.ProcurementAudit,{
+                    ids:this.purchasematerIds
+                }).then(res=>{
+                    if (res.data.code == 200) {
+                    this.$message({
+                        message: '提交成功',
+                        type: 'success',
+                        onClose() {
+                            location.reload()
+                        }
+                    });
+                } else {
+                    this.$message.error(res.data.msg);
+                }
+                })
+            },
+            AuditReject(){
+                //审核驳回
+                this.$axios.post(this.$store.state.RejectMater,{
+                    ids:this.purchasematerIds
+                }).then(res=>{
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            onClose() {
+                                location.reload()
+                            }
+                        });
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+            },
             delpurMaterList(data) {
                 //批量删除采购单信息（原材料）
                 this.purchasematerIds.length = 0
@@ -4880,14 +4936,25 @@
                     let list = data.map(item => {
                         return item.submitStatus
                     })
+                    let lists = data.map(item => {
+                        return item.auditStatus
+                    })
                     let num = list.indexOf('tj02')
-                    let nums = list.indexOf('sh02')
+                    let nums = lists.indexOf('sh01')
+                    console.log(data)
+                    console.log(list)
+                    console.log(nums)
                     if (num == -1) {
                         this.submitStatusBut = false
                         this.auditStatusBut = true
                     } else if (num != -1) {
                         this.submitStatusBut = true
                         this.auditStatusBut = false
+                    }
+                    if (nums!=-1){
+                        this.submitStatusBut = true
+                        this.auditStatusBut = true
+                        this.delStatusBut = true
                     }
                 }
 
