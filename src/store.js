@@ -54,7 +54,7 @@ export default new Vuex.Store({
         Upstorage:'http://192.168.1.199:8099/supplychain/warehouse/material/update',//修改入库单
         deleteStorage:'http://192.168.1.199:8099/supplychain/warehouse/material/delete',//删除入库单
 
-        stockQuery:'http://192.168.1.199:8099/supplychain/stock/material/queryPage',//库存分页查询
+        stockQuery:'http://192.168.1.199:8099/supplychain/warehouse/stock/material/queryPage',//库存分页查询
     },
     mutations: {},
     actions: {}

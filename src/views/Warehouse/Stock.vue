@@ -2,8 +2,8 @@
     <div class="Stock">
         <!--库存查询-->
         <div class="query">
-            <div>
-                <el-select v-model="Search" size="mini" placeholder="仓库类型">
+            <div style="display: flex;flex-wrap: nowrap">
+                <el-select  v-model="Search" size="mini" clearable placeholder="仓库类型">
                     <el-option
                             v-for="item in SearchType"
                             :key="item.value"
@@ -11,7 +11,7 @@
                             :value="item.value">
                     </el-option>
                 </el-select>
-                <el-select v-model="factoryName" size="mini" placeholder="仓库名称">
+                <el-select v-model="factoryName" clearable size="mini" placeholder="工厂名称">
                     <el-option
                             v-for="item in factorylist"
                             :key="item.value"
@@ -35,10 +35,10 @@
                         end-placeholder="结束日期"
                         align="right">
                 </el-date-picker>
-            </div>
-            <div>
+        </div>
+            <div style="display: flex;flex-wrap: nowrap">
                 <el-button size="mini" icon="el-icon-edit" type="primary"
-                           @click="Search='',MerchantCode='',ItemCode='',descriptionGoods=''">重置
+                           @click="Search='',MerchantCode='',ItemCode='',descriptionGoods='',queryTime='',factoryName=''">重置
                 </el-button>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="stockQuery()">查询</el-button>
             </div>
@@ -47,6 +47,7 @@
 
         <el-table
                 border
+                :data="stocList"
                 height="720"
                 stripe
                 width="100%"
@@ -121,6 +122,17 @@
                     prop="purchaseTransit"
             ></el-table-column>
         </el-table>
+        <!--分页-->
+        <el-row>
+            <el-col :span="10" :offset="14">
+                <el-pagination
+                        @current-change="factorylistpags"
+                        :page-size="15"
+                        layout="prev, pager, next, jumper"
+                        :total="StockNum">
+                </el-pagination>
+            </el-col>
+        </el-row>
     </div>
 </template>
 
@@ -158,6 +170,7 @@
                     }]
                 },
                 Search: '',//仓库具体类型
+                pageNum:1,
                 MerchantCode: '',//物料编码
                 ItemCode: '',//货品编号
                 descriptionGoods: '',//货品名称
@@ -175,9 +188,16 @@
                     }
                 ],
                 factorylist: [],//工厂查询数据
+                stocList:[],//库存数据
+                StockNum:0,//库存总条目数
             }
         },
         methods: {
+            factorylistpags(val) {
+                //库存分页查询
+                this.pageNum = val
+                this.stockQuery()
+            },
             factoryQuery() {
                 //工厂列表
                 this.$axios.get(this.$store.state.factoryselect).then(res => {
@@ -191,6 +211,8 @@
                 //库存分页查询
                 this.$axios.get(this.$store.state.stockQuery, {
                     params: {
+                        pageSize:15,
+                        pageNum:this.pageNum,
                         category:this.Search,
                         materialCode:this.MerchantCode,
                         itemCode:this.ItemCode,
@@ -199,11 +221,17 @@
                         startTime:this.queryTime[0],
                         endTime:this.queryTime[1],
                     }
+                }).then(res=>{
+                    // stocList
+                    this.stocList=res.data.list
+                    this.StockNum = res.data.totalRecord
+                    console.log(res)
                 })
             },
         },
         created: function () {
             this.factoryQuery();//工厂信息查询
+            this.stockQuery();//库存分页查询
         }
     }
 </script>

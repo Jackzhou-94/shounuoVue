@@ -10,10 +10,10 @@
             <el-button size="mini" type="danger" :disabled="delStatusBut" @click="delStorage()">批量删除</el-button>
             <!--<el-button size="mini">导出</el-button>-->
         </div>
-        <div style="display: flex;justify-content:space-between;margin-bottom: 0.5em">
+        <div style="display: flex;justify-content:space-between;margin-bottom: 0.5em;">
 
             <div>
-                <el-select v-model="factoryName" size="mini" placeholder="仓库">
+                <el-select  v-model="factoryName" size="mini" placeholder="仓库">
                     <el-option
                             v-for="item in factorylist"
                             :key="item.value"
