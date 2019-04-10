@@ -53,9 +53,10 @@ axios.interceptors.response.use(response => {
     // 处理响应失败
     setTimeout(function () {
         if (error) {
-            alert('网络错误')
+            alert('服务器连接异常')
             loadingInstance.close();
             throw error
+
         }
     }, 5000)
     return Promise.reject(error);

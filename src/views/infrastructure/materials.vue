@@ -146,7 +146,7 @@
             <!--右侧表格数据-->
             <el-table
                     style="width: 100%"
-                    height="700px"
+                    height="750px"
                     border
                     stripe
                     id="out-table"
@@ -273,8 +273,9 @@
                     <template
                             slot-scope="scope"
                     >
+
                         <el-button type="text" size="small" @click="uppanel(scope.row)">修改</el-button>
-                        <el-button type="text" size="small" @click="delpanel(scope.row)">删除</el-button>
+                        <el-button :disabled="scope.row.recordState=='rs01'?(true):(false)" type="text" size="small" @click="delpanel(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -979,7 +980,7 @@
                  * */
                 this.UpdatableVisible = true
                 this.updaData = data
-
+                console.log(data)
             },
             //修改原材料信息
             upsubmitForm(updaData) {
@@ -1100,12 +1101,19 @@
                 })
 
                 this.materialsIDs = ''
+                let listdata=[];//保存选中数据，判断是否允许删除
+
                 val.forEach(item => {
                     this.materialsIDs += `${item.id},`
+                    listdata.push(item.recordState)
                 })
                 let a = this.materialsIDs.length - 1
                 this.materialsIDs = this.materialsIDs.substring(0, a)
-                if (val.length == 0) {
+
+
+                let HideShow=listdata.indexOf('rs01')
+
+                if (val.length == 0||HideShow!=-1) {
                     this.delStatusButGoods = true
                 } else {
                     this.delStatusButGoods = false
@@ -1258,7 +1266,7 @@
             /**
              * 原材料分页查询
              * **/
-            queryPage(Num = 1, Size = 10, type = '全部') {
+            queryPage(Num = 1, Size = 15, type = '全部') {
                 let data = {
                     pageNum: Num, pageSize: Size, type: type,
                     materialCode: this.materialsNum, name: this.materialsName,

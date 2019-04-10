@@ -35,26 +35,34 @@ export default new Vuex.Store({
         factoryselect: 'http://192.168.1.199:8099/supplychain/factory/select',//工厂列表信息
 
         purchaseQueryPage: 'http://192.168.1.199:8099/supplychain/purchase/goods/queryPage',//采购单分页查询（商品）
-        addsavePurchase: 'http://192.168.1.199:8099/supplychain/purchase/goods/save',//添加采购单
-        upaddsavePurchase: 'http://192.168.1.199:8099/supplychain/purchase/goods/update',//修改采购单
-        queruPNumber: 'http://192.168.1.199:8099/supplychain/purchasedetail/goods/selectByPNumber',//根据采购单号查询当前批次信息
-        deletepur: 'http://192.168.1.199:8099/supplychain/purchase/goods/delete',//根据ids删除采购单信息
+        addsavePurchase: 'http://192.168.1.199:8099/supplychain/purchase/goods/save',//添加采购单（商品）
+        upaddsavePurchase: 'http://192.168.1.199:8099/supplychain/purchase/goods/update',//修改采购单（商品）
+        queruPNumber: 'http://192.168.1.199:8099/supplychain/purchasedetail/goods/selectByPNumber',//根据采购单号查询当前批次信息（商品）
+        deletepur: 'http://192.168.1.199:8099/supplychain/purchase/goods/delete',//根据ids删除采购单信息（商品）
 
         materialqueryPage: 'http://192.168.1.199:8099/supplychain/purchase/material/queryPage',//采购单分页查询（原材料）
         addmaterPurchase: 'http://192.168.1.199:8099/supplychain/purchase/material/save',//采购新建（原材料）
         delmater: 'http://192.168.1.199:8099/supplychain/purchase/material/delete',//删除采购单（原料）
         upmaterPurchase: 'http://192.168.1.199:8099/supplychain/purchase/material/update',//修改采购单(原料)
-        ProcurAudit:'http://192.168.1.199:8099/supplychain/purchase/material/updateSubmit',//采购单提交审核
-        ProcurementAudit:'http://192.168.1.199:8099/supplychain/purchase/material/updateAudit',//采购单审核通过
-        RejectMater:'http://192.168.1.199:8099/supplychain/purchase/material/updateUnaudit',//审核驳回
+        ProcurAudit:'http://192.168.1.199:8099/supplychain/purchase/material/updateSubmit',//采购单提交审核(原材料)
+        ProcurementAudit:'http://192.168.1.199:8099/supplychain/purchase/material/updateAudit',//采购单审核通过(原材料)
+        RejectMater:'http://192.168.1.199:8099/supplychain/purchase/material/updateUnaudit',//采购单审核驳回(原材料)
+        ProcurAuditGoods:'http://192.168.1.199:8099/supplychain/purchase/goods/updateSubmit',//采购单提交审核(商品)
+        goodsAudit:'http://192.168.1.199:8099/supplychain/purchase/goods/updateAudit',//采购单审核通过(商品)
+        RejectGoods:'http://192.168.1.199:8099/supplychain/purchase/goods/updateUnaudit',//采购单审核驳回(商品)
 
 
-        storageQuery:'http://192.168.1.199:8099/supplychain/warehouse/material/queryPage',//入库单分页查询
+
+storageQuery:'http://192.168.1.199:8099/supplychain/warehouse/material/queryPage',//入库单分页查询
         Addstorage:'http://192.168.1.199:8099/supplychain/warehouse/material/save',//添加入库单
         Upstorage:'http://192.168.1.199:8099/supplychain/warehouse/material/update',//修改入库单
         deleteStorage:'http://192.168.1.199:8099/supplychain/warehouse/material/delete',//删除入库单
+        storageAudit:'http://192.168.1.199:8099/supplychain/warehouse/material/updateSubmit',//入库单提交审核
+        throughStorage:'http://192.168.1.199:8099/supplychain/warehouse/material/updateAudit',//入库单审核通过
+        RejectStorage:'http://192.168.1.199:8099/supplychain/warehouse/material/updateUnSubmit',//入库单审核驳回
 
-        stockQuery:'http://192.168.1.199:8099/supplychain/warehouse/stock/material/queryPage',//库存分页查询
+
+stockQuery:'http://192.168.1.199:8099/supplychain/warehouse/stock/material/queryPage',//库存分页查询
     },
     mutations: {},
     actions: {}

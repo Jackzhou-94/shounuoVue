@@ -47,7 +47,7 @@
                     :data="factoryList"
                     border
                     stripe
-                    height="760px"
+                    height="750px"
                     @selection-change="factorySelection"
                     style="width: 100%">
                 <el-table-column
@@ -137,7 +137,7 @@
                 >
                     <template slot-scope="scope">
                         <el-button type="text" @click="upfactoryspanel(scope.row)">修改</el-button>
-                        <el-button type="text" @click="delfactoryspanel(scope.row)">删除</el-button>
+                        <el-button :disabled="scope.row.recordState=='rs01'?(true):(false)" type="text" @click="delfactoryspanel(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
 
@@ -148,7 +148,7 @@
                 <el-col :span="10" :offset="14">
                     <el-pagination
                             @current-change="factorylistpag"
-                            :page-size="10"
+                            :page-size="15"
                             layout="prev, pager, next, jumper"
                             :total="totalRecordNum">
                     </el-pagination>
@@ -326,7 +326,7 @@
         name: "factory",
         data() {
             return {
-                pageSizeFactory: 10,//每页条目数
+                pageSizeFactory: 15,//每页条目数
                 pageNumFactory: 1,//当前页数
                 factoryList: [],//工厂数据集合
                 factoryIds: [],//工厂信息ID
@@ -507,10 +507,15 @@
             factorySelection(val) {
                 //工厂信息多选
                 this.factoryIds.length = 0
+
+                let listdata=[];//保存选中数据，判断是否允许删除
+
                 val.forEach(item => {
                     this.factoryIds.push(item.id)
+                    listdata.push(item.recordState)
                 })
-                if (val.length==0){
+                let HideShow=listdata.indexOf('rs01')
+                if (val.length==0||HideShow!=-1){
                     this.delStatusButGoods=true
                 } else {
                     this.delStatusButGoods=false

@@ -16,7 +16,7 @@
             <!--新建与查询-->
             <div class="menuBox">
                 <div style="display: flex;justify-content: space-between">
-                    <div>
+                    <div style="display: flex;flex-wrap: nowrap">
                         <el-button type="primary" size="mini" class="el-icon-plus" @click="addSupplier=true">新建</el-button>
                         <el-button type="primary" size="mini" class="el-icon-delete">回收站</el-button>
                         <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
@@ -758,7 +758,7 @@
                     style="width: 100%"
                     border
                     stripe
-                    height="700px"
+                    height="750px"
                     :data="supplierList"
                     highlight-current-row
                     @selection-change="supplierSelection"
@@ -1000,11 +1000,9 @@
                         fixed="right"
                         width="120"
                 >
-                    <template
-                            slot-scope="scope"
-                    >
+                    <template slot-scope="scope">
                         <el-button type="text" size="small" @click="upgoodspanel(scope.row)">修改</el-button>
-                        <el-button type="text" size="small" @click="delgoodspanel(scope.row)">删除</el-button>
+                        <el-button :disabled="scope.row.recordState=='rs01'?(true):(false)" type="text" size="small" @click="delgoodspanel(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -1133,7 +1131,7 @@
                     ]
                 },
                 suppllierPageNum: 1,//默认显示页数
-                suppllierPageSize: 10,//默认显示条目数
+                suppllierPageSize: 15,//默认显示条目数
                 supplierList: [],//供应商数据列表
                 addSupplier: false,//新建供应商面板
                 upSupplier: false,//修改供应商面板
@@ -1191,10 +1189,13 @@
             supplierSelection(val) {
                 //供应商信息多选
                 this.supplierids.length = 0
+                let listdata=[];//保存选中数据，判断是否允许删除
                 val.forEach(item => {
                     this.supplierids.push(item.id)
+                    listdata.push(item.recordState)
                 })
-                if (val.length==0){
+                let HideShow=listdata.indexOf('rs01')
+                if (val.length==0||HideShow!=-1){
                     this.delStatusButGoods=true
                 } else {
                     this.delStatusButGoods=false

@@ -4,16 +4,18 @@
             <el-button size="mini" type="primary" class="el-icon-plus" @click="Newpurchaseorder=true">新建</el-button>
             <el-button icon="el-icon-view" type="primary" size="mini" @click="Settings=true">显示设置
             </el-button>
-            <el-button size="mini" type="primary" :disabled="auditStatusBut">提交审核</el-button>
-            <el-button size="mini" type="primary" :disabled="submitStatusBut">审核通过</el-button>
-            <el-button size="mini" type="primary" :disabled="submitStatusBut">审核驳回</el-button>
+            <el-button size="mini" type="primary" :disabled="auditStatusBut" @click="storageSubmit">提交审核</el-button>
+            <el-button size="mini" type="primary" :disabled="submitStatusBut" @click="throughStorageAudit">审核通过
+            </el-button>
+            <el-button size="mini" type="primary" :disabled="submitStatusBut" @click="RejectStorageAudit">审核驳回
+            </el-button>
             <el-button size="mini" type="danger" :disabled="delStatusBut" @click="delStorage()">批量删除</el-button>
             <!--<el-button size="mini">导出</el-button>-->
         </div>
         <div style="display: flex;justify-content:space-between;margin-bottom: 0.5em;">
 
-            <div>
-                <el-select  v-model="factoryName" size="mini" placeholder="仓库">
+            <div style="display: flex;flex-wrap: nowrap;">
+                <el-select v-model="factoryName" size="mini" placeholder="仓库">
                     <el-option
                             v-for="item in factorylist"
                             :key="item.value"
@@ -33,7 +35,7 @@
                           v-model="oddNumber"></el-input>
             </div>
 
-            <div>
+            <div  style="display: flex;flex-wrap: nowrap;">
                 <el-button type="primary" size="mini" icon="el-icon-edit"
                            @click="factoryName='',categorys='',oddNumber=''">
                     重置
@@ -166,7 +168,8 @@
                 <el-row>
                     <el-col :span="6">
                         <el-form-item label="分摊方式（其他）">
-                            <el-select @change="OtherfreightBut" v-model="NewWarehousing.expensesMode" size="mini" placeholder="其他费用">
+                            <el-select @change="OtherfreightBut" v-model="NewWarehousing.expensesMode" size="mini"
+                                       placeholder="其他费用">
                                 <el-option
                                         v-for="item in Apportionment_method"
                                         :key="item.value"
@@ -618,7 +621,8 @@
                     </el-col>
                     <el-col :span="6">
                         <el-form-item label="分摊方式（运费）">
-                            <el-select v-model="upNewWarehousing.mode" size="mini" @change="upfreightBut" placeholder="运费">
+                            <el-select v-model="upNewWarehousing.mode" size="mini" @change="upfreightBut"
+                                       placeholder="运费">
                                 <el-option
                                         v-for="item in upShare_way"
                                         :key="item.value"
@@ -665,7 +669,8 @@
                 <el-row>
                     <el-col :span="6">
                         <el-form-item label="分摊方式（其他）">
-                            <el-select @change="upOtherfreightBut" v-model="upNewWarehousing.expensesMode" size="mini" placeholder="其他费用">
+                            <el-select @change="upOtherfreightBut" v-model="upNewWarehousing.expensesMode" size="mini"
+                                       placeholder="其他费用">
                                 <el-option
                                         v-for="item in Apportionment_method"
                                         :key="item.value"
@@ -1206,7 +1211,12 @@
                 >
                 </el-table-column>
             </el-table>
-
+            <!--// totalStoreNumber:0,//入库总数量-->
+            <!--// hasStoreNumber:0, //已入库数量-->
+            <!--//     notStoreNumber:0,//未入库数量-->
+            <div style="text-align: left;margin-top: 0.5em">
+                入库总数量{{totalStoreNumber}},已入库数量{{hasStoreNumber}},未入库数量{{notStoreNumber}}
+            </div>
         </el-dialog>
 
 
@@ -1245,7 +1255,8 @@
                     v-if="stateShowAudit"
             >
                 <template slot-scope="scope">
-                    <span>{{scope.row.auditStatus=='sh01'?'已审核':'未审核'}}</span>
+
+                    <span>{{scope.row.auditStatus=='sh01'?'已审核':scope.row.auditStatus=='sh02'?'未审核':'审核驳回'}}</span>
                 </template>
             </el-table-column>
             <el-table-column
@@ -1393,8 +1404,12 @@
                     fixed="right"
             >
                 <template slot-scope="scope">
-                    <el-button type="text" @click="upStorage(scope.row)">修改</el-button>
-                    <el-button type="text" @click="delStoresingle(scope.row)">删除</el-button>
+                    <el-button :disabled="scope.row.auditStatus=='sh01'?(true):(false)" type="text"
+                               @click="upStorage(scope.row)">修改
+                    </el-button>
+                    <el-button :disabled="scope.row.auditStatus=='sh01'?(true):(false)" type="text"
+                               @click="delStoresingle(scope.row)">删除
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -1403,14 +1418,14 @@
             <el-col :span="10" :offset="14">
                 <el-pagination
                         @current-change="factorylistpags"
-                        :page-size="10"
+                        :page-size="15"
                         layout="prev, pager, next, jumper"
                         :total="StoraRecordNum">
                 </el-pagination>
             </el-col>
         </el-row>
 
-        </div>
+    </div>
 </template>
 
 <script>
@@ -1713,9 +1728,71 @@
                 Details_warehousing: false,//入库明细面板
                 warehousingGoodsList: [],//入库明细详情
 
+                totalStoreNumber: 0,//入库总数量
+                hasStoreNumber: 0, //已入库数量
+                notStoreNumber: 0,//未入库数量
+
             }
         },
         methods: {
+
+            storageSubmit() {
+                //入库单提交审核
+                this.$axios.post(this.$store.state.storageAudit, {
+                    ids: this.StorageIds
+                }).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '提交成功',
+                            type: 'success',
+                            onClose() {
+                                location.reload()
+                            }
+                        });
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+                console.log(this.StorageIds)
+            },
+
+            throughStorageAudit() {
+                //入库单通过审核
+                this.$axios.post(this.$store.state.throughStorage, {
+                    ids: this.StorageIds
+                }).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            onClose() {
+                                location.reload()
+                            }
+                        });
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+            },
+
+            RejectStorageAudit() {
+                //入库单审核驳回
+                this.$axios.post(this.$store.state.RejectStorage, {
+                    ids: this.StorageIds
+                }).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            onClose() {
+                                location.reload()
+                            }
+                        });
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+            },
             DobleIn(data) {
 
                 //双击引入
@@ -1756,11 +1833,19 @@
                 //双击表格
                 this.Details_warehousing = true
                 this.warehousingGoodsList = data.goodsList
+                // totalStoreNumber:0,//入库总数量
+                // hasStoreNumber:0, //已入库数量
+                //     notStoreNumber:0,//未入库数量
+
+
+                this.totalStoreNumber = data.warehouseNumber//入库总数量
+                this.hasStoreNumber = data.warehouseNumber1//已入库数量
+                this.notStoreNumber = data.warehouseNumber2//未入库数量
                 console.log(data)
             },
             handleStorage(data) {
                 //入库单列表多选
-                console.log(data)
+
                 data.forEach(item => {
                     this.StorageIds.push(item.id)
                 })
@@ -1775,14 +1860,26 @@
                     let list = data.map(item => {
                         return item.submitStatus
                     })
+                    let lists = data.map(item => {
+                        return item.auditStatus
+                    })
                     let num = list.indexOf('tj02')
-                    let nums = list.indexOf('sh02')
+                    let nums = lists.indexOf('sh01')
                     if (num == -1) {
                         this.submitStatusBut = false
                         this.auditStatusBut = true
                     } else if (num != -1) {
                         this.submitStatusBut = true
                         this.auditStatusBut = false
+                    }
+
+                    // submitStatusBut: true,//审核按钮
+                    //     auditStatusBut: true,//提交按钮
+
+                    if (nums!=-1){
+                        this.submitStatusBut = true
+                        this.auditStatusBut = true
+                        this.delStatusBut = true
                     }
                 }
 
@@ -2150,7 +2247,7 @@
                 //入库单分页查询
                 this.$axios.get(this.$store.state.storageQuery, {
                     params: {
-                        pageSize: 10,
+                        pageSize: 15,
                         pageNum: this.storageQueryPageNum,
                         factoryName: this.factoryName,
                         category: this.categorys, oddNumber: this.oddNumber
@@ -2159,7 +2256,7 @@
                     console.log(res)
                     this.WarehouseReceipt = res.data.list
                     this.StoraRecordNum = res.data.totalRecord
-                }).catch(err=>{
+                }).catch(err => {
                     throw err
                 })
             },

@@ -12,9 +12,13 @@
                             </el-button>
                             <el-button icon="el-icon-view" type="primary" size="mini" @click="SettingsMater=true">显示设置
                             </el-button>
-                            <el-button size="mini" type="primary" :disabled="auditStatusBut" @click="SubmitAudit">提交审核</el-button>
-                            <el-button size="mini" type="primary" :disabled="submitStatusBut" @click="AuditPass">审核通过</el-button>
-                            <el-button size="mini" type="primary" :disabled="submitStatusBut" @click="AuditReject">审核驳回</el-button>
+                            <el-button size="mini" type="primary" :disabled="auditStatusBut" @click="SubmitAudit">提交审核
+                            </el-button>
+                            <el-button size="mini" type="primary" :disabled="submitStatusBut" @click="AuditPass">审核通过
+                            </el-button>
+                            <el-button size="mini" type="primary" :disabled="submitStatusBut" @click="AuditReject">
+                                审核驳回
+                            </el-button>
                             <el-button size="mini" type="danger" :disabled="delStatusBut" @click="delMaterPur()">批量删除
                             </el-button>
                             <!--<el-button size="mini">导出</el-button>-->
@@ -226,60 +230,60 @@
                                 width="85%">
                             <el-form :model="addProcurementMater" ref="addProcurementMater"
                                      :rules="addProcurementsMater" label-width="100px" label-position="right"
-                                     >
+                            >
 
 
                                 <el-row>
                                     <el-col :span="6">
-                                    <el-form-item
-                                            label="供应商"
-                                            prop="supplier"
-                                    >
-                                        <!--供应商选择-->
-                                        <el-select size="mini" filterable clearable
-                                                   v-model="addProcurementMater.supplier"
-                                                   placeholder="供应商">
-                                            <el-option
-                                                    v-for="item in options"
-                                                    :key="item.value"
-                                                    :label="item.label"
-                                                    :value="item.value">
-                                            </el-option>
-                                        </el-select>
-                                    </el-form-item>
+                                        <el-form-item
+                                                label="供应商"
+                                                prop="supplier"
+                                        >
+                                            <!--供应商选择-->
+                                            <el-select size="mini" filterable clearable
+                                                       v-model="addProcurementMater.supplier"
+                                                       placeholder="供应商">
+                                                <el-option
+                                                        v-for="item in options"
+                                                        :key="item.value"
+                                                        :label="item.label"
+                                                        :value="item.value">
+                                                </el-option>
+                                            </el-select>
+                                        </el-form-item>
                                     </el-col>
                                     <el-col :span="6">
-                                    <el-form-item
-                                            label="工厂"
-                                            prop="factoryName"
-                                    >
-                                        <!--工厂选择-->
-                                        <el-select filterable size="mini" clearable
-                                                   v-model="addProcurementMater.factoryName"
-                                                   placeholder="工厂选择">
-                                            <el-option
-                                                    v-for="item in factorylist"
-                                                    :key="item.value"
-                                                    :label="item.label"
-                                                    :value="item.value">
-                                            </el-option>
-                                        </el-select>
-                                    </el-form-item>
+                                        <el-form-item
+                                                label="工厂"
+                                                prop="factoryName"
+                                        >
+                                            <!--工厂选择-->
+                                            <el-select filterable size="mini" clearable
+                                                       v-model="addProcurementMater.factoryName"
+                                                       placeholder="工厂选择">
+                                                <el-option
+                                                        v-for="item in factorylist"
+                                                        :key="item.value"
+                                                        :label="item.label"
+                                                        :value="item.value">
+                                                </el-option>
+                                            </el-select>
+                                        </el-form-item>
                                     </el-col>
 
                                     <el-col :span="6">
-                                    <el-form-item label="发票" prop="invoice">
-                                        <el-select @change="materchoose" size="mini"
-                                                   v-model="addProcurementMater.invoice"
-                                                   placeholder="请选择发票">
-                                            <el-option
-                                                    v-for="item in addinvoice"
-                                                    :key="item.value"
-                                                    :label="item.label"
-                                                    :value="item.value">
-                                            </el-option>
-                                        </el-select>
-                                    </el-form-item>
+                                        <el-form-item label="发票" prop="invoice">
+                                            <el-select @change="materchoose" size="mini"
+                                                       v-model="addProcurementMater.invoice"
+                                                       placeholder="请选择发票">
+                                                <el-option
+                                                        v-for="item in addinvoice"
+                                                        :key="item.value"
+                                                        :label="item.label"
+                                                        :value="item.value">
+                                                </el-option>
+                                            </el-select>
+                                        </el-form-item>
                                     </el-col>
 
                                     <el-col :span="6">
@@ -298,14 +302,12 @@
 
 
                                     <el-col :span="6">
-                                    <el-form-item label="备注">
-                                        <el-input size="mini" placeholder="备注"
-                                                  v-model="addProcurementMater.remark"></el-input>
-                                    </el-form-item>
+                                        <el-form-item label="备注">
+                                            <el-input size="mini" placeholder="备注"
+                                                      v-model="addProcurementMater.remark"></el-input>
+                                        </el-form-item>
                                     </el-col>
                                 </el-row>
-
-
 
 
                             </el-form>
@@ -1641,7 +1643,6 @@
                         </div>
                     </el-dialog>
 
-
                     <!--采购明细显示设置-->
                     <el-dialog
                             title="显示设置"
@@ -1735,12 +1736,11 @@
 
                     </el-dialog>
                     <div>
-
                         <el-table
                                 :data="materpurchaseList"
                                 border
                                 stripe
-                                height="700px"
+                                height="750px"
                                 @row-dblclick="Purchasedetailsmater"
                                 @selection-change="Multipleselection"
 
@@ -1811,7 +1811,7 @@
                                     align="center"
                                     prop="submitTime"
                                     label="提交时间"
-                                    width="160"
+                                    width="180"
                                     v-if="submitTimematerSet"
                             >
                             </el-table-column>
@@ -1829,7 +1829,7 @@
                                     align="center"
                                     prop="auditTime"
                                     label="审核时间"
-                                    width="160"
+                                    width="180"
                                     v-if="auditTimematerSet"
                             >
                             </el-table-column>
@@ -1985,9 +1985,19 @@
                                     width="120"
                                     align="center"
                             >
+
                                 <template slot-scope="scope">
-                                    <el-button type="text" @click="updatamater(scope.row)">修改</el-button>
-                                    <el-button type="text" @click="delpurMaterList(scope.row)">删除</el-button>
+                                    <!--purchOperation-->
+                                    <!--{{scope.row.auditStatus=='sh01'?(purchOperation=true):(purchOperation=false)}}-->
+
+                                    <el-button :disabled="scope.row.auditStatus=='sh01'?(true):(false)" type="text"
+                                               @click="updatamater(scope.row)">修改
+                                    </el-button>
+                                    <el-button :disabled="scope.row.auditStatus=='sh01'?(true):(false)" type="text"
+                                               @click="delpurMaterList(scope.row)">删除
+                                    </el-button>
+
+
                                 </template>
 
                             </el-table-column>
@@ -1997,7 +2007,7 @@
                             <el-col :span="10" :offset="14">
                                 <el-pagination
                                         @current-change="materfactorylistpag"
-                                        :page-size="10"
+                                        :page-size="15"
                                         layout="prev, pager, next, jumper"
                                         :total="totalRecordNum">
                                 </el-pagination>
@@ -2018,9 +2028,16 @@
                             </el-button>
                             <el-button icon="el-icon-view" type="primary" size="mini" @click="Settings=true">显示设置
                             </el-button>
-                            <el-button size="mini" type="primary" :disabled="auditStatusButGoods" >提交审核</el-button>
-                            <el-button size="mini" type="primary" :disabled="submitStatusButGoods">审核通过</el-button>
-                            <el-button size="mini" type="primary" :disabled="submitStatusButGoods">审核驳回</el-button>
+
+                            <el-button size="mini" type="primary" :disabled="auditStatusButGoods"
+                                       @click="SubmitAuditGoods">提交审核
+                            </el-button>
+                            <el-button size="mini" type="primary" :disabled="submitStatusButGoods"
+                                       @click="AuditPassGoods">审核通过
+                            </el-button>
+                            <el-button size="mini" type="primary" :disabled="submitStatusButGoods"
+                                       @click="AuditRejectGoods">审核驳回
+                            </el-button>
                             <el-button size="mini" type="danger" :disabled="delStatusButGoods"
                                        @click="delpurchaseList()">批量删除
                             </el-button>
@@ -2230,7 +2247,8 @@
                                 :visible.sync="Newpurchaseorder"
                                 :show-close="false"
                                 width="80%">
-                            <el-form :model="addProcurement" ref="addProcurement" :rules="addProcurements" label-position="right"
+                            <el-form :model="addProcurement" ref="addProcurement" :rules="addProcurements"
+                                     label-position="right"
                                      label-width="100px">
                                 <el-row>
                                     <el-col :span="6">
@@ -4022,7 +4040,7 @@
                                 :data="purchaseList"
                                 border
                                 stripe
-                                height="700px"
+                                height="750px"
                                 @row-dblclick="Purchasedetails"
                                 @selection-change="MultipleselectionGoods"
 
@@ -4093,7 +4111,7 @@
                                     align="center"
                                     prop="submitTime"
                                     label="提交时间"
-                                    width="150"
+                                    width="180"
                                     v-if="submitTime"
                             >
                             </el-table-column>
@@ -4111,7 +4129,7 @@
                                     align="center"
                                     prop="auditTime"
                                     label="审核时间"
-                                    width="150"
+                                    width="180"
                                     v-if="auditTime"
                             >
                             </el-table-column>
@@ -4267,9 +4285,15 @@
                                     width="120"
                                     align="center"
                             >
+                                <!--scope.row.auditStatus=='sh01'?'已审核':scope.row.auditStatus=='sh02'?'未审核':'审核驳回'-->
                                 <template slot-scope="scope">
-                                    <el-button type="text" @click="updata(scope.row)">修改</el-button>
-                                    <el-button type="text" @click="delpurchase(scope.row)">删除</el-button>
+
+                                    <el-button :disabled="scope.row.auditStatus=='sh01'?(true):(false)" type="text"
+                                               @click="updata(scope.row)">修改
+                                    </el-button>
+                                    <el-button :disabled="scope.row.auditStatus=='sh01'?(true):(false)" type="text"
+                                               @click="delpurchase(scope.row)">删除
+                                    </el-button>
                                 </template>
 
                             </el-table-column>
@@ -4279,7 +4303,7 @@
                             <el-col :span="10" :offset="14">
                                 <el-pagination
                                         @current-change="factorylistpag"
-                                        :page-size="10"
+                                        :page-size="15"
                                         layout="prev, pager, next, jumper"
                                         :total="totalRecordNum">
                                 </el-pagination>
@@ -4396,7 +4420,7 @@
                 Submitstate: '',//提交状态
                 purchaseTime: '',//查询时间
                 purchasePageNum: 1,//采购单默认显示页数(商品)
-                purchasePageSize: 10,//采购单默认显示条目数
+                purchasePageSize: 15,//采购单默认显示条目数
                 purchaseList: [],//采购订单列表信息(商品)
                 totalRecordNum: 0,
                 matertotalRecordNum: 0,
@@ -4702,7 +4726,7 @@
                 materSubmitstate: '',//提交状态(原材料)
                 materpurchaseTime: '',//查询时间(原材料)
                 materpurchasePageNum: 1,//采购单默认显示页数
-                materpurchasePageSize: 10,//采购单默认显示条目数
+                materpurchasePageSize: 15,//采购单默认显示条目数
                 materpurchaseList: [],//采购订单列表信息(原材料)
                 materReceivingStatus: '',//采购订单列表信息(原材料)
                 detailSettingsmater: false,//显示设置（原材料明细）
@@ -4774,11 +4798,11 @@
         },
 
         methods: {
-            SubmitAudit(){
-             //原材料提交审核
-                this.$axios.post(this.$store.state.ProcurAudit,{
-                    ids:this.purchasematerIds
-                }).then(res=>{
+            SubmitAudit() {
+                //原材料提交审核
+                this.$axios.post(this.$store.state.ProcurAudit, {
+                    ids: this.purchasematerIds
+                }).then(res => {
                     if (res.data.code == 200) {
                         this.$message({
                             message: '提交成功',
@@ -4794,29 +4818,11 @@
                 console.log(this.purchasematerIds)
             },
 
-            AuditPass(){
+            AuditPass() {
                 // 原材料采购审核通过
-                this.$axios.post(this.$store.state.ProcurementAudit,{
-                    ids:this.purchasematerIds
-                }).then(res=>{
-                    if (res.data.code == 200) {
-                    this.$message({
-                        message: '提交成功',
-                        type: 'success',
-                        onClose() {
-                            location.reload()
-                        }
-                    });
-                } else {
-                    this.$message.error(res.data.msg);
-                }
-                })
-            },
-            AuditReject(){
-                //审核驳回
-                this.$axios.post(this.$store.state.RejectMater,{
-                    ids:this.purchasematerIds
-                }).then(res=>{
+                this.$axios.post(this.$store.state.ProcurementAudit, {
+                    ids: this.purchasematerIds
+                }).then(res => {
                     if (res.data.code == 200) {
                         this.$message({
                             message: '操作成功',
@@ -4830,6 +4836,82 @@
                     }
                 })
             },
+            AuditReject() {
+                //审核驳回(原材料)
+                this.$axios.post(this.$store.state.RejectMater, {
+                    ids: this.purchasematerIds
+                }).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            onClose() {
+                                location.reload()
+                            }
+                        });
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+            },
+
+            SubmitAuditGoods() {
+                //采购单提交审核（商品信息）
+                this.$axios.post(this.$store.state.ProcurAuditGoods, {
+                    ids: this.purchaseIds
+                }).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '提交成功',
+                            type: 'success',
+                            onClose() {
+                                location.reload()
+                            }
+                        });
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+            },
+            AuditPassGoods() {
+                //采购单通过审核（商品信息）
+
+                this.$axios.post(this.$store.state.goodsAudit, {
+                    ids: this.purchaseIds
+                }).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            onClose() {
+                                location.reload()
+                            }
+                        });
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+            },
+            AuditRejectGoods() {
+                //审核驳回（商品）
+                this.$axios.post(this.$store.state.RejectGoods, {
+                    ids: this.purchaseIds
+                }).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            onClose() {
+                                location.reload()
+                            }
+                        });
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+            },
+
+
             delpurMaterList(data) {
                 //批量删除采购单信息（原材料）
                 this.purchasematerIds.length = 0
@@ -4951,7 +5033,7 @@
                         this.submitStatusBut = true
                         this.auditStatusBut = false
                     }
-                    if (nums!=-1){
+                    if (nums != -1) {
                         this.submitStatusBut = true
                         this.auditStatusBut = true
                         this.delStatusBut = true
@@ -4981,14 +5063,22 @@
                     let list = data.map(item => {
                         return item.submitStatus
                     })
+                    let lists = data.map(item => {
+                        return item.auditStatus
+                    })
                     let num = list.indexOf('tj02')
-                    let nums = list.indexOf('sh02')
+                    let nums = lists.indexOf('sh01')
                     if (num == -1) {
                         this.submitStatusButGoods = false
                         this.auditStatusButGoods = true
                     } else if (num != -1) {
                         this.submitStatusButGoods = true
                         this.auditStatusButGoods = false
+                    }
+                    if (nums != -1) {
+                        this.submitStatusButGoods = true
+                        this.auditStatusButGoods = true
+                        this.delStatusButGoods = true
                     }
                 }
 
@@ -5890,7 +5980,6 @@
             this.factoryQuery()//工厂列表
             this.queryGoods()//商品信息查询
             this.queryPage()//原材料信息查询
-
             this.materialQueryPage()//分页(原材料)
         }
     }

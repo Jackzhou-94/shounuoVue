@@ -59,7 +59,7 @@
                     :data="quireGoodsData"
                     border
                     stripe
-                    height="700px"
+                    height="750px"
                     @selection-change="goodsSelection"
                     style="width: 100%">
                 <el-table-column
@@ -211,8 +211,8 @@
                         fixed="right"
                 >
                     <template slot-scope="scope">
-                        <el-button type="text" @click="upgoodspanel(scope.row)">修改</el-button>
-                        <el-button type="text" @click="delGoods(scope.row)">删除</el-button>
+                        <el-button  type="text" @click="upgoodspanel(scope.row)">修改</el-button>
+                        <el-button :disabled="scope.row.recordState=='rs01'?(true):(false)" type="text" @click="delGoods(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -221,7 +221,7 @@
                 <el-col :span="10" :offset="14">
                     <el-pagination
                             @current-change="goodslistpag"
-                            :page-size="10"
+                            :page-size="15"
                             layout="prev, pager, next, jumper"
                             :total="totalRecordNum">
                     </el-pagination>
@@ -365,7 +365,7 @@
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="条形码" prop="barCode">
-                            <el-input size="mini" v-model="upgoodsForm.barCode"></el-input>
+                            <el-input disabled size="mini" v-model="upgoodsForm.barCode"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -374,7 +374,7 @@
                 <el-row>
                     <el-col :span="8">
                         <el-form-item label="商家编码" prop="merchantCode">
-                            <el-input size="mini" v-model="upgoodsForm.merchantCode"></el-input>
+                            <el-input disabled size="mini" v-model="upgoodsForm.merchantCode"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -732,7 +732,7 @@
                 queryitemCode: '',//查询货品编号
                 querymerchantCode: '',//查询商家编码
                 queryother: '',//查询其他
-                quireGoodspagesize: 10,//商品信息分页大小
+                quireGoodspagesize: 15,//商品信息分页大小
                 quireGoodspageNum: 1,//商品信息分页页数
                 quireGoodsData: [],//商品信息
                 totalRecordNum: 0,//总条目数
@@ -1106,10 +1106,13 @@
             goodsSelection(val) {
                 //商品信息多选
                 this.goodsids.length = 0
+                let listdata=[];//保存选中数据，判断是否允许删除
                 val.forEach(item => {
                     this.goodsids.push(item.id)
+                    listdata.push(item.recordState)
                 })
-                if (val.length == 0) {
+                let HideShow=listdata.indexOf('rs01')
+                if (val.length == 0||HideShow!=-1) {
                     this.delStatusButGoods = true
                 } else {
                     this.delStatusButGoods = false
@@ -1165,7 +1168,7 @@
                 //打开修改信息面板
                 this.upgoods = true
                 this.upgoodsForm = data
-
+                console.log(data)
             },
             delGoods(val) {
                 //删除单条商品信息
