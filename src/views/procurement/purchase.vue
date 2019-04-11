@@ -25,7 +25,7 @@
                         </div>
                         <div style="display: flex;justify-content:space-between">
 
-                            <el-select size="mini" v-model="materTimeType" placeholder="时间类型">
+                            <el-select size="mini"  v-model="materTimeType" placeholder="时间类型">
                                 <el-option
                                         v-for="item in TimeTypelist"
                                         :key="item.value"
@@ -87,7 +87,7 @@
                         <el-dialog
                                 title="显示设置"
                                 :visible.sync="SettingsMater"
-                                width="30%"
+                                width="450px"
                                 :show-close="false"
 
                         >
@@ -227,14 +227,13 @@
                                 title="新建采购单(原材料)"
                                 :visible.sync="Newpurchaseorder_mater"
                                 :show-close="false"
-                                width="85%">
+                                width="1000px">
                             <el-form :model="addProcurementMater" ref="addProcurementMater"
                                      :rules="addProcurementsMater" label-width="100px" label-position="right"
                             >
 
 
-                                <el-row>
-                                    <el-col :span="6">
+                                    <div style="display: flex;justify-content: space-between;flex-wrap: nowrap">
                                         <el-form-item
                                                 label="供应商"
                                                 prop="supplier"
@@ -251,8 +250,7 @@
                                                 </el-option>
                                             </el-select>
                                         </el-form-item>
-                                    </el-col>
-                                    <el-col :span="6">
+
                                         <el-form-item
                                                 label="工厂"
                                                 prop="factoryName"
@@ -269,11 +267,10 @@
                                                 </el-option>
                                             </el-select>
                                         </el-form-item>
-                                    </el-col>
 
-                                    <el-col :span="6">
                                         <el-form-item label="发票" prop="invoice">
                                             <el-select @change="materchoose" size="mini"
+
                                                        v-model="addProcurementMater.invoice"
                                                        placeholder="请选择发票">
                                                 <el-option
@@ -284,15 +281,23 @@
                                                 </el-option>
                                             </el-select>
                                         </el-form-item>
-                                    </el-col>
 
-                                    <el-col :span="6">
                                         <el-form-item label="货运方式" prop="freightTransportation">
-                                            <el-input size="mini" placeholder="货运方式"
+                                            <el-input  clearable size="mini" placeholder="货运方式"
                                                       v-model="addProcurementMater.freightTransportation"></el-input>
                                         </el-form-item>
-                                    </el-col>
-                                </el-row>
+                                        <!--<el-form-item label="运费" prop="freight">-->
+                                            <!--<el-input clearable  size="mini" v-model="addProcurementMater.freight"></el-input>-->
+                                        <!--</el-form-item>-->
+                                        <!--<el-form-item label="备注">-->
+                                            <!--<el-input  clearable size="mini" placeholder="备注"-->
+                                                      <!--v-model="addProcurementMater.remark"></el-input>-->
+                                        <!--</el-form-item>-->
+                                    </div>
+
+
+
+
                                 <el-row>
                                     <el-col :span="6">
                                         <el-form-item label="运费" prop="freight">
@@ -540,7 +545,7 @@
                         <el-dialog
                                 title="采购订单添加原材料"
                                 :visible.sync="PurchasingAddmaterial_material"
-                                width="80%"
+                                width="1000px"
                                 :show-close="false"
                         >
                             <!--新建与查询-->
@@ -699,7 +704,7 @@
                                     <el-col :span="8" :offset="8">
                                         <el-pagination
                                                 @current-change="handleCurrentChange"
-                                                :page-size="pageSize"
+                                                :page-size="5"
                                                 layout="prev, pager, next, jumper"
                                                 :total="totalRecord">
                                         </el-pagination>
@@ -838,8 +843,9 @@
                         <el-dialog
                                 title="修改采购单(原材料)"
                                 :visible.sync="upNewpurchaseorder_mater"
+                                @closed="closeFunMater"
                                 :show-close="false"
-                                width="80%">
+                                width="1000px">
                             <el-form :model="upaddProcurementMater" ref="upaddProcurementMater"
                                      :rules="upaddProcurementsMater"
                                      label-position="right"
@@ -1152,7 +1158,7 @@
                         <el-dialog
                                 title="采购订单添加原材料"
                                 :visible.sync="upPurchasingAddmaterial_material"
-                                width="80%"
+                                width="1000px"
                                 :show-close="false"
                         >
                             <!--新建与查询-->
@@ -1312,7 +1318,7 @@
                                     <el-col :span="8" :offset="8">
                                         <el-pagination
                                                 @current-change="handleCurrentChange"
-                                                :page-size="pageSize"
+                                                :page-size="5"
                                                 layout="prev, pager, next, jumper"
                                                 :total="totalRecord">
                                         </el-pagination>
@@ -1647,7 +1653,7 @@
                     <el-dialog
                             title="显示设置"
                             :visible.sync="detailSettingsmater"
-                            width="30%"
+                            width="450px"
                             :show-close="false"
 
                     >
@@ -2107,7 +2113,7 @@
                         <el-dialog
                                 title="显示设置"
                                 :visible.sync="Settings"
-                                width="30%"
+                                width="450px"
                                 :show-close="false"
 
                         >
@@ -2246,7 +2252,7 @@
                                 title="新建采购单(商品)"
                                 :visible.sync="Newpurchaseorder"
                                 :show-close="false"
-                                width="80%">
+                                width="1000px">
                             <el-form :model="addProcurement" ref="addProcurement" :rules="addProcurements"
                                      label-position="right"
                                      label-width="100px">
@@ -2587,7 +2593,7 @@
                         <el-dialog
                                 title="采购订单添加商品"
                                 :visible.sync="PurchasingAddGoods"
-                                width="80%"
+                                width="1000px"
                                 :show-close="false"
                         >
                             <!--新建与查询-->
@@ -3018,7 +3024,8 @@
                                 title="修改采购单(商品)"
                                 :visible.sync="upNewpurchaseorder"
                                 :show-close="false"
-                                width="80%">
+                                @closed="closeFunGoods"
+                                width="1000px">
 
                             <el-form :model="upaddProcurement" :rules="upaddProcurements" label-width="100px"
                                      ref="upaddProcurement" label-position="right">
@@ -3356,8 +3363,9 @@
                         <!--修改采购订单添加商品-->
                         <el-dialog
                                 title="修改采购订单添加商品"
+
                                 :visible.sync="upPurchasingAddGoods"
-                                width="80%"
+                                width="1000px"
                                 :show-close="false"
 
                         >
@@ -4665,7 +4673,7 @@
                 materialsName: '',//物料名称（原材料）
                 VendorQueries: '',//厂商查询（原材料）
                 totalPage: 0,//总页数（原材料）
-                pageSize: 0,//单页个数（原材料）
+                materpageNum:1,//当前页数（原材料）
                 totalRecord: 0,//总条数（原材料）
                 timematerData: '',//时间数据
                 uptimematerData: '',//修改时间数据
@@ -4794,12 +4802,51 @@
                         {required: true, message: '请选择预计入库时间', trigger: 'blur'},
                     ],
                 },
+                Matertypedata:[],////用于储存数据，当表单发生改变时校验(原材料)
+                Goodstypedata:[],////用于储存数据，当表单发生改变时校验（商品）
             }
         },
 
         methods: {
+            closeFunGoods(){
+                //商品信息修改验证
+                let obj = JSON.stringify(this.upaddProcurement)
+                let state = (obj == this.Goodstypedata)
+                let that = this
+                if (!state) {
+                    this.$confirm('检测到未保存的内容，是否在离开页面前保存修改？', '确认信息', {
+                        distinguishCancelAndClose: true,
+                        confirmButtonText: '保存',
+                        cancelButtonText: '放弃修改'
+                    })
+                        .then(() => {
+                            that.upSubmissionPurchase('upaddProcurement')
+                        })
+
+                }
+            },
+            closeFunMater() {
+                //原材料修改验证
+
+                let obj = JSON.stringify(this.upaddProcurementMater)
+                let state = (obj == this.Matertypedata)
+                let that = this
+                if (!state) {
+                    this.$confirm('检测到未保存的内容，是否在离开页面前保存修改？', '确认信息', {
+                        distinguishCancelAndClose: true,
+                        confirmButtonText: '保存',
+                        cancelButtonText: '放弃修改'
+                    })
+                        .then(() => {
+                            that.upSubmissionMater('upaddProcurementMater')
+                        })
+
+                }
+
+            },
             SubmitAudit() {
                 //原材料提交审核
+                let that=this
                 this.$axios.post(this.$store.state.ProcurAudit, {
                     ids: this.purchasematerIds
                 }).then(res => {
@@ -4808,7 +4855,7 @@
                             message: '提交成功',
                             type: 'success',
                             onClose() {
-                                location.reload()
+                                that.materialQueryPage()//分页(原材料)
                             }
                         });
                     } else {
@@ -4820,6 +4867,7 @@
 
             AuditPass() {
                 // 原材料采购审核通过
+                let that=this
                 this.$axios.post(this.$store.state.ProcurementAudit, {
                     ids: this.purchasematerIds
                 }).then(res => {
@@ -4828,7 +4876,7 @@
                             message: '操作成功',
                             type: 'success',
                             onClose() {
-                                location.reload()
+                                that.materialQueryPage()//分页(原材料)
                             }
                         });
                     } else {
@@ -4838,6 +4886,7 @@
             },
             AuditReject() {
                 //审核驳回(原材料)
+                let that=this
                 this.$axios.post(this.$store.state.RejectMater, {
                     ids: this.purchasematerIds
                 }).then(res => {
@@ -4846,7 +4895,7 @@
                             message: '操作成功',
                             type: 'success',
                             onClose() {
-                                location.reload()
+                                that.materialQueryPage()//分页(原材料)
                             }
                         });
                     } else {
@@ -4857,6 +4906,7 @@
 
             SubmitAuditGoods() {
                 //采购单提交审核（商品信息）
+                let that=this
                 this.$axios.post(this.$store.state.ProcurAuditGoods, {
                     ids: this.purchaseIds
                 }).then(res => {
@@ -4865,7 +4915,7 @@
                             message: '提交成功',
                             type: 'success',
                             onClose() {
-                                location.reload()
+                                that.purchaseQueryPage()//分页(商品)
                             }
                         });
                     } else {
@@ -4875,7 +4925,7 @@
             },
             AuditPassGoods() {
                 //采购单通过审核（商品信息）
-
+                let that=this
                 this.$axios.post(this.$store.state.goodsAudit, {
                     ids: this.purchaseIds
                 }).then(res => {
@@ -4884,7 +4934,7 @@
                             message: '操作成功',
                             type: 'success',
                             onClose() {
-                                location.reload()
+                                that.purchaseQueryPage()//分页(商品)
                             }
                         });
                     } else {
@@ -4894,6 +4944,7 @@
             },
             AuditRejectGoods() {
                 //审核驳回（商品）
+                let that=this
                 this.$axios.post(this.$store.state.RejectGoods, {
                     ids: this.purchaseIds
                 }).then(res => {
@@ -4902,7 +4953,7 @@
                             message: '操作成功',
                             type: 'success',
                             onClose() {
-                                location.reload()
+                                that.purchaseQueryPage()//分页(商品)
                             }
                         });
                     } else {
@@ -4919,16 +4970,17 @@
                 this.delMaterPur()
             },
             delMaterPur() {
+                let that=this
                 //删除采购单信息
                 this.$axios.post(this.$store.state.delmater, {
                     ids: this.purchasematerIds
                 }).then(res => {
                     if (res.data.code == 200) {
                         this.$message({
-                            message: '删除',
+                            message: '删除成功',
                             type: 'success',
                             onClose() {
-                                location.reload()
+                                that.materialQueryPage()//分页(原材料)
                             }
                         });
                     } else {
@@ -4952,7 +5004,8 @@
                     this.upgoodsMoney += item.totalPrice
                     this.uptaxgoodsMoney += item.taxTotalPrice
                 })
-
+                this.Goodstypedata = JSON.stringify(data) //将数据转为字符串，进行修改验证
+                console.log(this.Matertypedata)
             },
             updatamater(data) {
                 //修改采购单信息
@@ -4971,29 +5024,31 @@
                     this.upmatergoodsMoney += item.totalPrice
                     this.upmatertaxgoodsMoney += item.taxTotalPrice
                 })
+                this.Matertypedata = JSON.stringify(data) //将数据转为字符串，进行修改验证
+                console.log(this.Matertypedata)
 
             },
             handleCurrentChange(val) {
                 /**
                  * 原材料信息分页
                  * */
-                this.queryPage(val, 5, this.selsetType)
+                this.materpageNum=val
+                this.queryPage()
             },
-            queryPage(Num = 1, Size = 5, type = '全部') {
+            queryPage() {
                 //原材料信息分页查询
                 let data = {
-                    pageNum: Num, pageSize: Size, type: type,
+                    pageNum: this.materpageNum, pageSize: 5, type: '全部',
                     materialCode: this.materialsNum, name: this.materialsName,
                     manufacturer: this.VendorQueries
                 }
-
+                console.log(data)
                 this.$axios.get(this.$store.state.queryPage, {
                     params: data
                 }).then(res => {
                     console.log(res.data)
                     this.materialsList = res.data.list
                     this.totalPage = res.data.totalPage//总页数
-                    this.pageSize = res.data.pageSize//单页个数
                     this.totalRecord = res.data.totalRecord//总条数
                 })
 
@@ -5575,6 +5630,10 @@
 
             },
             SubmissionPurchase(formName) {
+                /**
+                 * 新建采购单（商品）
+                 * */
+                let that=this
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         //提交采购单数据
@@ -5584,7 +5643,8 @@
                                     message: '添加成功',
                                     type: 'success',
                                     onClose() {
-                                        location.reload()
+                                        that.purchaseQueryPage()//分页(商品)
+                                        that.Newpurchaseorder=false
                                     }
                                 });
                             } else {
@@ -5598,6 +5658,7 @@
                 });
             },
             SubmissionMater(formName) {
+                let that=this
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         //提交采购单数据（原材料）
@@ -5608,7 +5669,8 @@
                                     message: '添加成功',
                                     type: 'success',
                                     onClose() {
-                                        location.reload()
+                                        that.materialQueryPage()//分页(原材料)
+                                        that.Newpurchaseorder_mater=false
                                     }
                                 });
                             } else {
@@ -5624,6 +5686,7 @@
                 });
             },
             upSubmissionMater(formName) {
+                let that=this
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         //提交采购单数据(原材料 修改)
@@ -5633,7 +5696,8 @@
                                     message: '修改成功',
                                     type: 'success',
                                     onClose() {
-                                        location.reload()
+                                        that.materialQueryPage()//分页(原材料)
+                                        that.upNewpurchaseorder_mater=false
                                     }
                                 });
                             } else {
@@ -5649,7 +5713,7 @@
             },
             upSubmissionPurchase(formName) {
                 //提交修改采购单数据
-
+                let that=this
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         this.upaddProcurement.distanceDate = this.updistanceDate//预计入库时间
@@ -5661,7 +5725,8 @@
                                     message: '修改成功',
                                     type: 'success',
                                     onClose() {
-                                        location.reload()
+                                        that.purchaseQueryPage()//分页(商品)
+                                        that.upNewpurchaseorder=false
                                     }
                                 });
                             } else {
@@ -5685,6 +5750,7 @@
             },
             delpurchaseList() {
                 //删除采购单
+                let that=this
                 this.$axios.post(this.$store.state.deletepur, {
                     ids: this.purchaseIds
                 }).then(res => {
@@ -5693,7 +5759,7 @@
                             message: '删除成功',
                             type: 'success',
                             onClose() {
-                                location.reload()
+                                that.purchaseQueryPage()//分页(商品)
                             }
                         });
                     } else {

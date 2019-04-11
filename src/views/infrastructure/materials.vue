@@ -79,7 +79,7 @@
                     <el-dialog
                             title="显示设置"
                             :visible.sync="Settings"
-                            width="30%"
+                            width="450px"
                             :show-close="false"
                     >
                         <div style="text-align: left">
@@ -275,7 +275,9 @@
                     >
 
                         <el-button type="text" size="small" @click="uppanel(scope.row)">修改</el-button>
-                        <el-button :disabled="scope.row.recordState=='rs01'?(true):(false)" type="text" size="small" @click="delpanel(scope.row)">删除</el-button>
+                        <el-button :disabled="scope.row.recordState=='rs01'?(true):(false)" type="text" size="small"
+                                   @click="delpanel(scope.row)">删除
+                        </el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -294,7 +296,7 @@
             </el-row>
         </div>
         <!--添加-->
-        <el-dialog title="新建物料" :visible.sync="dialogTableVisible" width="50%" :show-close="false">
+        <el-dialog title="新建物料" :visible.sync="dialogTableVisible" width="800px" :show-close="false">
             <el-form style="text-align: left" :model="addmaterial" ref="addmaterial" :rules="rules"
                      label-width="100px" label-position="right">
 
@@ -313,6 +315,7 @@
                     <el-col :span="8">
                         <el-form-item label="物料分类" prop="materials">
                             <el-cascader
+                                    :show-all-levels="false"
                                     size="mini"
                                     :options="materialclassification"
                                     v-model="addmaterial.materials"
@@ -351,8 +354,17 @@
                 <el-row>
                     <el-col :span="8">
                         <el-form-item label="计量单位" prop="unit">
-                            <el-input size="mini" v-model="addmaterial.unit" placeholder="双/盒"></el-input>
+                            <!--<el-input size="mini" v-model="addmaterial.unit" placeholder="双/盒"></el-input>-->
+                            <el-select size="mini" v-model="addmaterial.unit">
+                                <el-option
+                                        v-for="item in UnitSelection"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                ></el-option>
+                            </el-select>
                         </el-form-item>
+
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="成份" prop="ingredients">
@@ -381,7 +393,7 @@
 
         </el-dialog>
         <!--修改-->
-        <el-dialog title="修改物料信息" :visible.sync="UpdatableVisible" width="50%" :show-close="false">
+        <el-dialog title="修改物料信息"   @closed="closeFun" :visible.sync="UpdatableVisible" width="800px" :show-close="false">
             <el-form :model="updaData" ref="updaData" :rules="ruless"
                      label-width="100px" label-position="right">
                 <el-row>
@@ -400,12 +412,15 @@
                     <el-col :span="8">
                         <el-form-item label="物料分类" prop="materials">
                             <el-cascader
+                                    :show-all-levels="false"
                                     size="mini"
                                     :options="materialclassification"
+                                    :change-on-select="true"
                                     v-model="updaData.materials"
                                     @change="upclassification">
                             </el-cascader>
                         </el-form-item>
+                        <!--materials-->
                     </el-col>
                 </el-row>
 
@@ -436,11 +451,19 @@
                 </el-row>
 
                 <el-row>
-
                     <el-col :span="8">
                         <el-form-item label="计量单位" prop="unit">
-                            <el-input size="mini" v-model="updaData.unit" placeholder="双/盒"></el-input>
+                            <!--<el-input size="mini" v-model="updaData.unit" placeholder="双/盒"></el-input>-->
+                            <el-select size="mini" v-model="updaData.unit">
+                                <el-option
+                                        v-for="item in UnitSelection"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                ></el-option>
+                            </el-select>
                         </el-form-item>
+
                     </el-col>
 
                     <el-col :span="8">
@@ -474,7 +497,7 @@
                 title="回收站"
                 :visible.sync="recycle"
                 :show-close="false"
-                width="80%"
+                width="1000px"
         >
             <div style="display: flex;justify-content: flex-start;margin-bottom: 0.5em">
                 <el-button size="mini" type="primary" @click="BatchRecovery">批量恢复</el-button>
@@ -643,12 +666,14 @@
                     detection: '',//检测
                     brand: '',//品牌
                 },
+
                 updaData: {
                     //修改
+                    materials: [],
                     name: '',
                     itemCode: '',
                     materialCode: '',//物料编码
-                    type: '',//物料选择
+                    type: 'cc',//物料选择
                     costPrice: '',//成本价
                     defaultLoss: '',//损耗
                     unit: '',//基本计量单位
@@ -733,6 +758,10 @@
                         value: '全部',
                     },
                     {
+                        label: '原材料',
+                        value: '原材料',
+                    },
+                    {
                         value: '辅料',
                         label: '辅料',
                         children: [{
@@ -754,6 +783,16 @@
                 openIcon: 'fontFamily hhtx-zhankai',//默认为展开的按钮
                 dialogTableVisible: false,//添加面板
                 vendor: [],//新建厂商
+                UnitSelection: [
+                    //单位选择
+                    {
+                        label: '双',
+                        value: '双'
+                    }, {
+                        label: '盒',
+                        value: '盒'
+                    }
+                ],
                 selsetType: '全部',//树形控件默认选择原料，辅料，
                 QueryField: '',//查询字段
                 spare: '',//状态
@@ -828,9 +867,27 @@
                 delmaterID: [],//原材料启用停用
                 recycleName: '',//回收站搜索名称
                 recycleNum: '',//回收站搜索编号
+                typedata:[],////用于储存数据，当表单发生改变时校验
             }
         },
         methods: {
+            closeFun() {
+                let obj = JSON.stringify(this.updaData)
+                let state = (obj == this.typedata)
+                let that = this
+                if (!state) {
+                    this.$confirm('检测到未保存的内容，是否在离开页面前保存修改？', '确认信息', {
+                        distinguishCancelAndClose: true,
+                        confirmButtonText: '保存',
+                        cancelButtonText: '放弃修改'
+                    })
+                        .then(() => {
+                            that.upsubmitForm('updaData')
+                        })
+
+                }
+
+            },
             itemCodeCopy() {
                 //物料编码赋值
                 this.addmaterial.itemCode = this.addmaterial.materialCode
@@ -935,6 +992,7 @@
                 /**
                  * 恢复
                  * */
+                let that = this
                 this.$axios.post(this.$store.state.updateByOpen, {
                     ids: ids
                 }).then(res => {
@@ -943,7 +1001,9 @@
                             message: '操作成功',
                             type: 'success',
                             onClose() {
-                                location.reload()
+                                that.queryMaterials()
+                                that.recyclingList()
+                                that.recycle = false
                             }
                         });
                     } else {
@@ -980,10 +1040,21 @@
                  * */
                 this.UpdatableVisible = true
                 this.updaData = data
-                console.log(data)
+                this.updaData.materials = []
+
+                if (data.type == '包装' || data.type == '一般辅料') {
+                    this.updaData.materials.push('辅料')
+                    this.updaData.materials.push(data.type)
+                } else {
+                    this.updaData.materials.push(data.type)
+                }
+                this.typedata = JSON.stringify(data) //将数据转为字符串，进行修改验证
+                console.log(this.typedata)
             },
-            //修改原材料信息
+
             upsubmitForm(updaData) {
+                //修改原材料信息
+                let that = this
                 this.$refs[updaData].validate((valid) => {
                     if (valid) {
                         let data = {
@@ -1002,7 +1073,10 @@
                             if (res.data.code == 200) {
                                 this.$message({
                                     message: '修改成功',
-                                    type: 'success'
+                                    type: 'success',
+                                    onClose() {
+                                        that.queryMaterials()
+                                    }
                                 });
                                 this.UpdatableVisible = false
                             } else {
@@ -1076,13 +1150,16 @@
             delmaterials() {
                 /**
                  * 根据ID移除原材料信息*/
+                let that = this
                 this.$axios.post(this.$store.state.delmaterials, {ids: this.delmaterID}).then(res => {
                     if (res.data.code == 200) {
                         this.$message({
                             message: '操作成功，请至回收站查看',
                             type: 'success',
                             onClose() {
-                                location.reload()
+
+                                that.queryMaterials()
+
                             }
                         });
                     } else {
@@ -1101,7 +1178,7 @@
                 })
 
                 this.materialsIDs = ''
-                let listdata=[];//保存选中数据，判断是否允许删除
+                let listdata = [];//保存选中数据，判断是否允许删除
 
                 val.forEach(item => {
                     this.materialsIDs += `${item.id},`
@@ -1111,9 +1188,9 @@
                 this.materialsIDs = this.materialsIDs.substring(0, a)
 
 
-                let HideShow=listdata.indexOf('rs01')
+                let HideShow = listdata.indexOf('rs01')
 
-                if (val.length == 0||HideShow!=-1) {
+                if (val.length == 0 || HideShow != -1) {
                     this.delStatusButGoods = true
                 } else {
                     this.delStatusButGoods = false
@@ -1169,7 +1246,7 @@
             },
             //新建物料
             submitForm(addmaterial) {
-
+                let that = this
                 /**
                  * 创建原料
                  * */
@@ -1183,6 +1260,7 @@
                             costPrice: this.addmaterial.costPrice,//成本价
                             defaultLoss: this.addmaterial.defaultLoss,//损耗
                             unit: this.addmaterial.unit,//基本计量单位
+                            brand: this.addmaterial.brand,//品牌
                             ingredients: this.addmaterial.ingredients,//成份
                             manufacturer: this.addmaterial.manufacturer,//厂商
                             note: this.addmaterial.note//备注
@@ -1191,7 +1269,10 @@
                             if (res.data.code == 200) {
                                 this.$message({
                                     message: '添加成功',
-                                    type: 'success'
+                                    type: 'success',
+                                    onClose() {
+                                        that.queryMaterials()
+                                    }
                                 });
                                 this.dialogTableVisible = false
                             } else {
@@ -1238,6 +1319,10 @@
                  * */
                 this.updaData.type = ''
                 this.updaData.type += value[value.length - 1]
+
+                console.log(this.updaData)
+
+
                 // value.forEach(item => {
                 //     this.updaData.type += `${item} `
                 // })

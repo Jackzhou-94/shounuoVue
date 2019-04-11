@@ -14,39 +14,26 @@
                 </div>
 
 
-                <div>
-                    <!--<el-input size="mini" placeholder="商家编码" v-model="querymerchantCode"></el-input>-->
-                    <!--<el-input size="mini" placeholder="商品名称" v-model="queryname"></el-input>-->
-                    <!--<el-input size="mini" placeholder="货品编号" v-model="queryitemCode"></el-input>-->
-                    <!--<el-input size="mini" placeholder="盒装SKU" v-model="querysku"></el-input>-->
-                    <!--<el-input size="mini" placeholder="其他" v-model="queryother"></el-input>-->
-                    <el-row>
-                        <el-col :span="3">
-                            <el-input size="mini" placeholder="商家编码" v-model="querymerchantCode"></el-input>
-                        </el-col>
-                        <el-col :span="3">
-                            <el-input size="mini" placeholder="商品名称" v-model="queryname"></el-input>
-                        </el-col>
-                        <el-col :span="3">
-                            <el-input size="mini" placeholder="货品编号" v-model="queryitemCode"></el-input>
-                        </el-col>
-                        <el-col :span="3">
-                            <el-input size="mini" placeholder="盒装SKU" v-model="querysku"></el-input>
-                        </el-col>
-                        <el-col :span="3">
-                            <el-input size="mini" placeholder="其他" v-model="queryother"></el-input>
-                        </el-col>
-                        <el-col :span="2">
-                            <el-button type="primary" size="mini"
-                                       @click="queryother='',querysku='',queryitemCode='',queryname='',querymerchantCode=''">
-                                重置
-                            </el-button>
-                        </el-col>
-                        <el-col :span="1">
-                            <el-button type="primary" size="mini" icon="el-icon-search" @click="queryGoods()">查询
-                            </el-button>
-                        </el-col>
-                    </el-row>
+                <div style="display: flex;justify-content: space-around">
+
+                    <el-input size="mini" placeholder="商家编码" v-model="querymerchantCode"></el-input>
+
+                    <el-input size="mini" placeholder="商品名称" v-model="queryname"></el-input>
+
+                    <el-input size="mini" placeholder="货品编号" v-model="queryitemCode"></el-input>
+
+                    <el-input size="mini" placeholder="盒装SKU" v-model="querysku"></el-input>
+
+                    <el-input size="mini" placeholder="其他" v-model="queryother"></el-input>
+
+                    <el-button type="primary" size="mini"
+                               @click="queryother='',querysku='',queryitemCode='',queryname='',querymerchantCode=''">
+                        重置
+                    </el-button>
+
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="queryGoods()">查询
+                    </el-button>
+
                 </div>
 
 
@@ -211,8 +198,10 @@
                         fixed="right"
                 >
                     <template slot-scope="scope">
-                        <el-button  type="text" @click="upgoodspanel(scope.row)">修改</el-button>
-                        <el-button :disabled="scope.row.recordState=='rs01'?(true):(false)" type="text" @click="delGoods(scope.row)">删除</el-button>
+                        <el-button type="text" @click="upgoodspanel(scope.row)">修改</el-button>
+                        <el-button :disabled="scope.row.recordState=='rs01'?(true):(false)" type="text"
+                                   @click="delGoods(scope.row)">删除
+                        </el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -233,11 +222,11 @@
         <el-dialog
                 title="新建商品信息"
                 :visible.sync="addgoods"
-                width="75%"
+                width="800px"
                 :show-close="false"
         >
 
-            <el-form :model="addgoodsForm" ref="addgoodsForm"  :rules="addgoodsrules"
+            <el-form :model="addgoodsForm" ref="addgoodsForm" :rules="addgoodsrules"
                      label-position="right"
                      label-width="100px">
 
@@ -326,7 +315,7 @@
                                     size="mini"
                                     @change="Classificationchoice"
                                     :options="addgoodsclassification"
-                                    :show-all-levels="false"
+
                             ></el-cascader>
                         </el-form-item>
                     </el-col>
@@ -345,7 +334,8 @@
         <el-dialog
                 title="修改商品信息"
                 :visible.sync="upgoods"
-                width="60%"
+                width="800px"
+                @closed="closeFun"
                 :show-close="false"
         >
             <el-form :model="upgoodsForm" label-position="right"
@@ -412,10 +402,10 @@
                     <el-col :span="8">
                         <el-form-item label="分类">
                             <el-cascader
+                                    v-model="upgoodsForm.types"
                                     size="mini"
-                                    @change="Classificationchoice"
+                                    @change="UPificationchoice"
                                     :options="upgoodsclassification"
-                                    :show-all-levels="false"
                             ></el-cascader>
                         </el-form-item>
                     </el-col>
@@ -459,15 +449,16 @@
         <el-dialog
                 title="回收站"
                 :visible.sync="goodsrecycle"
-                width="80%"
+                width="1000px"
                 :show-close="false"
         >
             <div style="display: flex;justify-content: flex-start;margin-bottom: 0.5em">
                 <el-button size="mini" type="primary" @click="batchgoods">批量恢复</el-button>
-                <el-input size="mini" placeholder="商家编码" v-model="querygoodsmerchantCode"></el-input>
-                <el-input size="mini" placeholder="商品名称" v-model="querygoodsname"></el-input>
-                <el-input size="mini" placeholder="其他" v-model="queryspare"></el-input>
-                <el-button size="mini" type="primary"
+                <el-input size="mini" style="width: 200px" placeholder="商家编码"
+                          v-model="querygoodsmerchantCode"></el-input>
+                <el-input size="mini" style="width: 200px" placeholder="商品名称" v-model="querygoodsname"></el-input>
+                <el-input size="mini" style="width: 200px" placeholder="其他" v-model="queryspare"></el-input>
+                <el-button size="mini" type="primary" style="margin-left: 0.5em"
                            @click="querygoodsmerchantCode='',querygoodsname='',queryspare=''">重置
                 </el-button>
                 <el-button size="mini" type="primary" @click="queryGoodsRecycle()">查询</el-button>
@@ -623,7 +614,7 @@
         <el-dialog
                 title="显示设置"
                 :visible.sync="Settings"
-                width="30%"
+                width="450px"
                 :show-close="false"
 
         >
@@ -875,10 +866,10 @@
                         ]
                     }
                 ],
-
-
+                typedata: '',//用于储存数据，当表单发生改变时校验
                 upgoodsForm: {
                     //修改商品信息表单数据
+
                     name: '',
                     sku: '',
                     brand: '',//品牌
@@ -1043,9 +1034,29 @@
                 querygoodsmerchantCode: '',//回收站查询商家编码
                 querygoodsname: '',//回收站查询商品名称
                 queryspare: '',//回收站查询其他
+                flag: '',//用于记录是否保存修改数据
             }
         },
         methods: {
+            closeFun() {
+                let obj = JSON.stringify(this.upgoodsForm)
+                let state = (obj == this.typedata)
+                let that = this
+                if (!state) {
+                    this.$confirm('检测到未保存的内容，是否在离开页面前保存修改？', '确认信息', {
+                        distinguishCancelAndClose: true,
+                        confirmButtonText: '保存',
+                        cancelButtonText: '放弃修改'
+                    })
+                        .then(() => {
+                            that.upsubmitForm('upgoodsForm')
+                        })
+
+                }
+
+            },
+
+
             printContent() {
                 //打印模块
                 let div_print = document.getElementById('aaa');
@@ -1063,13 +1074,15 @@
             },
             restoregoods() {
                 //恢复回收站可用信息
+                let that = this
                 this.$axios.post(this.$store.state.goodsByOpen, {ids: this.goodsids}).then(res => {
                     if (res.data.code == 200) {
                         this.$message({
                             message: '操作成功',
                             type: 'success',
                             onClose() {
-                                location.reload()
+                                that.queryGoodsRecycle()
+                                that.queryGoods()
                             }
                         });
                     } else {
@@ -1091,9 +1104,12 @@
                 //新建商品信息分类选择
                 this.addgoodsForm.type = ''
                 val.forEach(item => {
-                    this.addgoodsForm.type += item
+                    this.addgoodsForm.type += `${item}/`
+                    // this.addgoodsForm.type=this.addgoodsForm.type.substring(0,this.addgoodsForm.type.length-1)
                 })
+                this.addgoodsForm.type = this.addgoodsForm.type.substring(0, this.addgoodsForm.type.length - 1)
 
+                console.log(this.addgoodsForm.type)
             },
             UPificationchoice(val) {
                 //修改商品信息分类选择
@@ -1101,18 +1117,19 @@
                 val.forEach(item => {
                     this.upgoodsForm.type += item
                 })
-
+                this.upgoodsForm.type = this.upgoodsForm.types[0] + '/' + this.upgoodsForm.types[1]
+                console.log(val)
             },
             goodsSelection(val) {
                 //商品信息多选
                 this.goodsids.length = 0
-                let listdata=[];//保存选中数据，判断是否允许删除
+                let listdata = [];//保存选中数据，判断是否允许删除
                 val.forEach(item => {
                     this.goodsids.push(item.id)
                     listdata.push(item.recordState)
                 })
-                let HideShow=listdata.indexOf('rs01')
-                if (val.length == 0||HideShow!=-1) {
+                let HideShow = listdata.indexOf('rs01')
+                if (val.length == 0 || HideShow != -1) {
                     this.delStatusButGoods = true
                 } else {
                     this.delStatusButGoods = false
@@ -1121,13 +1138,14 @@
             },
             delgoodsfun() {
                 //删除商品信息
+                let that = this
                 this.$axios.post(this.$store.state.delgoods, {ids: this.goodsids}).then(res => {
                     if (res.data.code == 200) {
                         this.$message({
                             message: '删除成功',
                             type: 'success',
                             onClose() {
-                                location.reload()
+                                that.queryGoods()
                             }
                         });
                     }
@@ -1139,6 +1157,7 @@
 
             submitForm(addgoodsForm) {
                 //新建商品信息
+                let that = this
                 this.$refs[addgoodsForm].validate((valid) => {
                     if (valid) {
                         this.$axios.post(this.$store.state.addgoods, this.addgoodsForm).then(res => {
@@ -1148,7 +1167,8 @@
                                     message: '添加成功',
                                     type: 'success',
                                     onClose() {
-                                        location.reload()
+                                        that.queryGoods();
+                                        that.addgoods = false
                                     }
                                 });
                             } else {
@@ -1165,10 +1185,22 @@
             },
 
             upgoodspanel(data) {
+
                 //打开修改信息面板
                 this.upgoods = true
                 this.upgoodsForm = data
-                console.log(data)
+
+                this.upgoodsForm.types = []
+                let num = data.type.indexOf('/')
+
+                let a = data.type.substring(0, num)
+                let b = data.type.substring(num + 1)
+                this.upgoodsForm.types.push(a)
+                this.upgoodsForm.types.push(b)
+                // this.upsubmitForm.type
+
+                this.typedata = JSON.stringify(data) //将数据转为字符串，进行修改验证
+                console.log(this.typedata)
             },
             delGoods(val) {
                 //删除单条商品信息
@@ -1178,6 +1210,7 @@
             },
             upsubmitForm(upgoodsForm) {
                 //修改商品信息
+                let that = this
                 this.$refs[upgoodsForm].validate((valid) => {
                     if (valid) {
                         this.$axios.post(this.$store.state.upgoods, this.upgoodsForm).then(res => {
@@ -1186,7 +1219,10 @@
                                     message: '修改成功',
                                     type: 'success',
                                     onClose() {
-                                        location.reload()
+
+                                        that.queryGoods()
+                                        that.upgoods = false
+
                                     }
                                 });
                             }
@@ -1264,7 +1300,7 @@
         display: flex;
         background-color: #f8f8f8;
         justify-content: space-between;
-        align-items: center;
+
     }
 
     .goods {

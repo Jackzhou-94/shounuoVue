@@ -51,7 +51,7 @@
         <el-dialog
                 title="显示设置"
                 :visible.sync="Settings"
-                width="40%"
+                width="500px"
                 :show-close="false"
 
         >

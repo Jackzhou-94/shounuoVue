@@ -161,7 +161,7 @@
                 title="新建厂商信息"
                 :show-close="false"
                 :visible.sync="addfactory"
-                width="60%"
+                width="800px"
         >
 
             <el-form :model="addfactoryForm" ref="addfactoryForm" :rules="addfactorysrules" label-width="100px" label-position="right">
@@ -238,8 +238,9 @@
         <el-dialog
                 title="修改厂商信息"
                 :visible.sync="upfactory"
+                @closed="closeFun"
                 :show-close="false"
-                width="60%"
+                width="800px"
         >
 
             <el-form :model="upfactoryForm" ref="upfactoryForm" :rules="upfactorysrules" label-width="100px" label-position="right">
@@ -367,7 +368,7 @@
                 address: [],//地址
                 upaddress: [],//修改地址
                 upfactoryForm: {
-                    //新建厂商信息表单数据
+                    //修改厂商信息表单数据
                     name: '',//名称
                     code: '',//编码
                     company: '',//所属公司
@@ -398,9 +399,27 @@
                 queryspare01: '',//查询其他
                 queryname: '',//查询名称
                 querycompany: '',//查询所属公司
+                typedata: '',//用于储存数据，当表单发生改变时校验
             }
         },
         methods: {
+            closeFun() {
+                let obj = JSON.stringify(this.upfactoryForm)
+                let state = (obj == this.typedata)
+                let that = this
+                if (!state) {
+                    this.$confirm('检测到未保存的内容，是否在离开页面前保存修改？', '确认信息', {
+                        distinguishCancelAndClose: true,
+                        confirmButtonText: '保存',
+                        cancelButtonText: '放弃修改'
+                    })
+                        .then(() => {
+                            that.upsubmitForm('upfactoryForm')
+                        })
+
+                }
+
+            },
             handleChange(value) {
                 //城市选择
                 console.log(value)
@@ -412,6 +431,7 @@
             },
             submitForm(addfactoryForm) {
                 //新建厂商信息
+                let that=this
                 this.$refs[addfactoryForm].validate((valid) => {
                     if (valid) {
                         this.$axios.post(this.$store.state.addfactory, this.addfactoryForm).then(res => {
@@ -420,7 +440,8 @@
                                     message: '添加成功',
                                     type: 'success',
                                     onClose() {
-                                        location.reload()
+                                        that.factoryquery();
+                                        that.addfactory=false
                                     }
                                 });
                             } else {
@@ -437,6 +458,7 @@
             },
             upsubmitForm(upfactoryForm) {
                 //修改厂商信息
+                let that=this
                 this.$refs[upfactoryForm].validate((valid) => {
                     if (valid) {
                         this.$axios.post(this.$store.state.upfactory, this.upfactoryForm).then(res => {
@@ -445,7 +467,8 @@
                                     message: '修改成功',
                                     type: 'success',
                                     onClose() {
-                                        location.reload()
+                                        that.factoryquery()
+                                        that.upfactory=false
                                     }
                                 });
                             } else {
@@ -475,6 +498,7 @@
                 this.upaddress.splice(1,0,city)
                 this.upaddress.splice(2,0,county)
 
+                this.typedata = JSON.stringify(data) //将数据转为字符串，进行修改验证
             },
             delfactoryspanel(val){
               //删除单条工厂信息
@@ -484,13 +508,14 @@
             },
             delfactory() {
                 //删除工厂信息
+                let that=this
                 this.$axios.post(this.$store.state.delfactory, {ids: this.factoryIds}).then(res => {
                     if (res.data.code == 200) {
                         this.$message({
                             message: '删除成功',
                             type: 'success',
                             onClose() {
-                                location.reload()
+                                that.factoryquery()
                             }
                         });
                     }

@@ -52,7 +52,7 @@
                 title="入库开单"
                 :visible.sync="Newpurchaseorder"
                 :show-close="false"
-                width="85%">
+                width="1200px">
             <el-form :model="NewWarehousing" ref="NewWarehousing" label-width="130px" :rules="rules"
                      label-position="right">
 
@@ -282,7 +282,7 @@
                 title="引入单号"
                 :visible.sync="introductionNumber"
                 :show-close="false"
-                width="80%">
+                width="1000px">
             <div style="text-align: right;margin: 0.5em">
                 <el-input size="mini" style="width: 200px" placeholder="采购单号" clearable
                           v-model="purchaseNumbers"></el-input>
@@ -551,7 +551,7 @@
                 title="修改入库开单"
                 :visible.sync="upNewpurchaseorder"
                 :show-close="false"
-                width="80%">
+                width="1200px">
             <el-form :model="upNewWarehousing" ref="upNewWarehousing" label-position="right" label-width="130px"
                      :rules="uprules">
 
@@ -780,7 +780,7 @@
                 title="引入单号"
                 :visible.sync="upintroductionNumber"
                 :show-close="false"
-                width="80%">
+                width="1000px">
             <div style="text-align: right;margin: 0.5em">
                 <el-input size="mini" style="width: 200px" placeholder="采购单号" clearable
                           v-model="purchaseNumbers"></el-input>
@@ -1049,7 +1049,7 @@
         <el-dialog
                 title="显示设置"
                 :visible.sync="Settings"
-                width="40%"
+                width="500px"
                 :show-close="false"
 
         >
@@ -1137,6 +1137,16 @@
                         <el-checkbox v-model="stateShowAudit">入库单审核状态</el-checkbox>
                     </el-col>
                 </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        <el-checkbox v-model="createTimeShow">创建时间</el-checkbox>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-checkbox v-model="submitTimeShow">提交时间</el-checkbox>
+                    </el-col>
+
+                </el-row>
+
             </div>
 
         </el-dialog>
@@ -1373,17 +1383,33 @@
                     v-if="moneyShow"
             ></el-table-column>
             <el-table-column
-                    label="入库时间"
+                    label="创建时间"
                     align="center"
                     width="180"
                     prop="createTime"
-                    v-if="WarehousingtimeShow"
+                    v-if="createTimeShow"
             ></el-table-column>
+            <el-table-column
+                    label="提交时间"
+                    align="center"
+                    width="180"
+                    prop="submitTime"
+                    v-if="submitTimeShow"
+            ></el-table-column>
+
             <el-table-column
                     label="审核时间"
                     align="center"
+                    prop="auditTime"
                     width="180"
                     v-if="examineShow"
+            ></el-table-column>
+            <el-table-column
+                    label="入库时间"
+                    align="center"
+                    width="180"
+                    prop="warehouseTime"
+                    v-if="WarehousingtimeShow"
             ></el-table-column>
             <el-table-column
                     label="经办人"
@@ -1458,6 +1484,8 @@
                 moneyShow: true,//入库金额（税)
                 moneyShowTAX: true,//入库金额
                 WarehousingtimeShow: true,//入库时间
+                createTimeShow:true,//创建时间
+                submitTimeShow:true,//提交时间
                 examineShow: true,//审核时间
                 RemarksShow: true,//备注
 
@@ -1738,6 +1766,7 @@
 
             storageSubmit() {
                 //入库单提交审核
+                let that=this
                 this.$axios.post(this.$store.state.storageAudit, {
                     ids: this.StorageIds
                 }).then(res => {
@@ -1746,7 +1775,7 @@
                             message: '提交成功',
                             type: 'success',
                             onClose() {
-                                location.reload()
+                                that.storageQuery() //分页列表入库单查询
                             }
                         });
                     } else {
@@ -1758,6 +1787,7 @@
 
             throughStorageAudit() {
                 //入库单通过审核
+                let that=this
                 this.$axios.post(this.$store.state.throughStorage, {
                     ids: this.StorageIds
                 }).then(res => {
@@ -1766,7 +1796,7 @@
                             message: '操作成功',
                             type: 'success',
                             onClose() {
-                                location.reload()
+                                that.storageQuery() //分页列表入库单查询
                             }
                         });
                     } else {
@@ -1777,6 +1807,7 @@
 
             RejectStorageAudit() {
                 //入库单审核驳回
+                let that=this
                 this.$axios.post(this.$store.state.RejectStorage, {
                     ids: this.StorageIds
                 }).then(res => {
@@ -1785,7 +1816,7 @@
                             message: '操作成功',
                             type: 'success',
                             onClose() {
-                                location.reload()
+                                that.storageQuery() //分页列表入库单查询
                             }
                         });
                     } else {
@@ -1794,13 +1825,10 @@
                 })
             },
             DobleIn(data) {
-
                 //双击引入
-                console.log(data)
                 this.alternativeList.length = 0
                 this.NewWarehousing.introduceNumber = data.purchaseNumber
                 this.NewWarehousing.warehouseNumber = 0
-
                 data.goodsList.forEach(item => {
                     this.alternativeList.push(item)
                     this.NewWarehousing.warehouseNumber += item.number
@@ -1968,6 +1996,7 @@
             },
             upsubmitForm(upNewWarehousing) {
                 //修改新建入库单
+                let that=this
                 this.$refs[upNewWarehousing].validate((valid) => {
                     if (valid) {
                         console.log(this.upNewWarehousing)
@@ -1977,7 +2006,8 @@
                                     message: '修改成功',
                                     type: 'success',
                                     onClose() {
-                                        location.reload()
+                                        that.storageQuery() //分页列表入库单查询
+                                        that.upNewpurchaseorder=false
                                     }
                                 });
                             } else {
@@ -2094,6 +2124,7 @@
             },
             submitForm(NewWarehousing) {
                 //新建入库单
+                let that=this
                 this.$refs[NewWarehousing].validate((valid) => {
                     if (valid) {
                         console.log(this.NewWarehousing)
@@ -2103,7 +2134,8 @@
                                     message: '添加成功',
                                     type: 'success',
                                     onClose() {
-                                        location.reload()
+                                        that.storageQuery() //分页列表入库单查询
+                                        that.Newpurchaseorder=false
                                     }
                                 });
                             } else {
@@ -2208,6 +2240,7 @@
 
             delStorage() {
                 //删除入库单
+                let that=this
                 this.$axios.post(this.$store.state.deleteStorage, {
                     ids: this.StorageIds
                 }).then(res => {
@@ -2216,7 +2249,7 @@
                             message: '删除成功',
                             type: 'success',
                             onClose() {
-                                location.reload()
+                                that.storageQuery() //分页列表入库单查询
                             }
                         });
                     } else {

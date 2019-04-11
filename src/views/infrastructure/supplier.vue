@@ -254,7 +254,7 @@
             </el-dialog>
 
             <!--修改-->
-            <el-dialog  :show-close="false" title="修改供应商"  :visible.sync="upSupplier" width="70%">
+            <el-dialog  :show-close="false"   @closed="closeFun"  title="修改供应商"  :visible.sync="upSupplier" width="70%">
                 <el-form  label-width="100px" label-position="right" :model="upSupplierList" :rules="upSupplierRuee" ref="upSupplierList">
                     <el-row>
                         <el-col :span="6">
@@ -629,7 +629,7 @@
             <el-dialog
                     title="显示设置"
                     :visible.sync="Settings"
-                    width="30%"
+                    width="450px"
                     :show-close="false"
             >
                 <div style="text-align: left">
@@ -1178,10 +1178,28 @@
                 supplierids: [],//供应商ID
                 queryspare01: '',//查询其他字段
                 queryname: '',//查询名称
-                queryphoneNumber: ''//查询手机号码
+                queryphoneNumber: '',//查询手机号码
+                typedata:[],////用于储存数据，当表单发生改变时校验
             }
         },
         methods: {
+            closeFun() {
+                let obj = JSON.stringify(this.upSupplierList)
+                let state = (obj == this.typedata)
+                let that = this
+                if (!state) {
+                    this.$confirm('检测到未保存的内容，是否在离开页面前保存修改？', '确认信息', {
+                        distinguishCancelAndClose: true,
+                        confirmButtonText: '保存',
+                        cancelButtonText: '放弃修改'
+                    })
+                        .then(() => {
+                            that.upsubmitForm('upSupplierList')
+                        })
+
+                }
+
+            },
             querySupplierData() {
                 //供应商条件查询
                 this.querySupplier()
@@ -1203,6 +1221,7 @@
             },
             addsubmitForm(formName) {
                 //新建供应商
+                let that=this
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         this.$axios.post(this.$store.state.addSuppier, this.addSupplierList).then(res => {
@@ -1211,7 +1230,7 @@
                                     message: '操作成功',
                                     type: 'success',
                                     onClose() {
-                                        location.reload()
+                                        that.querySupplier()
                                     }
                                 });
                             } else {
@@ -1230,6 +1249,7 @@
             },
             upsubmitForm(formName) {
                 //修改供应商
+                let that=this
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         this.$axios.post(this.$store.state.upSuppier, this.upSupplierList).then(res => {
@@ -1238,11 +1258,11 @@
                                     message: '操作成功',
                                     type: 'success',
                                     onClose() {
-                                        location.reload()
+                                        that.querySupplier()
                                     }
                                 });
                             } else {
-                                this.$message.error('操作错误！');
+                                this.$message.error(res.data.msg);
                             }
                         }).catch(err => {
                             this.$message.error(err);
@@ -1259,7 +1279,8 @@
                 //打开修改信息面板
                 this.upSupplier = true
                 this.upSupplierList = data
-
+                this.typedata = JSON.stringify(data) //将数据转为字符串，进行修改验证
+                console.log(this.typedata)
             },
             delgoodspanel(val){
               //单条删除供应商信息
@@ -1269,18 +1290,19 @@
             },
             delSupplier() {
                 //删除供应商信息
+                let that=this
                 this.$axios.post(this.$store.state.delSuppier, {ids: this.supplierids}).then(res => {
                     if (res.data.code == 200) {
                         this.$message({
                             message: '删除成功',
                             type: 'success',
                             onClose() {
-                                location.reload()
+                                that.querySupplier()
                             }
                         });
                     }
                     else {
-                        this.$message.error('删除失败！');
+                        this.$message.error(res.data.msg);
                     }
                 })
             },
