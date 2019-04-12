@@ -43,18 +43,14 @@
 
                 </div>
 
-                <div>
+                <div style="display: flex;justify-content: space-between">
 
-                    <el-row>
-                        <el-col :span="5">
-                            <el-input placeholder="物料编号" size="mini" v-model="materialsNum"></el-input>
-                        </el-col>
-                        <el-col :span="5">
-                            <el-input placeholder="物料名称" size="mini" v-model="materialsName"></el-input>
-                        </el-col>
 
-                        <el-col :span="4">
-                            <el-select v-model="VendorQueries" placeholder="厂商" size="mini">
+                            <el-input style="width: 150px" placeholder="物料编号" size="mini" v-model="materialsNum"></el-input>
+
+                            <el-input style="width: 150px" placeholder="物料名称" size="mini" v-model="materialsName"></el-input>
+
+                            <el-select style="width: 180px" v-model="VendorQueries" placeholder="厂商" size="mini">
                                 <el-option
                                         v-for="item in options"
                                         :key="item.value"
@@ -63,16 +59,12 @@
                                 >
                                 </el-option>
                             </el-select>
-                        </el-col>
 
-                        <el-col :span="4">
                             <el-button type="primary" icon="el-icon-delete" size="mini" @click="reset">重置</el-button>
-                        </el-col>
-                        <el-col :span="2">
+
                             <el-button type="primary" icon="el-icon-search" size="mini" @click="queryMaterials">查询
                             </el-button>
-                        </el-col>
-                    </el-row>
+
 
 
                     <!--显示设置-->
@@ -145,7 +137,6 @@
             </div>
             <!--右侧表格数据-->
             <el-table
-                    style="width: 100%"
                     height="750px"
                     border
                     stripe
@@ -867,12 +858,15 @@
                 delmaterID: [],//原材料启用停用
                 recycleName: '',//回收站搜索名称
                 recycleNum: '',//回收站搜索编号
-                typedata:[],////用于储存数据，当表单发生改变时校验
+                typedata:'',////用于储存数据，当表单发生改变时校验
             }
         },
         methods: {
             closeFun() {
                 let obj = JSON.stringify(this.updaData)
+                console.log(obj)
+
+                // console.log(obj==this.typedata)
                 let state = (obj == this.typedata)
                 let that = this
                 if (!state) {
@@ -1053,6 +1047,7 @@
             },
 
             upsubmitForm(updaData) {
+
                 //修改原材料信息
                 let that = this
                 this.$refs[updaData].validate((valid) => {
@@ -1069,6 +1064,10 @@
                             manufacturer: this.updaData.manufacturer,//厂商
                             note: this.updaData.note//备注
                         }
+
+                        this.typedata = JSON.stringify(this.updaData)
+
+
                         this.$axios.post(this.$store.state.upmaterial, data).then(res => {
                             if (res.data.code == 200) {
                                 this.$message({
@@ -1409,7 +1408,7 @@
 
     .rightdata {
         text-align: center;
-        width: 88%;
+        width:88%;
         height: 100%;
     }
 

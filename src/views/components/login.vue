@@ -1,34 +1,37 @@
 <template>
     <div class="login">
-        <div class="user">
-            <p class="userTitle">首诺供应链管理系统</p>
-            <el-input
-                    class="user_input"
-                    prefix-icon="fontFamily hhtx-iconzh1"
-                    placeholder="账号"
-                    v-model="username"
-            >
-            </el-input>
-            <el-input
-                    class="user_input"
-                    prefix-icon="fontFamily hhtx-mimaffffffpx"
-                    placeholder="密码"
-                    type="password"
-                    v-model="password"
-            >
-            </el-input>
-            <!--验证码-->
-            <div style="display: flex;justify-content: space-between;margin-top: 2%">
-                <el-input placeholder="请输入验证码" @keyup.enter.native="login" style="width: 45%"
-                          v-model="validation"></el-input>
-                <div class="verify-box" @click="refreshCode">
-                    <Sidentify :identifyCode="identifyCode"></Sidentify>
+        <el-card class="user" >
+            <div >
+                <p class="userTitle">首诺供应链管理系统</p>
+                <el-input
+                        class="user_input"
+                        prefix-icon="fontFamily hhtx-iconzh1"
+                        placeholder="账号"
+                        v-model="username"
+                >
+                </el-input>
+                <el-input
+                        class="user_input"
+                        prefix-icon="fontFamily hhtx-mimaffffffpx"
+                        placeholder="密码"
+                        type="password"
+                        v-model="password"
+                >
+                </el-input>
+                <!--验证码-->
+                <div style="display: flex;justify-content: space-between;margin-top: 2%">
+                    <el-input placeholder="请输入验证码" @keyup.enter.native="login" style="width: 150px"
+                              v-model="validation"></el-input>
+                    <div class="verify-box" @click="refreshCode">
+                        <Sidentify :identifyCode="identifyCode"></Sidentify>
+                    </div>
                 </div>
+
+
+                <el-button class="user_loginbtn" type="primary" @click="login">登录</el-button>
             </div>
+        </el-card>
 
-
-            <el-button class="user_loginbtn" type="primary" @click="login">登录</el-button>
-        </div>
 
 
     </div>
@@ -109,23 +112,29 @@
     .login {
         width: 100%;
         height: 100%;
-        background: url("../../assets/banner.png") no-repeat;
+        background: url("../../assets/b.png") no-repeat;
+        display: flex;
+        justify-content: center;
+
         background-size: cover;
     }
 
     .user {
-        width: 300px;
+        margin-top: 200px;
+        width: 350px;
         height: 250px;
-        background-color: rgba(0, 0, 0, 0.2);
-        padding: 3%;
-        color: #ffffff;
-        position: absolute;
-        margin-top: 10%;
-        margin-left: 60%;
+        /*background-color: rgba(0, 0, 0, 0.2);*/
+        background-color: white;
+        padding: 20px 50px 50px 50px;
+        color: #093e66;
+        /*position: absolute;*/
+        /*margin-top: 10%;*/
+        /*margin-left: 35%;*/
     }
 
     .user_input {
-        margin-top: 2%
+        margin-top: 2%;
+        width: 300px;
     }
 
     .user_loginbtn {

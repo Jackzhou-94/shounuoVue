@@ -457,6 +457,7 @@
                 });
             },
             upsubmitForm(upfactoryForm) {
+                this.typedata = JSON.stringify(this.upfactoryForm)
                 //修改厂商信息
                 let that=this
                 this.$refs[upfactoryForm].validate((valid) => {

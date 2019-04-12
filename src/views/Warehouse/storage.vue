@@ -1,6 +1,6 @@
 <template>
     <div class="storage">
-        <div style="text-align: left;margin-bottom: 0.5em">
+        <div style="display:flex;flex-wrap: nowrap;justify-content: left;margin-bottom: 0.5em">
             <el-button size="mini" type="primary" class="el-icon-plus" @click="Newpurchaseorder=true">新建</el-button>
             <el-button icon="el-icon-view" type="primary" size="mini" @click="Settings=true">显示设置
             </el-button>
@@ -35,7 +35,7 @@
                           v-model="oddNumber"></el-input>
             </div>
 
-            <div  style="display: flex;flex-wrap: nowrap;">
+            <div style="display: flex;flex-wrap: nowrap;">
                 <el-button type="primary" size="mini" icon="el-icon-edit"
                            @click="factoryName='',categorys='',oddNumber=''">
                     重置
@@ -237,6 +237,11 @@
                 <el-table-column label="入库单位"
                                  align="center"
                                  prop="unit"
+                ></el-table-column>
+                <el-table-column
+                        label="入库单价"
+                        align="center"
+                        prop="unitPrice"
                 ></el-table-column>
                 <el-table-column label="入库金额"
                                  align="center"
@@ -551,6 +556,7 @@
                 title="修改入库开单"
                 :visible.sync="upNewpurchaseorder"
                 :show-close="false"
+                @closed="closeFun"
                 width="1200px">
             <el-form :model="upNewWarehousing" ref="upNewWarehousing" label-position="right" label-width="130px"
                      :rules="uprules">
@@ -737,6 +743,17 @@
                                  align="center"
                                  prop="unit"
                 ></el-table-column>
+                <el-table-column label="入库单价"
+                                 align="center"
+                                 width="120"
+                                 prop="unitPrice"
+                ></el-table-column>
+                <el-table-column label="入库单价(税)"
+                                 align="center"
+                                 width="120"
+                                 prop="taxPrice"
+                ></el-table-column>
+
                 <el-table-column label="入库金额"
                                  align="center"
                                  width="120"
@@ -1484,13 +1501,14 @@
                 moneyShow: true,//入库金额（税)
                 moneyShowTAX: true,//入库金额
                 WarehousingtimeShow: true,//入库时间
-                createTimeShow:true,//创建时间
-                submitTimeShow:true,//提交时间
+                createTimeShow: true,//创建时间
+                submitTimeShow: true,//提交时间
                 examineShow: true,//审核时间
                 RemarksShow: true,//备注
 
                 Newpurchaseorder: false,//入库开单面板
                 upNewpurchaseorder: false,//入库开单面板
+                money: 0,
                 NewWarehousing: {
                     //新建入库单
                     category: '',//入库类别
@@ -1759,14 +1777,30 @@
                 totalStoreNumber: 0,//入库总数量
                 hasStoreNumber: 0, //已入库数量
                 notStoreNumber: 0,//未入库数量
-
+                typedata: [],////用于储存数据，当表单发生改变时校验
             }
         },
         methods: {
+            closeFun() {
+                let obj = JSON.stringify(this.upNewWarehousing)
+                let state = (obj == this.typedata)
+                let that = this
+                if (!state) {
+                    this.$confirm('检测到未保存的内容，是否在离开页面前保存修改？', '确认信息', {
+                        distinguishCancelAndClose: true,
+                        confirmButtonText: '保存',
+                        cancelButtonText: '放弃修改'
+                    })
+                        .then(() => {
+                            that.upsubmitForm('upNewWarehousing')
+                        })
 
+                }
+
+            },
             storageSubmit() {
                 //入库单提交审核
-                let that=this
+                let that = this
                 this.$axios.post(this.$store.state.storageAudit, {
                     ids: this.StorageIds
                 }).then(res => {
@@ -1787,7 +1821,7 @@
 
             throughStorageAudit() {
                 //入库单通过审核
-                let that=this
+                let that = this
                 this.$axios.post(this.$store.state.throughStorage, {
                     ids: this.StorageIds
                 }).then(res => {
@@ -1807,7 +1841,7 @@
 
             RejectStorageAudit() {
                 //入库单审核驳回
-                let that=this
+                let that = this
                 this.$axios.post(this.$store.state.RejectStorage, {
                     ids: this.StorageIds
                 }).then(res => {
@@ -1828,25 +1862,40 @@
                 //双击引入
                 this.alternativeList.length = 0
                 this.NewWarehousing.introduceNumber = data.purchaseNumber
+                console.log(data.purchaseNumber)
                 this.NewWarehousing.warehouseNumber = 0
                 data.goodsList.forEach(item => {
                     this.alternativeList.push(item)
-                    this.NewWarehousing.warehouseNumber += item.number
+                    this.NewWarehousing.warehouseNumber += item.warehouseNumber //入库数量（默认1）
+                    this.NewWarehousing.warehouseAmount += item.unitPrice//入库金额（单价*数量）
+                    // warehouseAmount: 0,//入库金额
+                    //     warehouseTaxamount: 0,//入库金额(税)
+                    item.spare02 = item.unitPrice
+
                 })
+
+                this.NewWarehousing.warehouseNumber = data.goodsList.length
+
+
                 this.NewWarehousing.goodsList = this.alternativeList
                 this.introductionNumber = false
-
+                console.log(data)
             },
             upDobleIn(data) {
                 //修改引入单双击引入
                 console.log(data)
                 this.upalternativeList.length = 0
                 this.upNewWarehousing.introduceNumber = data.purchaseNumber
-                this.NewWarehousing.warehouseNumber = 0
+                this.upNewWarehousing.warehouseNumber = 0
+                this.upNewWarehousing.warehouseAmount = 0
                 data.goodsList.forEach(item => {
                     this.upalternativeList.push(item)
                     this.upNewWarehousing.warehouseNumber += item.number
+                    this.upNewWarehousing.warehouseAmount += item.unitPrice//入库金额（单价*数量）
+                    item.spare02 = item.unitPrice
                 })
+
+
                 this.upNewWarehousing.goodsList = this.upalternativeList
                 this.upintroductionNumber = false
                 // Multipleselection,alternative
@@ -1904,7 +1953,7 @@
                     // submitStatusBut: true,//审核按钮
                     //     auditStatusBut: true,//提交按钮
 
-                    if (nums!=-1){
+                    if (nums != -1) {
                         this.submitStatusBut = true
                         this.auditStatusBut = true
                         this.delStatusBut = true
@@ -1920,14 +1969,15 @@
             },
             upStorage(data) {
                 //修改入库单
-                this.NewWarehousing.warehouseNumber = 0
                 this.upNewpurchaseorder = true
                 this.upNewWarehousing = data
                 data.goodsList.forEach(item => {
                     this.upNewWarehousing.warehouseNumber += item.warehouseNumber
+                    item.spare02 = item.unitPrice * item.warehouseNumber
                 })
-
-
+                console.log(data)
+                this.typedata = JSON.stringify(data) //将数据转为字符串，进行修改验证
+                console.log(this.typedata)
             },
             upFreightallocation(data) {
                 //商品明细运费分摊文本框离开焦点事件
@@ -1982,24 +2032,25 @@
             upwarehouseNumberAdd(data) {
                 //入库单数量控制
 
+                console.log(this.upNewWarehousing.goodsList)
                 this.upNewWarehousing.warehouseNumber = 0 //入库数量
                 this.upNewWarehousing.warehouseAmount = 0//入库金额
 
                 data.spare02 = data.unitPrice * data.warehouseNumber//入库金额(单条数据)
 
-
                 this.upNewWarehousing.goodsList.forEach(item => {
                     this.upNewWarehousing.warehouseNumber += item.warehouseNumber //入库数量
                     this.upNewWarehousing.warehouseAmount += item.spare02 //入库金额
                 })
+
                 this.upNewWarehousing.warehouseTaxamount = this.upNewWarehousing.warehouseAmount * 1.15
             },
             upsubmitForm(upNewWarehousing) {
                 //修改新建入库单
-                let that=this
+                let that = this
+                this.typedata = JSON.stringify(this.upNewWarehousing)
                 this.$refs[upNewWarehousing].validate((valid) => {
                     if (valid) {
-                        console.log(this.upNewWarehousing)
                         this.$axios.post(this.$store.state.Upstorage, this.upNewWarehousing).then(res => {
                             if (res.data.code == 200) {
                                 this.$message({
@@ -2007,7 +2058,7 @@
                                     type: 'success',
                                     onClose() {
                                         that.storageQuery() //分页列表入库单查询
-                                        that.upNewpurchaseorder=false
+                                        that.upNewpurchaseorder = false
                                     }
                                 });
                             } else {
@@ -2045,7 +2096,9 @@
             },
             upWareSelect(data) {
                 //修改入库类别选择
-                this.upWarehousingCategory = data
+                this.upNewWarehousing.introduceNumber = '',//入库类别更改时，清空单号
+                    this.upNewWarehousing.goodsList = [],//入库类别更改时，清空商品数据
+                    this.upWarehousingCategory = data
                 this.upshowIntrodw = false
                 if (data == '原材料入库') {
                     this.upgoodsShow = false
@@ -2110,21 +2163,23 @@
             warehouseNumberAdd(data) {
                 //入库单数量控制
 
+                console.log(data)
+
                 this.NewWarehousing.warehouseNumber = 0 //入库数量
                 this.NewWarehousing.warehouseAmount = 0//入库金额
 
                 data.spare02 = data.unitPrice * data.warehouseNumber//入库金额(单条数据)
-
-
                 this.NewWarehousing.goodsList.forEach(item => {
                     this.NewWarehousing.warehouseNumber += item.warehouseNumber //入库数量
                     this.NewWarehousing.warehouseAmount += item.spare02 //入库金额
+                    console.log(item.spare02)
                 })
+                console.log(data.spare02)
                 this.NewWarehousing.warehouseTaxamount = this.NewWarehousing.warehouseAmount * 1.15
             },
             submitForm(NewWarehousing) {
                 //新建入库单
-                let that=this
+                let that = this
                 this.$refs[NewWarehousing].validate((valid) => {
                     if (valid) {
                         console.log(this.NewWarehousing)
@@ -2135,7 +2190,7 @@
                                     type: 'success',
                                     onClose() {
                                         that.storageQuery() //分页列表入库单查询
-                                        that.Newpurchaseorder=false
+                                        that.Newpurchaseorder = false
                                     }
                                 });
                             } else {
@@ -2196,7 +2251,9 @@
             },
             WareSelect(data) {
                 //入库类别选择
-                this.WarehousingCategory = data
+                this.NewWarehousing.introduceNumber = '',//入库类别更改时，清空单号
+                    this.NewWarehousing.goodsList = [],//入库类别更改时，清空商品数据
+                    this.WarehousingCategory = data
                 this.showIntrodw = false
                 if (data == '原材料入库') {
                     this.goodsShow = false
@@ -2240,7 +2297,7 @@
 
             delStorage() {
                 //删除入库单
-                let that=this
+                let that = this
                 this.$axios.post(this.$store.state.deleteStorage, {
                     ids: this.StorageIds
                 }).then(res => {

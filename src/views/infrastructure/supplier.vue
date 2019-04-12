@@ -1249,6 +1249,7 @@
             },
             upsubmitForm(formName) {
                 //修改供应商
+                this.typedata = JSON.stringify(this.upSupplierList)
                 let that=this
                 this.$refs[formName].validate((valid) => {
                     if (valid) {

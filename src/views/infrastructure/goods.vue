@@ -1209,6 +1209,7 @@
                 this.delgoodsfun()
             },
             upsubmitForm(upgoodsForm) {
+                this.typedata = JSON.stringify(this.upgoodsForm)
                 //修改商品信息
                 let that = this
                 this.$refs[upgoodsForm].validate((valid) => {

@@ -6,7 +6,7 @@
                     <!--新建与查询-->
                     <div style="padding: 0.5em">
 
-                        <div style="text-align: left;margin-bottom: 0.5em">
+                        <div style="display:flex;flex-wrap: nowrap;justify-content: left;margin-bottom: 0.5em">
                             <el-button size="mini" type="primary" class="el-icon-plus"
                                        @click="Newpurchaseorder_mater=true">新建
                             </el-button>
@@ -2028,7 +2028,7 @@
                     <div style="padding: 0.5em">
 
 
-                        <div style="text-align: left;margin-bottom: 0.5em">
+                        <div style="display:flex;flex-wrap: nowrap;justify-content: left;margin-bottom: 0.5em">
                             <el-button size="mini" type="primary" class="el-icon-plus" @click="Newpurchaseorder=true">
                                 新建
                             </el-button>
@@ -4808,10 +4808,13 @@
         },
 
         methods: {
+
             closeFunGoods(){
                 //商品信息修改验证
                 let obj = JSON.stringify(this.upaddProcurement)
                 let state = (obj == this.Goodstypedata)
+
+
                 let that = this
                 if (!state) {
                     this.$confirm('检测到未保存的内容，是否在离开页面前保存修改？', '确认信息', {
@@ -4998,7 +5001,8 @@
                 //     uptaxgoodsMoney: 0,//总金额(含税)
                 this.upNewpurchaseorder = true
                 this.upaddProcurement = data
-                console.log(data)
+
+
                 data.goodsList.forEach(item => {
                     this.upgoodsNum += item.number
                     this.upgoodsMoney += item.totalPrice
@@ -5008,7 +5012,7 @@
                 console.log(this.Matertypedata)
             },
             updatamater(data) {
-                //修改采购单信息
+                //修改采购单信息(原材料)
                 this.upmatergoodsNum = 0
                 this.upmatergoodsMoney = 0
                 this.upmatertaxgoodsMoney = 0
@@ -5687,6 +5691,7 @@
             },
             upSubmissionMater(formName) {
                 let that=this
+                this.Matertypedata = JSON.stringify(this.upaddProcurementMater)
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         //提交采购单数据(原材料 修改)
@@ -5713,12 +5718,13 @@
             },
             upSubmissionPurchase(formName) {
                 //提交修改采购单数据
+
                 let that=this
+
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         this.upaddProcurement.distanceDate = this.updistanceDate//预计入库时间
-                        console.log(this.upaddProcurement)
-
+                        this.Goodstypedata = JSON.stringify(this.upaddProcurement)//将数据重新赋值，对修改进行验证判断
                         this.$axios.post(this.$store.state.upaddsavePurchase, this.upaddProcurement).then(res => {
                             if (res.data.code == 200) {
                                 this.$message({
@@ -5739,9 +5745,10 @@
                         return false;
                     }
                 });
-                // this.distanceDate
+
 
             },
+
             delpurchase(data) {
                 //删除采购单信息
                 this.purchaseIds.length = 0
