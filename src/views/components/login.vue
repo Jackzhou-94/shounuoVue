@@ -19,7 +19,7 @@
                 >
                 </el-input>
                 <!--验证码-->
-                <div style="display: flex;justify-content: space-between;margin-top: 2%">
+                <div style="display: flex;justify-content: space-between;margin-top: 2%;margin-left: 0.3em">
                     <el-input placeholder="请输入验证码" @keyup.enter.native="login" style="width: 150px"
                               v-model="validation"></el-input>
                     <div class="verify-box" @click="refreshCode">

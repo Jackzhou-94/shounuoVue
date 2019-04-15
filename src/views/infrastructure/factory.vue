@@ -7,7 +7,9 @@
 
                     <el-button size="mini" type="primary" class="el-icon-plus" @click="addfactory=true">新建</el-button>
 
-                    <el-button type="danger" size="mini" class="el-icon-delete" :disabled="delStatusButGoods" @click="delfactory">批量删除</el-button>
+                    <el-button type="danger" size="mini" class="el-icon-delete" :disabled="delStatusButGoods"
+                               @click="delfactory">批量删除
+                    </el-button>
                     <!--<el-button type="primary" size="mini">打印</el-button>-->
                 </div>
 
@@ -137,7 +139,9 @@
                 >
                     <template slot-scope="scope">
                         <el-button type="text" @click="upfactoryspanel(scope.row)">修改</el-button>
-                        <el-button :disabled="scope.row.recordState=='rs01'?(true):(false)" type="text" @click="delfactoryspanel(scope.row)">删除</el-button>
+                        <el-button :disabled="scope.row.recordState=='rs01'?(true):(false)" type="text"
+                                   @click="delfactoryspanel(scope.row)">删除
+                        </el-button>
                     </template>
                 </el-table-column>
 
@@ -164,7 +168,8 @@
                 width="800px"
         >
 
-            <el-form :model="addfactoryForm" ref="addfactoryForm" :rules="addfactorysrules" label-width="100px" label-position="right">
+            <el-form :model="addfactoryForm" ref="addfactoryForm" :rules="addfactorysrules" label-width="100px"
+                     label-position="right">
 
                 <el-row>
                     <el-col :span="8">
@@ -173,7 +178,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item  label="名称" prop="name">
+                        <el-form-item label="名称" prop="name">
                             <el-input placeholder="厂商名称" size="mini" v-model="addfactoryForm.name"></el-input>
                         </el-form-item>
                     </el-col>
@@ -196,11 +201,12 @@
                 <el-row>
                     <el-col :span="8">
                         <el-form-item label="收货地址" prop="detailedAddress">
-                            <el-input placeholder="收货地址"  size="mini" v-model="addfactoryForm.detailedAddress"></el-input>
+                            <el-input placeholder="收货地址" size="mini"
+                                      v-model="addfactoryForm.detailedAddress"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item  label="所属公司" prop="company">
+                        <el-form-item label="所属公司" prop="company">
                             <el-input placeholder="所属公司" size="mini" v-model="addfactoryForm.company"></el-input>
                         </el-form-item>
                     </el-col>
@@ -216,6 +222,18 @@
                     <el-col :span="8">
                         <el-form-item label="联系人">
                             <el-input placeholder="联系人" size="mini" v-model="addfactoryForm.contact"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="工艺职能" v-model="addfactoryForm.technology" prop="technology">
+                            <el-select placeholder="请选择" multiple size="mini" v-model="addfactoryForm.technology">
+                                <el-option
+                                        v-for="item in ProcessFunction"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                </el-option>
+                            </el-select>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -243,7 +261,8 @@
                 width="800px"
         >
 
-            <el-form :model="upfactoryForm" ref="upfactoryForm" :rules="upfactorysrules" label-width="100px" label-position="right">
+            <el-form :model="upfactoryForm" ref="upfactoryForm" :rules="upfactorysrules" label-width="100px"
+                     label-position="right">
 
                 <el-row>
                     <el-col :span="8">
@@ -279,7 +298,7 @@
                 <el-row>
                     <el-col :span="8">
                         <el-form-item label="收货地址" prop="detailedAddress">
-                            <el-input  placeholder="收货地址" size="mini" v-model="upfactoryForm.detailedAddress"></el-input>
+                            <el-input placeholder="收货地址" size="mini" v-model="upfactoryForm.detailedAddress"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -302,12 +321,23 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
+                        <el-form-item label="工艺职能"  prop="technology">
+                            <el-select placeholder="请选择" multiple size="medium" v-model="upfactoryForm.technology">
+                                <el-option
+                                        v-for="item in ProcessFunction"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
                         <el-form-item label="备注信息">
                             <el-input placeholder="备注信息" size="mini" v-model="upfactoryForm.remark"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
-
 
 
                 <el-form-item>
@@ -322,7 +352,8 @@
 </template>
 
 <script>
-    import {regionData,CodeToText,TextToCode} from 'element-china-area-data'
+    import {regionData, CodeToText, TextToCode} from 'element-china-area-data'
+
     export default {
         name: "factory",
         data() {
@@ -333,17 +364,40 @@
                 factoryIds: [],//工厂信息ID
                 totalRecordNum: 0,
                 addfactory: false,//新建厂商面板
-                delStatusButGoods:true,//删除按钮
+                delStatusButGoods: true,//删除按钮
                 upfactory: false,//修改厂商面板
+
+                ProcessFunction: [
+                    //工艺职能
+                    {
+                        label: '织造',
+                        value: '织造'
+                    },
+                    {
+                        label: '缝头',
+                        value: '缝头'
+                    }
+                    ,
+                    {
+                        label: '定型',
+                        value: '定型'
+                    }
+                    ,
+                    {
+                        label: '包装',
+                        value: '包装'
+                    }
+                ],
                 addfactoryForm: {
                     //新建厂商信息表单数据
                     name: '',//名称
                     code: '',//编码
                     company: '',//所属公司
                     address: '',//地址
-                    detailedAddress:'',//详细地址信息
+                    detailedAddress: '',//详细地址信息
                     contact: '',//联系人
                     phoneNumber: '',//手机号码
+                    technology: [],//工艺职能
                     remark: '',//备注信息
 
                 },
@@ -357,11 +411,14 @@
                         {required: true, message: '请输入厂商编码', trigger: 'blur'},
                         {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
                     ],
-                    address:[
-                        {required:true,message:'请选择收货城市',trigger:'blur'}
+                    address: [
+                        {required: true, message: '请选择收货城市', trigger: 'blur'}
                     ],
-                    detailedAddress:[
-                        {required:true,message:'收货地址不能为空',trigger:'blur'}
+                    detailedAddress: [
+                        {required: true, message: '收货地址不能为空', trigger: 'blur'}
+                    ],
+                    technology:[
+                        {required: true, message: '工艺不能为空', trigger: 'blur'}
                     ]
                 },
                 option: regionData,//城市选择
@@ -373,9 +430,10 @@
                     code: '',//编码
                     company: '',//所属公司
                     address: '',//地址
-                    detailedAddress:'',//详细地址信息
+                    detailedAddress: '',//详细地址信息
                     contact: '',//联系人
                     phoneNumber: '',//手机号码
+                    technology: [],//工艺职能
                     remark: '',//备注信息
 
                 },
@@ -389,11 +447,14 @@
                         {required: true, message: '请输入厂商编码', trigger: 'blur'},
                         {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
                     ],
-                    address:[
-                        {required:true,message:'请选择收货城市',trigger:'blur'}
+                    address: [
+                        {required: true, message: '请选择收货城市', trigger: 'blur'}
                     ],
-                    detailedAddress:[
-                        {required:true,message:'收货地址不能为空',trigger:'blur'}
+                    detailedAddress: [
+                        {required: true, message: '收货地址不能为空', trigger: 'blur'}
+                    ],
+                    technology:[
+                        {required: true, message: '工艺不能为空', trigger: 'blur'}
                     ]
                 },
                 queryspare01: '',//查询其他
@@ -431,7 +492,7 @@
             },
             submitForm(addfactoryForm) {
                 //新建厂商信息
-                let that=this
+                let that = this
                 this.$refs[addfactoryForm].validate((valid) => {
                     if (valid) {
                         this.$axios.post(this.$store.state.addfactory, this.addfactoryForm).then(res => {
@@ -441,7 +502,7 @@
                                     type: 'success',
                                     onClose() {
                                         that.factoryquery();
-                                        that.addfactory=false
+                                        that.addfactory = false
                                     }
                                 });
                             } else {
@@ -459,7 +520,7 @@
             upsubmitForm(upfactoryForm) {
                 this.typedata = JSON.stringify(this.upfactoryForm)
                 //修改厂商信息
-                let that=this
+                let that = this
                 this.$refs[upfactoryForm].validate((valid) => {
                     if (valid) {
                         this.$axios.post(this.$store.state.upfactory, this.upfactoryForm).then(res => {
@@ -469,7 +530,7 @@
                                     type: 'success',
                                     onClose() {
                                         that.factoryquery()
-                                        that.upfactory=false
+                                        that.upfactory = false
                                     }
                                 });
                             } else {
@@ -488,28 +549,28 @@
                 //打开修改信息面板
                 this.upfactory = true
                 this.upfactoryForm = data
-                this.upaddress.length=0
+                this.upaddress.length = 0
                 // TextToCode
 
-                let cti=data.address.split('-')
-                let county =TextToCode[cti[0]][cti[1]][cti[2]].code //县市
-                let provinces =`${county.substring(0,3)}000`   //省份
-                let city =`${county.substring(0,4)}00`      //辖区
-                this.upaddress.splice(0,0,provinces)
-                this.upaddress.splice(1,0,city)
-                this.upaddress.splice(2,0,county)
+                let cti = data.address.split('-')
+                let county = TextToCode[cti[0]][cti[1]][cti[2]].code //县市
+                let provinces = `${county.substring(0, 3)}000`   //省份
+                let city = `${county.substring(0, 4)}00`      //辖区
+                this.upaddress.splice(0, 0, provinces)
+                this.upaddress.splice(1, 0, city)
+                this.upaddress.splice(2, 0, county)
 
                 this.typedata = JSON.stringify(data) //将数据转为字符串，进行修改验证
             },
-            delfactoryspanel(val){
-              //删除单条工厂信息
-                this.factoryIds.length=0
+            delfactoryspanel(val) {
+                //删除单条工厂信息
+                this.factoryIds.length = 0
                 this.factoryIds.push(val.id)
                 this.delfactory()
             },
             delfactory() {
                 //删除工厂信息
-                let that=this
+                let that = this
                 this.$axios.post(this.$store.state.delfactory, {ids: this.factoryIds}).then(res => {
                     if (res.data.code == 200) {
                         this.$message({
@@ -534,17 +595,17 @@
                 //工厂信息多选
                 this.factoryIds.length = 0
 
-                let listdata=[];//保存选中数据，判断是否允许删除
+                let listdata = [];//保存选中数据，判断是否允许删除
 
                 val.forEach(item => {
                     this.factoryIds.push(item.id)
                     listdata.push(item.recordState)
                 })
-                let HideShow=listdata.indexOf('rs01')
-                if (val.length==0||HideShow!=-1){
-                    this.delStatusButGoods=true
+                let HideShow = listdata.indexOf('rs01')
+                if (val.length == 0 || HideShow != -1) {
+                    this.delStatusButGoods = true
                 } else {
-                    this.delStatusButGoods=false
+                    this.delStatusButGoods = false
                 }
             },
             factoryquery() {
@@ -577,6 +638,7 @@
         /*justify-content: space-around;*/
 
     }
+
     .menuBox {
         display: flex;
         background-color: #f8f8f8;

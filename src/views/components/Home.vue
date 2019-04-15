@@ -22,17 +22,17 @@
                                 </div>
                             </el-dropdown-item>
                             <el-dropdown-item>
-                                <div @click="addTab('工艺管理')">
+                                <div @click="addTab('工艺管理','ProcessManagement',$router.push('ProcessManagement'))">
                                     <i class="fontFamily hhtx-gongyipin"></i>
                                     <span class="menu">工艺管理</span>
                                 </div>
                             </el-dropdown-item>
-                            <el-dropdown-item>
-                                <div @click="addTab('流程设置')">
-                                    <i class="fontFamily hhtx-liucheng"></i>
-                                    <span class="menu">流程设置</span>
-                                </div>
-                            </el-dropdown-item>
+                            <!--<el-dropdown-item>-->
+                                <!--<div @click="addTab('流程设置')">-->
+                                    <!--<i class="fontFamily hhtx-liucheng"></i>-->
+                                    <!--<span class="menu">流程设置</span>-->
+                                <!--</div>-->
+                            <!--</el-dropdown-item>-->
                             <el-dropdown-item>
                                 <div @click="addTab('原材料信息','materials'),$router.push('materials')">
                                     <i class="fontFamily hhtx-yuancailiao"></i>

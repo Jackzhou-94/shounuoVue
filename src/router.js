@@ -56,9 +56,14 @@ export default new Router({
                 },
                 {
                     //库存查询
-                    path:'/Stock',
-                    name:'Stock',
-                    component:require('./views/Warehouse/Stock').default,
+                    path: '/Stock',
+                    name: 'Stock',
+                    component: require('./views/Warehouse/Stock').default,
+                }, {
+                    //工艺管理
+                    path: '/ProcessManagement',
+                    name: 'ProcessManagement',
+                    component: require('./views/infrastructure/ProcessManagement').default,
                 }
             ]
         }
