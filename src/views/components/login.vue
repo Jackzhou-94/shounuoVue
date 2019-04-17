@@ -73,7 +73,7 @@
                 } else {
                     this.$axios.post(this.$store.state.login, {
                             username: this.username,
-                            password: this.$md5(this.password)
+                            password: this.password
                         }
                     ).then(res => {
                         if (res.data.code != 200) {

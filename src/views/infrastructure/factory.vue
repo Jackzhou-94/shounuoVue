@@ -168,18 +168,18 @@
                 width="800px"
         >
 
-            <el-form :model="addfactoryForm" ref="addfactoryForm" :rules="addfactorysrules" label-width="100px"
+            <el-form size="mini" :model="addfactoryForm" ref="addfactoryForm" :rules="addfactorysrules" label-width="100px"
                      label-position="right">
 
                 <el-row>
                     <el-col :span="8">
                         <el-form-item label="编码" prop="code">
-                            <el-input placeholder="厂商编码" size="mini" v-model="addfactoryForm.code"></el-input>
+                            <el-input placeholder="厂商编码"  v-model="addfactoryForm.code"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="名称" prop="name">
-                            <el-input placeholder="厂商名称" size="mini" v-model="addfactoryForm.name"></el-input>
+                            <el-input placeholder="厂商名称"  v-model="addfactoryForm.name"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -187,7 +187,6 @@
                         <el-form-item label="收货城市" prop="address">
                             <el-cascader
                                     placeholder="收货城市"
-                                    size="mini"
                                     :options="option"
                                     v-model="address"
                                     @change="handleChange">
@@ -201,19 +200,19 @@
                 <el-row>
                     <el-col :span="8">
                         <el-form-item label="收货地址" prop="detailedAddress">
-                            <el-input placeholder="收货地址" size="mini"
+                            <el-input placeholder="收货地址"
                                       v-model="addfactoryForm.detailedAddress"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="所属公司" prop="company">
-                            <el-input placeholder="所属公司" size="mini" v-model="addfactoryForm.company"></el-input>
+                            <el-input placeholder="所属公司"  v-model="addfactoryForm.company"></el-input>
                         </el-form-item>
                     </el-col>
 
                     <el-col :span="8">
                         <el-form-item label="手机号码">
-                            <el-input placeholder="手机号码" size="mini" v-model="addfactoryForm.phoneNumber"></el-input>
+                            <el-input placeholder="手机号码"  v-model="addfactoryForm.phoneNumber"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -221,12 +220,12 @@
                 <el-row>
                     <el-col :span="8">
                         <el-form-item label="联系人">
-                            <el-input placeholder="联系人" size="mini" v-model="addfactoryForm.contact"></el-input>
+                            <el-input placeholder="联系人"  v-model="addfactoryForm.contact"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="工艺职能" v-model="addfactoryForm.technology" prop="technology">
-                            <el-select placeholder="请选择" multiple size="mini" v-model="addfactoryForm.technology">
+                        <el-form-item label="工艺职能"  v-model="addfactoryForm.technology" prop="technology">
+                            <el-select placeholder="请选择" multiple  v-model="addfactoryForm.technology">
                                 <el-option
                                         v-for="item in ProcessFunction"
                                         :key="item.value"
@@ -238,7 +237,7 @@
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="备注信息">
-                            <el-input placeholder="备注信息" size="mini" v-model="addfactoryForm.remark"></el-input>
+                            <el-input placeholder="备注信息" v-model="addfactoryForm.remark"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -261,18 +260,18 @@
                 width="800px"
         >
 
-            <el-form :model="upfactoryForm" ref="upfactoryForm" :rules="upfactorysrules" label-width="100px"
+            <el-form size="mini"  :model="upfactoryForm" ref="upfactoryForm" :rules="upfactorysrules" label-width="100px"
                      label-position="right">
 
                 <el-row>
                     <el-col :span="8">
                         <el-form-item label="编码" prop="code">
-                            <el-input placeholder="厂商编码" size="mini" v-model="upfactoryForm.code"></el-input>
+                            <el-input placeholder="厂商编码"  v-model="upfactoryForm.code"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="名称" prop="name">
-                            <el-input placeholder="厂商名称" size="mini" v-model="upfactoryForm.name"></el-input>
+                            <el-input placeholder="厂商名称"  v-model="upfactoryForm.name"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -284,7 +283,6 @@
                         <el-form-item label="收货城市" prop="address">
                             <el-cascader
                                     placeholder="收货城市"
-                                    size="mini"
                                     :options="option"
                                     v-model="upaddress"
                                     @change="handleChange">
@@ -298,18 +296,18 @@
                 <el-row>
                     <el-col :span="8">
                         <el-form-item label="收货地址" prop="detailedAddress">
-                            <el-input placeholder="收货地址" size="mini" v-model="upfactoryForm.detailedAddress"></el-input>
+                            <el-input placeholder="收货地址"  v-model="upfactoryForm.detailedAddress"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="所属公司" prop="company">
-                            <el-input placeholder="所属公司" size="mini" v-model="upfactoryForm.company"></el-input>
+                            <el-input placeholder="所属公司"  v-model="upfactoryForm.company"></el-input>
                         </el-form-item>
                     </el-col>
 
                     <el-col :span="8">
                         <el-form-item label="手机号码">
-                            <el-input placeholder="手机号码" size="mini" v-model="upfactoryForm.phoneNumber"></el-input>
+                            <el-input placeholder="手机号码"  v-model="upfactoryForm.phoneNumber"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -317,12 +315,13 @@
                 <el-row>
                     <el-col :span="8">
                         <el-form-item label="联系人">
-                            <el-input placeholder="联系人" size="mini" v-model="upfactoryForm.contact"></el-input>
+                            <el-input placeholder="联系人"  v-model="upfactoryForm.contact"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="工艺职能"  prop="technology">
-                            <el-select placeholder="请选择" multiple size="medium" v-model="upfactoryForm.technology">
+                        <el-form-item label="工艺职能"    prop="technology">
+
+                            <el-select placeholder="请选择" multiple  v-model="upfactoryForm.technology">
                                 <el-option
                                         v-for="item in ProcessFunction"
                                         :key="item.value"
@@ -330,19 +329,32 @@
                                         :value="item.value">
                                 </el-option>
                             </el-select>
+
+
+
+
+                            <!---->
+                            <!--<el-select placeholder="请选择" multiple  v-model="upfactoryForm.technology">-->
+                                <!--<el-option-->
+                                        <!--v-for="item in ProcessFunction"-->
+                                        <!--:key="item.value"-->
+                                        <!--:label="item.label"-->
+                                        <!--:value="item.value">-->
+                                <!--</el-option>-->
+                            <!--</el-select>-->
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="备注信息">
-                            <el-input placeholder="备注信息" size="mini" v-model="upfactoryForm.remark"></el-input>
+                            <el-input placeholder="备注信息"  v-model="upfactoryForm.remark"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
 
 
                 <el-form-item>
-                    <el-button size="mini" type="primary" @click="upsubmitForm('upfactoryForm')">立即修改</el-button>
-                    <el-button size="mini" @click="upfactory=false">取消</el-button>
+                    <el-button  type="primary" @click="upsubmitForm('upfactoryForm')">立即修改</el-button>
+                    <el-button  @click="upfactory=false">取消</el-button>
                 </el-form-item>
             </el-form>
 

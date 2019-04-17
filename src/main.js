@@ -12,7 +12,7 @@ import './less/Style.less'
 import {Loading} from 'element-ui'
 import md5 from 'js-md5'
 
-Vue.prototype.$md5=md5
+Vue.prototype.$md5 = md5
 Vue.prototype.$axios = axios
 require('./assets/icon/iconfont')
 
@@ -31,7 +31,19 @@ axios.interceptors.request.use(
         if (token != null) {
             config.headers['token'] = token
         }
-        Loading.service()
+
+        // const loading = this.$loading({
+        //     lock: true,
+        //     text: 'Loading',
+        //     spinner: 'el-icon-loading',
+        //     background: 'rgba(0, 0, 0, 0.7)'
+        // });
+        Loading.service({
+            lock: true,
+            text: 'Loading',
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)'
+        })
         return config
     }
 )
