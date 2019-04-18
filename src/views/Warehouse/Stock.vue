@@ -1,42 +1,8 @@
 <template>
     <div class="Stock">
         <!--库存查询-->
-        <div class="query">
-            <div style="display: flex;flex-wrap: nowrap">
-                <el-select v-model="Search" size="mini" clearable placeholder="仓库类型">
-                    <el-option
-                            v-for="item in SearchType"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                    </el-option>
-                </el-select>
-                <el-select v-model="factoryName" clearable size="mini" placeholder="工厂名称">
-                    <el-option
-                            v-for="item in factorylist"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                    </el-option>
-                </el-select>
-                <el-input size="mini" style="width: 200px" placeholder="物料编码" clearable
-                          v-model="MerchantCode"></el-input>
-                <el-input size="mini" style="width: 200px" placeholder="货品编号" clearable v-model="ItemCode"></el-input>
-                <el-input size="mini" style="width: 200px" placeholder="货品名称" clearable
-                          v-model="descriptionGoods"></el-input>
-                <el-date-picker
-                        size="mini"
-                        v-model="queryTime"
-                        type="datetimerange"
-                        value-format="yyyy-MM-dd HH:mm:ss"
-                        :picker-options="pickerOptions2"
-                        range-separator="至"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期"
-                        align="right">
-                </el-date-picker>
-            </div>
-            <div style="display: flex;flex-wrap: nowrap;margin-left: 1em">
+        <div class="menuBox">
+            <div class="QueryConditions">
                 <el-button size="mini" type="primary" @click="Settings=true">显示设置</el-button>
                 <el-button size="mini" icon="el-icon-edit" type="primary"
                            @click="Search='',MerchantCode='',ItemCode='',descriptionGoods='',queryTime='',factoryName=''">
@@ -44,6 +10,45 @@
                 </el-button>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="stockQuery()">查询</el-button>
             </div>
+            <div class="QueryConditions QueryInput">
+                <div>
+                    <el-select v-model="Search" size="mini" clearable placeholder="仓库类型">
+                        <el-option
+                                v-for="item in SearchType"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
+                    <el-select v-model="factoryName" clearable size="mini" placeholder="工厂名称">
+                        <el-option
+                                v-for="item in factorylist"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
+                    <el-input size="mini" style="width: 200px" placeholder="物料编码" clearable
+                              v-model="MerchantCode"></el-input>
+                    <el-input size="mini" style="width: 200px" placeholder="货品编号" clearable
+                              v-model="ItemCode"></el-input>
+                    <el-input size="mini" style="width: 200px" placeholder="货品名称" clearable
+                              v-model="descriptionGoods"></el-input>
+                    <el-date-picker
+                            size="mini"
+                            v-model="queryTime"
+                            type="datetimerange"
+                            value-format="yyyy-MM-dd HH:mm:ss"
+                            :picker-options="pickerOptions2"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            align="right">
+                    </el-date-picker>
+                </div>
+
+            </div>
+
 
         </div>
 

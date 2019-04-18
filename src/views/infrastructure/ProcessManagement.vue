@@ -1,45 +1,44 @@
 <template>
     <div class="ProcessManagement">
 
-        <div style="display:flex;flex-wrap: nowrap;justify-content: left;margin-bottom: 0.5em">
-            <el-button size="mini" type="primary" class="el-icon-plus" @click="addprocess=true">新建</el-button>
-            <el-button size="mini" type="primary" class="el-icon-plus" @click="upaddprocess=true">修改</el-button>
-        </div>
-        <div class="selectBox">
-
-            <div style="display: flex;flex-wrap: nowrap;">
-                <el-input clearable size="mini" placeholder="款式编号"></el-input>
-                <el-input clearable size="mini" placeholder="商家编码"></el-input>
-                <el-input clearable size="mini" placeholder="名称"></el-input>
-
-                <el-select size="mini" clearable v-model="category" placeholder="类别">
-                    <el-option
-                            v-for="item in categorySelect"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                    </el-option>
-                </el-select>
-
-                <el-select size="mini" clearable v-model="selectState" placeholder="状态">
-                    <el-option
-                            v-for="item in SelectOptions"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                    </el-option>
-                </el-select>
+        <div class="menuBox">
+            <div class="QueryConditions">
+                <el-button size="mini" type="primary" class="el-icon-plus" @click="addprocess=true">新建</el-button>
+                <el-button size="mini" type="primary" class="el-icon-plus" @click="upaddprocess=true">修改</el-button>
             </div>
+            <div class="QueryConditions QueryInput">
+                <div>
+                    <el-input clearable size="mini" placeholder="款式编号"></el-input>
+                    <el-input clearable size="mini" placeholder="商家编码"></el-input>
+                    <el-input clearable size="mini" placeholder="名称"></el-input>
 
-            <div style="display: flex;flex-wrap: nowrap;">
-                <el-button type="primary" size="mini">重置</el-button>
+                    <el-select size="mini" clearable v-model="category" placeholder="类别">
+                        <el-option
+                                v-for="item in categorySelect"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
 
-                <el-button type="primary" size="mini" icon="el-icon-search">查询</el-button>
+                    <el-select size="mini" clearable v-model="selectState" placeholder="状态">
+                        <el-option
+                                v-for="item in SelectOptions"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
+                </div>
+
+                <div>
+                    <el-button type="primary" size="mini">重置</el-button>
+
+                    <el-button type="primary" size="mini" icon="el-icon-search">查询</el-button>
+                </div>
+
             </div>
-
-
         </div>
-
         <!--新建工艺单-->
         <el-dialog
                 width="1100px"
@@ -95,166 +94,166 @@
 
             <el-tabs shadow="never" type="border-card" v-model="activeName">
                 <el-tab-pane label="新品管理" name="first">
-                    <div style="text-align: left">
+                    <div class="QueryConditions">
 
-                        <el-button size="mini" type="primary" @click="addGoods">添加新品</el-button>
-
-                        <el-table
-                                :data="addprocessData.goodsList"
-                                border
-                                stripe
-                                style="width: 100%">
-
-
-                            <el-table-column
-                                    align="center"
-                                    prop="merchantCode"
-                                    v-if="merchantCode"
-                                    label="商家编码"
-                                    width="180">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="name"
-                                    v-if="name"
-                                    label="商品名称"
-                                    width="180">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="itemCode"
-                                    v-if="itemCode"
-                                    label="货品编号"
-                                    width="180"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="type"
-                                    v-if="type"
-                                    label="分类"
-                                    width="180">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="sku"
-                                    v-if="sku"
-                                    width="180"
-                                    label="盒装SKU">
-
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="brand"
-                                    v-if="brand"
-                                    width="180"
-                                    label="品牌">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    v-if="process"
-                                    prop="process"
-                                    width="180"
-                                    label="工艺流程">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="season"
-                                    v-if="season"
-                                    width="180"
-                                    label="季节">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="costPrice"
-                                    v-if="costPrice"
-                                    width="180"
-                                    label="商品成本价">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="unit"
-                                    v-if="unit"
-                                    width="180"
-                                    label="基本单位">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    v-if="packag"
-                                    prop="packag"
-                                    width="180"
-                                    label="包装材料">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="weight"
-                                    v-if="weight"
-                                    width="180"
-                                    label="重量">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="barCode"
-                                    v-if="barCode"
-                                    width="180"
-                                    label="条形码">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="ingredients"
-                                    v-if="ingredients"
-                                    width="180"
-                                    label="面料成份">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="standard"
-                                    v-if="standard"
-                                    width="180"
-                                    label="执行工艺标准">
-                            </el-table-column>
-                            <el-table-column
-
-                                    label="创建时间"
-                                    prop="createTime"
-                                    v-if="createTime"
-                                    width="180"
-                                    align="center"
-                                    sortable
-                            ></el-table-column>
-                            <el-table-column
-                                    label="修改时间"
-                                    prop="updateTime"
-                                    v-if="updateTime"
-                                    width="180"
-                                    align="center"
-                                    sortable
-                            ></el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="remark"
-                                    v-if="remark"
-                                    width="180"
-                                    label="备注">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    fixed="right"
-                                    label="操作">
-                                <template slot-scope="scope">
-                                    <el-button type="text" @click="rmGoods(scope.row)">移除</el-button>
-                                </template>
-                            </el-table-column>
-                        </el-table>
-
+                        <el-button size="mini"  @click="addGoods">添加新品</el-button>
 
                     </div>
+                    <el-table
+                            :data="addprocessData.goodsList"
+                            border
+                            stripe
+                            style="width: 100%">
+
+
+                        <el-table-column
+                                align="center"
+                                prop="merchantCode"
+                                v-if="merchantCode"
+                                label="商家编码"
+                                width="180">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="name"
+                                v-if="name"
+                                label="商品名称"
+                                width="180">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="itemCode"
+                                v-if="itemCode"
+                                label="货品编号"
+                                width="180"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="type"
+                                v-if="type"
+                                label="分类"
+                                width="180">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="sku"
+                                v-if="sku"
+                                width="180"
+                                label="盒装SKU">
+
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="brand"
+                                v-if="brand"
+                                width="180"
+                                label="品牌">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                v-if="process"
+                                prop="process"
+                                width="180"
+                                label="工艺流程">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="season"
+                                v-if="season"
+                                width="180"
+                                label="季节">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="costPrice"
+                                v-if="costPrice"
+                                width="180"
+                                label="商品成本价">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="unit"
+                                v-if="unit"
+                                width="180"
+                                label="基本单位">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                v-if="packag"
+                                prop="packag"
+                                width="180"
+                                label="包装材料">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="weight"
+                                v-if="weight"
+                                width="180"
+                                label="重量">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="barCode"
+                                v-if="barCode"
+                                width="180"
+                                label="条形码">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="ingredients"
+                                v-if="ingredients"
+                                width="180"
+                                label="面料成份">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="standard"
+                                v-if="standard"
+                                width="180"
+                                label="执行工艺标准">
+                        </el-table-column>
+                        <el-table-column
+
+                                label="创建时间"
+                                prop="createTime"
+                                v-if="createTime"
+                                width="180"
+                                align="center"
+                                sortable
+                        ></el-table-column>
+                        <el-table-column
+                                label="修改时间"
+                                prop="updateTime"
+                                v-if="updateTime"
+                                width="180"
+                                align="center"
+                                sortable
+                        ></el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="remark"
+                                v-if="remark"
+                                width="180"
+                                label="备注">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                fixed="right"
+                                label="操作">
+                            <template slot-scope="scope">
+                                <el-button type="text" @click="rmGoods(scope.row)">移除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+
+
                 </el-tab-pane>
 
                 <el-tab-pane label="原材料管理" name="second">
-                    <div style="display: flex;flex-wrap: nowrap">
-                        <el-button size="mini" type="primary" @click="addMater">添加原材料</el-button>
-                        <el-button type="primary" size="mini" @click="batchMaterRm">批量移除</el-button>
+                    <div class="QueryConditions">
+                        <el-button size="mini" @click="addMater">添加原材料</el-button>
+                        <el-button size="mini" @click="batchMaterRm">批量移除</el-button>
                     </div>
 
                     <el-table
@@ -290,6 +289,12 @@
                                 align="center"
                         ></el-table-column>
                         <el-table-column
+                                prop="ingredients"
+                                label="成分配比"
+                                width="180"
+                                align="center"
+                        ></el-table-column>
+                        <el-table-column
                                 label="物料分类"
                                 prop="type"
                                 width="180"
@@ -309,11 +314,10 @@
                                 align="center"
                         ></el-table-column>
                         <el-table-column
-                                label="基本计量单位"
+                                label="计量单位"
                                 prop="unit"
-                                width="150"
+                                width="100"
                                 align="center"
-                                sortable
                         ></el-table-column>
                         <el-table-column
                                 label="成本价"
@@ -424,166 +428,166 @@
 
             <el-tabs shadow="never" type="border-card" v-model="upactiveName">
                 <el-tab-pane label="新品管理" name="first">
-                    <div style="text-align: left">
+                    <div class="QueryConditions">
 
-                        <el-button size="mini" type="primary" @click="upaddGoods">添加新品</el-button>
-
-                        <el-table
-                                :data="upaddprocessData.goodsList"
-                                border
-                                stripe
-                                style="width: 100%">
-
-
-                            <el-table-column
-                                    align="center"
-                                    prop="merchantCode"
-                                    v-if="upmerchantCode"
-                                    label="商家编码"
-                                    width="180">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="name"
-                                    v-if="upname"
-                                    label="商品名称"
-                                    width="180">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="itemCode"
-                                    v-if="upitemCode"
-                                    label="货品编号"
-                                    width="180"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="type"
-                                    v-if="uptype"
-                                    label="分类"
-                                    width="180">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="sku"
-                                    v-if="upsku"
-                                    width="180"
-                                    label="盒装SKU">
-
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="brand"
-                                    v-if="upbrand"
-                                    width="180"
-                                    label="品牌">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    v-if="upprocess"
-                                    prop="process"
-                                    width="180"
-                                    label="工艺流程">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="season"
-                                    v-if="upseason"
-                                    width="180"
-                                    label="季节">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="costPrice"
-                                    v-if="upcostPrice"
-                                    width="180"
-                                    label="商品成本价">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="unit"
-                                    v-if="upunit"
-                                    width="180"
-                                    label="基本单位">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    v-if="uppackag"
-                                    prop="packag"
-                                    width="180"
-                                    label="包装材料">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="weight"
-                                    v-if="upweight"
-                                    width="180"
-                                    label="重量">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="barCode"
-                                    v-if="upbarCode"
-                                    width="180"
-                                    label="条形码">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="ingredients"
-                                    v-if="upingredients"
-                                    width="180"
-                                    label="面料成份">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="standard"
-                                    v-if="upstandard"
-                                    width="180"
-                                    label="执行工艺标准">
-                            </el-table-column>
-                            <el-table-column
-
-                                    label="创建时间"
-                                    prop="createTime"
-                                    v-if="upcreateTime"
-                                    width="180"
-                                    align="center"
-                                    sortable
-                            ></el-table-column>
-                            <el-table-column
-                                    label="修改时间"
-                                    prop="updateTime"
-                                    v-if="upupdateTime"
-                                    width="180"
-                                    align="center"
-                                    sortable
-                            ></el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="remark"
-                                    v-if="upremark"
-                                    width="180"
-                                    label="备注">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    fixed="right"
-                                    label="操作">
-                                <template slot-scope="scope">
-                                    <el-button type="text" @click="uprmGoods(scope.row)">移除</el-button>
-                                </template>
-                            </el-table-column>
-                        </el-table>
-
+                        <el-button size="mini"  @click="upaddGoods">添加新品</el-button>
 
                     </div>
+                    <el-table
+                            :data="upaddprocessData.goodsList"
+                            border
+                            stripe
+                            style="width: 100%">
+
+
+                        <el-table-column
+                                align="center"
+                                prop="merchantCode"
+                                v-if="upmerchantCode"
+                                label="商家编码"
+                                width="180">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="name"
+                                v-if="upname"
+                                label="商品名称"
+                                width="180">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="itemCode"
+                                v-if="upitemCode"
+                                label="货品编号"
+                                width="180"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="type"
+                                v-if="uptype"
+                                label="分类"
+                                width="180">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="sku"
+                                v-if="upsku"
+                                width="180"
+                                label="盒装SKU">
+
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="brand"
+                                v-if="upbrand"
+                                width="180"
+                                label="品牌">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                v-if="upprocess"
+                                prop="process"
+                                width="180"
+                                label="工艺流程">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="season"
+                                v-if="upseason"
+                                width="180"
+                                label="季节">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="costPrice"
+                                v-if="upcostPrice"
+                                width="180"
+                                label="商品成本价">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="unit"
+                                v-if="upunit"
+                                width="180"
+                                label="基本单位">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                v-if="uppackag"
+                                prop="packag"
+                                width="180"
+                                label="包装材料">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="weight"
+                                v-if="upweight"
+                                width="180"
+                                label="重量">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="barCode"
+                                v-if="upbarCode"
+                                width="180"
+                                label="条形码">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="ingredients"
+                                v-if="upingredients"
+                                width="180"
+                                label="面料成份">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="standard"
+                                v-if="upstandard"
+                                width="180"
+                                label="执行工艺标准">
+                        </el-table-column>
+                        <el-table-column
+
+                                label="创建时间"
+                                prop="createTime"
+                                v-if="upcreateTime"
+                                width="180"
+                                align="center"
+                                sortable
+                        ></el-table-column>
+                        <el-table-column
+                                label="修改时间"
+                                prop="updateTime"
+                                v-if="upupdateTime"
+                                width="180"
+                                align="center"
+                                sortable
+                        ></el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="remark"
+                                v-if="upremark"
+                                width="180"
+                                label="备注">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                fixed="right"
+                                label="操作">
+                            <template slot-scope="scope">
+                                <el-button type="text" @click="uprmGoods(scope.row)">移除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+
+
                 </el-tab-pane>
 
                 <el-tab-pane label="原材料管理" name="second">
-                    <div style="display: flex;flex-wrap: nowrap">
-                        <el-button size="mini" type="primary" @click="upaddMater">添加原材料</el-button>
-                        <el-button type="primary" size="mini" @click="upbatchMaterRm">批量移除</el-button>
+                    <div class="QueryConditions">
+                        <el-button size="mini" @click="upaddMater">添加原材料</el-button>
+                        <el-button size="mini" @click="upbatchMaterRm">批量移除</el-button>
                     </div>
 
                     <el-table

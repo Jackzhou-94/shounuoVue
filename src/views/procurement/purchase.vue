@@ -4,9 +4,9 @@
             <el-tab-pane label="原材料采购" name="second">
                 <div>
                     <!--新建与查询-->
-                    <div style="padding: 0.5em">
+                    <div class="menuBox">
 
-                        <div style="display:flex;flex-wrap: nowrap;justify-content: left;margin-bottom: 0.5em">
+                        <div class="QueryConditions">
                             <el-button size="mini" type="primary" class="el-icon-plus"
                                        @click="Newpurchaseorder_mater=true">新建
                             </el-button>
@@ -23,66 +23,69 @@
                             </el-button>
                             <!--<el-button size="mini">导出</el-button>-->
                         </div>
-                        <div style="display: flex;justify-content:space-between">
+                        <div class="QueryConditions QueryInput">
+                            <div>
+                                <el-select size="mini" v-model="materTimeType" placeholder="时间类型">
+                                    <el-option
+                                            v-for="item in TimeTypelist"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
+                                <el-date-picker
+                                        size="mini"
+                                        v-model="materpurchaseTime"
+                                        type="daterange"
+                                        range-separator="至"
+                                        format="yyyy 年 MM 月 dd 日"
+                                        value-format="yyyy-MM-dd"
+                                        start-placeholder="开始日期"
+                                        end-placeholder="结束日期">
+                                </el-date-picker>
 
-                            <el-select size="mini"  v-model="materTimeType" placeholder="时间类型">
-                                <el-option
-                                        v-for="item in TimeTypelist"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value">
-                                </el-option>
-                            </el-select>
-                            <el-date-picker
-                                    size="mini"
-                                    v-model="materpurchaseTime"
-                                    type="daterange"
-                                    range-separator="至"
-                                    format="yyyy 年 MM 月 dd 日"
-                                    value-format="yyyy-MM-dd"
-                                    start-placeholder="开始日期"
-                                    end-placeholder="结束日期">
-                            </el-date-picker>
+                                <el-select size="mini" clearable v-model="materAuditStatuss" placeholder="审核状态">
+                                    <el-option
+                                            v-for="item in Audit"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
+                                <el-select size="mini" clearable v-model="materSubmitstate" placeholder="提交状态">
+                                    <el-option
+                                            v-for="item in Submit"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
 
-                            <el-select size="mini" clearable v-model="materAuditStatuss" placeholder="审核状态">
-                                <el-option
-                                        v-for="item in Audit"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value">
-                                </el-option>
-                            </el-select>
-                            <el-select size="mini" clearable v-model="materSubmitstate" placeholder="提交状态">
-                                <el-option
-                                        v-for="item in Submit"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value">
-                                </el-option>
-                            </el-select>
-
-                            <el-select size="mini" clearable v-model="materReceivingStatus" placeholder="收货状态">
-                                <el-option
-                                        v-for="item in Receiving"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value">
-                                </el-option>
-                            </el-select>
+                                <el-select size="mini" clearable v-model="materReceivingStatus" placeholder="收货状态">
+                                    <el-option
+                                            v-for="item in Receiving"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
 
 
-                            <el-input size="mini" style="width: 200px" placeholder="采购单号" clearable
-                                      v-model="materpurchaseNumbers"></el-input>
+                                <el-input size="mini" style="width: 200px" placeholder="采购单号" clearable
+                                          v-model="materpurchaseNumbers"></el-input>
+                            </div>
+                            <div>
+                                <el-button type="primary" size="mini" icon="el-icon-edit"
+                                           @click="materpurchaseNumbers='',materSubmitstate='',materReceivingStatus='',materAuditStatuss='',materpurchaseTime='',materTimeType=''">
+                                    重置
+                                </el-button>
 
-                            <el-button type="primary" size="mini" icon="el-icon-edit"
-                                       @click="materpurchaseNumbers='',materSubmitstate='',materReceivingStatus='',materAuditStatuss='',materpurchaseTime='',materTimeType=''">
-                                重置
-                            </el-button>
-
-                            <el-button type="primary" size="mini" icon="el-icon-search" @click="materialQueryPage()">查询
-                            </el-button>
-
+                                <el-button type="primary" size="mini" icon="el-icon-search"
+                                           @click="materialQueryPage()">查询
+                                </el-button>
+                            </div>
                         </div>
+
                         <!--显示设置-->
                         <el-dialog
                                 title="显示设置"
@@ -233,69 +236,67 @@
                             >
 
 
-                                    <div style="display: flex;justify-content: space-between;flex-wrap: nowrap">
-                                        <el-form-item
-                                                label="供应商"
-                                                prop="supplier"
-                                        >
-                                            <!--供应商选择-->
-                                            <el-select size="mini" filterable clearable
-                                                       v-model="addProcurementMater.supplier"
-                                                       placeholder="供应商">
-                                                <el-option
-                                                        v-for="item in options"
-                                                        :key="item.value"
-                                                        :label="item.label"
-                                                        :value="item.value">
-                                                </el-option>
-                                            </el-select>
-                                        </el-form-item>
+                                <div style="display: flex;justify-content: space-between;flex-wrap: nowrap">
+                                    <el-form-item
+                                            label="供应商"
+                                            prop="supplier"
+                                    >
+                                        <!--供应商选择-->
+                                        <el-select size="mini" filterable clearable
+                                                   v-model="addProcurementMater.supplier"
+                                                   placeholder="供应商">
+                                            <el-option
+                                                    v-for="item in options"
+                                                    :key="item.value"
+                                                    :label="item.label"
+                                                    :value="item.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
 
-                                        <el-form-item
-                                                label="工厂"
-                                                prop="factoryName"
-                                        >
-                                            <!--工厂选择-->
-                                            <el-select filterable size="mini" clearable
-                                                       v-model="addProcurementMater.factoryName"
-                                                       placeholder="工厂选择">
-                                                <el-option
-                                                        v-for="item in factorylist"
-                                                        :key="item.value"
-                                                        :label="item.label"
-                                                        :value="item.value">
-                                                </el-option>
-                                            </el-select>
-                                        </el-form-item>
+                                    <el-form-item
+                                            label="工厂"
+                                            prop="factoryName"
+                                    >
+                                        <!--工厂选择-->
+                                        <el-select filterable size="mini" clearable
+                                                   v-model="addProcurementMater.factoryName"
+                                                   placeholder="工厂选择">
+                                            <el-option
+                                                    v-for="item in factorylist"
+                                                    :key="item.value"
+                                                    :label="item.label"
+                                                    :value="item.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
 
-                                        <el-form-item label="发票" prop="invoice">
-                                            <el-select @change="materchoose" size="mini"
+                                    <el-form-item label="发票" prop="invoice">
+                                        <el-select @change="materchoose" size="mini"
 
-                                                       v-model="addProcurementMater.invoice"
-                                                       placeholder="请选择发票">
-                                                <el-option
-                                                        v-for="item in addinvoice"
-                                                        :key="item.value"
-                                                        :label="item.label"
-                                                        :value="item.value">
-                                                </el-option>
-                                            </el-select>
-                                        </el-form-item>
+                                                   v-model="addProcurementMater.invoice"
+                                                   placeholder="请选择发票">
+                                            <el-option
+                                                    v-for="item in addinvoice"
+                                                    :key="item.value"
+                                                    :label="item.label"
+                                                    :value="item.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
 
-                                        <el-form-item label="货运方式" prop="freightTransportation">
-                                            <el-input  clearable size="mini" placeholder="货运方式"
-                                                      v-model="addProcurementMater.freightTransportation"></el-input>
-                                        </el-form-item>
-                                        <!--<el-form-item label="运费" prop="freight">-->
-                                            <!--<el-input clearable  size="mini" v-model="addProcurementMater.freight"></el-input>-->
-                                        <!--</el-form-item>-->
-                                        <!--<el-form-item label="备注">-->
-                                            <!--<el-input  clearable size="mini" placeholder="备注"-->
-                                                      <!--v-model="addProcurementMater.remark"></el-input>-->
-                                        <!--</el-form-item>-->
-                                    </div>
-
-
+                                    <el-form-item label="货运方式" prop="freightTransportation">
+                                        <el-input clearable size="mini" placeholder="货运方式"
+                                                  v-model="addProcurementMater.freightTransportation"></el-input>
+                                    </el-form-item>
+                                    <!--<el-form-item label="运费" prop="freight">-->
+                                    <!--<el-input clearable  size="mini" v-model="addProcurementMater.freight"></el-input>-->
+                                    <!--</el-form-item>-->
+                                    <!--<el-form-item label="备注">-->
+                                    <!--<el-input  clearable size="mini" placeholder="备注"-->
+                                    <!--v-model="addProcurementMater.remark"></el-input>-->
+                                    <!--</el-form-item>-->
+                                </div>
 
 
                                 <el-row>
@@ -316,10 +317,11 @@
 
 
                             </el-form>
-                            <div style="text-align: left">
+                            <div class="QueryConditions">
                                 <el-button size="mini" @click="PurchasingAddmaterial_material=true">添加商品</el-button>
                                 <el-button size="mini" @click="batchMaterTime">批量添加预计入库时间</el-button>
                                 <el-date-picker
+                                        style="margin-left: 0.5em"
                                         size="mini"
                                         v-model="timematerData"
                                         value-format="yyyy-MM-dd HH:mm:ss"
@@ -550,36 +552,33 @@
                         >
                             <!--新建与查询-->
                             <div class="menuBox">
-                                <div>
-                                    <el-row>
-                                        <el-col :span="5">
-                                            <el-input placeholder="物料编号" size="mini" v-model="materialsNum"></el-input>
-                                        </el-col>
-                                        <el-col :span="5">
-                                            <el-input placeholder="物料名称" size="mini" v-model="materialsName"></el-input>
-                                        </el-col>
+                                <div class="QueryConditions QueryInput">
+                                    <div>
+                                        <el-input clearable placeholder="物料编号" size="mini"
+                                                  v-model="materialsNum"></el-input>
 
-                                        <el-col :span="4">
-                                            <el-select v-model="VendorQueries" placeholder="厂商" size="mini">
-                                                <el-option
-                                                        v-for="item in options"
-                                                        :key="item.value"
-                                                        :label="item.label"
-                                                        :value="item.value"
-                                                >
-                                                </el-option>
-                                            </el-select>
-                                        </el-col>
+                                        <el-input clearable placeholder="物料名称" size="mini"
+                                                  v-model="materialsName"></el-input>
 
-                                        <el-col :span="4">
-                                            <el-button type="primary" icon="el-icon-delete" size="mini">重置</el-button>
-                                        </el-col>
-                                        <el-col :span="2">
-                                            <el-button type="primary" icon="el-icon-search" size="mini"
-                                                       @click="queryPage">查询
-                                            </el-button>
-                                        </el-col>
-                                    </el-row>
+                                        <el-select clearable v-model="VendorQueries" placeholder="厂商" size="mini">
+                                            <el-option
+                                                    v-for="item in options"
+                                                    :key="item.value"
+                                                    :label="item.label"
+                                                    :value="item.value"
+                                            >
+                                            </el-option>
+                                        </el-select>
+                                    </div>
+                                    <div>
+                                        <el-button type="primary" icon="el-icon-delete" size="mini"
+                                                   @click="materialsNum='',materialsName='',VendorQueries=''">重置
+                                        </el-button>
+
+                                        <el-button type="primary" icon="el-icon-search" size="mini"
+                                                   @click="queryPage">查询
+                                        </el-button>
+                                    </div>
                                 </div>
                             </div>
                             <div>
@@ -699,18 +698,15 @@
 
                                 </el-table>
                                 <!--分页-->
-                                <el-row :gutter="24">
-                                    <el-col :span="12" :offset="12"></el-col>
-                                    <el-col :span="8" :offset="8">
-                                        <el-pagination
-                                                @current-change="handleCurrentChange"
-                                                :page-size="5"
-                                                layout="prev, pager, next, jumper"
-                                                :total="totalRecord">
-                                        </el-pagination>
-                                    </el-col>
+                                <div class="PageLayout">
+                                    <el-pagination
+                                            @current-change="handleCurrentChange"
+                                            :page-size="5"
+                                            layout="prev, pager, next, jumper"
+                                            :total="totalRecord">
+                                    </el-pagination>
 
-                                </el-row>
+                                </div>
 
                                 <el-table
                                         :data="quiremateDataBox"
@@ -930,10 +926,11 @@
 
 
                             </el-form>
-                            <div style="text-align: left">
+                            <div class="QueryConditions">
                                 <el-button size="mini" @click="upPurchasingAddmaterial_material=true">添加商品</el-button>
                                 <el-button size="mini" @click="upbatchMaterTime">批量添加预计入库时间</el-button>
                                 <el-date-picker
+                                        style="margin-left: 0.5em"
                                         size="mini"
                                         v-model="uptimematerData"
                                         type="datetime"
@@ -1163,36 +1160,33 @@
                         >
                             <!--新建与查询-->
                             <div class="menuBox">
-                                <div>
-                                    <el-row>
-                                        <el-col :span="5">
-                                            <el-input placeholder="物料编号" size="mini" v-model="materialsNum"></el-input>
-                                        </el-col>
-                                        <el-col :span="5">
-                                            <el-input placeholder="物料名称" size="mini" v-model="materialsName"></el-input>
-                                        </el-col>
+                                <div class="QueryConditions QueryInput">
+                                    <div>
+                                        <el-input clearable placeholder="物料编号" size="mini"
+                                                  v-model="materialsNum"></el-input>
 
-                                        <el-col :span="4">
-                                            <el-select v-model="VendorQueries" placeholder="厂商" size="mini">
-                                                <el-option
-                                                        v-for="item in options"
-                                                        :key="item.value"
-                                                        :label="item.label"
-                                                        :value="item.value"
-                                                >
-                                                </el-option>
-                                            </el-select>
-                                        </el-col>
+                                        <el-input clearable placeholder="物料名称" size="mini"
+                                                  v-model="materialsName"></el-input>
 
-                                        <el-col :span="4">
-                                            <el-button type="primary" icon="el-icon-delete" size="mini">重置</el-button>
-                                        </el-col>
-                                        <el-col :span="2">
-                                            <el-button type="primary" icon="el-icon-search" size="mini"
-                                                       @click="queryPage">查询
-                                            </el-button>
-                                        </el-col>
-                                    </el-row>
+                                        <el-select clearable v-model="VendorQueries" placeholder="厂商" size="mini">
+                                            <el-option
+                                                    v-for="item in options"
+                                                    :key="item.value"
+                                                    :label="item.label"
+                                                    :value="item.value"
+                                            >
+                                            </el-option>
+                                        </el-select>
+                                    </div>
+                                    <div>
+                                        <el-button type="primary" icon="el-icon-delete" size="mini"
+                                                   @click="materialsNum='',materialsName='',VendorQueries=''">重置
+                                        </el-button>
+
+                                        <el-button type="primary" icon="el-icon-search" size="mini"
+                                                   @click="queryPage">查询
+                                        </el-button>
+                                    </div>
                                 </div>
                             </div>
                             <div>
@@ -1212,7 +1206,8 @@
                                     >
                                         <template slot-scope="scope">
 
-                                            <el-button type="text" @click="addmateTopurchase(scope.row)">添加</el-button>
+                                            <el-button type="text" @click="upaddmaterTopurchase(scope.row)">添加
+                                            </el-button>
                                         </template>
                                     </el-table-column>
                                     <el-table-column
@@ -1313,18 +1308,15 @@
 
                                 </el-table>
                                 <!--分页-->
-                                <el-row :gutter="24">
-                                    <el-col :span="12" :offset="12"></el-col>
-                                    <el-col :span="8" :offset="8">
-                                        <el-pagination
-                                                @current-change="handleCurrentChange"
-                                                :page-size="5"
-                                                layout="prev, pager, next, jumper"
-                                                :total="totalRecord">
-                                        </el-pagination>
-                                    </el-col>
+                                <div class="PageLayout">
+                                    <el-pagination
+                                            @current-change="handleCurrentChange"
+                                            :page-size="5"
+                                            layout="prev, pager, next, jumper"
+                                            :total="totalRecord">
+                                    </el-pagination>
 
-                                </el-row>
+                                </div>
 
 
                                 <el-table
@@ -1438,7 +1430,7 @@
                                     >
                                         <template slot-scope="scope">
                                             <!--删除备选数组信息-->
-                                            <el-button type="text" @click="delpruchase(scope.row)">删除</el-button>
+                                            <el-button type="text" @click="updelpruchase(scope.row)">删除</el-button>
                                         </template>
                                     </el-table-column>
 
@@ -2025,10 +2017,8 @@
             <el-tab-pane label="商品采购" name="first">
                 <div>
                     <!--新建与查询-->
-                    <div style="padding: 0.5em">
-
-
-                        <div style="display:flex;flex-wrap: nowrap;justify-content: left;margin-bottom: 0.5em">
+                    <div class="menuBox">
+                        <div class="QueryConditions">
                             <el-button size="mini" type="primary" class="el-icon-plus" @click="Newpurchaseorder=true">
                                 新建
                             </el-button>
@@ -2049,65 +2039,66 @@
                             </el-button>
                             <!--<el-button size="mini">导出</el-button>-->
                         </div>
-                        <div style="display: flex;justify-content:space-between">
+                        <div class="QueryConditions QueryInput">
+                            <div>
+                                <el-select size="mini" v-model="TimeType" placeholder="时间类型">
+                                    <el-option
+                                            v-for="item in TimeTypelist"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
+                                <el-date-picker
+                                        size="mini"
+                                        v-model="purchaseTime"
+                                        type="daterange"
+                                        range-separator="至"
+                                        format="yyyy 年 MM 月 dd 日"
+                                        value-format="yyyy-MM-dd"
+                                        start-placeholder="开始日期"
+                                        end-placeholder="结束日期">
+                                </el-date-picker>
 
-                            <el-select size="mini" v-model="TimeType" placeholder="时间类型">
-                                <el-option
-                                        v-for="item in TimeTypelist"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value">
-                                </el-option>
-                            </el-select>
-                            <el-date-picker
-                                    size="mini"
-                                    v-model="purchaseTime"
-                                    type="daterange"
-                                    range-separator="至"
-                                    format="yyyy 年 MM 月 dd 日"
-                                    value-format="yyyy-MM-dd"
-                                    start-placeholder="开始日期"
-                                    end-placeholder="结束日期">
-                            </el-date-picker>
+                                <el-select size="mini" clearable v-model="AuditStatuss" placeholder="审核状态">
+                                    <el-option
+                                            v-for="item in Audit"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
+                                <el-select size="mini" clearable v-model="Submitstate" placeholder="提交状态">
+                                    <el-option
+                                            v-for="item in Submit"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
 
-                            <el-select size="mini" clearable v-model="AuditStatuss" placeholder="审核状态">
-                                <el-option
-                                        v-for="item in Audit"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value">
-                                </el-option>
-                            </el-select>
-                            <el-select size="mini" clearable v-model="Submitstate" placeholder="提交状态">
-                                <el-option
-                                        v-for="item in Submit"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value">
-                                </el-option>
-                            </el-select>
+                                <el-select size="mini" clearable v-model="ReceivingStatus" placeholder="收货状态">
+                                    <el-option
+                                            v-for="item in Receiving"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
 
-                            <el-select size="mini" clearable v-model="ReceivingStatus" placeholder="收货状态">
-                                <el-option
-                                        v-for="item in Receiving"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value">
-                                </el-option>
-                            </el-select>
+                                <el-input size="mini" style="width: 200px" placeholder="采购单号" clearable
+                                          v-model="purchaseNumbers"></el-input>
+                            </div>
+                            <div>
+                                <el-button type="primary" size="mini" icon="el-icon-edit"
+                                           @click="purchaseNumbers='',ReceivingStatus='',AuditStatuss='',purchaseTime='',TimeType=''">
+                                    重置
+                                </el-button>
 
-
-                            <el-input size="mini" style="width: 200px" placeholder="采购单号" clearable
-                                      v-model="purchaseNumbers"></el-input>
-
-                            <el-button type="primary" size="mini" icon="el-icon-edit"
-                                       @click="purchaseNumbers='',ReceivingStatus='',AuditStatuss='',purchaseTime='',TimeType=''">
-                                重置
-                            </el-button>
-
-                            <el-button type="primary" size="mini" icon="el-icon-search" @click="purchaseQueryPage()">查询
-                            </el-button>
-
+                                <el-button type="primary" size="mini" icon="el-icon-search"
+                                           @click="purchaseQueryPage()">查询
+                                </el-button>
+                            </div>
                         </div>
                         <!--显示设置-->
                         <el-dialog
@@ -2349,10 +2340,11 @@
 
 
                             </el-form>
-                            <div style="text-align: left">
+                            <div class="QueryConditions">
                                 <el-button size="mini" @click="PurchasingAddGoods=true">添加商品</el-button>
                                 <el-button size="mini" @click="batchTime">批量添加预计入库时间</el-button>
                                 <el-date-picker
+                                        style="margin-left: 0.5em"
                                         size="mini"
                                         v-model="timeData"
                                         type="datetime"
@@ -2598,36 +2590,27 @@
                         >
                             <!--新建与查询-->
                             <div class="menuBox">
-                                <div>
-                                    <el-row>
-                                        <el-col :span="4">
-                                            <el-input size="mini" placeholder="商家编码"
-                                                      v-model="querymerchantCode"></el-input>
-                                        </el-col>
-                                        <el-col :span="4">
-                                            <el-input size="mini" placeholder="商品名称" v-model="queryname"></el-input>
-                                        </el-col>
-                                        <el-col :span="4">
-                                            <el-input size="mini" placeholder="货品编号" v-model="queryitemCode"></el-input>
-                                        </el-col>
-                                        <el-col :span="4">
-                                            <el-input size="mini" placeholder="盒装SKU" v-model="querysku"></el-input>
-                                        </el-col>
-                                        <el-col :span="4">
-                                            <el-input size="mini" placeholder="其他" v-model="queryother"></el-input>
-                                        </el-col>
-                                        <el-col :span="2">
-                                            <el-button type="primary" size="mini"
-                                                       @click="queryother='',querysku='',queryitemCode='',queryname='',querymerchantCode=''">
-                                                重置
-                                            </el-button>
-                                        </el-col>
-                                        <el-col :span="2">
-                                            <el-button type="primary" size="mini" icon="el-icon-search"
-                                                       @click="queryGoods()">查询
-                                            </el-button>
-                                        </el-col>
-                                    </el-row>
+                                <div class="QueryConditions QueryInput">
+                                    <el-input size="mini" placeholder="商家编码"
+                                              v-model="querymerchantCode"></el-input>
+
+                                    <el-input size="mini" placeholder="商品名称" v-model="queryname"></el-input>
+
+                                    <el-input size="mini" placeholder="货品编号" v-model="queryitemCode"></el-input>
+
+                                    <el-input size="mini" placeholder="盒装SKU" v-model="querysku"></el-input>
+
+                                    <el-input size="mini" placeholder="其他" v-model="queryother"></el-input>
+
+                                    <el-button type="primary" size="mini"
+                                               @click="queryother='',querysku='',queryitemCode='',queryname='',querymerchantCode=''">
+                                        重置
+                                    </el-button>
+
+                                    <el-button type="primary" size="mini" icon="el-icon-search"
+                                               @click="queryGoods()">查询
+                                    </el-button>
+
                                 </div>
                             </div>
                             <div>
@@ -2778,16 +2761,16 @@
 
                                 </el-table>
                                 <!--分页-->
-                                <el-row>
-                                    <el-col :span="10" :offset="12">
+                                <div class="PageLayout">
+
                                         <el-pagination
                                                 @current-change="goodslistpag"
                                                 :page-size="5"
                                                 layout="prev, pager, next, jumper"
                                                 :total="totalRecordNum">
                                         </el-pagination>
-                                    </el-col>
-                                </el-row>
+
+                                </div>
                                 <el-table
                                         :data="quireGoodsDataBox"
                                         border
@@ -2855,7 +2838,7 @@
                                     >
                                         <template slot-scope="scope">
                                             <!--删除备选数组信息-->
-                                            <el-button type="text" @click="delpruchase(scope.row)">删除</el-button>
+                                            <el-button type="text" @click="delGoodspruchase(scope.row)">删除</el-button>
                                         </template>
                                     </el-table-column>
 
@@ -3121,10 +3104,11 @@
 
                                 </el-row>
                             </el-form>
-                            <div style="text-align: left">
+                            <div class="QueryConditions">
                                 <el-button size="mini" @click="upPurchasingAddGoods=true">添加商品</el-button>
                                 <el-button size="mini" @click="upbatchTime">批量添加预计入库时间</el-button>
                                 <el-date-picker
+                                        style="margin-left: 0.5em"
                                         size="mini"
                                         v-model="uptimeData"
                                         type="datetime"
@@ -3371,36 +3355,27 @@
                         >
                             <!--新建与查询-->
                             <div class="menuBox">
-                                <div>
-                                    <el-row>
-                                        <el-col :span="4">
-                                            <el-input size="mini" placeholder="商家编码"
-                                                      v-model="querymerchantCode"></el-input>
-                                        </el-col>
-                                        <el-col :span="4">
-                                            <el-input size="mini" placeholder="商品名称" v-model="queryname"></el-input>
-                                        </el-col>
-                                        <el-col :span="4">
-                                            <el-input size="mini" placeholder="货品编号" v-model="queryitemCode"></el-input>
-                                        </el-col>
-                                        <el-col :span="4">
-                                            <el-input size="mini" placeholder="盒装SKU" v-model="querysku"></el-input>
-                                        </el-col>
-                                        <el-col :span="4">
-                                            <el-input size="mini" placeholder="其他" v-model="queryother"></el-input>
-                                        </el-col>
-                                        <el-col :span="2">
-                                            <el-button type="primary" size="mini"
-                                                       @click="queryother='',querysku='',queryitemCode='',queryname='',querymerchantCode=''">
-                                                重置
-                                            </el-button>
-                                        </el-col>
-                                        <el-col :span="2">
-                                            <el-button type="primary" size="mini" icon="el-icon-search"
-                                                       @click="queryGoods()">查询
-                                            </el-button>
-                                        </el-col>
-                                    </el-row>
+                                <div class="QueryConditions QueryInput">
+                                    <el-input size="mini" placeholder="商家编码"
+                                              v-model="querymerchantCode"></el-input>
+
+                                    <el-input size="mini" placeholder="商品名称" v-model="queryname"></el-input>
+
+                                    <el-input size="mini" placeholder="货品编号" v-model="queryitemCode"></el-input>
+
+                                    <el-input size="mini" placeholder="盒装SKU" v-model="querysku"></el-input>
+
+                                    <el-input size="mini" placeholder="其他" v-model="queryother"></el-input>
+
+                                    <el-button type="primary" size="mini"
+                                               @click="queryother='',querysku='',queryitemCode='',queryname='',querymerchantCode=''">
+                                        重置
+                                    </el-button>
+
+                                    <el-button type="primary" size="mini" icon="el-icon-search"
+                                               @click="queryGoods()">查询
+                                    </el-button>
+
                                 </div>
                             </div>
                             <div>
@@ -3549,16 +3524,16 @@
                                     </el-table-column>
                                 </el-table>
                                 <!--分页-->
-                                <el-row>
-                                    <el-col :span="10" :offset="12">
+                                <div class="PageLayout">
+
                                         <el-pagination
                                                 @current-change="goodslistpag"
                                                 :page-size="5"
                                                 layout="prev, pager, next, jumper"
                                                 :total="totalRecordNum">
                                         </el-pagination>
-                                    </el-col>
-                                </el-row>
+
+                                </div>
                                 <el-table
                                         :data="upquireGoodsDataBox"
                                         border
@@ -3600,7 +3575,7 @@
                                     >
                                         <template slot-scope="scope">
                                             <!--删除备选数组信息-->
-                                            <el-button type="text" @click="delpruchase(scope.row)">删除</el-button>
+                                            <el-button type="text" @click="updelGoodspruchase(scope.row)">删除</el-button>
                                         </template>
                                     </el-table-column>
 
@@ -4673,7 +4648,7 @@
                 materialsName: '',//物料名称（原材料）
                 VendorQueries: '',//厂商查询（原材料）
                 totalPage: 0,//总页数（原材料）
-                materpageNum:1,//当前页数（原材料）
+                materpageNum: 1,//当前页数（原材料）
                 totalRecord: 0,//总条数（原材料）
                 timematerData: '',//时间数据
                 uptimematerData: '',//修改时间数据
@@ -4802,14 +4777,14 @@
                         {required: true, message: '请选择预计入库时间', trigger: 'blur'},
                     ],
                 },
-                Matertypedata:[],////用于储存数据，当表单发生改变时校验(原材料)
-                Goodstypedata:[],////用于储存数据，当表单发生改变时校验（商品）
+                Matertypedata: [],////用于储存数据，当表单发生改变时校验(原材料)
+                Goodstypedata: [],////用于储存数据，当表单发生改变时校验（商品）
             }
         },
 
         methods: {
 
-            closeFunGoods(){
+            closeFunGoods() {
                 //商品信息修改验证
                 let obj = JSON.stringify(this.upaddProcurement)
                 let state = (obj == this.Goodstypedata)
@@ -4849,7 +4824,7 @@
             },
             SubmitAudit() {
                 //原材料提交审核
-                let that=this
+                let that = this
                 this.$axios.post(this.$store.state.ProcurAudit, {
                     ids: this.purchasematerIds
                 }).then(res => {
@@ -4870,7 +4845,7 @@
 
             AuditPass() {
                 // 原材料采购审核通过
-                let that=this
+                let that = this
                 this.$axios.post(this.$store.state.ProcurementAudit, {
                     ids: this.purchasematerIds
                 }).then(res => {
@@ -4889,7 +4864,7 @@
             },
             AuditReject() {
                 //审核驳回(原材料)
-                let that=this
+                let that = this
                 this.$axios.post(this.$store.state.RejectMater, {
                     ids: this.purchasematerIds
                 }).then(res => {
@@ -4909,7 +4884,7 @@
 
             SubmitAuditGoods() {
                 //采购单提交审核（商品信息）
-                let that=this
+                let that = this
                 this.$axios.post(this.$store.state.ProcurAuditGoods, {
                     ids: this.purchaseIds
                 }).then(res => {
@@ -4928,7 +4903,7 @@
             },
             AuditPassGoods() {
                 //采购单通过审核（商品信息）
-                let that=this
+                let that = this
                 this.$axios.post(this.$store.state.goodsAudit, {
                     ids: this.purchaseIds
                 }).then(res => {
@@ -4947,7 +4922,7 @@
             },
             AuditRejectGoods() {
                 //审核驳回（商品）
-                let that=this
+                let that = this
                 this.$axios.post(this.$store.state.RejectGoods, {
                     ids: this.purchaseIds
                 }).then(res => {
@@ -4973,7 +4948,7 @@
                 this.delMaterPur()
             },
             delMaterPur() {
-                let that=this
+                let that = this
                 //删除采购单信息
                 this.$axios.post(this.$store.state.delmater, {
                     ids: this.purchasematerIds
@@ -5036,7 +5011,7 @@
                 /**
                  * 原材料信息分页
                  * */
-                this.materpageNum=val
+                this.materpageNum = val
                 this.queryPage()
             },
             queryPage() {
@@ -5637,7 +5612,7 @@
                 /**
                  * 新建采购单（商品）
                  * */
-                let that=this
+                let that = this
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         //提交采购单数据
@@ -5648,7 +5623,7 @@
                                     type: 'success',
                                     onClose() {
                                         that.purchaseQueryPage()//分页(商品)
-                                        that.Newpurchaseorder=false
+                                        that.Newpurchaseorder = false
                                     }
                                 });
                             } else {
@@ -5662,7 +5637,7 @@
                 });
             },
             SubmissionMater(formName) {
-                let that=this
+                let that = this
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         //提交采购单数据（原材料）
@@ -5674,7 +5649,7 @@
                                     type: 'success',
                                     onClose() {
                                         that.materialQueryPage()//分页(原材料)
-                                        that.Newpurchaseorder_mater=false
+                                        that.Newpurchaseorder_mater = false
                                     }
                                 });
                             } else {
@@ -5690,7 +5665,7 @@
                 });
             },
             upSubmissionMater(formName) {
-                let that=this
+                let that = this
                 this.Matertypedata = JSON.stringify(this.upaddProcurementMater)
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
@@ -5702,7 +5677,7 @@
                                     type: 'success',
                                     onClose() {
                                         that.materialQueryPage()//分页(原材料)
-                                        that.upNewpurchaseorder_mater=false
+                                        that.upNewpurchaseorder_mater = false
                                     }
                                 });
                             } else {
@@ -5719,7 +5694,7 @@
             upSubmissionPurchase(formName) {
                 //提交修改采购单数据
 
-                let that=this
+                let that = this
 
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
@@ -5732,7 +5707,7 @@
                                     type: 'success',
                                     onClose() {
                                         that.purchaseQueryPage()//分页(商品)
-                                        that.upNewpurchaseorder=false
+                                        that.upNewpurchaseorder = false
                                     }
                                 });
                             } else {
@@ -5757,7 +5732,7 @@
             },
             delpurchaseList() {
                 //删除采购单
-                let that=this
+                let that = this
                 this.$axios.post(this.$store.state.deletepur, {
                     ids: this.purchaseIds
                 }).then(res => {
@@ -5882,10 +5857,28 @@
                 // console.log(this.addProcurement.goodsList)
                 this.upPurchasingAddmaterial_material = false
             },
+
             delpruchase(data) {
-                //删除备选数组中信息
+                //删除备选数组中信息(原材料)
+                let a = this.quiremateDataBox.indexOf(data)
+                this.quiremateDataBox.splice(a, 1)
+            },
+            updelpruchase(data) {
+                //修改删除备选数组中信息(原材料)
+                let a = this.upquiremateDataBox.indexOf(data)
+                this.upquiremateDataBox.splice(a, 1)
+            },
+
+
+            delGoodspruchase(data) {
+                //删除备选数组中信息(商品)
                 let a = this.quireGoodsDataBox.indexOf(data)
                 this.quireGoodsDataBox.splice(a, 1)
+            },
+            updelGoodspruchase(data) {
+                //修改删除备选数组中信息
+                let a = this.upquireGoodsDataBox.indexOf(data)
+                this.upquireGoodsDataBox.splice(a, 1)
             },
             addgoodsTopurchase(data) {
                 //添加商品信息至备选数组
@@ -5911,8 +5904,22 @@
                 // this.quireGoodsDataBox.push(data)
                 if (this.quiremateDataBox.indexOf(data) == -1) {
                     this.quiremateDataBox.push(data)
+
                     data.number = 1
                 }
+            },
+            upaddmaterTopurchase(data) {
+                //添加商品信息至备选数组
+
+                let a = JSON.stringify(this.upquiremateDataBox).indexOf(JSON.stringify(data))
+                if (a != -1) {
+                    data.number++
+                } else {
+                    this.upquiremateDataBox.push(data)
+                    data.number = 1
+                }
+                data.unitPrice = 1 //不含税单价
+
             },
             upaddgoodsTopurchase(data) {
                 //添加商品信息至备选数组
@@ -6059,11 +6066,8 @@
 </script>
 
 <style scoped>
-    .menuBox {
-        display: flex;
-        background-color: #f8f8f8;
-        justify-content: space-between;
-        align-items: center;
+    .QueryConditions .el-button {
+        margin-right: 0.5em;
     }
 
     .el-dialog .el-dialog__body {

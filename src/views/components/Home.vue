@@ -15,12 +15,12 @@
                                     <span class="menu">商品信息</span>
                                 </div>
                             </el-dropdown-item>
-                            <el-dropdown-item>
-                                <div @click="addTab('仓库信息')">
-                                    <i class="fontFamily hhtx-cangku"></i>
-                                    <span class="menu">仓库信息</span>
-                                </div>
-                            </el-dropdown-item>
+                            <!--<el-dropdown-item>-->
+                                <!--<div @click="addTab('仓库信息')">-->
+                                    <!--<i class="fontFamily hhtx-cangku"></i>-->
+                                    <!--<span class="menu">仓库信息</span>-->
+                                <!--</div>-->
+                            <!--</el-dropdown-item>-->
                             <el-dropdown-item>
                                 <div @click="addTab('工艺管理','ProcessManagement',$router.push('ProcessManagement'))">
                                     <i class="fontFamily hhtx-gongyipin"></i>

@@ -1,6 +1,7 @@
 <template>
     <div class="storage">
-        <div style="display:flex;flex-wrap: nowrap;justify-content: left;margin-bottom: 0.5em">
+        <div class="menuBox">
+            <div class="QueryConditions">
             <el-button size="mini" type="primary" class="el-icon-plus" @click="Newpurchaseorder=true">新建</el-button>
             <el-button icon="el-icon-view" type="primary" size="mini" @click="Settings=true">显示设置
             </el-button>
@@ -12,7 +13,7 @@
             <el-button size="mini" type="danger" :disabled="delStatusBut" @click="delStorage()">批量删除</el-button>
             <!--<el-button size="mini">导出</el-button>-->
         </div>
-        <div style="display: flex;justify-content:space-between;margin-bottom: 0.5em;">
+        <div class="QueryConditions QueryInput">
 
             <div style="display: flex;flex-wrap: nowrap;">
                 <el-select v-model="factoryName" size="mini" placeholder="仓库">
@@ -46,6 +47,7 @@
             </div>
 
 
+        </div>
         </div>
         <!--入库开单-->
         <el-dialog

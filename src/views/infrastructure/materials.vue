@@ -15,7 +15,7 @@
         <div class="rightdata">
             <!--新建与查询-->
             <div class="menuBox">
-                <div style="display: flex;justify-content: space-around">
+                <div class="QueryConditions">
                     <el-button type="primary" size="mini" class="el-icon-plus" @click="dialogTableVisible=true">新建
                     </el-button>
                     <el-button type="primary" size="mini" class="el-icon-circle-check-outline" @click="Delmateropen">
@@ -43,29 +43,31 @@
 
                 </div>
 
-                <div style="display: flex;justify-content: space-between">
+                <div class="QueryConditions QueryInput">
 
+                    <div>
+                        <el-input  style="width: 150px" placeholder="物料编号" size="mini" v-model="materialsNum"></el-input>
 
-                            <el-input style="width: 150px" placeholder="物料编号" size="mini" v-model="materialsNum"></el-input>
+                        <el-input style="width: 150px" placeholder="物料名称" size="mini"
+                                  v-model="materialsName"></el-input>
 
-                            <el-input style="width: 150px" placeholder="物料名称" size="mini" v-model="materialsName"></el-input>
+                        <el-select style="width: 180px" v-model="VendorQueries" placeholder="厂商" size="mini">
+                            <el-option
+                                    v-for="item in options"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value"
+                            >
+                            </el-option>
+                        </el-select>
+                    </div>
+                    <div>
+                        <el-button type="primary" icon="el-icon-delete" size="mini" @click="reset">重置</el-button>
 
-                            <el-select style="width: 180px" v-model="VendorQueries" placeholder="厂商" size="mini">
-                                <el-option
-                                        v-for="item in options"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value"
-                                >
-                                </el-option>
-                            </el-select>
+                        <el-button type="primary" icon="el-icon-search" size="mini" @click="queryMaterials">查询
+                        </el-button>
 
-                            <el-button type="primary" icon="el-icon-delete" size="mini" @click="reset">重置</el-button>
-
-                            <el-button type="primary" icon="el-icon-search" size="mini" @click="queryMaterials">查询
-                            </el-button>
-
-
+                    </div>
 
                     <!--显示设置-->
                     <el-dialog
@@ -153,24 +155,7 @@
                         sortable
                 ></el-table-column>
                 <!--createTime-->
-                <el-table-column
 
-                        label="创建时间"
-                        prop="createTime"
-                        v-if="createTime"
-                        width="180"
-                        align="center"
-                        sortable
-                ></el-table-column>
-                <el-table-column
-
-                        label="修改时间"
-                        prop="updateTime"
-                        v-if="updateTime"
-                        width="180"
-                        align="center"
-                        sortable
-                ></el-table-column>
 
                 <el-table-column
                         v-if="materialCode"
@@ -228,11 +213,10 @@
                 ></el-table-column>
                 <el-table-column
                         v-if="unit"
-                        label="基本计量单位"
+                        label="计量单位"
                         prop="unit"
-                        width="150"
+                        width="100"
                         align="center"
-                        sortable
                 ></el-table-column>
                 <!--<el-table-column-->
                 <!--label="起订量"-->
@@ -245,6 +229,24 @@
                         label="成本价"
                         prop="costPrice"
                         width="120"
+                        align="center"
+                        sortable
+                ></el-table-column>
+                <el-table-column
+
+                        label="创建时间"
+                        prop="createTime"
+                        v-if="createTime"
+                        width="180"
+                        align="center"
+                        sortable
+                ></el-table-column>
+                <el-table-column
+
+                        label="修改时间"
+                        prop="updateTime"
+                        v-if="updateTime"
+                        width="180"
                         align="center"
                         sortable
                 ></el-table-column>
@@ -384,7 +386,7 @@
 
         </el-dialog>
         <!--修改-->
-        <el-dialog title="修改物料信息"   @closed="closeFun" :visible.sync="UpdatableVisible" width="800px" :show-close="false">
+        <el-dialog title="修改物料信息" @closed="closeFun" :visible.sync="UpdatableVisible" width="800px" :show-close="false">
             <el-form :model="updaData" ref="updaData" :rules="ruless"
                      label-width="100px" label-position="right">
                 <el-row>
@@ -858,7 +860,7 @@
                 delmaterID: [],//原材料启用停用
                 recycleName: '',//回收站搜索名称
                 recycleNum: '',//回收站搜索编号
-                typedata:'',////用于储存数据，当表单发生改变时校验
+                typedata: '',////用于储存数据，当表单发生改变时校验
             }
         },
         methods: {
@@ -1408,16 +1410,11 @@
 
     .rightdata {
         text-align: center;
-        width:88%;
+        width: 88%;
         height: 100%;
     }
 
-    .menuBox {
-        display: flex;
-        background-color: #f8f8f8;
-        justify-content: space-between;
-        align-items: center;
-    }
+
 
     .selsectInput .el-input, .selsectInput .el-cascader .selsectInput .el-select {
         width: 150px;

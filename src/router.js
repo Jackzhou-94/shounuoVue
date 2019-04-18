@@ -22,7 +22,7 @@ export default new Router({
                     // 生产计划单
                     path: '/production',
                     name: 'production',
-                    component: require('./menu/procurement/production').default,
+                    component: require('./views/procurement/production').default,
                 }, {
                     //原材料信息
                     path: '/materials',

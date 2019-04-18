@@ -3,7 +3,7 @@
         <div>
             <!--新建与查询-->
             <div class="menuBox">
-                <div style="display: flex;justify-content: space-around">
+                <div class="QueryConditions QueryBan">
 
                     <el-button size="mini" type="primary" class="el-icon-plus" @click="addgoods=true">新建</el-button>
                     <el-button icon="el-icon-view" type="primary" size="mini" @click="Settings=true">显示设置</el-button>
@@ -12,31 +12,32 @@
                     </el-button>
                     <el-button size="mini" type="info" @click="goodsrecycleopen">回收站</el-button>
                 </div>
+                <div class="QueryConditions QueryInput">
 
+                    <div>
+                        <el-input size="mini" placeholder="商家编码" v-model="querymerchantCode"></el-input>
 
-                <div style="display: flex;justify-content: space-around">
+                        <el-input size="mini" placeholder="商品名称" v-model="queryname"></el-input>
 
-                    <el-input size="mini" placeholder="商家编码" v-model="querymerchantCode"></el-input>
+                        <el-input size="mini" placeholder="货品编号" v-model="queryitemCode"></el-input>
 
-                    <el-input size="mini" placeholder="商品名称" v-model="queryname"></el-input>
+                        <el-input size="mini" placeholder="盒装SKU" v-model="querysku"></el-input>
 
-                    <el-input size="mini" placeholder="货品编号" v-model="queryitemCode"></el-input>
+                        <el-input size="mini" placeholder="其他" v-model="queryother"></el-input>
+                    </div>
 
-                    <el-input size="mini" placeholder="盒装SKU" v-model="querysku"></el-input>
+                    <div>
+                        <el-button type="primary" size="mini"
+                                   @click="queryother='',querysku='',queryitemCode='',queryname='',querymerchantCode=''">
+                            重置
+                        </el-button>
 
-                    <el-input size="mini" placeholder="其他" v-model="queryother"></el-input>
+                        <el-button type="primary" size="mini" icon="el-icon-search" @click="queryGoods()">查询
+                        </el-button>
+                    </div>
 
-                    <el-button type="primary" size="mini"
-                               @click="queryother='',querysku='',queryitemCode='',queryname='',querymerchantCode=''">
-                        重置
-                    </el-button>
-
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="queryGoods()">查询
-                    </el-button>
 
                 </div>
-
-
             </div>
         </div>
 
@@ -60,23 +61,6 @@
                         type="index"
                         width="50">
                 </el-table-column>
-                <el-table-column
-
-                        label="创建时间"
-                        prop="createTime"
-                        v-if="createTime"
-                        width="180"
-                        align="center"
-                        sortable
-                ></el-table-column>
-                <el-table-column
-                        label="修改时间"
-                        prop="updateTime"
-                        v-if="updateTime"
-                        width="180"
-                        align="center"
-                        sortable
-                ></el-table-column>
                 <el-table-column
                         align="center"
                         prop="merchantCode"
@@ -184,6 +168,23 @@
                         width="180"
                         label="执行工艺标准">
                 </el-table-column>
+                <el-table-column
+
+                        label="创建时间"
+                        prop="createTime"
+                        v-if="createTime"
+                        width="180"
+                        align="center"
+                        sortable
+                ></el-table-column>
+                <el-table-column
+                        label="修改时间"
+                        prop="updateTime"
+                        v-if="updateTime"
+                        width="180"
+                        align="center"
+                        sortable
+                ></el-table-column>
                 <el-table-column
                         align="center"
                         prop="remark"
@@ -1297,13 +1298,9 @@
 
 <style scoped>
 
-    .menuBox {
-        display: flex;
+    .QueryBan{
         background-color: #f8f8f8;
-        justify-content: space-between;
-
     }
-
     .goods {
         width: 100%;
         height: 100%;

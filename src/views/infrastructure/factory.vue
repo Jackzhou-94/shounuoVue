@@ -3,41 +3,38 @@
         <div>
             <!--新建与查询-->
             <div class="menuBox">
-                <div style="display: flex;justify-content: space-around">
+                <div class="QueryConditions">
 
                     <el-button size="mini" type="primary" class="el-icon-plus" @click="addfactory=true">新建</el-button>
-
+                    <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
                     <el-button type="danger" size="mini" class="el-icon-delete" :disabled="delStatusButGoods"
                                @click="delfactory">批量删除
                     </el-button>
                     <!--<el-button type="primary" size="mini">打印</el-button>-->
                 </div>
 
-                <div>
+                <div class="QueryConditions QueryInput">
 
-                    <el-row>
-                        <el-col :span="6">
-                            <el-input size="mini" placeholder="所属公司" v-model="querycompany"></el-input>
-                        </el-col>
-                        <el-col :span="6">
-                            <el-input size="mini" placeholder="名称" v-model="queryname"></el-input>
-                        </el-col>
-                        <el-col :span="6">
-                            <el-input size="mini" placeholder="其他" v-model="queryspare01"></el-input>
-                        </el-col>
+                    <div>
+                        <el-input size="mini" placeholder="所属公司" v-model="querycompany"></el-input>
 
-                        <el-col :span="3">
-                            <el-button type="primary" size="mini"
-                                       @click="queryspare01='',queryname='',querycompany=''">
-                                重置
-                            </el-button>
-                        </el-col>
-                        <el-col :span="3">
-                            <el-button type="primary" size="mini" icon="el-icon-search"
-                                       @click="factoryquery()">查询
-                            </el-button>
-                        </el-col>
-                    </el-row>
+                        <el-input size="mini" placeholder="名称" v-model="queryname"></el-input>
+
+                        <el-input size="mini" placeholder="其他" v-model="queryspare01"></el-input>
+                    </div>
+
+                    <div>
+                        <el-button type="primary" size="mini"
+                                   @click="queryspare01='',queryname='',querycompany=''">
+                            重置
+                        </el-button>
+
+                        <el-button type="primary" size="mini" icon="el-icon-search"
+                                   @click="factoryquery()">查询
+                        </el-button>
+                    </div>
+
+
                 </div>
 
 
@@ -66,40 +63,30 @@
                 <el-table-column
                         align="center"
                         prop="name"
+                        v-if="nameShow"
                         width="150"
                         label="名称">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         prop="code"
+                        v-if="codeShow"
                         label="编码"
                         width="100"
                 >
                 </el-table-column>
-                <el-table-column
-                        label="创建时间"
-                        prop="createTime"
-                        width="180"
-                        align="center"
-                        sortable
-                ></el-table-column>
-                <el-table-column
-                        label="修改时间"
-                        prop="updateTime"
-                        width="180"
-                        align="center"
-                        sortable
-                ></el-table-column>
 
                 <el-table-column
                         align="center"
                         prop="address"
+                        v-if="addressShow"
                         label="城市"
                         width="180"
                 >
                 </el-table-column>
                 <el-table-column
                         align="center"
+                        v-if="detailedAddressShow"
                         prop="detailedAddress"
                         label="详细地址"
                         width="180"
@@ -109,6 +96,7 @@
                 <el-table-column
                         align="center"
                         prop="company"
+                        v-if="companyShow"
                         label="所属公司"
 
                 >
@@ -116,6 +104,7 @@
                 <el-table-column
                         align="center"
                         prop="contact"
+                        v-if="contactShow"
                         label="联系人"
                 >
                 </el-table-column>
@@ -123,13 +112,31 @@
                         align="center"
                         prop="phoneNumber"
                         width="150"
+                        v-if="phoneNumberShow"
                         label="手机号码">
                 </el-table-column>
+                <el-table-column
+                        label="创建时间"
+                        prop="createTime"
+                        width="180"
+                        v-if="createTimeShow"
+                        align="center"
+                        sortable
+                ></el-table-column>
+                <el-table-column
+                        label="修改时间"
+                        prop="updateTime"
+                        width="180"
+                        v-if="updateTimeShow"
+                        align="center"
+                        sortable
+                ></el-table-column>
                 <el-table-column
                         align="center"
                         prop="remark"
                         width="100"
-                        label="备注信息">
+                        v-if="remarkShow"
+                        label="备注">
                 </el-table-column>
                 <el-table-column
                         align="center"
@@ -160,6 +167,59 @@
             </el-row>
         </div>
 
+        <!--显示设置-->
+        <el-dialog
+                title="显示设置"
+                :show-close="false"
+                :visible.sync="Settings"
+                width="400px">
+            <div style="text-align: left">
+                <el-row>
+                    <el-col :span="8">
+                        <el-checkbox v-model="nameShow">名称</el-checkbox>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-checkbox v-model="codeShow">编码</el-checkbox>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-checkbox v-model="addressShow">城市</el-checkbox>
+                    </el-col>
+                </el-row>
+
+                <el-row>
+                    <el-col :span="8">
+                        <el-checkbox v-model="detailedAddressShow">详细地址</el-checkbox>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-checkbox v-model="companyShow">所属公司</el-checkbox>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-checkbox v-model="contactShow">联系人</el-checkbox>
+                    </el-col>
+                </el-row>
+
+                <el-row>
+                    <el-col :span="8">
+                        <el-checkbox v-model="phoneNumberShow">手机号码</el-checkbox>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-checkbox v-model="createTimeShow">创建时间</el-checkbox>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-checkbox v-model="updateTimeShow">修改时间</el-checkbox>
+                    </el-col>
+                </el-row>
+
+                <el-row>
+                    <el-col :span="8">
+                        <el-checkbox v-model=" remarkShow">备注</el-checkbox>
+                    </el-col>
+                </el-row>
+            </div>
+
+
+        </el-dialog>
+
         <!--新建厂商信息-->
         <el-dialog
                 title="新建厂商信息"
@@ -168,18 +228,19 @@
                 width="800px"
         >
 
-            <el-form size="mini" :model="addfactoryForm" ref="addfactoryForm" :rules="addfactorysrules" label-width="100px"
+            <el-form size="mini" :model="addfactoryForm" ref="addfactoryForm" :rules="addfactorysrules"
+                     label-width="100px"
                      label-position="right">
 
                 <el-row>
                     <el-col :span="8">
                         <el-form-item label="编码" prop="code">
-                            <el-input placeholder="厂商编码"  v-model="addfactoryForm.code"></el-input>
+                            <el-input placeholder="厂商编码" v-model="addfactoryForm.code"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="名称" prop="name">
-                            <el-input placeholder="厂商名称"  v-model="addfactoryForm.name"></el-input>
+                            <el-input placeholder="厂商名称" v-model="addfactoryForm.name"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -206,13 +267,13 @@
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="所属公司" prop="company">
-                            <el-input placeholder="所属公司"  v-model="addfactoryForm.company"></el-input>
+                            <el-input placeholder="所属公司" v-model="addfactoryForm.company"></el-input>
                         </el-form-item>
                     </el-col>
 
                     <el-col :span="8">
                         <el-form-item label="手机号码">
-                            <el-input placeholder="手机号码"  v-model="addfactoryForm.phoneNumber"></el-input>
+                            <el-input placeholder="手机号码" v-model="addfactoryForm.phoneNumber"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -220,12 +281,12 @@
                 <el-row>
                     <el-col :span="8">
                         <el-form-item label="联系人">
-                            <el-input placeholder="联系人"  v-model="addfactoryForm.contact"></el-input>
+                            <el-input placeholder="联系人" v-model="addfactoryForm.contact"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="工艺职能"  v-model="addfactoryForm.technology" prop="technology">
-                            <el-select placeholder="请选择" multiple  v-model="addfactoryForm.technology">
+                        <el-form-item label="工艺职能" v-model="addfactoryForm.technology" prop="technology">
+                            <el-select placeholder="请选择" multiple v-model="addfactoryForm.technology">
                                 <el-option
                                         v-for="item in ProcessFunction"
                                         :key="item.value"
@@ -260,18 +321,18 @@
                 width="800px"
         >
 
-            <el-form size="mini"  :model="upfactoryForm" ref="upfactoryForm" :rules="upfactorysrules" label-width="100px"
+            <el-form size="mini" :model="upfactoryForm" ref="upfactoryForm" :rules="upfactorysrules" label-width="100px"
                      label-position="right">
 
                 <el-row>
                     <el-col :span="8">
                         <el-form-item label="编码" prop="code">
-                            <el-input placeholder="厂商编码"  v-model="upfactoryForm.code"></el-input>
+                            <el-input placeholder="厂商编码" v-model="upfactoryForm.code"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="名称" prop="name">
-                            <el-input placeholder="厂商名称"  v-model="upfactoryForm.name"></el-input>
+                            <el-input placeholder="厂商名称" v-model="upfactoryForm.name"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -296,18 +357,18 @@
                 <el-row>
                     <el-col :span="8">
                         <el-form-item label="收货地址" prop="detailedAddress">
-                            <el-input placeholder="收货地址"  v-model="upfactoryForm.detailedAddress"></el-input>
+                            <el-input placeholder="收货地址" v-model="upfactoryForm.detailedAddress"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="所属公司" prop="company">
-                            <el-input placeholder="所属公司"  v-model="upfactoryForm.company"></el-input>
+                            <el-input placeholder="所属公司" v-model="upfactoryForm.company"></el-input>
                         </el-form-item>
                     </el-col>
 
                     <el-col :span="8">
                         <el-form-item label="手机号码">
-                            <el-input placeholder="手机号码"  v-model="upfactoryForm.phoneNumber"></el-input>
+                            <el-input placeholder="手机号码" v-model="upfactoryForm.phoneNumber"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -315,13 +376,13 @@
                 <el-row>
                     <el-col :span="8">
                         <el-form-item label="联系人">
-                            <el-input placeholder="联系人"  v-model="upfactoryForm.contact"></el-input>
+                            <el-input placeholder="联系人" v-model="upfactoryForm.contact"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="工艺职能"    prop="technology">
+                        <el-form-item label="工艺职能" prop="technology">
 
-                            <el-select placeholder="请选择" multiple  v-model="upfactoryForm.technology">
+                            <el-select placeholder="请选择" multiple v-model="upfactoryForm.technology">
                                 <el-option
                                         v-for="item in ProcessFunction"
                                         :key="item.value"
@@ -331,30 +392,28 @@
                             </el-select>
 
 
-
-
                             <!---->
                             <!--<el-select placeholder="请选择" multiple  v-model="upfactoryForm.technology">-->
-                                <!--<el-option-->
-                                        <!--v-for="item in ProcessFunction"-->
-                                        <!--:key="item.value"-->
-                                        <!--:label="item.label"-->
-                                        <!--:value="item.value">-->
-                                <!--</el-option>-->
+                            <!--<el-option-->
+                            <!--v-for="item in ProcessFunction"-->
+                            <!--:key="item.value"-->
+                            <!--:label="item.label"-->
+                            <!--:value="item.value">-->
+                            <!--</el-option>-->
                             <!--</el-select>-->
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="备注信息">
-                            <el-input placeholder="备注信息"  v-model="upfactoryForm.remark"></el-input>
+                            <el-input placeholder="备注信息" v-model="upfactoryForm.remark"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
 
 
                 <el-form-item>
-                    <el-button  type="primary" @click="upsubmitForm('upfactoryForm')">立即修改</el-button>
-                    <el-button  @click="upfactory=false">取消</el-button>
+                    <el-button type="primary" @click="upsubmitForm('upfactoryForm')">立即修改</el-button>
+                    <el-button @click="upfactory=false">取消</el-button>
                 </el-form-item>
             </el-form>
 
@@ -370,6 +429,7 @@
         name: "factory",
         data() {
             return {
+                Settings: false,//显示设置
                 pageSizeFactory: 15,//每页条目数
                 pageNumFactory: 1,//当前页数
                 factoryList: [],//工厂数据集合
@@ -429,7 +489,7 @@
                     detailedAddress: [
                         {required: true, message: '收货地址不能为空', trigger: 'blur'}
                     ],
-                    technology:[
+                    technology: [
                         {required: true, message: '工艺不能为空', trigger: 'blur'}
                     ]
                 },
@@ -465,14 +525,29 @@
                     detailedAddress: [
                         {required: true, message: '收货地址不能为空', trigger: 'blur'}
                     ],
-                    technology:[
+                    technology: [
                         {required: true, message: '工艺不能为空', trigger: 'blur'}
                     ]
                 },
+                /**
+                 * 显示设置
+                 * **/
+                nameShow: true,//名称
+                codeShow: true,//编码
+                addressShow: true,//城市
+                detailedAddressShow: true,//详细地址
+                companyShow: true,//所属公司
+                contactShow: true,//联系人
+                phoneNumberShow: true,//手机号码
+                createTimeShow: true,//创建时间
+                updateTimeShow: true,//修改时间
+                remarkShow: true,//备注
+
                 queryspare01: '',//查询其他
                 queryname: '',//查询名称
                 querycompany: '',//查询所属公司
                 typedata: '',//用于储存数据，当表单发生改变时校验
+
             }
         },
         methods: {
@@ -651,10 +726,4 @@
 
     }
 
-    .menuBox {
-        display: flex;
-        background-color: #f8f8f8;
-        justify-content: space-between;
-        align-items: center;
-    }
 </style>
