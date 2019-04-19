@@ -11,6 +11,7 @@ import VueCookies from 'vue-cookies'
 import './less/Style.less'
 import {Loading} from 'element-ui'
 import md5 from 'js-md5'
+import VCharts from 'v-charts'
 
 Vue.prototype.$md5 = md5
 Vue.prototype.$axios = axios
@@ -19,6 +20,7 @@ require('./assets/icon/iconfont')
 
 Vue.use(ElementUi)
 Vue.use(VueCookies)
+Vue.use(VCharts)
 Vue.config.productionTip = false
 
 // axios.defaults.timeout = 10;//全局请求超时

@@ -17,7 +17,14 @@ export default new Router({
             path: '/Home',
             name: 'Home',
             component: require('./views/components/Home').default,
+            redirect: '/chartPage',
             children: [
+                {
+                    //首页，图表页
+                    path: '/chartPage',
+                    name: 'chartPage',
+                    component: require('./views/components/chartPage').default
+                },
                 {
                     // 生产计划单
                     path: '/production',

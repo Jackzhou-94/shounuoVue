@@ -75,7 +75,7 @@
                     </el-form-item>
                 </div>
 
-                <div style="display: flex;flex-wrap: nowrap">
+                <div style="display: flex;flex-wrap: nowrap" class="x">
                     <el-form-item label="工艺设置" prop="processNode">
                         <el-select placeholder="请选择" size="mini" multiple
                                    v-model="addprocessData.processNode">
@@ -409,7 +409,7 @@
                     </el-form-item>
                 </div>
 
-                <div style="display: flex;flex-wrap: nowrap">
+                <div style="display: flex;flex-wrap: nowrap" class="x">
                     <el-form-item label="工艺设置" prop="processNode">
                         <el-select placeholder="请选择" size="mini" multiple
                                    v-model="upaddprocessData.processNode">
@@ -2385,5 +2385,8 @@
 
     .el-tabs {
         margin: 0px;
+    }
+    .x .el-select{
+        width: 260px;
     }
 </style>

@@ -3,7 +3,7 @@
         <el-container>
             <!--头-->
             <el-header>
-                <h3>首诺供应链</h3>
+                <h3 @click="jumpChats">首诺供应链</h3>
                 <div class="menubox">
 
                     <el-dropdown>
@@ -16,10 +16,10 @@
                                 </div>
                             </el-dropdown-item>
                             <!--<el-dropdown-item>-->
-                                <!--<div @click="addTab('仓库信息')">-->
-                                    <!--<i class="fontFamily hhtx-cangku"></i>-->
-                                    <!--<span class="menu">仓库信息</span>-->
-                                <!--</div>-->
+                            <!--<div @click="addTab('仓库信息')">-->
+                            <!--<i class="fontFamily hhtx-cangku"></i>-->
+                            <!--<span class="menu">仓库信息</span>-->
+                            <!--</div>-->
                             <!--</el-dropdown-item>-->
                             <el-dropdown-item>
                                 <div @click="addTab('工艺管理','ProcessManagement',$router.push('ProcessManagement'))">
@@ -28,10 +28,10 @@
                                 </div>
                             </el-dropdown-item>
                             <!--<el-dropdown-item>-->
-                                <!--<div @click="addTab('流程设置')">-->
-                                    <!--<i class="fontFamily hhtx-liucheng"></i>-->
-                                    <!--<span class="menu">流程设置</span>-->
-                                <!--</div>-->
+                            <!--<div @click="addTab('流程设置')">-->
+                            <!--<i class="fontFamily hhtx-liucheng"></i>-->
+                            <!--<span class="menu">流程设置</span>-->
+                            <!--</div>-->
                             <!--</el-dropdown-item>-->
                             <el-dropdown-item>
                                 <div @click="addTab('原材料信息','materials'),$router.push('materials')">
@@ -58,20 +58,20 @@
                     <el-dropdown>
                         <span class="el-dropdown-link headerTitle">系统设置</span>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item>
+                            <el-dropdown-item disabled>
                                 <div @click="addTab('权限管理')">
                                     <i class="fontFamily hhtx-permissions"></i>
                                     <span class="menu">权限管理</span>
                                 </div>
                             </el-dropdown-item>
-                            <el-dropdown-item>
+                            <el-dropdown-item disabled>
                                 <div @click="addTab('参数设置')">
                                     <i class="fontFamily hhtx-canshu"></i>
                                     <span class="menu">参数设置</span>
                                 </div>
                             </el-dropdown-item>
 
-                            <el-dropdown-item>
+                            <el-dropdown-item disabled>
                                 <div @click="addTab('操作员管理')">
                                     <i class="fontFamily hhtx-guanliyuan"></i>
                                     <span class="menu">操作员管理</span>
@@ -97,13 +97,13 @@
                                 </div>
 
                             </el-dropdown-item>
-                            <el-dropdown-item>
+                            <el-dropdown-item disabled>
                                 <div @click="addTab('收货单(原料)')">
                                     <i class="fontFamily hhtx-shouhuoshou--"></i>
                                     <span class="menu">收货单(原料)</span>
                                 </div>
                             </el-dropdown-item>
-                            <el-dropdown-item>
+                            <el-dropdown-item disabled>
                                 <div @click="addTab('委外加工订单')">
                                     <i class="fontFamily hhtx-weiwaifeiyong"></i>
                                     <span class="menu">委外加工订单</span>
@@ -123,7 +123,7 @@
                                     <span class="menu">入库管理</span>
                                 </div>
                             </el-dropdown-item>
-                            <el-dropdown-item>
+                            <el-dropdown-item disabled>
                                 <div @click="addTab('出库管理')">
                                     <i class="fontFamily hhtx-chuku"></i>
                                     <span class="menu">出库管理</span>
@@ -142,26 +142,26 @@
                     <el-dropdown>
                         <span class="el-dropdown-link headerTitle">统计分析</span>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item>
+                            <el-dropdown-item disabled>
                                 <div @click="addTab('原材料采购统计')">
                                     <i class="fontFamily hhtx-yuancailiao"></i>
                                     <span class="menu">原材料采购统计</span>
                                 </div>
                             </el-dropdown-item>
 
-                            <el-dropdown-item>
+                            <el-dropdown-item disabled>
                                 <div @click="addTab('委外加工统计')">
                                     <i class="fontFamily hhtx-tongji2"></i>
                                     <span class="menu">委外加工统计</span>
                                 </div>
                             </el-dropdown-item>
-                            <el-dropdown-item>
+                            <el-dropdown-item disabled>
                                 <div @click="addTab('成品入库统计')">
                                     <i class="fontFamily hhtx-tongji1"></i>
                                     <span class="menu">成品入库统计</span>
                                 </div>
                             </el-dropdown-item>
-                            <el-dropdown-item>
+                            <el-dropdown-item disabled>
                                 <div @click="addTab('加工绩效统计')">
                                     <i class="fontFamily hhtx-tongji"></i>
                                     <span class="menu">加工绩效统计</span>
@@ -194,13 +194,15 @@
 
                     <el-tooltip class="item" effect="dark" content="商品信息" placement="right">
 
-                        <p @click="addTab('商品信息','goods'),$router.push('goods')"><i class="fontFamily hhtx-shangpin"></i></p>
+                        <p @click="addTab('商品信息','goods'),$router.push('goods')"><i
+                                class="fontFamily hhtx-shangpin"></i></p>
 
                     </el-tooltip>
 
 
                     <el-tooltip class="item" effect="dark" content="工厂管理" placement="right">
-                        <p @click="addTab('工厂管理','factory'),$router.push('factory')"><i class="fontFamily hhtx-cangku"></i></p>
+                        <p @click="addTab('工厂管理','factory'),$router.push('factory')"><i
+                                class="fontFamily hhtx-cangku"></i></p>
                     </el-tooltip>
 
                     <el-tooltip class="item" effect="dark" content="工艺管理" placement="right">
@@ -209,32 +211,35 @@
 
 
                     <el-tooltip class="item" effect="dark" content="原材料信息" placement="right">
-                        <p @click="addTab('原材料信息','materials'),$router.push('materials')"><i class="fontFamily hhtx-yuancailiao"></i></p>
+                        <p @click="addTab('原材料信息','materials'),$router.push('materials')"><i
+                                class="fontFamily hhtx-yuancailiao"></i></p>
                     </el-tooltip>
 
                     <el-tooltip class="item" effect="dark" content="供应商管理" placement="right">
-                        <p @click="addTab('供应商管理','supplier'),$router.push('supplier')"><i class="fontFamily hhtx-icon-p_gongyingshang"></i></p>
+                        <p @click="addTab('供应商管理','supplier'),$router.push('supplier')"><i
+                                class="fontFamily hhtx-icon-p_gongyingshang"></i></p>
                     </el-tooltip>
                 </el-aside>
 
                 <!--内容-->
                 <el-main>
                     <div class="tabsPane">
-                        <el-tabs v-model="editableTabsValue2"  type="border-card" tab-position="top" closable
+                        <el-tabs v-model="editableTabsValue2" type="card" tab-position="top" closable
                                  @tab-remove="removeTab" @tab-click="selected">
                             <el-tab-pane
+                                    v-if="chartsShow"
                                     v-for="item in editableTabs2"
                                     :key="item.name"
                                     :label="item.title"
                                     :name="item.name"
                                     :urlTag="item"
                             >
-                                <router-view></router-view>
+
                             </el-tab-pane>
+                            <router-view></router-view>
                         </el-tabs>
+
                     </div>
-
-
 
 
                 </el-main>
@@ -254,9 +259,15 @@
                 editableTabs2: [],//所有标签信息
                 tabIndex: 0,//索引，当新增的时候从哪里开始递增
                 headernickname: '',//登录账号
+                chartsShow: false,//tabs显示控制
             }
         },
         methods: {
+            jumpChats() {
+                //图表页
+                this.chartsShow = false
+                this.$router.push('/chartPage')
+            },
             outLogin() {
                 //退出登录
                 this.$router.push('/')
@@ -265,6 +276,7 @@
             },
             //新增选项卡
             addTab(targetName, url) {
+                this.chartsShow = true
                 let num
                 let select = this.editableTabs2.some((item, index) => {
                     num = index + 1
@@ -323,10 +335,15 @@
                 //最后选中的选项卡
                 sessionStorage.setItem('index', this.editableTabsValue2)
             },
-            //页面加载后恢复之前记录的选项卡
+
             PageLoad() {
+                //页面加载后恢复之前记录的选项卡
                 this.headernickname = this.$cookies.get('nickname')
                 let menu = JSON.parse(sessionStorage.getItem('menu'))
+                let path = this.$route.path
+                if (path != '/chartPage') {
+                    this.chartsShow = true//tabs显示控制
+                }
                 if (menu != null) {
                     menu.forEach(item => {
                         this.editableTabs2.push(item)

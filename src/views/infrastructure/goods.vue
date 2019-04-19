@@ -1301,14 +1301,14 @@
     .QueryBan{
         background-color: #f8f8f8;
     }
-    .goods {
-        width: 100%;
-        height: 100%;
-        /*padding: 1%;*/
-        /*display: flex;*/
-        /*justify-content: space-around;*/
+    /*.goods {*/
+        /*width: 100%;*/
+        /*height: 100%;*/
+        /*!*padding: 1%;*!*/
+        /*!*display: flex;*!*/
+        /*!*justify-content: space-around;*!*/
 
-    }
+    /*}*/
 
 
 </style>
