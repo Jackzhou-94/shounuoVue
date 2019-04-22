@@ -1,6 +1,5 @@
 <template>
     <div class="ProcessManagement">
-
         <div class="menuBox">
             <div class="QueryConditions">
                 <el-button size="mini" type="primary" class="el-icon-plus" @click="addprocess=true">新建</el-button>
@@ -52,21 +51,22 @@
                     <el-form-item label="工艺名称" prop="name">
                         <el-input v-model="addprocessData.name"></el-input>
                     </el-form-item>
-                    <el-form-item label="商家编码" prop="merchantCode">
+                    <el-form-item label="商家编码">
                         <el-input v-model="addprocessData.merchantCode" disabled></el-input>
                     </el-form-item>
-                    <el-form-item label="品牌" prop="brand">
-                        <el-input v-model="addprocessData.brand"></el-input>
+                    <el-form-item label="品牌">
+                        <el-input v-model="addprocessData.brand" disabled></el-input>
                     </el-form-item>
-                    <el-form-item label="类别" prop="category">
-                        <el-select clearable v-model="addprocessData.category" placeholder="类别">
-                            <el-option
-                                    v-for="item in categorySelect"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value">
-                            </el-option>
-                        </el-select>
+                    <el-form-item label="类别">
+                        <el-input v-model="addprocessData.category" disabled></el-input>
+                        <!--<el-select clearable v-model="addprocessData.category" placeholder="类别" disabled>-->
+                        <!--<el-option-->
+                        <!--v-for="item in categorySelect"-->
+                        <!--:key="item.value"-->
+                        <!--:label="item.label"-->
+                        <!--:value="item.value">-->
+                        <!--</el-option>-->
+                        <!--</el-select>-->
 
 
                     </el-form-item>
@@ -76,9 +76,9 @@
                 </div>
 
                 <div style="display: flex;flex-wrap: nowrap" class="x">
-                    <el-form-item label="工艺设置" prop="processNode">
+                    <el-form-item label="工艺设置" prop="processNodeList">
                         <el-select placeholder="请选择" size="mini" multiple
-                                   v-model="addprocessData.processNode">
+                                   v-model="addprocessData.processNodeList">
                             <el-option
                                     v-for="item in ProcessFunction"
                                     :key="item.value"
@@ -96,7 +96,7 @@
                 <el-tab-pane label="新品管理" name="first">
                     <div class="QueryConditions">
 
-                        <el-button size="mini"  @click="addGoods">添加新品</el-button>
+                        <el-button size="mini" @click="addGoods">添加新品</el-button>
 
                     </div>
                     <el-table
@@ -288,9 +288,36 @@
                                 width="180"
                                 align="center"
                         ></el-table-column>
+
+                        <!--oninput="value=value.replace(/^\d.*?\d{3}/g,'');"-->
+                        <!--oninput="value=value.replace(/[1-9]\d*.\d{3}\d*|0.\d*[1-9]\d*/g,'');"-->
+                        <!--oninput="value=value.replace(/(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/,'');"-->
                         <el-table-column
                                 prop="ingredients"
                                 label="成分配比"
+                                width="180"
+                                align="center"
+                        >
+                            <template slot-scope="scope">
+                                <el-input-number size="mini" v-model="scope.row.distributionRatio" :precision="2" :step="0.1"
+                                                 :max="10">
+
+                                    <template slot="append">%</template>
+                                </el-input-number>
+                                <!--<el-input size="mini"-->
+                                <!--max="100"-->
+                                <!--min="1"-->
+                                <!--type="number"-->
+                                <!--oninput="value=value.replace(/[^(\d)\.*?\d{3}]$/g,'');"-->
+                                <!--:value=""-->
+                                <!--&gt;-->
+                                <!---->
+                                <!--</el-input>-->
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                prop="ingredients"
+                                label="单位用量"
                                 width="180"
                                 align="center"
                         ></el-table-column>
@@ -386,22 +413,22 @@
                     <el-form-item label="工艺名称" prop="name">
                         <el-input v-model="upaddprocessData.name"></el-input>
                     </el-form-item>
-                    <el-form-item label="商家编码" prop="merchantCode">
+                    <el-form-item label="商家编码">
                         <el-input v-model="upaddprocessData.merchantCode" disabled></el-input>
                     </el-form-item>
-                    <el-form-item label="品牌" prop="brand">
-                        <el-input v-model="upaddprocessData.brand"></el-input>
+                    <el-form-item label="品牌">
+                        <el-input v-model="upaddprocessData.brand" disabled></el-input>
                     </el-form-item>
-                    <el-form-item label="类别" prop="category">
-                        <el-select clearable v-model="upaddprocessData.category" placeholder="类别">
-                            <el-option
-                                    v-for="item in categorySelect"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value">
-                            </el-option>
-                        </el-select>
-
+                    <el-form-item label="类别">
+                        <el-input v-model="upaddprocessData.category" disabled></el-input>
+                        <!--<el-select clearable v-model="upaddprocessData.category" placeholder="类别" disabled>-->
+                        <!--<el-option-->
+                        <!--v-for="item in categorySelect"-->
+                        <!--:key="item.value"-->
+                        <!--:label="item.label"-->
+                        <!--:value="item.value">-->
+                        <!--</el-option>-->
+                        <!--</el-select>-->
 
                     </el-form-item>
                     <el-form-item label="颜色">
@@ -430,7 +457,7 @@
                 <el-tab-pane label="新品管理" name="first">
                     <div class="QueryConditions">
 
-                        <el-button size="mini"  @click="upaddGoods">添加新品</el-button>
+                        <el-button size="mini" @click="upaddGoods">添加新品</el-button>
 
                     </div>
                     <el-table
@@ -1817,6 +1844,8 @@
         name: "ProcessManagement",
         data() {
             return {
+
+                pageNumQuery:1,//分页查询默认显示页数
                 addprocess: false,//新建工艺单面板
                 processSet: false,//流程节点设置面板
                 upaddprocess: false,//修改工艺单面板
@@ -1828,7 +1857,7 @@
                     merchantCode: '',//商家编码
                     colour: '',//颜色
                     processFlow: '',//工艺流程（用于展示）
-                    processNode: [],//流程节点
+                    processNodeList: [],//流程节点
                     name: '',//工艺名称
                     brand: '',//品牌
                     category: '',//类别
@@ -1849,7 +1878,7 @@
                     category: [
                         {required: true, message: '请选择类别', trigger: 'change'}
                     ],
-                    processNode: [
+                    processNodeList: [
                         {required: true, message: '请选择工艺设置', trigger: 'change'},
                     ],
                 },
@@ -2051,19 +2080,32 @@
             }
         },
         methods: {
+            PricessQuery(){
+                //工艺单分页查询
+                this.$axios.get(this.$store.state.PricessQueryPage,{
+                    params:{
+                        pageSize:15,
+                        pageNum:this.pageNumQuery,
+                    }
+                })
+            },
             addtechnology(addprocessData) {
                 //新建工艺单
                 //新建商品信息
                 let that = this
                 this.$refs[addprocessData].validate((valid) => {
                     if (valid) {
-                        console.log('ok')
-                        console.log(this.addprocessData)
-                    } else {
-                        this.$message({
-                            message: '信息填写不完全',
-                            type: 'warning'
-                        });
+
+                        if (this.addprocessData.goodsList.length === 0 || this.addprocessData.materialsList.length === 0) {
+                            this.$message.error('信息填写不完全');
+                        } else {
+                            this.$axios.post(this.$store.state.AddPricess,this.addprocessData).then(res=>{
+                                console.log(this.addprocessData)
+                                console.log(res)
+                            })
+
+
+                        }
                     }
                 });
 
@@ -2074,13 +2116,12 @@
                 let that = this
                 this.$refs[upaddprocessData].validate((valid) => {
                     if (valid) {
-                        console.log('ok')
-                        console.log(this.upaddprocessData)
-                    } else {
-                        this.$message({
-                            message: '信息填写不完全',
-                            type: 'warning'
-                        });
+                        if (this.upaddprocessData.goodsList.length === 0 || this.upaddprocessData.materialsList.length === 0) {
+                            this.$message.error('信息填写不完全');
+                        } else {
+                            console.log('ok')
+                            console.log(this.upaddprocessData)
+                        }
                     }
                 });
 
@@ -2250,7 +2291,10 @@
             introductionGoods(data) {
                 //引入商品信息
                 this.addprocessData.goodsList.length = 0;
-                this.addprocessData.merchantCode = data.merchantCode
+                this.addprocessData.merchantCode = data.merchantCode //商家编码
+                this.addprocessData.category = data.type//类别
+                this.addprocessData.brand = data.brand//品牌
+
                 this.addGoodsPanel = false
                 this.addprocessData.goodsList.push(data)
                 // this.addprocessData.goodsList
@@ -2258,7 +2302,9 @@
             upintroductionGoods(data) {
                 //修改引入商品信息
                 this.upaddprocessData.goodsList.length = 0;
-                this.upaddprocessData.merchantCode = data.merchantCode
+                this.upaddprocessData.merchantCode = data.merchantCode//商家编码
+                this.upaddprocessData.category = data.type//类别
+                this.upaddprocessData.brand = data.brand//品牌
                 this.upaddGoodsPanel = false
                 this.upaddprocessData.goodsList.push(data)
                 // this.addprocessData.goodsList
@@ -2365,6 +2411,7 @@
             }
         },
         created: function () {
+            this.PricessQuery()//工艺单分页查询
             this.queryMater();//原材料信息分页查询
 
         }
@@ -2386,7 +2433,8 @@
     .el-tabs {
         margin: 0px;
     }
-    .x .el-select{
+
+    .x .el-select {
         width: 260px;
     }
 </style>
