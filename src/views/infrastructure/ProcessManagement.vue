@@ -4,14 +4,16 @@
             <div class="QueryConditions">
                 <el-button size="mini" type="primary" class="el-icon-plus" @click="addprocess=true">新建</el-button>
                 <el-button size="mini" type="primary" class="el-icon-plus" @click="upaddprocess=true">修改</el-button>
+                <el-button size="mini" type="danger"  @click="delProcessfuns">批量删除</el-button>
             </div>
             <div class="QueryConditions QueryInput">
                 <div>
-                    <el-input clearable size="mini" placeholder="款式编号"></el-input>
-                    <el-input clearable size="mini" placeholder="商家编码"></el-input>
-                    <el-input clearable size="mini" placeholder="名称"></el-input>
 
-                    <el-select size="mini" clearable v-model="category" placeholder="类别">
+                    <el-input clearable size="mini" v-model="styleCodeQuery" placeholder="款式编号"></el-input>
+                    <el-input clearable size="mini" v-model="merchantCodeQuery" placeholder="商家编码"></el-input>
+                    <el-input clearable size="mini" v-model="nameQuery" placeholder="名称"></el-input>
+
+                    <el-select size="mini" clearable v-model="categoryQuery" placeholder="类别">
                         <el-option
                                 v-for="item in categorySelect"
                                 :key="item.value"
@@ -20,20 +22,14 @@
                         </el-option>
                     </el-select>
 
-                    <el-select size="mini" clearable v-model="selectState" placeholder="状态">
-                        <el-option
-                                v-for="item in SelectOptions"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                        </el-option>
-                    </el-select>
                 </div>
 
                 <div>
-                    <el-button type="primary" size="mini">重置</el-button>
+                    <el-button type="primary" size="mini"
+                               @click="categoryQuery='',nameQuery='',merchantCodeQuery='',styleCodeQuery=''">重置
+                    </el-button>
 
-                    <el-button type="primary" size="mini" icon="el-icon-search">查询</el-button>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="PricessQuery()">查询</el-button>
                 </div>
 
             </div>
@@ -289,38 +285,35 @@
                                 align="center"
                         ></el-table-column>
 
-                        <!--oninput="value=value.replace(/^\d.*?\d{3}/g,'');"-->
-                        <!--oninput="value=value.replace(/[1-9]\d*.\d{3}\d*|0.\d*[1-9]\d*/g,'');"-->
-                        <!--oninput="value=value.replace(/(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/,'');"-->
                         <el-table-column
                                 prop="ingredients"
-                                label="成分配比"
+                                label="成分配比(%)"
                                 width="180"
                                 align="center"
                         >
                             <template slot-scope="scope">
-                                <el-input-number size="mini" v-model="scope.row.distributionRatio" :precision="2" :step="0.1"
-                                                 :max="10">
+                                <el-input-number size="mini" controls-position="right"
+                                                 v-model="scope.row.distributionRatio"
+                                                 :min="0.1"
+                                                 :max="100">
 
                                     <template slot="append">%</template>
                                 </el-input-number>
-                                <!--<el-input size="mini"-->
-                                <!--max="100"-->
-                                <!--min="1"-->
-                                <!--type="number"-->
-                                <!--oninput="value=value.replace(/[^(\d)\.*?\d{3}]$/g,'');"-->
-                                <!--:value=""-->
-                                <!--&gt;-->
-                                <!---->
-                                <!--</el-input>-->
                             </template>
                         </el-table-column>
+
                         <el-table-column
                                 prop="ingredients"
                                 label="单位用量"
                                 width="180"
                                 align="center"
-                        ></el-table-column>
+                        >
+                            <template slot-scope="scope">
+                                <el-input size="mini" v-model="scope.row.unitDosage"></el-input>
+                            </template>
+                        </el-table-column>
+
+
                         <el-table-column
                                 label="物料分类"
                                 prop="type"
@@ -403,6 +396,7 @@
         <el-dialog
                 width="1100px"
                 style="padding: 0px;margin: 0px"
+                @closed="closeFun"
                 title="修改工艺单" :visible.sync="upaddprocess" :show-close="false"
         >
             <el-form style="text-align: left" :model="upaddprocessData" ref="upaddprocessData"
@@ -437,9 +431,9 @@
                 </div>
 
                 <div style="display: flex;flex-wrap: nowrap" class="x">
-                    <el-form-item label="工艺设置" prop="processNode">
+                    <el-form-item label="工艺设置" prop="processNodeList">
                         <el-select placeholder="请选择" size="mini" multiple
-                                   v-model="upaddprocessData.processNode">
+                                   v-model="upaddprocessData.processNodeList">
                             <el-option
                                     v-for="item in ProcessFunction"
                                     :key="item.value"
@@ -489,6 +483,7 @@
                                 width="180"
                         >
                         </el-table-column>
+
                         <el-table-column
                                 align="center"
                                 prop="type"
@@ -649,6 +644,45 @@
                                 width="180"
                                 align="center"
                         ></el-table-column>
+
+                        <!--<el-table-column-->
+                        <!--align="center"-->
+                        <!--prop="itemCode"-->
+                        <!--v-if="upitemCode"-->
+                        <!--label="货品编号"-->
+                        <!--width="180"-->
+                        <!--&gt;-->
+                        <!--</el-table-column>-->
+
+                        <el-table-column
+                                prop="ingredients"
+                                label="成分配比(%)"
+                                width="180"
+                                align="center"
+                        >
+                            <template slot-scope="scope">
+                                <el-input-number size="mini" controls-position="right"
+                                                 v-model="scope.row.distributionRatio"
+                                                 :min="0.1"
+                                                >
+
+                                    <template slot="append">%</template>
+                                </el-input-number>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="ingredients"
+                                label="单位用量"
+                                width="180"
+                                align="center"
+                        >
+                            <template slot-scope="scope">
+                                <el-input size="mini" v-model="scope.row.unitDosage"></el-input>
+                            </template>
+                        </el-table-column>
+
+
                         <el-table-column
                                 label="物料分类"
                                 prop="type"
@@ -1786,8 +1820,10 @@
         <el-table
                 border
                 height="750px"
+                :data="ProcessList"
                 stripe
                 style="width: 100%"
+                @selection-change="ProcessSelection"
         >
             <el-table-column
                     type="index"
@@ -1799,42 +1835,69 @@
             </el-table-column>
             <el-table-column
                     label="款式编号"
+                    width="200"
+                    prop="styleCode"
                     align="center">
             </el-table-column>
             <el-table-column
                     label="商家编码"
+                    prop="merchantCode"
                     align="center">
             </el-table-column>
             <el-table-column
-                    label="颜色"
-                    align="center">
-            </el-table-column>
-            <el-table-column
-                    label="流程节点"
-                    align="center">
-            </el-table-column>
-            <el-table-column
+                    prop="name"
                     label="工艺名称"
                     align="center">
             </el-table-column>
             <el-table-column
+                    label="流程节点"
+                    width="230"
+                    align="center">
+                <template slot-scope="scope">
+                    <el-tag type="danger" v-for="item in scope.row.processNodeList">
+                        {{item=='weave'?'织造':item=='seamHead'?'缝头':item=='stereoType'?'定型':'包装'}}
+                    </el-tag>
+                </template>
+            </el-table-column>
+
+            <el-table-column
+                    label="颜色"
+                    prop="colour"
+                    align="center">
+            </el-table-column>
+            <el-table-column
                     label="品牌"
+                    prop="brand"
                     align="center">
             </el-table-column>
             <el-table-column
                     label="类别"
+                    prop="category"
                     align="center">
             </el-table-column>
             <el-table-column
-                    label="启用状态"
-                    align="center">
-            </el-table-column>
-            <el-table-column
+                    align="center"
+                    width="100"
                     label="操作"
-                    align="center">
+                    fixed="right"
+            >
+                <template slot-scope="scope">
+                    <el-button type="text" @click="upProcessBot(scope.row)">修改</el-button>
+                    <el-button type="text" @click="delPro(scope.row)">删除</el-button>
+                </template>
             </el-table-column>
         </el-table>
-
+        <!--分页-->
+        <el-row>
+            <el-col :span="10" :offset="14">
+                <el-pagination
+                        @current-change="Processlistpag"
+                        :page-size="10"
+                        layout="prev, pager, next, jumper"
+                        :total="totalRecordNum">
+                </el-pagination>
+            </el-col>
+        </el-row>
     </div>
 
 </template>
@@ -1845,12 +1908,17 @@
         data() {
             return {
 
-                pageNumQuery:1,//分页查询默认显示页数
+                pageNumQuery: 1,//分页查询默认显示页数
+                ProcessList: [],//工艺单数据
                 addprocess: false,//新建工艺单面板
                 processSet: false,//流程节点设置面板
                 upaddprocess: false,//修改工艺单面板
                 upprocessSet: false,//修改节点设置面板
 
+                styleCodeQuery: '',//款式编号
+                merchantCodeQuery: '',//商家编码
+                nameQuery: '',//工艺名称
+                categoryQuery: '',//类别
 
                 addprocessData: {
                     //新建工艺单数据
@@ -1883,7 +1951,7 @@
                     ],
                 },
                 upaddprocessData: {
-                    //新建工艺单数据
+                    //修改工艺单数据
                     merchantCode: '',//商家编码
                     colour: '',//颜色
                     processFlow: '',//工艺流程（用于展示）
@@ -1908,7 +1976,7 @@
                     category: [
                         {required: true, message: '请选择类别', trigger: 'change'}
                     ],
-                    processNode: [
+                    processNodeList: [
                         {required: true, message: '请选择工艺设置', trigger: 'change'},
                     ],
                 },
@@ -2032,6 +2100,7 @@
 
                 totalRecord: 0,//总条目数
                 materialsList: [],//原材料数据
+                upmaterialsList: [],//修改时原材料数据
                 materialsNum: '',//物料编码
                 materialsName: '',//物料名称
                 VendorQueries: '',//厂商查询
@@ -2077,16 +2146,100 @@
                 addMaterMultiList: [],//新建工艺单原材料列表多选数据
 
                 upaddMaterMultiList: [],//修改新建工艺单原材料列表多选数据
+                typedata: '',//用于储存数据，当表单发生改变时校验
+                uuidList:[],//工艺单多选IDS
             }
         },
         methods: {
-            PricessQuery(){
-                //工艺单分页查询
-                this.$axios.get(this.$store.state.PricessQueryPage,{
-                    params:{
-                        pageSize:15,
-                        pageNum:this.pageNumQuery,
+            closeFun() {
+                //数据修改验证
+                let obj = JSON.stringify(this.upaddprocessData)
+                let state = (obj == this.typedata)
+                let that = this
+                if (!state) {
+                    this.$confirm('检测到未保存的内容，是否在离开页面前保存修改？', '确认信息', {
+                        distinguishCancelAndClose: true,
+                        confirmButtonText: '保存',
+                        cancelButtonText: '放弃修改'
+                    })
+                        .then(() => {
+                            that.upaddtechnology('upaddprocessData')
+                        })
+
+                }
+
+            },
+            delPro(data){
+                //单个删除
+                this.uuidList=[]
+                this.uuidList.push(data.uuid)
+                this.delProcessfuns()
+            },
+            delProcessfuns(){
+              //批量删除
+                let that=this
+                this.$axios.post(this.$store.state.delProce,{
+                    uuidList:this.uuidList
+                }).then(res=>{
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '删除成功',
+                            type: 'success',
+                            onClose() {
+                                that.PricessQuery()
+                            }
+                        });
                     }
+                    else {
+                        this.$message.error('删除失败！');
+                    }
+                })
+            },
+            ProcessSelection(data){
+                // 工艺单信息多选
+                this.uuidList=[]
+                data.forEach(item=>{
+                    this.uuidList.push(item.uuid)
+                })
+                console.log( this.uuidList)
+
+            },
+            upProcessBot(data) {
+                //修改按钮
+                this.typedata = JSON.stringify(this.upaddprocessData)
+
+
+                this.upaddprocess = true
+                this.$axios.get(this.$store.state.PricessDetails, {
+                    params: {uuid: data.uuid}
+                }).then(res => {
+                    this.upaddprocessData = res.data.data
+                    this.typedata = JSON.stringify(this.upaddprocessData)//将数据转为字符串，进行修改验证
+
+                })
+                // this.upaddprocessData = data
+            },
+            Processlistpag(val) {
+                //商品信息分页
+                this.pageNumQuery = val
+                this.PricessQuery()
+            },
+            PricessQuery() {
+                //工艺单分页查询
+
+                this.$axios.get(this.$store.state.PricessQueryPage, {
+                    params: {
+                        pageSize: 10,
+                        pageNum: this.pageNumQuery,
+                        styleCode: this.styleCodeQuery,
+                        merchantCode: this.merchantCodeQuery,
+                        name: this.nameQuery,
+                        category: this.categoryQuery
+                    }
+                }).then(res => {
+                    this.ProcessList = res.data.list
+                    this.totalRecordNum = res.data.totalRecord
+                    console.log(res)
                 })
             },
             addtechnology(addprocessData) {
@@ -2099,9 +2252,22 @@
                         if (this.addprocessData.goodsList.length === 0 || this.addprocessData.materialsList.length === 0) {
                             this.$message.error('信息填写不完全');
                         } else {
-                            this.$axios.post(this.$store.state.AddPricess,this.addprocessData).then(res=>{
+                            this.$axios.post(this.$store.state.AddPricess, this.addprocessData).then(res => {
                                 console.log(this.addprocessData)
                                 console.log(res)
+                                if (res.data.code == 200) {
+                                    this.$message({
+                                        message: '添加成功',
+                                        type: 'success',
+                                        onClose() {
+                                            that.PricessQuery()
+                                            that.addprocess = false
+                                        }
+                                    });
+                                }
+                                else {
+                                    this.$message.error(res.data.msg);
+                                }
                             })
 
 
@@ -2119,8 +2285,22 @@
                         if (this.upaddprocessData.goodsList.length === 0 || this.upaddprocessData.materialsList.length === 0) {
                             this.$message.error('信息填写不完全');
                         } else {
-                            console.log('ok')
-                            console.log(this.upaddprocessData)
+                            this.$axios.post(this.$store.state.AddPricess, this.upaddprocessData).then(res => {
+                                if (res.data.code == 200) {
+                                    this.$message({
+                                        message: '修改成功',
+                                        type: 'success',
+                                        onClose() {
+                                            that.PricessQuery()
+                                            that.upaddprocess = false
+                                        }
+                                    });
+                                }
+                                else {
+                                    this.$message.error(res.data.msg);
+                                }
+                            })
+
                         }
                     }
                 });
@@ -2128,27 +2308,48 @@
             },
             batchMaterRm() {
                 //批量移除原材料信息
-                let indexList = this.addMaterMultiList.map((item, index) => {
-                    return this.addprocessData.materialsList.indexOf(item)
+                /**
+                 * 1.当匹配到想同数据时，进行删除
+                 * 2.先将原材料数据全部选中，再取消选中，从而达到刷新效果
+                 * **/
+
+                this.addMaterMultiList.forEach(item => {
+                    this.addprocessData.materialsList.forEach(j => {
+                        if (item == j) {
+                            this.addprocessData.materialsList[this.addprocessData.materialsList.indexOf(item)].show = false
+                            this.addprocessData.materialsList.splice(this.addprocessData.materialsList.indexOf(item), 1)
+                            this.$refs.multipleTable.toggleRowSelection();
+                            this.$refs.multipleTable.clearSelection();
+                        }
+
+                    })
                 })
-                indexList.forEach(item => {
-                    this.addprocessData.materialsList[item].show = false
-                    this.addprocessData.materialsList.splice(item, 1)
-                    this.$refs.multipleTable.toggleRowSelection();
-                    this.$refs.multipleTable.clearSelection();
-                })
+
+
             },
             upbatchMaterRm() {
                 //修改批量移除原材料信息
-                let indexList = this.upaddMaterMultiList.map((item, index) => {
-                    return this.upaddprocessData.materialsList.indexOf(item)
+                this.upaddMaterMultiList.forEach(item => {
+                    this.upaddprocessData.materialsList.forEach(j => {
+                        if (item == j) {
+                            this.upaddprocessData.materialsList[this.upaddprocessData.materialsList.indexOf(item)].show = false
+                            this.upaddprocessData.materialsList.splice(this.upaddprocessData.materialsList.indexOf(item), 1)
+                            // this.$refs.upmultipleTable.toggleRowSelection();
+                            // this.$refs.upmultipleTable.clearSelection();
+                        }
+                    })
                 })
-                indexList.forEach(item => {
-                    this.upaddprocessData.materialsList[item].show = false
-                    this.upaddprocessData.materialsList.splice(item, 1)
-                    this.$refs.upmultipleTable.toggleRowSelection();
-                    this.$refs.upmultipleTable.clearSelection();
-                })
+
+
+                // let indexList = this.upaddMaterMultiList.map((item, index) => {
+                //     return this.upaddprocessData.materialsList.indexOf(item)
+                // })
+                // indexList.forEach(item => {
+                //     this.upaddprocessData.materialsList[item].show = false
+                //     this.upaddprocessData.materialsList.splice(item, 1)
+                //     this.$refs.upmultipleTable.toggleRowSelection();
+                //     this.$refs.upmultipleTable.clearSelection();
+                // })
             },
             rmMater(data) {
                 //移除原材料信息
@@ -2180,8 +2381,8 @@
                 listArr.forEach(item => {
                     item.show = false
                 })
-                this.$refs.upmultipleTable.toggleRowSelection();
-                this.$refs.upmultipleTable.clearSelection();
+                // this.$refs.upmultipleTable.toggleRowSelection();
+                // this.$refs.upmultipleTable.clearSelection();
                 console.log(this.upmaterialsList)
                 console.log(listArr)
 
@@ -2287,6 +2488,18 @@
                 this.upaddMaterPanel = true
                 this.factoryList = []
                 this.supplierQuery();//工厂信息查询
+                /***
+                 *
+                 * 将已有的数据与查询到的数据进行匹配，如匹配到相同数据将状态改为true
+                 * */
+                this.upmaterialsList.forEach(item => {
+                    this.upaddprocessData.materialsList.forEach(j => {
+                        if (item.materialCode === j.materialCode) {
+                            item.show = true
+                        }
+                    })
+                })
+
             },
             introductionGoods(data) {
                 //引入商品信息
@@ -2373,6 +2586,7 @@
                     params: data
                 }).then(res => {
                     this.materialsList = res.data.list
+                    this.upmaterialsList = res.data.list
                     this.totalRecord = res.data.totalRecord//总条数
 
                     /**
@@ -2419,6 +2633,10 @@
 </script>
 
 <style scoped>
+    .el-tag {
+        margin: 0em 0.1em 0em 0.1em;
+    }
+
     .selectBox {
         display: flex;
         justify-content: space-between;

@@ -870,7 +870,6 @@
                 typedata: '',//用于储存数据，当表单发生改变时校验
                 upgoodsForm: {
                     //修改商品信息表单数据
-
                     name: '',
                     sku: '',
                     brand: '',//品牌
@@ -1298,15 +1297,16 @@
 
 <style scoped>
 
-    .QueryBan{
+    .QueryBan {
         background-color: #f8f8f8;
     }
+
     /*.goods {*/
-        /*width: 100%;*/
-        /*height: 100%;*/
-        /*!*padding: 1%;*!*/
-        /*!*display: flex;*!*/
-        /*!*justify-content: space-around;*!*/
+    /*width: 100%;*/
+    /*height: 100%;*/
+    /*!*padding: 1%;*!*/
+    /*!*display: flex;*!*/
+    /*!*justify-content: space-around;*!*/
 
     /*}*/
 
