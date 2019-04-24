@@ -5,7 +5,9 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-        login: 'http://192.168.1.199:8099/supplychain/operator/login',//登录
+        login: 'http://192.168.2.112:8099/supplychain/operator/login',//登录
+        upPassWord:'http://192.168.2.112:8099/supplychain/operator/updatePassword',//修改密码
+
         addmaterial: 'http://192.168.1.199:8099/supplychain/materialmessage/save',//添加原材料
         upmaterial: 'http://192.168.1.199:8099/supplychain/materialmessage/update',//修改原材料
         queryPage: 'http://192.168.1.199:8099/supplychain/materialmessage/queryPage',//原材料信息分页查询

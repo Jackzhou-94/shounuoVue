@@ -648,6 +648,8 @@
                 this.upaddress.splice(2, 0, county)
 
                 this.typedata = JSON.stringify(data) //将数据转为字符串，进行修改验证
+
+                console.log(data)
             },
             delfactoryspanel(val) {
                 //删除单条工厂信息

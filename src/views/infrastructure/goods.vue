@@ -294,7 +294,8 @@
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="商品成本">
-                            <el-input size="mini" v-model="addgoodsForm.costPrice"></el-input>
+                            <el-input-number size="mini" controls-position="right" v-model="addgoodsForm.costPrice" :precision="2" :step="0.1"></el-input-number>
+                            <!--<el-input size="mini" v-model="addgoodsForm.costPrice"></el-input>-->
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -417,7 +418,8 @@
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="商品成本">
-                            <el-input size="mini" v-model="upgoodsForm.costPrice"></el-input>
+                            <el-input-number size="mini" controls-position="right" v-model="upgoodsForm.costPrice" :precision="2" :step="0.1"></el-input-number>
+                            <!--<el-input size="mini" v-model="upgoodsForm.costPrice"></el-input>-->
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -738,7 +740,7 @@
                     brand: '',//品牌
                     process: '',//工艺流程
                     season: '',//季节
-                    costPrice: '',//成本
+                    costPrice: 0.1,//成本
                     unit: '',//基本单位
                     packag: '',//包装材料
                     weight: '',//重量
@@ -875,7 +877,7 @@
                     brand: '',//品牌
                     process: '',//工艺流程
                     season: '',//季节
-                    costPrice: '',//成本
+                    costPrice: 0.1,//成本
                     unit: '',//基本单位
                     packag: '',//包装材料
                     weight: '',//重量

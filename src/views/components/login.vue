@@ -104,13 +104,25 @@
                 // let mys = CryptoJS.AES.encrypt(pass, 'secret key 123').toString()
                 // console.log(mys)
                 // console.log(pass)
+                    /**
+                     * 加密
+                     * **/
+
 
                 if (this.validation != this.identifyCode) {
                     this.$message.error('验证码输入有误')
                 } else {
+                    let uuid=this.uuid(16, 10)
+                    let pass=this.password+uuid
+
+                    let encrypt = CryptoJS.AES.encrypt(pass, CryptoJS.enc.Utf8.parse('548dssa26s2s4s8s'), {
+                        mode: CryptoJS.mode.ECB,
+                        padding: CryptoJS.pad.Pkcs7
+                    }).toString();
+
                     this.$axios.post(this.$store.state.login, {
                             username: this.username,
-                            password: this.password
+                            password: encrypt
                         }
                     ).then(res => {
                         if (res.data.code != 200) {
@@ -124,6 +136,7 @@
                         this.$cookies.set('nickname', res.data.data.nickname)
                         this.$cookies.set('token', res.data.token)
                         this.$cookies.set('state', res.data.data.state)
+                        sessionStorage.setItem('A',JSON.stringify(res.data.data))
                         this.$router.push('Home')
                     }).catch(err => {
                         throw err

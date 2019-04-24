@@ -3,8 +3,8 @@
         <div class="menuBox">
             <div class="QueryConditions">
                 <el-button size="mini" type="primary" class="el-icon-plus" @click="addprocess=true">新建</el-button>
-                <el-button size="mini" type="primary" class="el-icon-plus" @click="upaddprocess=true">修改</el-button>
-                <el-button size="mini" type="danger"  @click="delProcessfuns">批量删除</el-button>
+                <!--<el-button size="mini" type="primary" class="el-icon-plus" @click="upaddprocess=true">修改</el-button>-->
+                <el-button size="mini" type="danger" @click="delProcessfuns">批量删除</el-button>
             </div>
             <div class="QueryConditions QueryInput">
                 <div>
@@ -664,7 +664,7 @@
                                 <el-input-number size="mini" controls-position="right"
                                                  v-model="scope.row.distributionRatio"
                                                  :min="0.1"
-                                                >
+                                >
 
                                     <template slot="append">%</template>
                                 </el-input-number>
@@ -762,6 +762,213 @@
 
         </el-dialog>
 
+
+        <!--工艺明细-->
+        <el-dialog
+                width="1100px"
+                title="工艺明细" :visible.sync="ProcessDetails" :show-close="false"
+        >
+            <div class="Details">
+                <el-tag size="medium" >商品明细</el-tag>
+                <el-table
+                        :data="DetailsGoodsList"
+                        border
+                        stripe
+                        style="width: 100%">
+
+                    <el-table-column
+                            align="center"
+                            prop="merchantCode"
+                            v-if="merchantCode"
+                            label="商家编码"
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="name"
+                            v-if="name"
+                            label="商品名称"
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="itemCode"
+                            v-if="itemCode"
+                            label="货品编号"
+                            width="180"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="type"
+                            v-if="type"
+                            label="分类"
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="sku"
+                            v-if="sku"
+                            width="180"
+                            label="盒装SKU">
+
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="brand"
+                            v-if="brand"
+                            width="180"
+                            label="品牌">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            v-if="process"
+                            prop="process"
+                            width="180"
+                            label="工艺流程">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="season"
+                            v-if="season"
+                            width="180"
+                            label="季节">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="costPrice"
+                            v-if="costPrice"
+                            width="180"
+                            label="商品成本价">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="unit"
+                            v-if="unit"
+                            width="180"
+                            label="基本单位">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            v-if="packag"
+                            prop="packag"
+                            width="180"
+                            label="包装材料">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="weight"
+                            v-if="weight"
+                            width="180"
+                            label="重量">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="barCode"
+                            v-if="barCode"
+                            width="180"
+                            label="条形码">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="ingredients"
+                            v-if="ingredients"
+                            width="180"
+                            label="面料成份">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="standard"
+                            v-if="standard"
+                            width="180"
+                            label="执行工艺标准">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="remark"
+                            v-if="remark"
+                            width="180"
+                            label="备注">
+                    </el-table-column>
+
+                </el-table>
+            </div>
+            <div  class="Details">
+                <el-tag size="medium" >原材料明细</el-tag>
+                <el-table
+                        border
+                        stripe
+                        :data="DetailsMaterList"
+                        highlight-current-row
+
+                >
+                    <el-table-column
+                            type="index"
+                            align="center"
+                            sortable
+                    ></el-table-column>
+                    <el-table-column
+                            label="物料编号"
+                            prop="materialCode"
+                            width="180"
+                            align="center"
+                            sortable
+                    ></el-table-column>
+                    <el-table-column
+                            label="物料名称"
+                            prop="name"
+                            width="200"
+                            align="center"
+                    ></el-table-column>
+                    <el-table-column
+                            prop="ingredients"
+                            label="成分规格"
+                            width="180"
+                            align="center"
+                    ></el-table-column>
+
+                    <el-table-column
+                            prop="distributionRatio"
+                            label="成分配比(%)"
+                            align="center"
+                    ></el-table-column>
+
+                    <el-table-column
+                            prop="unitDosage"
+                            label="单位用量"
+                            width="180"
+                            align="center"
+                    ></el-table-column>
+
+                    <el-table-column
+                            label="默认损耗"
+                            prop="defaultLoss"
+                            width="160"
+                            align="center"
+                            sortable
+                    ></el-table-column>
+                    <el-table-column
+                            label="厂商"
+                            prop="manufacturer"
+                            width="180"
+                            align="center"
+                    ></el-table-column>
+                    <el-table-column
+                            label="单位"
+                            prop="unit"
+                            align="center"
+                    ></el-table-column>
+                    <el-table-column
+                            label="备注"
+                            prop="note"
+                            width="150"
+                            align="center"
+                    ></el-table-column>
+
+                </el-table>
+            </div>
+
+        </el-dialog>
 
         <!--添加商品面板-->
         <el-dialog
@@ -1822,6 +2029,7 @@
                 height="750px"
                 :data="ProcessList"
                 stripe
+                @cell-dblclick="detailsQuery"
                 style="width: 100%"
                 @selection-change="ProcessSelection"
         >
@@ -1912,6 +2120,7 @@
                 ProcessList: [],//工艺单数据
                 addprocess: false,//新建工艺单面板
                 processSet: false,//流程节点设置面板
+                ProcessDetails: false,//工艺明细面板
                 upaddprocess: false,//修改工艺单面板
                 upprocessSet: false,//修改节点设置面板
 
@@ -2147,10 +2356,29 @@
 
                 upaddMaterMultiList: [],//修改新建工艺单原材料列表多选数据
                 typedata: '',//用于储存数据，当表单发生改变时校验
-                uuidList:[],//工艺单多选IDS
+                uuidList: [],//工艺单多选IDS
+
+                DetailsGoodsList: [],//工艺明细（商品）
+                DetailsMaterList: [],//工艺明细（原材料）
             }
         },
         methods: {
+            detailsQuery(data) {
+                //工艺明细查询明细
+                this.ProcessDetails = true
+
+                this.$axios.get(this.$store.state.PricessDetails, {
+                    params: {uuid: data.uuid}
+                }).then(res => {
+                    console.log(res)
+
+                    this.DetailsGoodsList = res.data.data.goodsList//工艺明细（商品）
+                    this.DetailsMaterList = res.data.data.materialsList//工艺明细（原材料）
+
+                })
+
+
+            },
             closeFun() {
                 //数据修改验证
                 let obj = JSON.stringify(this.upaddprocessData)
@@ -2169,18 +2397,18 @@
                 }
 
             },
-            delPro(data){
+            delPro(data) {
                 //单个删除
-                this.uuidList=[]
+                this.uuidList = []
                 this.uuidList.push(data.uuid)
                 this.delProcessfuns()
             },
-            delProcessfuns(){
-              //批量删除
-                let that=this
-                this.$axios.post(this.$store.state.delProce,{
-                    uuidList:this.uuidList
-                }).then(res=>{
+            delProcessfuns() {
+                //批量删除
+                let that = this
+                this.$axios.post(this.$store.state.delProce, {
+                    uuidList: this.uuidList
+                }).then(res => {
                     if (res.data.code == 200) {
                         this.$message({
                             message: '删除成功',
@@ -2195,19 +2423,17 @@
                     }
                 })
             },
-            ProcessSelection(data){
+            ProcessSelection(data) {
                 // 工艺单信息多选
-                this.uuidList=[]
-                data.forEach(item=>{
+                this.uuidList = []
+                data.forEach(item => {
                     this.uuidList.push(item.uuid)
                 })
-                console.log( this.uuidList)
+                console.log(this.uuidList)
 
             },
             upProcessBot(data) {
                 //修改按钮
-                this.typedata = JSON.stringify(this.upaddprocessData)
-
 
                 this.upaddprocess = true
                 this.$axios.get(this.$store.state.PricessDetails, {
@@ -2220,7 +2446,7 @@
                 // this.upaddprocessData = data
             },
             Processlistpag(val) {
-                //商品信息分页
+                //工艺单信息分页
                 this.pageNumQuery = val
                 this.PricessQuery()
             },
@@ -2279,6 +2505,7 @@
             upaddtechnology(upaddprocessData) {
                 //修改工艺单
                 //修改商品信息
+                this.typedata = JSON.stringify(this.upaddprocessData)
                 let that = this
                 this.$refs[upaddprocessData].validate((valid) => {
                     if (valid) {
@@ -2636,7 +2863,13 @@
     .el-tag {
         margin: 0em 0.1em 0em 0.1em;
     }
-
+    .Details{
+       text-align: left;
+        margin-top: 1em;
+    }
+    .Details .el-tag{
+        margin-bottom: 0.5em;
+    }
     .selectBox {
         display: flex;
         justify-content: space-between;
