@@ -71,6 +71,11 @@ export default new Router({
                     path: '/ProcessManagement',
                     name: 'ProcessManagement',
                     component: require('./views/infrastructure/ProcessManagement').default,
+                }, {
+                    //工厂派单
+                    path: '/FactoryDispatch',
+                    name: 'FactoryDispatch',
+                    component: require('./views/procurement/FactoryDispatch').default,
                 }
             ]
         }

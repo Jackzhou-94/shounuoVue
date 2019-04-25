@@ -65,10 +65,15 @@ export default new Vuex.Store({
 
         stockQuery: 'http://192.168.1.199:8099/supplychain/warehouse/stock/material/queryPage',//库存分页查询
 
-        AddPricess:'http://192.168.1.199:8099/supplychain/craft/save',//工艺单保存接口
-        PricessQueryPage:'http://192.168.1.199:8099/supplychain/craft/list',//工艺单分页查询接口
-        PricessDetails:'http://192.168.1.199:8099/supplychain/craft/select',//工艺单详情数据
-        delProce:'http://192.168.1.199:8099/supplychain/craft/delete',//删除工艺单信息
+        AddPricess:'http://192.168.2.112:8099/supplychain/craft/save',//工艺单保存接口
+        PricessQueryPage:'http://192.168.2.112:8099/supplychain/craft/list',//工艺单分页查询接口
+        PricessDetails:'http://192.168.2.112:8099/supplychain/craft/select',//工艺单详情数据
+        delProce:'http://192.168.2.112:8099/supplychain/craft/delete',//删除工艺单信息
+
+        addProduction:'http://192.168.2.112:8099/supplychain/produceplan/save',//保存生产计划单
+        ProductionQueryPage:'http://192.168.2.112:8099/supplychain/produceplan/list',//生产计划单分页查询
+        basicInformationPro:'http://192.168.2.112:8099/supplychain/produceplan/select',//查询生产计划单基本信息
+        deleteproduction:'http://192.168.2.112:8099/supplychain/produceplan/delete',//删除生产计划单
 
 },
     mutations: {},

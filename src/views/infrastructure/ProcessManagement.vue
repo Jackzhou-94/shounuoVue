@@ -4,7 +4,7 @@
             <div class="QueryConditions">
                 <el-button size="mini" type="primary" class="el-icon-plus" @click="addprocess=true">新建</el-button>
                 <!--<el-button size="mini" type="primary" class="el-icon-plus" @click="upaddprocess=true">修改</el-button>-->
-                <el-button size="mini" type="danger" @click="delProcessfuns">批量删除</el-button>
+                <el-button size="mini" type="danger" @click="delProcessfuns" :disabled="delStatusButPro">批量删除</el-button>
             </div>
             <div class="QueryConditions QueryInput">
                 <div>
@@ -2034,13 +2034,14 @@
                 @selection-change="ProcessSelection"
         >
             <el-table-column
-                    type="index"
-                    align="center">
-            </el-table-column>
-            <el-table-column
                     type="selection"
                     align="center">
             </el-table-column>
+            <el-table-column
+                    type="index"
+                    align="center">
+            </el-table-column>
+
             <el-table-column
                     label="款式编号"
                     width="200"
@@ -2090,8 +2091,8 @@
                     fixed="right"
             >
                 <template slot-scope="scope">
-                    <el-button type="text" @click="upProcessBot(scope.row)">修改</el-button>
-                    <el-button type="text" @click="delPro(scope.row)">删除</el-button>
+                    <el-button type="text"   @click="upProcessBot(scope.row)">修改</el-button>
+                    <el-button type="text" :disabled="scope.row.recordState=='1'?(true):(false)" @click="delPro(scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -2123,7 +2124,7 @@
                 ProcessDetails: false,//工艺明细面板
                 upaddprocess: false,//修改工艺单面板
                 upprocessSet: false,//修改节点设置面板
-
+                delStatusButPro:true,//批量删除按钮控制
                 styleCodeQuery: '',//款式编号
                 merchantCodeQuery: '',//商家编码
                 nameQuery: '',//工艺名称
@@ -2424,17 +2425,31 @@
                 })
             },
             ProcessSelection(data) {
+
                 // 工艺单信息多选
                 this.uuidList = []
+
                 data.forEach(item => {
                     this.uuidList.push(item.uuid)
                 })
-                console.log(this.uuidList)
+
+                    /**
+                     *工艺单信息多选，如果与其他模块进行了数据交互
+                     * 即使选中也无法删除
+                     * **/
+                let a=data.map(item=>{
+                    return item.recordState=='1'
+                })
+                if (a.indexOf(true)!=-1||data.length == 0){
+                    this.delStatusButPro=true
+                }else{
+                    this.delStatusButPro=false
+                }
 
             },
             upProcessBot(data) {
                 //修改按钮
-
+                console.log(data)
                 this.upaddprocess = true
                 this.$axios.get(this.$store.state.PricessDetails, {
                     params: {uuid: data.uuid}

@@ -285,8 +285,8 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="工艺职能" v-model="addfactoryForm.technology" prop="technology">
-                            <el-select placeholder="请选择" multiple v-model="addfactoryForm.technology">
+                        <el-form-item label="工艺职能" prop="technologys">
+                            <el-select placeholder="请选择" multiple v-model="addfactoryForm.technologys">
                                 <el-option
                                         v-for="item in ProcessFunction"
                                         :key="item.value"
@@ -382,7 +382,7 @@
                     <el-col :span="8">
                         <el-form-item label="工艺职能" prop="technology">
 
-                            <el-select placeholder="请选择" multiple v-model="upfactoryForm.technology">
+                            <el-select placeholder="请选择" multiple v-model="upfactoryForm.technologys">
                                 <el-option
                                         v-for="item in ProcessFunction"
                                         :key="item.value"
@@ -469,7 +469,7 @@
                     detailedAddress: '',//详细地址信息
                     contact: '',//联系人
                     phoneNumber: '',//手机号码
-                    technology: [],//工艺职能
+                    technologys: [],//工艺职能
                     remark: '',//备注信息
 
                 },
@@ -489,7 +489,7 @@
                     detailedAddress: [
                         {required: true, message: '收货地址不能为空', trigger: 'blur'}
                     ],
-                    technology: [
+                    technologys: [
                         {required: true, message: '工艺不能为空', trigger: 'blur'}
                     ]
                 },
@@ -505,7 +505,7 @@
                     detailedAddress: '',//详细地址信息
                     contact: '',//联系人
                     phoneNumber: '',//手机号码
-                    technology: [],//工艺职能
+                    technologys: [],//工艺职能
                     remark: '',//备注信息
 
                 },
@@ -525,7 +525,7 @@
                     detailedAddress: [
                         {required: true, message: '收货地址不能为空', trigger: 'blur'}
                     ],
-                    technology: [
+                    technologys: [
                         {required: true, message: '工艺不能为空', trigger: 'blur'}
                     ]
                 },

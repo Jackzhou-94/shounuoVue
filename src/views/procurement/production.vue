@@ -3,6 +3,7 @@
         <div class="menuBox">
             <div class="QueryConditions">
                 <el-button size="mini" type="primary" class="el-icon-plus" @click="addProductionBtn">新建</el-button>
+
                 <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
                 <!--:disabled="auditStatusBut" 提交审核显示控制-->
                 <el-button size="mini" type="primary">提交审核</el-button>
@@ -12,18 +13,20 @@
                 <!--:disabled="submitStatusBut" 审核驳回显示控制-->
                 <el-button size="mini" type="primary">审核驳回</el-button>
 
-                <!--:disabled="delStatusButGoods" 批量删除显示控制-->
-                <el-button type="danger" size="mini" class="el-icon-delete">批量删除
-                </el-button>
             </div>
             <div class=" QueryConditions QueryInput">
+                <!--conditionsstyleCode:'',//生产计划单查询（款式编号）-->
+                <!--conditionproduceCode:'',//生产计划单编号-->
+                <!--conditionmerchantCode:'',//商家编号-->
+                <!--conditionName:'',//商品名称-->
+                <!--conditionprocessNode:[],//工艺流程-->
                 <div>
-                    <el-input size="mini" placeholder="生产计划单编号"></el-input>
-                    <el-input size="mini" placeholder="款式编号"></el-input>
-                    <el-input size="mini" placeholder="商家编号"></el-input>
-                    <el-input size="mini" placeholder="商品名称"></el-input>
+                    <el-input size="mini" clearable v-model="conditionproduceCode" placeholder="生产计划单编号"></el-input>
+                    <el-input size="mini" clearable v-model="conditionsstyleCode" placeholder="款式编号"></el-input>
+                    <el-input size="mini" clearable v-model="conditionmerchantCode" placeholder="商家编号"></el-input>
+                    <el-input size="mini" clearable v-model="conditionName" placeholder="商品名称"></el-input>
                     <div class="produ">
-                        <el-select placeholder="工艺流程" multiple size="mini" v-model="technology">
+                        <el-select clearable placeholder="工艺流程" multiple size="mini" v-model="conditionprocessNode">
                             <el-option
                                     v-for="item in ProcessFunction"
                                     :key="item.value"
@@ -51,24 +54,47 @@
         <el-table
                 border
                 stripe
+                :data="ProductionList"
                 height="750px"
         >
             <el-table-column align="center" type="selection"></el-table-column>
             <el-table-column align="center" type="index"></el-table-column>
-            <el-table-column align="center" v-if="ProductionOrderShow" label="生产计划单编号" width="120px"></el-table-column>
-            <el-table-column align="center" v-if="styleNumberShow" label="款式编号" width="120px"></el-table-column>
-            <el-table-column align="center" v-if="MerchantNumberShow" label="商家编号" width="120px"></el-table-column>
-            <el-table-column align="center" v-if="MerchantNameShow" label="商品名称"></el-table-column>
-            <el-table-column align="center" v-if="specificationsShow" label="规格(颜色)" width="100px"></el-table-column>
-            <el-table-column align="center" v-if="NumberShow" label="数量"></el-table-column>
-            <el-table-column align="center" v-if="unitShow" label="单位"></el-table-column>
-            <el-table-column align="center" v-if="bandShow" label="品牌"></el-table-column>
-            <el-table-column align="center" v-if="categoryShow" label="类别"></el-table-column>
-            <el-table-column align="center" v-if="processShow" label="工艺流程" width="150px"></el-table-column>
-            <el-table-column align="center" v-if="CreationTimeShow" label="创建时间" width="150px"></el-table-column>
-            <el-table-column align="center" v-if="ModifyTimeShow" label="修改时间" width="150px"></el-table-column>
-            <el-table-column align="center" v-if="noteShow" label="备注"></el-table-column>
-            <el-table-column align="center" label="操作" fixed="right"></el-table-column>
+            <el-table-column align="center" v-if="ProductionOrderShow" label="生产计划单编号" prop="produceCode"
+                             width="160px"></el-table-column>
+            <el-table-column align="center" v-if="styleNumberShow" label="款式编号" prop="styleCode"
+                             width="170px"></el-table-column>
+            <el-table-column align="center" v-if="MerchantNumberShow" label="商家编号" prop="merchantCode"
+                             width="160px"></el-table-column>
+            <el-table-column align="center" v-if="MerchantNameShow" label="商品名称" prop="name"></el-table-column>
+            <el-table-column align="center" v-if="specificationsShow" label="规格(颜色)" prop="colour"
+                             width="100px"></el-table-column>
+            <el-table-column align="center" v-if="NumberShow" label="数量" prop="craftNumber"></el-table-column>
+            <el-table-column align="center" v-if="unitShow" label="单位" prop="unit"></el-table-column>
+            <el-table-column align="center" v-if="bandShow" label="品牌" prop="brand"></el-table-column>
+            <el-table-column align="center" width="100px" v-if="categoryShow" label="类别"
+                             prop="category"></el-table-column>
+            <el-table-column
+                    label="工艺流程"
+                    width="230"
+                    align="center">
+                <template slot-scope="scope">
+                    <el-tag type="danger" v-for="item in scope.row.processNodeList">
+                        {{item=='weave'?'织造':item=='seamHead'?'缝头':item=='stereoType'?'定型':'包装'}}
+                    </el-tag>
+                </template>
+            </el-table-column>
+            <!--<el-table-column align="center" v-if="processShow" label="工艺流程" prop="processNodeList"-->
+            <!--width="150px"></el-table-column>-->
+            <el-table-column align="center" v-if="CreationTimeShow" label="创建时间" prop="createTime"
+                             width="180px"></el-table-column>
+            <el-table-column align="center" v-if="ModifyTimeShow" label="修改时间" prop="updateTime"
+                             width="180px"></el-table-column>
+            <el-table-column align="center" v-if="noteShow" label="备注" prop="remark"></el-table-column>
+            <el-table-column align="center" label="操作" fixed="right">
+                <template slot-scope="scope">
+                    <el-button type="text" @click="upProceBtn(scope.row)">修改</el-button>
+                </template>
+            </el-table-column>
         </el-table>
         <!--显示设置-->
         <el-dialog
@@ -173,7 +199,8 @@
                     </el-button>
 
                     <el-button type="primary" size="mini" icon="el-icon-search" @click="PricessQuery()">查询</el-button>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="BatchIntroduction()">批量引入</el-button>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="BatchIntroduction()">批量引入
+                    </el-button>
                 </div>
 
             </div>
@@ -185,7 +212,7 @@
                     :data="ProcessList"
                     highlight-current-row
                     @selection-change="MultiplePro"
-                >
+            >
 
                 <el-table-column
                         type="index"
@@ -330,7 +357,7 @@
                         <el-input v-model="scope.row.craftNumber"
                                   size="mini"
                                   style="width: 75px"
-                                  oninput = "value=value.replace(/[^\d]/g,'')"
+                                  oninput="value=value.replace(/[^\d]/g,'')"
                         ></el-input>
                     </template>
                 </el-table-column>
@@ -374,8 +401,248 @@
 
             <div class="btnBox">
                 <el-button size="mini" type="primary" @click="addProductiondata">添加</el-button>
-                <el-button size="mini" type="primary">取消</el-button>
+                <el-button size="mini" type="primary" @click="addProduction=false">取消</el-button>
             </div>
+
+
+        </el-dialog>
+
+
+        <!--修改工艺单面板-->
+        <el-dialog
+                title="修改工艺单"
+                :visible.sync="upaddProduction"
+                @closed="closeFun"
+                :show-close="false"
+                width="1100px">
+            <div class="QueryConditions">
+                <el-button size="mini" type="primary" @click="upProcessIntroductionBtn">工艺信息引入</el-button>
+                <el-button size="mini" type="primary" @click="updelProdufuns">批量移除</el-button>
+
+            </div>
+            <el-table
+                    border
+                    :data="upScheduleList.producePlanDetailBeanList"
+                    stripe
+                    @selection-change="upaddProductionMultiple"
+            >
+                <el-table-column
+                        type="index"
+                        align="center">
+                </el-table-column>
+                <el-table-column
+                        type="selection"
+                        align="center">
+                </el-table-column>
+                <el-table-column
+                        label="款式编号"
+                        width="165"
+                        prop="styleCode"
+                        align="center">
+                </el-table-column>
+                <el-table-column
+                        label="商家编码"
+                        prop="merchantCode"
+                        align="center">
+                </el-table-column>
+                <el-table-column
+                        prop="name"
+                        label="工艺名称"
+                        align="center">
+                </el-table-column>
+                <el-table-column
+                        label="数量"
+                        width="100px"
+                        align="center">
+                    <template slot-scope="scope">
+
+                        <el-input v-model="scope.row.craftNumber"
+                                  size="mini"
+                                  style="width: 75px"
+                                  oninput="value=value.replace(/[^\d]/g,'')"
+                        ></el-input>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        label="流程节点"
+                        width="205"
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-tag type="danger" v-for="item in scope.row.processNodeList">
+                            {{item=='weave'?'织造':item=='seamHead'?'缝头':item=='stereoType'?'定型':'包装'}}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+
+                <el-table-column
+                        label="颜色"
+                        prop="colour"
+                        align="center">
+                </el-table-column>
+                <el-table-column
+                        label="品牌"
+                        prop="brand"
+                        align="center">
+                </el-table-column>
+                <el-table-column
+                        label="类别"
+                        prop="category"
+                        width="90"
+                        align="center">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        label="操作"
+                        fixed="right"
+                >
+                    <template slot-scope="scope">
+                        <el-button type="text" @click="uprmproduction(scope.row)">移除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+            <div class="btnBox">
+                <el-button type="danger" size="mini" @click="delProduction">删除计划单</el-button>
+                <el-button size="mini" type="primary" :disabled="upsaveShow" @click="upaddProductiondata">保存</el-button>
+                <el-button size="mini" type="primary" @click="upaddProduction=false">取消</el-button>
+            </div>
+
+
+        </el-dialog>
+
+        <!--修改工艺引入面板-->
+        <el-dialog
+                title="修改工艺引入"
+                :visible.sync="upProcessIntroduction"
+                :show-close="false"
+                width="1100px">
+            <div class="QueryConditions QueryInput">
+                <div>
+
+                    <el-input clearable size="mini" v-model="styleCodeQuery" placeholder="款式编号"></el-input>
+                    <el-input clearable size="mini" v-model="merchantCodeQuery" placeholder="商家编码"></el-input>
+                    <el-input clearable size="mini" v-model="nameQuery" placeholder="名称"></el-input>
+
+                    <el-select size="mini" clearable v-model="categoryQuery" placeholder="类别">
+                        <el-option
+                                v-for="item in categorySelect"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
+
+                </div>
+
+                <div>
+                    <el-button type="primary" size="mini"
+                               @click="categoryQuery='',nameQuery='',merchantCodeQuery='',styleCodeQuery=''">重置
+                    </el-button>
+
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="PricessQuery()">查询</el-button>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="upBatchIntroduction()">批量引入
+                    </el-button>
+                </div>
+
+            </div>
+
+            <el-table
+                    border
+                    stripe
+                    ref="upmultipleTable"
+                    :data="upProcessList"
+                    highlight-current-row
+                    @selection-change="upMultiplePro"
+            >
+
+                <el-table-column
+                        type="index"
+                        align="center">
+                </el-table-column>
+                <el-table-column
+                        :selectable="selectable"
+                        type="selection"
+                        align="center">
+                </el-table-column>
+                <el-table-column
+                        label="款式编号"
+                        width="200"
+                        prop="styleCode"
+                        align="center">
+                </el-table-column>
+                <el-table-column
+                        label="商家编码"
+                        prop="merchantCode"
+                        align="center">
+                </el-table-column>
+                <el-table-column
+                        prop="name"
+                        label="工艺名称"
+                        align="center">
+                </el-table-column>
+                <el-table-column
+                        label="流程节点"
+                        width="230"
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-tag type="danger" v-for="item in scope.row.processNodeList">
+                            {{item=='weave'?'织造':item=='seamHead'?'缝头':item=='stereoType'?'定型':'包装'}}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+
+                <el-table-column
+                        label="颜色"
+                        prop="colour"
+                        align="center">
+                </el-table-column>
+                <el-table-column
+                        label="品牌"
+                        prop="brand"
+                        align="center">
+                </el-table-column>
+                <el-table-column
+                        label="类别"
+                        prop="category"
+                        width="100"
+                        align="center">
+                </el-table-column>
+
+
+                <el-table-column
+                        label="操作"
+                        align="center"
+                        fixed="right"
+                >
+                    <template slot-scope="scope">
+                        <el-button type="text" @click="upIntroduce(scope.row)" :disabled="scope.row.show">引入
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+            <!--分页-->
+            <el-row>
+                <el-col :span="10" :offset="14">
+                    <el-pagination
+                            background
+                            layout="prev, pager, next"
+                            @current-change="Processlistpag"
+                            :total="totalRecordNum"
+                            :page-size="5"
+                    >
+                    </el-pagination>
+
+
+                    <!---->
+                    <!--<el-pagination-->
+                    <!--@current-change="Processlistpag"-->
+                    <!--:page-size="5"-->
+                    <!--layout="prev, pager, next, jumper"-->
+                    <!--:total="totalRecordNum">-->
+                    <!--</el-pagination>-->
+                </el-col>
+            </el-row>
 
 
         </el-dialog>
@@ -415,7 +682,11 @@
                 technology: [],//工艺流程Value值
 
                 addProduction: false,//新建生产计划单面板
+
+                upaddProduction: false,//修改生产计划单面板
+
                 ProcessIntroduction: false,//工艺引入面板
+                upProcessIntroduction: false,//修改工艺引入面板
                 Settings: false,//显示设置面板
                 /**
                  * 显示设置
@@ -436,7 +707,7 @@
 
                 pageNumQuery: 1,//分页查询默认显示页数
                 ProcessList: [],//工艺单数据
-
+                upProcessList: [],//修改时工艺单数据
                 styleCodeQuery: '',//款式编号
                 merchantCodeQuery: '',//商家编码
                 nameQuery: '',//工艺名称
@@ -462,19 +733,159 @@
                     }
                 ],
                 ScheduleList: [],//新建生产计划单数据
-                MultipleProList:[],//添加时多选工艺单数据（准备添加到数组的数据）
-                addProductionMultipleList:[],//新建生产计划单数据多选
+                MultipleProList: [],//添加时多选工艺单数据（准备添加到数组的数据）
+                addProductionMultipleList: [],//新建生产计划单数据多选
 
+                upScheduleList: {
+                    //修改生产计划单数据
+                    id: '',
+                    producePlanDetailBeanList: []
+                },
+                upMultipleProList: [],//修改时多选工艺单数据（准备添加到数组的数据）
+                upaddProductionMultipleList: [],//修改生产计划单数据多选
+
+                ProdupageNum: 1,//访问页数
+
+                conditionsstyleCode: '',//生产计划单查询（款式编号）
+                conditionproduceCode: '',//生产计划单编号
+                conditionmerchantCode: '',//商家编号
+                conditionName: '',//商品名称
+                conditionprocessNode: [],//工艺流程
+                ProductionList: [],//生产计划单数据
+                typedata: '',//用于储存数据，当表单发生改变时校验
+                upsaveShow: false,//修改生产计划单保存按钮显示控制
+                delID: [],//删除生产计划单ID
             }
         },
 
         methods: {
-            addProductiondata(){
-              //添加生产计划单
-                console.log(this.ScheduleList)
+            closeFun() {
+                //数据修改验证
+                if (this.upScheduleList.producePlanDetailBeanList.length != 0) {
+                    let obj = JSON.stringify(this.upScheduleList)
+                    let state = (obj == this.typedata)
+                    let that = this
+                    if (!state) {
+                        this.$confirm('检测到未保存的内容，是否在离开页面前保存修改？', '确认信息', {
+                            distinguishCancelAndClose: true,
+                            confirmButtonText: '保存',
+                            cancelButtonText: '放弃修改'
+                        })
+                            .then(() => {
+                                that.upaddProductiondata()
+                            })
+
+                    }
+                }
+
+
             },
-            delProdufuns(){
-              //批量移除  新建生产计单 工艺单信息多选
+            delProduction() {
+                //删除生产计划单
+                let that = this
+                this.$confirm('此操作将永久删除该条订单记录, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$axios.post(this.$store.state.deleteproduction, {
+                        uuidList: this.delID
+                    }).then(res => {
+                        if (res.data.code == 200) {
+                            this.$message({
+                                message: '删除成功',
+                                type: 'success',
+                                onClose() {
+                                    that.ProduQueryPage()
+                                    that.upaddProduction = false
+                                }
+                            });
+                        } else {
+                            this.$message.error(res.data.msg);
+                        }
+                    })
+
+
+                })
+            },
+            upProceBtn(data) {
+                //生产计划单修改按钮
+                this.delID.push(data.produceId)//将id赋值.
+                this.upsaveShow = false//显示修改保存按钮
+                this.$axios.get(this.$store.state.basicInformationPro, {
+                    params: {uuid: data.produceId}
+                }).then(res => {
+                    this.upaddProduction = true
+                    this.upScheduleList.producePlanDetailBeanList = res.data.data.producePlanDetailBeanList
+                    this.upScheduleList.id = data.produceId
+                    console.log(this.upScheduleList)
+
+                    this.typedata = JSON.stringify(this.upScheduleList)//将数据转为字符串，进行修改验证
+                })
+            },
+            ProduQueryPage() {
+                //工艺单分页查询
+                this.$axios.get(this.$store.state.ProductionQueryPage, {
+                    params: {
+                        pageSize: 15,
+                        pageNum: this.ProdupageNum,
+                        styleCode: this.conditionsstyleCode,
+                        produceCode: this.conditionproduceCode,
+                        merchantCode: this.conditionmerchantCode,
+                        name: this.conditionName,
+                        processNode: this.conditionprocessNode
+                    }
+                }).then(res => {
+                    this.ProductionList = res.data.list
+                    console.log(res)
+                })
+            },
+            addProductiondata() {
+                //添加生产计划单
+                console.log(this.ScheduleList)
+                let that = this
+                this.$axios.post(this.$store.state.addProduction, {producePlanDetailBeanList: this.ScheduleList}).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '保存成功',
+                            type: 'success',
+                            onClose() {
+                                that.ProduQueryPage()
+                                that.addProduction = false
+                            }
+                        });
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+            },
+
+
+            upaddProductiondata() {
+                //修改生产计划单
+                // producePlanDetailBeanList
+
+                let that = this
+                this.$axios.post(this.$store.state.addProduction, this.upScheduleList).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '保存成功',
+                            type: 'success',
+                            onClose() {
+                                that.typedata = JSON.stringify(that.upScheduleList)
+                                that.ProduQueryPage()
+                                that.upaddProduction = false
+                            }
+                        });
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+
+                console.log(this.upScheduleList)
+            },
+            delProdufuns() {
+                //批量移除  新建生产计单 工艺单信息多选
                 //批量移除原材料信息
                 /**
                  * 1.当匹配到想同数据时，进行删除
@@ -493,10 +904,43 @@
                     })
                 })
             },
-            addProductionMultiple(data){
-              //新建生产计单 工艺单信息多选
-                this.addProductionMultipleList=[]
+            updelProdufuns() {
+                //批量移除  新建生产计单 工艺单信息多选
+                //批量移除原材料信息
+                /**
+                 * 1.当匹配到想同数据时，进行删除
+                 * 2.先将原材料数据全部选中，再取消选中，从而达到刷新效果
+                 * **/
+
+
+                console.log(this.upScheduleList.producePlanDetailBeanList.length)
+                console.log(this.upsaveShow)
+                this.upaddProductionMultipleList.forEach(item => {
+                    this.upScheduleList.producePlanDetailBeanList.forEach(j => {
+                        if (item == j) {
+                            this.upScheduleList.producePlanDetailBeanList[this.upScheduleList.producePlanDetailBeanList.indexOf(item)].show = false
+                            this.upScheduleList.producePlanDetailBeanList.splice(this.upScheduleList.producePlanDetailBeanList.indexOf(item), 1)
+                            // this.$refs.upmultipleTable.toggleRowSelection();
+                            // this.$refs.upmultipleTable.clearSelection();
+                        }
+
+                    })
+                })
+                // upsaveShow
+                if (this.upScheduleList.producePlanDetailBeanList.length == 0) {
+                    //判断要修改的数据，工艺单数据是否为空，为空就无法保存
+                    this.upsaveShow = true
+                }
+            },
+            addProductionMultiple(data) {
+                //新建生产计单 工艺单信息多选
+                this.addProductionMultipleList = []
                 this.addProductionMultipleList = data
+            },
+            upaddProductionMultiple(data) {
+                //新建生产计单 工艺单信息多选
+                this.upaddProductionMultipleList = []
+                this.upaddProductionMultipleList = data
             },
             rmproduction(data) {
                 //移除工艺单信息（单个移除）
@@ -515,19 +959,46 @@
 
 
             },
-            MultiplePro(data){
-                //多选工艺单信息
-                this.MultipleProList=[]
-                this.MultipleProList=data
+            uprmproduction(data) {
+                //移除工艺单信息（单个移除）
+                let index = this.upScheduleList.producePlanDetailBeanList.indexOf(data)
+                delete data.show
+                this.upScheduleList.producePlanDetailBeanList.splice(index, 1)
 
-                console.log( this.MultipleProList)
+                let listArr = this.upProcessList.filter(item => {
+                    return data.styleCode === item.styleCode
+                })
+                listArr.forEach(item => {
+                    item.show = false
+                })
+                // this.$refs.upmultipleTable.toggleRowSelection();
+                // this.$refs.upmultipleTable.clearSelection();
+                if (this.upScheduleList.producePlanDetailBeanList.length == 0) {
+                    //判断要修改的数据，工艺单数据是否为空，为空就无法保存
+                    this.upsaveShow = true
+                }
 
             },
+            MultiplePro(data) {
+                //多选工艺单信息
+                this.MultipleProList = []
+                this.MultipleProList = data
 
-            BatchIntroduction(){
-              //批量引入
+                console.log(this.MultipleProList)
+
+            },
+            upMultiplePro(data) {
+                //修改多选工艺单信息
+                this.upMultipleProList = []
+                this.upMultipleProList = data
+
+                console.log(this.upMultipleProList)
+
+            },
+            //
+            BatchIntroduction() {
+                //批量引入
                 //ScheduleList: [],//新建生产计划单数据
-
 
 
                 this.MultipleProList.forEach(item => {
@@ -544,7 +1015,24 @@
                 this.$refs.multipleTable.clearSelection();
 
 
+            },
+            upBatchIntroduction() {
+                //修改工艺单批量引入
+                //ScheduleList: [],//新建生产计划单数据
 
+
+                this.upMultipleProList.forEach(item => {
+                    if (item.show != true) {
+                        this.upScheduleList.producePlanDetailBeanList.push(item)
+                        item.show = true
+                    } else {
+                        this.$message.error('同一条记录无法重复添加哦！');
+                    }
+
+                })
+
+                //取消选中状态
+                this.$refs.upmultipleTable.clearSelection();
 
 
             },
@@ -561,10 +1049,20 @@
                 data.show = true
                 this.ScheduleList.push(data)
             },
+            upIntroduce(data) {
+                //修改工艺信息引入(单个)
+                data.show = true
+                this.upScheduleList.producePlanDetailBeanList.push(data)
+            },
             addProductionBtn() {
                 //新建生产计划单
                 this.addProduction = true
 
+            },
+            upProcessIntroductionBtn() {
+                //工艺信息引入按钮
+                this.upProcessIntroduction = true
+                this.PricessQuery()//工艺单信息查询
             },
             ProcessIntroductionBtn() {
                 //工艺信息引入按钮
@@ -590,6 +1088,7 @@
                     }
                 }).then(res => {
                     this.ProcessList = res.data.list
+                    this.upProcessList = res.data.list
                     this.totalRecordNum = res.data.totalRecord
 
 
@@ -609,8 +1108,28 @@
                         item.show = true
                     })
 
+
+                    /**
+                     * 修改部分
+                     * */
+                    let upmaterArr = this.upProcessList
+                    let upmArr = this.upScheduleList.producePlanDetailBeanList
+                    let upitems = []
+                    upmArr.forEach(item => {
+                        items.push(item.styleCode)
+                    })
+                    let uplist = materArr.filter(item => {
+                        return items.indexOf(item.styleCode) != -1
+                    });
+                    uplist.forEach(item => {
+                        item.show = true
+                    })
+
                 })
             },
+        },
+        created: function () {
+            this.ProduQueryPage()//生产计划单分页查询
         }
 
 
@@ -621,7 +1140,8 @@
     .el-select, .el-input {
         width: 500px
     }
-    .btnBox{
+
+    .btnBox {
         text-align: right;
         margin-top: 0.5em;
     }
