@@ -75,6 +75,8 @@ export default new Vuex.Store({
         basicInformationPro:'http://192.168.2.112:8099/supplychain/produceplan/select',//查询生产计划单基本信息
         deleteproduction:'http://192.168.2.112:8099/supplychain/produceplan/delete',//删除生产计划单
 
+        factTechno:'http://192.168.1.199:8099/supplychain/factory/selectByTechnology',//根据职能查询工厂信息
+
 },
     mutations: {},
     actions: {}

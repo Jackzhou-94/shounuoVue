@@ -15,11 +15,6 @@
 
             </div>
             <div class=" QueryConditions QueryInput">
-                <!--conditionsstyleCode:'',//生产计划单查询（款式编号）-->
-                <!--conditionproduceCode:'',//生产计划单编号-->
-                <!--conditionmerchantCode:'',//商家编号-->
-                <!--conditionName:'',//商品名称-->
-                <!--conditionprocessNode:[],//工艺流程-->
                 <div>
                     <el-input size="mini" clearable v-model="conditionproduceCode" placeholder="生产计划单编号"></el-input>
                     <el-input size="mini" clearable v-model="conditionsstyleCode" placeholder="款式编号"></el-input>
@@ -40,12 +35,12 @@
 
                 <div>
                     <el-button type="primary" size="mini"
-                               @click="queryspare01='',queryname='',querycompany=''">
+                               @click="conditionproduceCode='',conditionsstyleCode='',conditionmerchantCode='',conditionName='',conditionprocessNode=[]">
                         重置
                     </el-button>
 
                     <el-button type="primary" size="mini" icon="el-icon-search"
-                               @click="factoryquery()">查询
+                               @click="ProduQueryPage()">查询
                     </el-button>
                 </div>
             </div>
@@ -65,7 +60,7 @@
                              width="170px"></el-table-column>
             <el-table-column align="center" v-if="MerchantNumberShow" label="商家编号" prop="merchantCode"
                              width="160px"></el-table-column>
-            <el-table-column align="center" v-if="MerchantNameShow" label="商品名称" prop="name"></el-table-column>
+            <el-table-column align="center" v-if="MerchantNameShow" label="商品名称" prop="goodsName"></el-table-column>
             <el-table-column align="center" v-if="specificationsShow" label="规格(颜色)" prop="colour"
                              width="100px"></el-table-column>
             <el-table-column align="center" v-if="NumberShow" label="数量" prop="craftNumber"></el-table-column>
@@ -76,6 +71,7 @@
             <el-table-column
                     label="工艺流程"
                     width="230"
+                    v-if="processShow"
                     align="center">
                 <template slot-scope="scope">
                     <el-tag type="danger" v-for="item in scope.row.processNodeList">
@@ -96,6 +92,17 @@
                 </template>
             </el-table-column>
         </el-table>
+        <!--分页-->
+        <el-row>
+            <el-col :span="10" :offset="14">
+                <el-pagination
+                        @current-change="productionpag"
+                        :page-size="15"
+                        layout="prev, pager, next, jumper"
+                        :total="totalRecordNum">
+                </el-pagination>
+            </el-col>
+        </el-row>
         <!--显示设置-->
         <el-dialog
                 title="显示设置"
@@ -662,21 +669,21 @@
                     //工艺流程
                     {
                         label: '织造',
-                        value: '织造'
+                        value: 'weave'
                     },
                     {
                         label: '缝头',
-                        value: '缝头'
+                        value: 'seamHead'
                     }
                     ,
                     {
                         label: '定型',
-                        value: '定型'
+                        value: 'stereoType'
                     }
                     ,
                     {
                         label: '包装',
-                        value: '包装'
+                        value: 'pack'
                     }
                 ],
                 technology: [],//工艺流程Value值
@@ -755,10 +762,16 @@
                 typedata: '',//用于储存数据，当表单发生改变时校验
                 upsaveShow: false,//修改生产计划单保存按钮显示控制
                 delID: [],//删除生产计划单ID
+                str: '',//生产计划单 工艺查询将数组转字符串
             }
         },
 
         methods: {
+            productionpag(val) {
+                //工艺单信息分页
+                this.pageNumQuery = val
+                this.ProduQueryPage()
+            },
             closeFun() {
                 //数据修改验证
                 if (this.upScheduleList.producePlanDetailBeanList.length != 0) {
@@ -824,7 +837,15 @@
                 })
             },
             ProduQueryPage() {
-                //工艺单分页查询
+                //生产计划单分页查询
+
+                this.str = ''//流程查询，将数组转拼接成字符串
+                this.conditionprocessNode.forEach(item => {
+                    this.str += item + ','
+                })
+                this.str = this.str.substring(0, this.str.length - 1)
+
+
                 this.$axios.get(this.$store.state.ProductionQueryPage, {
                     params: {
                         pageSize: 15,
@@ -833,10 +854,11 @@
                         produceCode: this.conditionproduceCode,
                         merchantCode: this.conditionmerchantCode,
                         name: this.conditionName,
-                        processNode: this.conditionprocessNode
+                        processNode: this.str
                     }
                 }).then(res => {
                     this.ProductionList = res.data.list
+                    this.totalRecordNum=res.data.totalRecord
                     console.log(res)
                 })
             },

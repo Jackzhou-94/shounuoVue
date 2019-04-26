@@ -75,7 +75,17 @@
                         width="100"
                 >
                 </el-table-column>
-
+                <el-table-column
+                        label="工厂职能"
+                        v-if="functionShow"
+                        width="230"
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-tag type="danger" v-for="item in scope.row.technologys">
+                            {{item}}
+                        </el-tag>
+                    </template>
+                </el-table-column>
                 <el-table-column
                         align="center"
                         prop="address"
@@ -211,6 +221,10 @@
                 </el-row>
 
                 <el-row>
+
+                    <el-col :span="8">
+                        <el-checkbox v-model=" functionShow">工厂职能</el-checkbox>
+                    </el-col>
                     <el-col :span="8">
                         <el-checkbox v-model=" remarkShow">备注</el-checkbox>
                     </el-col>
@@ -534,6 +548,7 @@
                  * **/
                 nameShow: true,//名称
                 codeShow: true,//编码
+                functionShow:true,//工厂职能
                 addressShow: true,//城市
                 detailedAddressShow: true,//详细地址
                 companyShow: true,//所属公司
@@ -633,6 +648,7 @@
                 });
             },
             upfactoryspanel(data) {
+                console.log(data)
                 //打开修改信息面板
                 this.upfactory = true
                 this.upfactoryForm = data
