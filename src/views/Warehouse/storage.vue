@@ -32,6 +32,25 @@
                             :value="item.value">
                     </el-option>
                 </el-select>
+
+                <el-select v-model="submits" size="mini" placeholder="提交状态">
+                    <el-option
+                            v-for="item in submitStatusQuery"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                    </el-option>
+                </el-select>
+                <el-select v-model="audits" size="mini" placeholder="审核状态">
+                    <el-option
+                            v-for="item in auditStatusQuery"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                    </el-option>
+                </el-select>
+
+
                 <el-input size="mini" style="width: 200px" placeholder="入库单号" clearable
                           v-model="oddNumber"></el-input>
             </div>
@@ -1529,8 +1548,6 @@
                     freightShare: '',//运费分摊
                     remark: '',//备注
                     goodsList: [],//数据详情
-
-
                 },
                 rules: {
                     //入库单表单验证
@@ -1585,6 +1602,34 @@
                     ]
 
                 },
+                submits:'',//提交状态
+                audits:'',//审核状态
+                submitStatusQuery:[
+                  //提交状态
+                    {
+                        value:'tj01',
+                        label:'已提交'
+                    }  ,
+                    {
+                        value:'tj02',
+                        label:'未提交'
+                    }
+                ],
+                auditStatusQuery:[
+                    //审核状态
+                    {
+                        value:'sh01',
+                        label:'已审核'
+                    }  ,
+                    {
+                        value:'sh02',
+                        label:'未审核'
+                    },
+                    {
+                        value:'sh03',
+                        label:'已拒绝'
+                    }
+                ],
                 category: [
                     //入库类别
                     {
@@ -2342,7 +2387,8 @@
                         pageSize: 15,
                         pageNum: this.storageQueryPageNum,
                         factoryName: this.factoryName,
-                        category: this.categorys, oddNumber: this.oddNumber
+                        category: this.categorys, oddNumber: this.oddNumber,
+                        submitStatus:this.submits,auditStatus:this.audits
                     }
                 }).then(res => {
                     console.log(res)

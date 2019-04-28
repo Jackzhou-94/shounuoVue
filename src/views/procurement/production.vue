@@ -313,16 +313,27 @@
 
         </el-dialog>
 
-        <!--新建工艺单面板-->
+        <!--新建生产计划单面板-->
         <el-dialog
-                title="新建工艺单"
+                title="新建生产计划单"
                 :visible.sync="addProduction"
                 :show-close="false"
                 width="1100px">
             <div class="QueryConditions">
                 <el-button size="mini" type="primary" @click="ProcessIntroductionBtn">工艺信息引入</el-button>
                 <el-button size="mini" type="primary" @click="delProdufuns">批量移除</el-button>
-
+                <el-date-picker
+                        style="margin-left: 0.5em"
+                        v-model="value2"
+                        size="mini"
+                        type="datetimerange"
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                        :picker-options="pickerOptions"
+                        range-separator="至"
+                        start-placeholder="预加工时间"
+                        end-placeholder="预完工时间"
+                        align="right">
+                </el-date-picker>
 
             </div>
             <el-table
@@ -415,9 +426,9 @@
         </el-dialog>
 
 
-        <!--修改工艺单面板-->
+        <!--修改生产计划单面板-->
         <el-dialog
-                title="修改工艺单"
+                title="修改生产计划单"
                 :visible.sync="upaddProduction"
                 @closed="closeFun"
                 :show-close="false"
@@ -425,7 +436,19 @@
             <div class="QueryConditions">
                 <el-button size="mini" type="primary" @click="upProcessIntroductionBtn">工艺信息引入</el-button>
                 <el-button size="mini" type="primary" @click="updelProdufuns">批量移除</el-button>
-
+                <el-date-picker
+                        style="margin-left: 0.5em"
+                        v-model="upTime"
+                        size="mini"
+                        @change="upTimeFun"
+                        type="datetimerange"
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                        :picker-options="pickerOptions"
+                        range-separator="至"
+                        start-placeholder="预加工时间"
+                        end-placeholder="预完工时间"
+                        align="right">
+                </el-date-picker>
             </div>
             <el-table
                     border
@@ -665,6 +688,37 @@
         name: "production",
         data() {
             return {
+                //时间选择
+                pickerOptions: {
+                    shortcuts: [{
+                        text: '最近一周',
+                        onClick(picker) {
+                            const end = new Date();
+                            const start = new Date();
+                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }, {
+                        text: '最近一个月',
+                        onClick(picker) {
+                            const end = new Date();
+                            const start = new Date();
+                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }, {
+                        text: '最近三个月',
+                        onClick(picker) {
+                            const end = new Date();
+                            const start = new Date();
+                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }]
+                },
+                value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
+                value2: '',
+                upTime: [],//修改计划单时间
                 ProcessFunction: [
                     //工艺流程
                     {
@@ -746,7 +800,9 @@
                 upScheduleList: {
                     //修改生产计划单数据
                     id: '',
-                    producePlanDetailBeanList: []
+                    producePlanDetailBeanList: [],
+                    expectProcessTime: '',//预计加工时间
+                    expectCompleteTime: '',//预计完工时间
                 },
                 upMultipleProList: [],//修改时多选工艺单数据（准备添加到数组的数据）
                 upaddProductionMultipleList: [],//修改生产计划单数据多选
@@ -767,14 +823,22 @@
         },
 
         methods: {
+            upTimeFun() {
+                //修改生产计划单时，时间选择控件值发生变化时回调
+                this.upScheduleList.expectProcessTime = this.upTime[0]
+                this.upScheduleList.expectCompleteTime = this.upTime[1]
+            },
             productionpag(val) {
                 //工艺单信息分页
+
                 this.pageNumQuery = val
                 this.ProduQueryPage()
             },
             closeFun() {
                 //数据修改验证
+
                 if (this.upScheduleList.producePlanDetailBeanList.length != 0) {
+
                     let obj = JSON.stringify(this.upScheduleList)
                     let state = (obj == this.typedata)
                     let that = this
@@ -831,7 +895,11 @@
                     this.upaddProduction = true
                     this.upScheduleList.producePlanDetailBeanList = res.data.data.producePlanDetailBeanList
                     this.upScheduleList.id = data.produceId
-                    console.log(this.upScheduleList)
+                    this.upScheduleList.expectProcessTime=res.data.data.expectProcessTime//预计加工时间
+                    this.upScheduleList.expectCompleteTime=res.data.data.expectCompleteTime//预计完工时间
+
+                    this.upTime.push(res.data.data.expectProcessTime)//预计加工时间控件绑定值
+                    this.upTime.push(res.data.data.expectCompleteTime)//预计完工时间绑定值
 
                     this.typedata = JSON.stringify(this.upScheduleList)//将数据转为字符串，进行修改验证
                 })
@@ -849,7 +917,7 @@
                 this.$axios.get(this.$store.state.ProductionQueryPage, {
                     params: {
                         pageSize: 15,
-                        pageNum: this.ProdupageNum,
+                        pageNum: this.pageNumQuery,
                         styleCode: this.conditionsstyleCode,
                         produceCode: this.conditionproduceCode,
                         merchantCode: this.conditionmerchantCode,
@@ -858,34 +926,45 @@
                     }
                 }).then(res => {
                     this.ProductionList = res.data.list
-                    this.totalRecordNum=res.data.totalRecord
+                    this.totalRecordNum = res.data.totalRecord
                     console.log(res)
                 })
             },
             addProductiondata() {
                 //添加生产计划单
-                console.log(this.ScheduleList)
-                let that = this
-                this.$axios.post(this.$store.state.addProduction, {producePlanDetailBeanList: this.ScheduleList}).then(res => {
-                    if (res.data.code == 200) {
-                        this.$message({
-                            message: '保存成功',
-                            type: 'success',
-                            onClose() {
-                                that.ProduQueryPage()
-                                that.addProduction = false
-                            }
-                        });
-                    } else {
-                        this.$message.error(res.data.msg);
-                    }
-                })
+
+                let a = {
+                    producePlanDetailBeanList: this.ScheduleList,
+                    expectProcessTime: this.value2[0],
+                    expectCompleteTime: this.value2[1]
+                }
+
+                if (a.producePlanDetailBeanList.length == 0 || a.expectProcessTime == '' || a.expectCompleteTime == '') {
+                    this.$message.error('信息填写不完全');
+                } else {
+                    let that = this
+                    this.$axios.post(this.$store.state.addProduction, a).then(res => {
+                        if (res.data.code == 200) {
+                            this.$message({
+                                message: '保存成功',
+                                type: 'success',
+                                onClose() {
+                                    that.ProduQueryPage()
+                                    that.addProduction = false
+                                }
+                            });
+                        } else {
+                            this.$message.error(res.data.msg);
+                        }
+                    })
+                }
+
             },
 
 
             upaddProductiondata() {
                 //修改生产计划单
-                // producePlanDetailBeanList
+
 
                 let that = this
                 this.$axios.post(this.$store.state.addProduction, this.upScheduleList).then(res => {

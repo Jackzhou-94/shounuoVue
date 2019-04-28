@@ -82,7 +82,7 @@
                         align="center">
                     <template slot-scope="scope">
                         <el-tag type="danger" v-for="item in scope.row.technologys">
-                            {{item}}
+                            {{item=='weave'?'织造':item=='seamHead'?'缝头':item=='stereoType'?'定型':'包装'}}
                         </el-tag>
                     </template>
                 </el-table-column>
@@ -457,21 +457,21 @@
                     //工艺职能
                     {
                         label: '织造',
-                        value: '织造'
+                        value: 'weave'
                     },
                     {
                         label: '缝头',
-                        value: '缝头'
+                        value: 'seamHead'
                     }
                     ,
                     {
                         label: '定型',
-                        value: '定型'
+                        value: 'stereoType'
                     }
                     ,
                     {
                         label: '包装',
-                        value: '包装'
+                        value: 'pack'
                     }
                 ],
                 addfactoryForm: {

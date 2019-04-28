@@ -5,8 +5,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-        login: 'http://192.168.2.112:8099/supplychain/operator/login',//登录
-        upPassWord:'http://192.168.2.112:8099/supplychain/operator/updatePassword',//修改密码
+        login: 'http://192.168.1.131:8099/supplychain/operator/login',//登录
+        upPassWord:'http://192.168.1.131:8099/supplychain/operator/updatePassword',//修改密码
 
         addmaterial: 'http://192.168.1.199:8099/supplychain/materialmessage/save',//添加原材料
         upmaterial: 'http://192.168.1.199:8099/supplychain/materialmessage/update',//修改原材料
@@ -66,16 +66,20 @@ export default new Vuex.Store({
         stockQuery: 'http://192.168.1.199:8099/supplychain/warehouse/stock/material/queryPage',//库存分页查询
 
         AddPricess:'http://192.168.2.112:8099/supplychain/craft/save',//工艺单保存接口
-        PricessQueryPage:'http://192.168.2.112:8099/supplychain/craft/list',//工艺单分页查询接口
-        PricessDetails:'http://192.168.2.112:8099/supplychain/craft/select',//工艺单详情数据
-        delProce:'http://192.168.2.112:8099/supplychain/craft/delete',//删除工艺单信息
+        PricessQueryPage:'http://192.168.1.131:8099/supplychain/craft/list',//工艺单分页查询接口
+        PricessDetails:'http://192.168.1.131:8099/supplychain/craft/select',//工艺单详情数据
+        delProce:'http://192.168.1.131:8099/supplychain/craft/delete',//删除工艺单信息
 
-        addProduction:'http://192.168.2.112:8099/supplychain/produceplan/save',//保存生产计划单
-        ProductionQueryPage:'http://192.168.2.112:8099/supplychain/produceplan/list',//生产计划单分页查询
-        basicInformationPro:'http://192.168.2.112:8099/supplychain/produceplan/select',//查询生产计划单基本信息
+        addProduction:'http://192.168.1.131:8099/supplychain/produceplan/save',//保存生产计划单
+        ProductionQueryPage:'http://192.168.1.131:8099/supplychain/produceplan/list',//生产计划单分页查询
+        basicInformationPro:'http://192.168.1.131:8099/supplychain/produceplan/select',//查询生产计划单基本信息
         deleteproduction:'http://192.168.2.112:8099/supplychain/produceplan/delete',//删除生产计划单
 
         factTechno:'http://192.168.1.199:8099/supplychain/factory/selectByTechnology',//根据职能查询工厂信息
+
+        addDispatch:'http://192.168.1.131:8099/supplychain/dispatch/add',//新增派工单
+        dispatchPage:'http://192.168.1.131:8099/supplychain/dispatch/list',//派工单分页查询
+        delFaDisp:'http://192.168.1.131:8099/supplychain/dispatch/delete',//删除派工单
 
 },
     mutations: {},
