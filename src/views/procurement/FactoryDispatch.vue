@@ -5,12 +5,12 @@
                 <el-button size="mini" type="primary" class="el-icon-plus" @click="addfactoryDispath=true">新建
                 </el-button>
                 <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
-                <el-button size="mini" type="primary" :disabled="auditStatusBut" >提交审核</el-button>
+                <el-button size="mini" type="primary" :disabled="auditStatusBut">提交审核</el-button>
                 <el-button size="mini" type="primary" :disabled="submitStatusBut">审核通过
                 </el-button>
-                <el-button size="mini" type="primary" :disabled="submitStatusBut" >审核驳回
+                <el-button size="mini" type="primary" :disabled="submitStatusBut">审核驳回
                 </el-button>
-                <el-button size="mini" type="danger" :disabled="delStatusBut" @click="delFactory" >批量删除</el-button>
+                <el-button size="mini" type="danger" :disabled="delStatusBut" @click="delFactory">批量删除</el-button>
             </div>
             <div class=" QueryConditions QueryInput">
                 <div>
@@ -20,14 +20,14 @@
 
                     <el-input size="mini" placeholder="生产计划单编号" v-model="produceCode"></el-input>
                     <div class="produ">
-                    <el-select clearable placeholder="工艺流程" multiple size="mini" v-model="processNodeList">
-                        <el-option
-                                v-for="item in ProcessFunction"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                        </el-option>
-                    </el-select>
+                        <el-select clearable placeholder="工艺流程" multiple size="mini" v-model="processNodeList">
+                            <el-option
+                                    v-for="item in ProcessFunction"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                            </el-option>
+                        </el-select>
                     </div>
 
 
@@ -37,7 +37,8 @@
                                @click="dispatchCode='',factoryName='',processNode='',produceCode=''">重置
                     </el-button>
 
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="dispatchPageQuery()">查询</el-button>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="dispatchPageQuery()">查询
+                    </el-button>
                 </div>
             </div>
         </div>
@@ -56,10 +57,10 @@
             <el-table-column label="工厂" v-if="factoryShow" prop="factoryName" align="center"></el-table-column>
             <!--<el-table-column label="工艺" v-if="TechnologyShow" prop="processNode" align="center">-->
 
-                <!--<template slot-scope="scope">-->
+            <!--<template slot-scope="scope">-->
 
-                    <!--{{scope.row.processNode}}-->
-                <!--</template>-->
+            <!--{{scope.row.processNode}}-->
+            <!--</template>-->
 
 
             <!--</el-table-column>-->
@@ -100,12 +101,17 @@
             </el-table-column>
 
 
-
             <el-table-column label="单位" v-if="uintShow" align="center" prop="goodsUnit"></el-table-column>
             <el-table-column label="派工人员" v-if="DispatchedWorkerShow" prop="dispatchWorker"
                              align="center"></el-table-column>
             <el-table-column label="审批人" v-if="ApproverShow" prop="approver" align="center"></el-table-column>
             <el-table-column label="备注" v-if="RemarksShow" prop="remark" align="center"></el-table-column>
+            <el-table-column label="操作" width="100" align="center" fixed="right">
+                <template slot-scope="scope">
+                    <!--<el-button size="mini" type="text">修改</el-button>-->
+                    <el-button size="mini" type="text" @click="delFadis(scope.row)">删除</el-button>
+                </template>
+            </el-table-column>
         </el-table>
         <!--分页-->
         <el-row>
@@ -173,7 +179,32 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <el-divider content-position="left">工艺流程详情</el-divider>
+            <el-table
+                    :data="Processdetails"
+                    border
+                    stripe
+            >
 
+                <el-table-column
+                        align="center"
+                        prop="process"
+                        label="工艺详情">
+                    <template slot-scope="scope">
+
+                        {{scope.row.processNode=='weave'?'织造':scope.row.processNode=='seamHead'?'缝头':scope.row.processNode=='stereoType'?'定型':'包装'}}
+
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="factoryName"
+                        label="派工工厂"
+                >
+                </el-table-column>
+
+
+            </el-table>
             <div style="margin-top: 0.5em">
                 <el-button size="mini" type="primary" @click="addFactoryDispatch">保存</el-button>
                 <el-button size="mini" type="primary" @click="addfactoryDispath=false">取消</el-button>
@@ -545,8 +576,8 @@
                 PreprocessingShow: true,//预加工时间
                 PrecompletionShow: true,//预完工时间
                 ProcessingQuantityShow: true,//加工数量
-                submitShow:true,//提交状态
-                auditShow:true,//审核状态
+                submitShow: true,//提交状态
+                auditShow: true,//审核状态
                 uintShow: true,//单位
                 ApproverShow: true,//审批人
                 DispatchedWorkerShow: true,//派工人员
@@ -668,41 +699,47 @@
                  * */
                 FaDidsList: [],//派工单数据
                 pageNum: 1,//默认查询页数
-                str:'',
+                str: '',
                 dispatchCode: '',//派工单编号
                 factoryName: '',//工厂名称
                 processNodeList: [],//工艺
                 produceCode: '',//生产计划单编号
 
-                uuidList:[],//删除IDs
+                uuidList: [],//删除IDs
             }
         },
         methods: {
-            delFactory(){
-              //删除派工单
-                let that=this
-              this.$axios.post(this.$store.state.delFaDisp,{
-                  uuidList:this.uuidList
-              }).then(res=>{
-                  if (res.data.code == 200) {
-                      this.$message({
-                          message: '删除成功',
-                          type: 'success',
-                          onClose() {
-                              that.dispatchPageQuery()//分页(原材料)
+            delFadis(data) {
+                //单条删除派工单
+                this.uuidList = []
+                this.uuidList.push(data.uuid)
+                this.delFactory()
+            },
+            delFactory() {
+                //删除派工单
+                let that = this
+                this.$axios.post(this.$store.state.delFaDisp, {
+                    uuidList: this.uuidList
+                }).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '删除成功',
+                            type: 'success',
+                            onClose() {
+                                that.dispatchPageQuery()//分页(原材料)
 
-                          }
-                      });
-                  } else {
-                      this.$message.error(res.data.msg);
-                  }
-              })
+                            }
+                        });
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
             },
             Multipleselection(data) {
                 //派工单多选
                 console.log(data)
-                this.uuidList.length=0
-                data.forEach(item=>{
+                this.uuidList.length = 0
+                data.forEach(item => {
                     this.uuidList.push(item.uuid)
                 })
 
@@ -745,9 +782,13 @@
                 this.dispatchPageQuery()//派工单分页查询
             },
             addFactoryDispatch() {
-                let that=this
+                let that = this
                 //确认添加派工单按钮
-                if (this.addFactoryData.productionList.length == 0 || this.addFactoryData.dispatchedDetailList.length == 0) {
+
+                let state = this.addFactoryData.dispatchedDetailList.every(item => {
+                    return item.factoryName != ''
+                })
+                if (this.addFactoryData.productionList.length == 0 || this.addFactoryData.dispatchedDetailList.length == 0 || !state) {
                     this.$message.error('信息填写不完善！');
                 } else {
                     this.$axios.post(this.$store.state.addDispatch, this.addFactoryData).then(res => {
@@ -860,13 +901,17 @@
                 })
 
                 //Processdetails该条派工单需要的工艺流程信息
-                this.Processdetails.length = 0
+                // this.Processdetails.length = 0
                 process.forEach((item, index) => {
                     let details = {
                         processNode: item,
                         factoryName: ''
                     }
-                    this.Processdetails.push(details)
+
+                    if (this.Processdetails.length < process.length) {
+                        this.Processdetails.push(details)
+                    }
+
 
                 })
                 // console.log(process)
@@ -885,8 +930,9 @@
                 if (this.addFactoryData.productionList.length != 0) {
                     this.DispatchingSetBut = false
                 }
-                // DispatchingSetBut
-                console.log(data)
+                this.Processdetails.length = 0 //引入时将工艺流程详情清空
+
+
             },
             ImportProduction() {
                 //引入生产计划单按钮

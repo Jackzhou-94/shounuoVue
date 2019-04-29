@@ -76,6 +76,21 @@ export default new Router({
                     path: '/FactoryDispatch',
                     name: 'FactoryDispatch',
                     component: require('./views/procurement/FactoryDispatch').default,
+                }, {
+                    //生产日志
+                    path: '/ProductionLog',
+                    name: 'ProductionLog',
+                    component: require('./views/ProductionManagement/ProductionLog').default,
+                }, {
+                    //半成品发货
+                    path: '/deliveryProducts',
+                    name: 'deliveryProducts',
+                    component: require('./views/ProductionManagement/deliveryProducts').default,
+                }, {
+                    //半成品入库
+                    path: '/storageProducts',
+                    name: 'storageProducts',
+                    component: require('./views/ProductionManagement/storageProducts').default,
                 }
             ]
         }

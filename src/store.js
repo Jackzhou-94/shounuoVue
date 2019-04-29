@@ -81,6 +81,15 @@ export default new Vuex.Store({
         dispatchPage:'http://192.168.1.131:8099/supplychain/dispatch/list',//派工单分页查询
         delFaDisp:'http://192.168.1.131:8099/supplychain/dispatch/delete',//删除派工单
 
+        addproducelog:'http://192.168.1.199:8099/supplychain/producelog/save',//新增生产日志
+        producelogQueryPage:'http://192.168.1.199:8099/supplychain/producelog/list',//生产日志分页查询
+
+        addDelivProucts:'http://192.168.1.131:8099/supplychain/sendgoods/add',//半成品发货添加
+        upDelivProucts:'http://192.168.1.131:8099/supplychain/sendgoods/save',//修改半成品发货
+        selectSendgoods:'http://192.168.1.131:8099/supplychain/sendgoods/select',//根据id查询基本信息
+        sendgoodsQueryPage:'http://192.168.1.131:8099/supplychain/sendgoods/list',//半成品发货分页查询
+        deleteSendgoods:'http://192.168.1.131:8099/supplychain/sendgoods/delete',//半成品发货单删除
+
 },
     mutations: {},
     actions: {}
