@@ -177,7 +177,7 @@
 
                 <div style="display: flex;flex-wrap: nowrap;justify-content: space-between">
                     <el-form-item label="预计发货总量" prop="expectSendGoodsTotal">
-                        <el-input   v-model="addProduData.expectSendGoodsTotal"></el-input>
+                        <el-input onkeyup="value=value.replace(/[^\d]/g,'')"  v-model="addProduData.expectSendGoodsTotal"></el-input>
                     </el-form-item>
                     <el-form-item label="实际发货总量" prop="actualSendGoodsQuantity">
                         <el-input onkeyup="value=value.replace(/[^\d]/g,'')"  v-model="addProduData.actualSendGoodsQuantity"></el-input>

@@ -887,6 +887,8 @@
             },
             upProceBtn(data) {
                 //生产计划单修改按钮
+
+
                 this.delID.push(data.produceId)//将id赋值.
                 this.upsaveShow = false//显示修改保存按钮
                 this.$axios.get(this.$store.state.basicInformationPro, {
@@ -898,9 +900,13 @@
                     this.upScheduleList.expectProcessTime=res.data.data.expectProcessTime//预计加工时间
                     this.upScheduleList.expectCompleteTime=res.data.data.expectCompleteTime//预计完工时间
 
-                    this.upTime.push(res.data.data.expectProcessTime)//预计加工时间控件绑定值
-                    this.upTime.push(res.data.data.expectCompleteTime)//预计完工时间绑定值
 
+                    if(res.data.data.expectProcessTime!=null&&res.data.data.expectCompleteTime!=null){
+                        this.upTime.push(res.data.data.expectProcessTime)//预计加工时间控件绑定值
+                        this.upTime.push(res.data.data.expectCompleteTime)//预计完工时间绑定值
+                    }
+
+                    console.log(res.data)
                     this.typedata = JSON.stringify(this.upScheduleList)//将数据转为字符串，进行修改验证
                 })
             },
