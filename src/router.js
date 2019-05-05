@@ -26,11 +26,24 @@ export default new Router({
                     component: require('./views/components/chartPage').default
                 },
                 {
+                    //操作员设置
+                    path:'/operator',
+                    name:'operator',
+                    component:require('./views/SystemSettings/operator').default
+                },
+                {
                     // 生产计划单
                     path: '/production',
                     name: 'production',
                     component: require('./views/procurement/production').default,
-                }, {
+                },
+                {
+                    // 生产计划单明细
+                    path:'/productionDetail',
+                    name:'productionDetail',
+                    component:require('./views/procurement/productionDetail').default,
+                },
+                {
                     //原材料信息
                     path: '/materials',
                     name: 'materials',

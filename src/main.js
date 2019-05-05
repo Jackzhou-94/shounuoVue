@@ -14,6 +14,7 @@ import md5 from 'js-md5'
 import VCharts from 'v-charts'
 
 Vue.prototype.$md5 = md5
+axios.defaults.withCredentials = true; //意思是携带cookie信息,保持session的一致性
 Vue.prototype.$axios = axios
 require('./assets/icon/iconfont')
 
@@ -24,15 +25,17 @@ Vue.use(VCharts)
 Vue.config.productionTip = false
 
 // axios.defaults.timeout = 10;//全局请求超时
+
+
 /**
  * 请求拦截
  * */
 axios.interceptors.request.use(
     config => {
-        let token = VueCookies.get('token')
-        if (token != null) {
-            config.headers['token'] = token
-        }
+        // let token = VueCookies.get('token')
+        // if (token != null) {
+        //     config.headers['token'] = token
+        // }
 
         // const loading = this.$loading({
         //     lock: true,

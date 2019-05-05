@@ -5,8 +5,13 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-        login: 'http://192.168.1.199:8099/supplychain/operator/login',//登录
-        upPassWord:'http://192.168.1.199:8099/supplychain/operator/updatePassword',//修改密码
+        getImage:'http://192.168.2.241:8099/supplychain/verify/getImage',//图片验证码
+        login: 'http://192.168.2.241:8099/supplychain/operator/login',//登录
+        upPassWord:'http://192.168.2.241:8099/supplychain/operator/updatePassword',//修改密码
+        addSaveOperator:'http://192.168.2.241:8099/supplychain/operator/saveOperator',//新增操作员
+        OperatorQueryPages:'http://192.168.2.241:8099/supplychain/operator/getListPage',//操作员分页查询
+        resetPassword:'http://192.168.2.241:8099/supplychain/operator/resetPassword',//批量重置密码
+
 
         addmaterial: 'http://192.168.1.199:8099/supplychain/materialmessage/save',//添加原材料
         upmaterial: 'http://192.168.1.199:8099/supplychain/materialmessage/update',//修改原材料
@@ -73,7 +78,7 @@ export default new Vuex.Store({
         addProduction:'http://192.168.1.199:8099/supplychain/produceplan/save',//保存生产计划单
         ProductionQueryPage:'http://192.168.1.199:8099/supplychain/produceplan/list',//生产计划单分页查询
         basicInformationPro:'http://192.168.1.199:8099/supplychain/produceplan/select',//查询生产计划单基本信息
-        deleteproduction:'http://192.168.2.112:8099/supplychain/produceplan/delete',//删除生产计划单
+        deleteproduction:'http://192.168.1.199:8099/supplychain/produceplan/delete',//删除生产计划单
 
         factTechno:'http://192.168.1.199:8099/supplychain/factory/selectByTechnology',//根据职能查询工厂信息
 
@@ -93,11 +98,11 @@ export default new Vuex.Store({
         deleteSendgoods:'http://192.168.1.199:8099/supplychain/sendgoods/delete',//半成品发货单删除
 
 
-        addStockin:'http://192.168.2.241:8099/supplychain/stockin/add',//半成品入库新增
-        stockinQuery:'http://192.168.2.241:8099/supplychain/stockin/list',//半成品入库分页查询
-        selectstockin:'http://192.168.2.241:8099/supplychain/stockin/select',//根据id查询入库基本信息
-        upselectstockin:'http://192.168.2.241:8099/supplychain/stockin/save',//修改入库基本信息
-        delStockin:'http://192.168.2.241:8099/supplychain/stockin/delete',//半成品入库单删除
+        addStockin:'http://192.168.1.199:8099/supplychain/stockin/add',//半成品入库新增
+        stockinQuery:'http://192.168.1.199:8099/supplychain/stockin/list',//半成品入库分页查询
+        selectstockin:'http://192.168.1.199:8099/supplychain/stockin/select',//根据id查询入库基本信息
+        upselectstockin:'http://192.168.1.199:8099/supplychain/stockin/save',//修改入库基本信息
+        delStockin:'http://192.168.1.199:8099/supplychain/stockin/delete',//半成品入库单删除
 
 },
     mutations: {},
