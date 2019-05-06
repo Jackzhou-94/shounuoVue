@@ -8,9 +8,11 @@ export default new Vuex.Store({
         getImage:'http://192.168.2.241:8099/supplychain/verify/getImage',//图片验证码
         login: 'http://192.168.2.241:8099/supplychain/operator/login',//登录
         upPassWord:'http://192.168.2.241:8099/supplychain/operator/updatePassword',//修改密码
-        addSaveOperator:'http://192.168.2.241:8099/supplychain/operator/saveOperator',//新增操作员
+        addSaveOperator:'http://192.168.2.241:8099/supplychain/operator/add',//新增操作员
+        updateState:'http://192.168.2.241:8099/supplychain/operator/updateState',//操作员停用启用
         OperatorQueryPages:'http://192.168.2.241:8099/supplychain/operator/getListPage',//操作员分页查询
         resetPassword:'http://192.168.2.241:8099/supplychain/operator/resetPassword',//批量重置密码
+        deleteoperator:'http://192.168.2.241:8099/supplychain/operator/delete',//删除操作员
 
 
         addmaterial: 'http://192.168.1.199:8099/supplychain/materialmessage/save',//添加原材料

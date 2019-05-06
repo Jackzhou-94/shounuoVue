@@ -12,7 +12,7 @@ import './less/Style.less'
 import {Loading} from 'element-ui'
 import md5 from 'js-md5'
 import VCharts from 'v-charts'
-
+import { Message } from 'element-ui'
 Vue.prototype.$md5 = md5
 axios.defaults.withCredentials = true; //意思是携带cookie信息,保持session的一致性
 Vue.prototype.$axios = axios
@@ -60,9 +60,19 @@ axios.interceptors.response.use(response => {
     setTimeout(function () {
         loadingInstance.close();
         if (response) {
+            if (response.data.code == 101) {
+                Message({
+                    message: '身份验证过期，请重新登录',
+                    type: 'error',
+                    onClose(){
+                        router.push('/')
+                    }
+                });
+            }
             loadingInstance.close();
         }
     }, 500)
+    console.log(response)
     return response;
 
 }, function (error) {

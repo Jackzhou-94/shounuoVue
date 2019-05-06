@@ -2,9 +2,13 @@
     <div class="operator">
         <div class="menuBox">
             <div class="QueryConditions">
-                <el-button size="mini" type="primary" class="el-icon-plus" @click="addUser=true,factoryQuery()">新建
+                <el-button size="mini" type="primary" class="el-icon-plus" @click="addUser=true">新建
                 </el-button>
-                <el-button size="mini" type="primary" class="el-icon-plus" @click="passReset">批量密码重置
+                <el-button size="mini" type="primary" @click="passReset">批量密码重置
+                </el-button>
+                <el-button size="mini" type="primary" @click="operatorEnable">启用
+                </el-button>
+                <el-button size="mini" type="primary" @click="operatorDisable">禁用
                 </el-button>
             </div>
             <div class=" QueryConditions QueryInput">
@@ -14,16 +18,39 @@
                     <el-input size="mini" clearable v-model="nickname" placeholder="用户姓名"></el-input>
                     <el-input size="mini" id="mazey" @blur="emailChange" clearable v-model="email"
                               placeholder="邮箱"></el-input>
-
+                    <el-select v-model="role" size="mini" clearable placeholder="角色">
+                        <el-option
+                                v-for="item in roleoptions"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
+                    <el-select v-model="state" size="mini" clearable placeholder="状态">
+                        <el-option
+                                v-for="item in stateoptions"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
+                    <el-select v-model="factoryName" size="mini" clearable placeholder="工厂">
+                        <el-option
+                                v-for="item in factoryList"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
                 </div>
 
                 <div>
                     <el-button type="primary" size="mini"
-                               @click="phoneNumber='',nickname='',email=''">
+                               @click="phoneNumber='',nickname='',email='',state='',role='',factoryName=''">
                         重置
                     </el-button>
 
-                    <el-button type="primary" size="mini" icon="el-icon-search">查询
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="OperatorQueryPage()">查询
                     </el-button>
                 </div>
             </div>
@@ -44,12 +71,20 @@
                     {{scope.row.role=='MANAGER'?'管理员':scope.row.role=='GENERAL'?'一般用户':'超级管理员'}}
                 </template>
             </el-table-column>
-            <el-table-column prop="email" label="邮箱" align="center"></el-table-column>
+            <el-table-column prop="email" label="邮箱" width="180px" align="center"></el-table-column>
+            <el-table-column prop="email" label="状态" align="center">
+                <template slot-scope="scope">
+                    {{scope.row.state=='0'?'未启用':'已启用'}}
+                </template>
+            </el-table-column>
+            <el-table-column prop="factoryName" label="工厂" align="center"></el-table-column>
             <el-table-column prop="createTime" label="添加时间" align="center"></el-table-column>
             <el-table-column prop="updateTime" label="修改时间" align="center"></el-table-column>
-            <el-table-column label="操作" align="center">
+            <el-table-column label="操作" align="center" width="180px">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="operatorUpdate(scope.row)">修改</el-button>
+                    <el-button type="text" @click="operatorUpdate(scope.row)">编辑</el-button>
+                    <el-button type="text" @click="resetUpPassword(scope.row)">重置密码</el-button>
+                    <el-button type="text" v-if="scope.row.nickname==judgeName?false:true" @click="delOpera(scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -201,13 +236,26 @@
 
 
             return {
-
                 addUser: false,//新建用户面板
                 upaddUser: false,//修改用户面板
+                judgeName:'',//用于身份判断，自己无法删除
                 phoneNumber: '',//手机号
                 email: '',//邮箱
+                role: '',//角色
+                state: '',//状态
                 nickname: '',//昵称
+                factoryName: '',//工厂
                 pageNum: 1,//分页查询页数
+                stateoptions: [
+                    {
+                        label: '未启用',
+                        value: '0'
+                    },
+                    {
+                        label: '已启用',
+                        value: '1'
+                    }
+                ],
                 roleoptions: [
                     {
                         label: '管理员',
@@ -252,7 +300,7 @@
                     ]
                 },
                 upaddUserData: {
-                    //新建用户数据
+                    //修改用户数据
                     phoneNumber: '',//手机号
                     email: '',//邮箱
                     nickname: '',//用户姓名
@@ -261,7 +309,7 @@
                     factoryUuid: '',//工厂ID
                 },
                 upaddUserDataValidation: {
-                    //新建用户表单验证
+                    //修改用户表单验证
                     username: [
                         {required: true, message: '请输入登录账号', trigger: 'blur'},
                     ],
@@ -292,26 +340,148 @@
                 upfactoryShow: true,//工厂选择信息
                 upfactorySelectShow: false,//判断工厂是否可选
 
-                operatorData:[],//选中操作员信息
+                operatorData: [],//选中操作员信息
             }
         },
         methods: {
-            passReset(){
-              //密码重置
-                this.$axios.post(this.$store.state.resetPassword,this.operatorData).then(res=>{
-                    console.log(res)
+            operatorEnable() {
+                //启用
+                let that = this
+                let data = {
+                    state: '1',
+                    operatorList: this.operatorData,
+                }
+                /**
+                 * 判断是否选中超级管理员
+                 * */
+                let state = this.operatorData.some(item => {
+                    return item.username == 'admin'
+                })
+                if (!state) {
+                    this.$axios.post(this.$store.state.updateState, data).then(res => {
+                        if (res.data.code == 200) {
+                            this.$message({
+                                message: '操作成功',
+                                type: 'success',
+                                onClose() {
+                                    that.OperatorQueryPage()
+                                }
+                            });
+                        } else {
+                            this.$message.error(res.data.msg);
+                        }
+                    })
+                } else {
+                    this.$message({
+                        showClose: true,
+                        message: '不能选择超级管理员',
+                        type: 'error'
+                    });
+                }
+
+                console.log(data)
+            },
+            operatorDisable() {
+                //禁用
+                let that = this
+                let data = {
+                    state: '2',
+                    operatorList: this.operatorData,
+                }
+                /**
+                 * 判断是否选中超级管理员
+                 * */
+                let state = this.operatorData.some(item => {
+                    return item.username == 'admin'
+                })
+                if (!state) {
+                    this.$axios.post(this.$store.state.updateState, data).then(res => {
+                        if (res.data.code == 200) {
+                            this.$message({
+                                message: '操作成功',
+                                type: 'success',
+                                onClose() {
+                                    that.OperatorQueryPage()
+                                }
+                            });
+                        } else {
+                            this.$message.error(res.data.msg);
+                        }
+                    })
+                } else {
+                    this.$message({
+                        showClose: true,
+                        message: '不能选择超级管理员',
+                        type: 'error'
+                    });
+                }
+
+            },
+            passReset() {
+                //密码重置
+                let that=this
+                this.$axios.post(this.$store.state.resetPassword, this.operatorData).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            onClose() {
+                                that.OperatorQueryPage()
+                            }
+                        });
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
                 })
 
 
             },
-                Multipleselection(data){
-              //操作员多选
-                this.operatorData=data
+            resetUpPassword(data) {
+                //单个重置
+                this.operatorData=[]
+                this.operatorData.push(data)
+                this.passReset()
             },
-            operatorUpdate(data){
-              //修改操作员按钮
-                this.upaddUser=true
-                this.upaddUserData=data
+            delOpera(data){
+              //删除操作员
+                let that=this
+
+
+                this.$confirm('确定删除此用户？', '确认信息', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+                    .then(() => {
+                        this.$axios.post(this.$store.state.deleteoperator,{uuid:data.uuid}).then(res=>{
+                            if (res.data.code == 200) {
+                                this.$message({
+                                    message: '操作成功',
+                                    type: 'success',
+                                    onClose() {
+                                        that.OperatorQueryPage()
+                                    }
+                                });
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+                        })
+                    })
+
+
+
+
+
+            },
+            Multipleselection(data) {
+                //操作员多选
+                this.operatorData = data
+                console.log(this.operatorData)
+            },
+            operatorUpdate(data) {
+                //修改操作员按钮
+                this.upaddUser = true
+                this.upaddUserData = data
             },
             operatorpag(val) {
                 //操作员分页
@@ -347,9 +517,20 @@
                 let that = this
                 this.$refs[addUserData].validate((valid) => {
                     if (valid) {
-                        // this.$axios.post(this.$store.state.addSaveOperator, this.addUserData).then(res => {
-                        //     console.log(res)
-                        // })
+                        this.$axios.post(this.$store.state.addSaveOperator, this.addUserData).then(res => {
+                            if (res.data.code == 200) {
+                                this.$message({
+                                    message: '保存成功',
+                                    type: 'success',
+                                    onClose() {
+                                        that.OperatorQueryPage()
+                                        that.addUser = false
+                                    }
+                                });
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+                        })
                         console.log(this.addUserData)
                     } else {
                         console.log('error submit!!');
@@ -359,14 +540,14 @@
                 });
             },
             upsubmitaddUserData(upaddUserData) {
-                //提交管理员信息
+                //修改管理员信息
                 let that = this
                 this.$refs[upaddUserData].validate((valid) => {
                     if (valid) {
                         console.log(this.upaddUserData)
-                        // this.$axios.post(this.$store.state.addSaveOperator, this.addUserData).then(res => {
-                        //     console.log(res)
-                        // })
+                        this.$axios.post(this.$store.state.addSaveOperator, this.upaddUserData).then(res => {
+                            console.log(res)
+                        })
                         console.log(this.addUserData)
                     } else {
                         console.log('error submit!!');
@@ -440,16 +621,23 @@
                         phoneNumber: this.phoneNumber,//手机号
                         email: this.email,//邮箱
                         nickname: this.nickname,//昵称
+                        role: this.role,//角色
+                        state: this.state,//状态
+                        factoryUuid: this.factoryName,//工厂
                     }
                 }).then(res => {
                     this.OperatorList = res.data.list
                     this.totalOperatorNumdel = res.data.totalRecord
+                    console.log(res.data.list)
                 })
             }
         },
 
         created: function () {
+            this.judgeName=this.$cookies.get('nickname')
+            console.log(this.judgeName)
             this.OperatorQueryPage();//操作员信息分页查询
+            this.factoryQuery()//工厂信息
 
         }
     }
