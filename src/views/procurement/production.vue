@@ -51,41 +51,21 @@
                 stripe
                 :data="ProductionList"
                 height="750px"
+                @cell-dblclick="detailedQuery"
         >
             <el-table-column align="center" type="selection"></el-table-column>
             <el-table-column align="center" type="index"></el-table-column>
-            <el-table-column align="center" v-if="ProductionOrderShow" label="生产计划单编号" prop="produceCode"
+            <el-table-column align="center" label="生产计划单编号" prop="produceCode"
                              width="160px"></el-table-column>
-            <el-table-column align="center" v-if="styleNumberShow" label="款式编号" prop="styleCode"
+            <el-table-column align="center" label="预加工时间" prop="expectProcessTime"
                              width="170px"></el-table-column>
-            <el-table-column align="center" v-if="MerchantNumberShow" label="商家编号" prop="merchantCode"
+            <el-table-column align="center" label="预完工时间" prop="expectCompleteTime"
                              width="160px"></el-table-column>
-            <el-table-column align="center" v-if="MerchantNameShow" label="商品名称" prop="goodsName"></el-table-column>
-            <el-table-column align="center" v-if="specificationsShow" label="规格(颜色)" prop="colour"
-                             width="100px"></el-table-column>
-            <el-table-column align="center" v-if="NumberShow" label="数量" prop="craftNumber"></el-table-column>
-            <el-table-column align="center" v-if="unitShow" label="单位" prop="unit"></el-table-column>
-            <el-table-column align="center" v-if="bandShow" label="品牌" prop="brand"></el-table-column>
-            <el-table-column align="center" width="100px" v-if="categoryShow" label="类别"
-                             prop="category"></el-table-column>
-            <el-table-column
-                    label="工艺流程"
-                    width="230"
-                    v-if="processShow"
-                    align="center">
-                <template slot-scope="scope">
-                    <el-tag type="danger" v-for="item in scope.row.processNodeList">
-                        {{item=='weave'?'织造':item=='seamHead'?'缝头':item=='stereoType'?'定型':'包装'}}
-                    </el-tag>
-                </template>
-            </el-table-column>
-            <!--<el-table-column align="center" v-if="processShow" label="工艺流程" prop="processNodeList"-->
-            <!--width="150px"></el-table-column>-->
-            <el-table-column align="center" v-if="CreationTimeShow" label="创建时间" prop="createTime"
+            <el-table-column align="center" label="创建时间" prop="createTime"
                              width="180px"></el-table-column>
-            <el-table-column align="center" v-if="ModifyTimeShow" label="修改时间" prop="updateTime"
+            <el-table-column align="center" label="修改时间" prop="updateTime"
                              width="180px"></el-table-column>
-            <el-table-column align="center" v-if="noteShow" label="备注" prop="remark"></el-table-column>
+            <el-table-column align="center" label="备注" prop="remark"></el-table-column>
             <el-table-column align="center" label="操作" fixed="right">
                 <template slot-scope="scope">
                     <el-button type="text" @click="upProceBtn(scope.row)">修改</el-button>
@@ -103,7 +83,71 @@
                 </el-pagination>
             </el-col>
         </el-row>
-        <!--显示设置-->
+
+        <!--生产计划详情-->
+        <el-dialog
+                title="生产计划详情"
+                :visible.sync="DetailsPlan"
+                :show-close="false"
+                width="1100px">
+            <div class="QueryConditions">
+                <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
+                <el-button type="primary" icon="el-icon-view" size="mini" @click="workerSettingsBtn">派工设置</el-button>
+            </div>
+
+            <el-table
+                    border
+                    stripe
+                    :data="DetailsPlanList"
+                    @selection-change="selectionDetailsPlanList"
+            >
+                <el-table-column align="center" fixed="left" type="selection"></el-table-column>
+                <el-table-column align="center" type="index"></el-table-column>
+                <el-table-column align="center" v-if="ProductionOrderShow" label="生产计划单编号" prop="produceCode"
+                                 width="160px"></el-table-column>
+                <el-table-column align="center" v-if="styleNumberShow" label="款式编号" prop="styleCode"
+                                 width="170px"></el-table-column>
+                <el-table-column align="center" v-if="MerchantNumberShow" label="商家编号" prop="merchantCode"
+                                 width="160px"></el-table-column>
+                <el-table-column align="center" v-if="MerchantNameShow" label="商品名称" prop="goodsName"></el-table-column>
+                <el-table-column
+                        label="工艺流程"
+                        width="230"
+                        v-if="processShow"
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-tag type="danger" v-for="item in scope.row.processNodeList">
+                            {{item=='weave'?'织造':item=='seamHead'?'缝头':item=='stereoType'?'定型':'包装'}}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" v-if="specificationsShow" label="规格(颜色)" prop="colour"
+                                 width="100px"></el-table-column>
+                <el-table-column align="center" v-if="NumberShow" label="数量" prop="craftNumber"></el-table-column>
+                <el-table-column align="center" v-if="unitShow" label="单位" prop="unit"></el-table-column>
+                <el-table-column align="center" v-if="bandShow" label="品牌" prop="brand"></el-table-column>
+                <el-table-column align="center" width="100px" v-if="categoryShow" label="类别"
+                                 prop="category"></el-table-column>
+
+                <!--<el-table-column align="center" v-if="processShow" label="工艺流程" prop="processNodeList"-->
+                <!--width="150px"></el-table-column>-->
+                <el-table-column align="center" v-if="CreationTimeShow" label="创建时间" prop="createTime"
+                                 width="180px"></el-table-column>
+                <el-table-column align="center" v-if="ModifyTimeShow" label="修改时间" prop="updateTime"
+                                 width="180px"></el-table-column>
+                <el-table-column align="center" v-if="noteShow" label="备注" prop="remark"></el-table-column>
+                <!--<el-table-column align="center" label="操作" fixed="right">-->
+                <!--<template slot-scope="scope">-->
+                <!--<el-button type="text" @click="upProceBtn(scope.row)">修改</el-button>-->
+                <!--</template>-->
+                <!--</el-table-column>-->
+            </el-table>
+
+
+        </el-dialog>
+
+
+        <!--生产计划详情显示设置-->
         <el-dialog
                 title="显示设置"
                 :visible.sync="Settings"
@@ -175,6 +219,299 @@
             </div>
 
         </el-dialog>
+
+
+        <!--生产计划单派工设置-->
+        <el-dialog
+                title="派工设置"
+                :visible.sync="workerSettings"
+                width="1000px"
+                :show-close="false"
+        >
+            <div class="QueryConditions QueryInput">
+                <el-button type="primary" size="mini" @click="generateDispatch">确认派工</el-button>
+            </div>
+            <!--选中的派工单详情信息-->
+            <el-table
+                    :data="Dispatched"
+                    border
+                    stripe
+                    row-key="uuid"
+                    style="width: 100%">
+                <el-table-column type="expand">
+                    <template slot-scope="props">
+                        <!--<el-checkbox v-for="city in  props.row.dispatchedDetailList.keys()"-->
+                        <!--:label="city" :key="city">-->
+                        <!--{{city=='weave'?'织造':city=='seamHead'?'缝头':city=='stereoType'?'定型':'包装'}}-->
+                        <!---->
+                        <!--</el-checkbox>-->
+                        <el-table
+                                border
+                                stripe
+                                :data="props.row.dispatchedDetailList"
+                        >
+                            <el-table-column prop="processNode" label="工艺流程"></el-table-column>
+                            <el-table-column prop="factoryName" label="工厂"></el-table-column>
+                        </el-table>
+
+
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" label="款式编号" prop="styleCode"
+                                 width="170px"></el-table-column>
+                <el-table-column align="center" label="商家编号" prop="merchantCode"
+                                 width="160px"></el-table-column>
+                <el-table-column align="center" label="商品名称" prop="goodsName"></el-table-column>
+
+                <el-table-column align="center" label="单位" prop="unit"></el-table-column>
+
+                <el-table-column
+                        label="工艺流程"
+                        width="230"
+                        v-if="processShow"
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-tag type="danger" v-for="item in scope.row.processNodeList">
+                            {{item=='weave'?'织造':item=='seamHead'?'缝头':item=='stereoType'?'定型':'包装'}}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+
+
+            </el-table>
+
+            <el-divider content-position="right"></el-divider>
+            <div class="QueryConditions QueryInput">
+
+                <div>
+                    <el-input size="mini" placeholder="所属公司" v-model="querycompany"></el-input>
+
+                    <el-input size="mini" placeholder="名称" v-model="queryname"></el-input>
+
+                    <el-input size="mini" placeholder="其他" v-model="queryspare01"></el-input>
+                </div>
+
+                <div>
+                    <el-button size="mini" type="primary" @click="factorySettings=true">显示设置</el-button>
+                    <el-button type="primary" size="mini"
+                               @click="queryspare01='',queryname='',querycompany=''">
+                        重置
+                    </el-button>
+
+                    <el-button type="primary" size="mini" icon="el-icon-search"
+                               @click="factoryquery()">查询
+                    </el-button>
+                </div>
+
+
+            </div>
+            <el-table
+                    :data="factoryList"
+                    border
+                    stripe
+                    style="width: 100%">
+
+                <el-table-column
+                        align="center"
+                        type="index"
+                        width="50">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="name"
+                        v-if="nameShow"
+                        width="150"
+                        label="名称">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="code"
+                        v-if="codeShow"
+                        label="编码"
+                        width="100"
+                >
+                </el-table-column>
+                <el-table-column
+                        label="工厂职能"
+                        v-if="functionShow"
+                        width="230"
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-tag type="danger" v-for="item in scope.row.technologys">
+                            {{item=='weave'?'织造':item=='seamHead'?'缝头':item=='stereoType'?'定型':'包装'}}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="address"
+                        v-if="addressShow"
+                        label="城市"
+                        width="180"
+                >
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        v-if="detailedAddressShow"
+                        prop="detailedAddress"
+                        label="详细地址"
+                        width="180"
+                >
+                </el-table-column>
+
+                <el-table-column
+                        align="center"
+                        prop="company"
+                        v-if="companyShow"
+                        label="所属公司"
+
+                >
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="contact"
+                        v-if="contactShow"
+                        label="联系人"
+                >
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="phoneNumber"
+                        width="150"
+                        v-if="phoneNumberShow"
+                        label="手机号码">
+                </el-table-column>
+                <el-table-column
+                        label="创建时间"
+                        prop="createTime"
+                        width="180"
+                        v-if="createTimeShow"
+                        align="center"
+                        sortable
+                ></el-table-column>
+                <el-table-column
+                        label="修改时间"
+                        prop="updateTime"
+                        width="180"
+                        v-if="updateTimeShow"
+                        align="center"
+                        sortable
+                ></el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="remark"
+                        width="100"
+                        v-if="remarkShow"
+                        label="备注">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        label="操作"
+                        width="120"
+                        fixed="right"
+                >
+                    <template slot-scope="scope">
+                        <el-button type="text" @click="plantSelection(scope.row)">选择</el-button>
+
+                    </template>
+                </el-table-column>
+
+
+            </el-table>
+            <!--分页-->
+            <el-row>
+                <el-col :span="10" :offset="14">
+                    <el-pagination
+                            @current-change="factorylistpag"
+                            :page-size="15"
+                            layout="prev, pager, next, jumper"
+                            :total="totalRecordNum">
+                    </el-pagination>
+                </el-col>
+            </el-row>
+
+
+        </el-dialog>
+
+
+        <!--派工单选择工厂职能-->
+        <el-dialog
+                title="工厂职能选择"
+                :show-close="false"
+                :visible.sync="functionsSelect"
+                width="400px">
+            <!--technologys-->
+            <el-checkbox-group v-model="checkList" v-for="city in  DispatchedFactory.technologys" :key="city">
+
+                <!--<el-checkbox-->
+                <!--:label="city=='weave'?'织造':city=='seamHead'?'缝头':city=='stereoType'?'定型':'包装'">-->
+                <el-checkbox
+                        :label="city">
+
+
+                </el-checkbox>
+            </el-checkbox-group>
+            <el-button size="mini" @click="seave">保存</el-button>
+        </el-dialog>
+
+
+        <!--生产计划单派工设置工厂信息显示设置-->
+        <el-dialog
+                title="显示设置"
+                :show-close="false"
+                :visible.sync="factorySettings"
+                width="400px">
+            <div style="text-align: left">
+                <el-row>
+                    <el-col :span="8">
+                        <el-checkbox v-model="nameShow">名称</el-checkbox>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-checkbox v-model="codeShow">编码</el-checkbox>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-checkbox v-model="addressShow">城市</el-checkbox>
+                    </el-col>
+                </el-row>
+
+                <el-row>
+                    <el-col :span="8">
+                        <el-checkbox v-model="detailedAddressShow">详细地址</el-checkbox>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-checkbox v-model="companyShow">所属公司</el-checkbox>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-checkbox v-model="contactShow">联系人</el-checkbox>
+                    </el-col>
+                </el-row>
+
+                <el-row>
+                    <el-col :span="8">
+                        <el-checkbox v-model="phoneNumberShow">手机号码</el-checkbox>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-checkbox v-model="createTimeShow">创建时间</el-checkbox>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-checkbox v-model="updateTimeShow">修改时间</el-checkbox>
+                    </el-col>
+                </el-row>
+
+                <el-row>
+
+                    <el-col :span="8">
+                        <el-checkbox v-model=" functionShow">工厂职能</el-checkbox>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-checkbox v-model=" remarkShow">备注</el-checkbox>
+                    </el-col>
+                </el-row>
+            </div>
+
+
+        </el-dialog>
+
 
         <!--工艺引入面板-->
         <el-dialog
@@ -749,8 +1086,12 @@
                 ProcessIntroduction: false,//工艺引入面板
                 upProcessIntroduction: false,//修改工艺引入面板
                 Settings: false,//显示设置面板
+                workerSettings: false,//派工设置面板
+                DetailsPlan: false,//生产计划详情面板
+                DetailsPlanList: [],//生产计划详情数据
+
                 /**
-                 * 显示设置
+                 * 生产计划详情显示设置
                  * */
                 ProductionOrderShow: true,// 生产计划单编号
                 styleNumberShow: true,//款式编号
@@ -765,6 +1106,7 @@
                 CreationTimeShow: true,//创建时间
                 ModifyTimeShow: true,//修改时间
                 noteShow: true,//备注
+
 
                 pageNumQuery: 1,//分页查询默认显示页数
                 ProcessList: [],//工艺单数据
@@ -819,10 +1161,138 @@
                 upsaveShow: false,//修改生产计划单保存按钮显示控制
                 delID: [],//删除生产计划单ID
                 str: '',//生产计划单 工艺查询将数组转字符串
+
+                /**
+                 * 派工设置工厂查询信息
+                 * **/
+                pageSizeFactory: 5,//每页条目数
+                pageNumFactory: 1,//当前页数
+                factoryList: [],//工厂数据集合
+                queryspare01: '',//查询其他
+                queryname: '',//查询名称
+                querycompany: '',//查询所属公司
+
+                /**
+                 * 派工设置显示设置
+                 * **/
+                factorySettings: false,//派工设置工厂信息显示设置面板
+                nameShow: true,//名称
+                codeShow: true,//编码
+                functionShow: true,//工厂职能
+                addressShow: true,//城市
+                detailedAddressShow: true,//详细地址
+                companyShow: true,//所属公司
+                contactShow: true,//联系人
+                phoneNumberShow: true,//手机号码
+                createTimeShow: true,//创建时间
+                updateTimeShow: true,//修改时间
+                remarkShow: true,//备注
+
+
+                Dispatched: [],//选择的派工单信息
+                functionsSelect: false,//选择工厂职能面板
+                DispatchedFactory: '',//选择的工厂数据
+                checkList: [],//选择工厂时选中的工厂职能
             }
         },
 
         methods: {
+            generateDispatch() {
+                //生成派工单
+                this.$axios.post(this.$store.state.addDispatch, this.Dispatched).then(res => {
+                    console.log(res)
+                })
+            },
+            seave() {
+                //保存选中的工厂职能
+
+                this.functionsSelect = false
+                let data = this.Dispatched//选择的派工单信息
+                let factory = this.DispatchedFactory//选择的工厂数据
+                data.forEach(item => {
+                    console.log(item.processNodeList)
+                    item.processNodeList.forEach(k => {
+                        console.log(k)
+
+                        if (item.dispatchedDetailList.length < item.processNodeList.length) {
+                            let param = {processNode: '', factoryUuid: '', factoryName: ''};
+                            // param['processType'] = '';
+                            this.checkList.forEach(j => {
+                                if (k === j) {
+                                    param.processNode = j;
+                                    param.factoryUuid = factory.uuid;//此时param对象的键名字为id而不是idNa
+                                    param.factoryName = factory.name;
+                                    item.dispatchedDetailList.push(param)
+                                }
+
+                            })
+
+                        }
+
+                    })
+
+
+                })
+
+
+                console.log(data)
+            },
+            plantSelection(data) {
+                console.log(data)
+                //派工设置选择工厂
+                this.DispatchedFactory = data
+                this.functionsSelect = true
+
+            },
+            selectionDetailsPlanList(data) {
+                //选中需要派单的信息
+
+                this.Dispatched = data
+                console.log(data)
+                // this.Dispatched.children=data.processNodeList
+                this.Dispatched.forEach(item => {
+                    item.dispatchedDetailList = []
+                })
+            },
+            workerSettingsBtn() {
+                //派工设置按钮
+                if (this.Dispatched.length != 0) {
+                    this.workerSettings = true;
+                    this.factoryquery()
+                } else {
+                    this.$message.error('还未选择需要派工的信息！');
+                }
+
+            },
+            detailedQuery(data) {
+                //生产计划单明细查询
+                this.DetailsPlan = true
+                this.$axios.get(this.$store.state.produceplanselect, {
+                    params: {uuid: data.uuid}
+                }).then(res => {
+                    console.log(res)
+                    this.DetailsPlanList = res.data.data.producePlanDetailBeanList
+                })
+            },
+            factorylistpag(val) {
+                //工厂信息分页
+                this.pageNumFactory = val
+                this.factoryquery()
+            },
+
+            factoryquery() {
+                //工厂信息分页查询
+                this.$axios.get(this.$store.state.factoryPage, {
+                    params: {
+                        pageSize: this.pageSizeFactory, pageNum: this.pageNumFactory,
+                        company: this.querycompany, name: this.queryname, spare01: this.queryspare01
+                    }
+                }).then(res => {
+                    console.log(res)
+                    this.factoryList = res.data.list
+                    this.totalRecordNum = res.data.totalRecord
+                })
+            },
             upTimeFun() {
                 //修改生产计划单时，时间选择控件值发生变化时回调
                 this.upScheduleList.expectProcessTime = this.upTime[0]
@@ -887,21 +1357,19 @@
             },
             upProceBtn(data) {
                 //生产计划单修改按钮
-
-
                 this.delID.push(data.produceId)//将id赋值.
                 this.upsaveShow = false//显示修改保存按钮
                 this.$axios.get(this.$store.state.basicInformationPro, {
-                    params: {uuid: data.produceId}
+                    params: {uuid: data.uuid}
                 }).then(res => {
                     this.upaddProduction = true
                     this.upScheduleList.producePlanDetailBeanList = res.data.data.producePlanDetailBeanList
                     this.upScheduleList.id = data.produceId
-                    this.upScheduleList.expectProcessTime=res.data.data.expectProcessTime//预计加工时间
-                    this.upScheduleList.expectCompleteTime=res.data.data.expectCompleteTime//预计完工时间
+                    this.upScheduleList.expectProcessTime = res.data.data.expectProcessTime//预计加工时间
+                    this.upScheduleList.expectCompleteTime = res.data.data.expectCompleteTime//预计完工时间
 
 
-                    if(res.data.data.expectProcessTime!=null&&res.data.data.expectCompleteTime!=null){
+                    if (res.data.data.expectProcessTime != null && res.data.data.expectCompleteTime != null) {
                         this.upTime.push(res.data.data.expectProcessTime)//预计加工时间控件绑定值
                         this.upTime.push(res.data.data.expectCompleteTime)//预计完工时间绑定值
                     }

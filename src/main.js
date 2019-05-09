@@ -69,10 +69,8 @@ axios.interceptors.response.use(response => {
                     }
                 });
             }
-            loadingInstance.close();
         }
     }, 500)
-    console.log(response)
     return response;
 
 }, function (error) {

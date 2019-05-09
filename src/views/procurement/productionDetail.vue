@@ -911,7 +911,7 @@
                 })
             },
             ProduQueryPage() {
-                //生产计划单分页查询
+                //生产计划单明细分页查询
 
                 this.str = ''//流程查询，将数组转拼接成字符串
                 this.conditionprocessNode.forEach(item => {
@@ -920,7 +920,7 @@
                 this.str = this.str.substring(0, this.str.length - 1)
 
 
-                this.$axios.get(this.$store.state.ProductionQueryPage, {
+                this.$axios.get(this.$store.state.ProductionDetailQueryPage, {
                     params: {
                         pageSize: 15,
                         pageNum: this.pageNumQuery,

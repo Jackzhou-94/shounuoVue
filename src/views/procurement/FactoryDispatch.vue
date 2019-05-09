@@ -956,7 +956,7 @@
                 this.str = this.str.substring(0, this.str.length - 1)
 
 
-                this.$axios.get(this.$store.state.ProductionQueryPage, {
+                this.$axios.get(this.$store.state.ProductionDetailQueryPage, {
                     params: {
                         pageSize: 5,
                         pageNum: this.pageNumQuery,
