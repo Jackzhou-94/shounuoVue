@@ -1256,11 +1256,7 @@
         methods: {
             generateDispatch() {
                 //生成派工单
-
-                // console.log(this.Dispatched)
-                // this.$axios.post(this.$store.state.addDispatch, this.Dispatched).then(res => {
-                //     console.log(res)
-                // })
+                let that = this
                 let stateArr = this.Dispatched.every(item => {
 
                     return item.dispatchedDetailList.length === item.processNodeList.length
@@ -1268,9 +1264,21 @@
                 })
                 if (stateArr) {
                     this.$axios.post(this.$store.state.addDispatch, this.Dispatched).then(res => {
-                        console.log(res)
+                        if (res.data.code == 200) {
+                            this.$message({
+                                message: '操作成功',
+                                type: 'success',
+                                onClose() {
+                                    that.DetailsPlan = false;
+                                    that.workerSettings = false;
+                                }
+                            });
+                        }
+                        else {
+                            this.$message.error(res.data.msg);
+                        }
                     })
-                }else {
+                } else {
                     this.$message.error('还有单据未选择派工派工！');
                 }
 
@@ -1333,15 +1341,17 @@
                 this.Dispatched = data
                 console.log(data)
                 // this.Dispatched.children=data.processNodeList
-                this.Dispatched.forEach(item => {
-                    item.dispatchedDetailList = []
-                })
+                // this.Dispatched.forEach(item => {
+                //     item.dispatchedDetailList = []
+                // })
             }
             ,
             workerSettingsBtn() {
                 //派工设置按钮
                 if (this.Dispatched.length != 0) {
                     this.workerSettings = true;
+                    console.log(this.Dispatched)
+                    // this.Dispatched=
                     this.factoryquery()
                 } else {
                     this.$message.error('还未选择需要派工的信息！');
