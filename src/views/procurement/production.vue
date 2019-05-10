@@ -142,7 +142,52 @@
                 <!--</template>-->
                 <!--</el-table-column>-->
             </el-table>
+            <el-divider>派工详情</el-divider>
 
+            <el-table
+                    border
+                    stripe
+                    :data="dispatchingDetailsData"
+                    @selection-change="selectionDetailsPlanList"
+            >
+                <el-table-column align="center" type="index"></el-table-column>
+                <el-table-column align="center" v-if="ProductionOrderShow" label="生产计划单编号" prop="produceCode"
+                                 width="160px"></el-table-column>
+                <el-table-column align="center" v-if="styleNumberShow" label="派工单号" prop="produceCode"
+                                 width="170px"></el-table-column>
+                <el-table-column align="center" v-if="MerchantNumberShow" label="款式编号" prop="styleCode"
+                                 width="160px"></el-table-column>
+                <el-table-column align="center" v-if="MerchantNameShow" label="工厂" prop="factoryName"></el-table-column>
+                <el-table-column
+                        label="工艺流程"
+                        width="120"
+                        v-if="processShow"
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-tag type="danger" v-for="item in scope.row.processNodeList">
+                            {{item=='weave'?'织造':item=='seamHead'?'缝头':item=='stereoType'?'定型':'包装'}}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" v-if="CreationTimeShow" label="创建时间" prop="createTime"
+                                 width="180px"></el-table-column>
+                <el-table-column align="center" v-if="noteShow" label="备注" prop="remark"></el-table-column>
+
+            </el-table>
+
+            <!--分页-->
+            <el-row>
+                <el-col :span="10" :offset="14">
+                    <el-pagination
+                            background
+                            :page-size="5"
+                            @current-change="dispatchingDetailspag"
+                            layout="prev, pager, next"
+                            style="margin-top: 10px"
+                            :total="dispatchingDetailsNum">
+                    </el-pagination>
+                </el-col>
+            </el-row>
 
         </el-dialog>
 
@@ -250,7 +295,14 @@
                                 stripe
                                 :data="props.row.dispatchedDetailList"
                         >
-                            <el-table-column prop="processNode" label="工艺流程"></el-table-column>
+                            <el-table-column prop="processNode" label="工艺流程">
+                                <template slot-scope="aaa">
+                                    {{aaa.row.processNode=='weave'?'织造':aaa.row.processNode=='seamHead'?'缝头':aaa.row.processNode=='stereoType'?'定型':'包装'}}
+                                </template>
+                                <!--<template>-->
+                                <!--{{item=='weave'?'织造':item=='seamHead'?'缝头':item=='stereoType'?'定型':'包装'}}-->
+                                <!--</template>-->
+                            </el-table-column>
                             <el-table-column prop="factoryName" label="工厂"></el-table-column>
                         </el-table>
 
@@ -437,6 +489,7 @@
         <!--派工单选择工厂职能-->
         <el-dialog
                 title="工厂职能选择"
+                class="functions"
                 :show-close="false"
                 :visible.sync="functionsSelect"
                 width="400px">
@@ -446,10 +499,9 @@
                 <!--<el-checkbox-->
                 <!--:label="city=='weave'?'织造':city=='seamHead'?'缝头':city=='stereoType'?'定型':'包装'">-->
                 <el-checkbox
-                        :label="city">
-
-
+                        :label="city=='weave'?'织造':city=='seamHead'?'缝头':city=='stereoType'?'定型':'包装'">
                 </el-checkbox>
+
             </el-checkbox-group>
             <el-button size="mini" @click="seave">保存</el-button>
         </el-dialog>
@@ -1193,19 +1245,48 @@
                 functionsSelect: false,//选择工厂职能面板
                 DispatchedFactory: '',//选择的工厂数据
                 checkList: [],//选择工厂时选中的工厂职能
+                dispatchingDetailsPageNum: 1,//派工详情默认显示页数
+                dispatchingDetailsData: [],//派工详情数据
+                dispatchingDetailsNum: 0,//派工详情总条目数
+                producitonUUID: '',//生产计划单双击获取的UUID
+
             }
         },
 
         methods: {
             generateDispatch() {
                 //生成派工单
-                this.$axios.post(this.$store.state.addDispatch, this.Dispatched).then(res => {
-                    console.log(res)
+
+                // console.log(this.Dispatched)
+                // this.$axios.post(this.$store.state.addDispatch, this.Dispatched).then(res => {
+                //     console.log(res)
+                // })
+                let stateArr = this.Dispatched.every(item => {
+
+                    return item.dispatchedDetailList.length === item.processNodeList.length
+
                 })
+                if (stateArr) {
+                    this.$axios.post(this.$store.state.addDispatch, this.Dispatched).then(res => {
+                        console.log(res)
+                    })
+                }else {
+                    this.$message.error('还有单据未选择派工派工！');
+                }
+
+
             },
+
+
             seave() {
                 //保存选中的工厂职能
-
+                let dataArr = []
+                // dataArr = this.checkList//选中工厂职能数据转换
+                this.checkList.forEach(l => {
+                    let a = l === '织造' ? 'weave' : l === '缝头' ? 'seamHead' : l === '定型' ? 'stereoType' : 'pack'
+                    dataArr.push(a)
+                })
+                console.log(dataArr)
                 this.functionsSelect = false
                 let data = this.Dispatched//选择的派工单信息
                 let factory = this.DispatchedFactory//选择的工厂数据
@@ -1217,7 +1298,7 @@
                         if (item.dispatchedDetailList.length < item.processNodeList.length) {
                             let param = {processNode: '', factoryUuid: '', factoryName: ''};
                             // param['processType'] = '';
-                            this.checkList.forEach(j => {
+                            dataArr.forEach(j => {
                                 if (k === j) {
                                     param.processNode = j;
                                     param.factoryUuid = factory.uuid;//此时param对象的键名字为id而不是idNa
@@ -1236,14 +1317,16 @@
 
 
                 console.log(data)
-            },
+            }
+            ,
             plantSelection(data) {
                 console.log(data)
                 //派工设置选择工厂
                 this.DispatchedFactory = data
                 this.functionsSelect = true
 
-            },
+            }
+            ,
             selectionDetailsPlanList(data) {
                 //选中需要派单的信息
 
@@ -1253,7 +1336,8 @@
                 this.Dispatched.forEach(item => {
                     item.dispatchedDetailList = []
                 })
-            },
+            }
+            ,
             workerSettingsBtn() {
                 //派工设置按钮
                 if (this.Dispatched.length != 0) {
@@ -1263,22 +1347,51 @@
                     this.$message.error('还未选择需要派工的信息！');
                 }
 
-            },
+            }
+            ,
+            dispatchingDetailspag(val) {
+                //派工详情分页按钮
+                this.dispatchingDetailsPageNum = val
+                this.dispatchingDetailsFun()
+            }
+            ,
             detailedQuery(data) {
-                //生产计划单明细查询
+                //生产计划单双击事件
+                this.producitonUUID = data.uuid
                 this.DetailsPlan = true
+                /**
+                 *
+                 * 生产计划单明细
+                 * */
                 this.$axios.get(this.$store.state.produceplanselect, {
                     params: {uuid: data.uuid}
                 }).then(res => {
                     console.log(res)
                     this.DetailsPlanList = res.data.data.producePlanDetailBeanList
                 })
-            },
+                this.dispatchingDetailsFun()
+            }
+            ,
+            dispatchingDetailsFun() {
+                /**
+                 *
+                 * 生产计划单明细派工信息
+                 * */
+                this.$axios.get(this.$store.state.dispatchPage, {
+                    params: {produceUuid: this.producitonUUID, pageSize: 5, pageNum: this.dispatchingDetailsPageNum}
+                }).then(res => {
+                    console.log(res)
+                    this.dispatchingDetailsData = res.data.list
+                    this.dispatchingDetailsNum = res.data.totalRecord
+                })
+            }
+            ,
             factorylistpag(val) {
                 //工厂信息分页
                 this.pageNumFactory = val
                 this.factoryquery()
-            },
+            }
+            ,
 
             factoryquery() {
                 //工厂信息分页查询
@@ -1292,18 +1405,21 @@
                     this.factoryList = res.data.list
                     this.totalRecordNum = res.data.totalRecord
                 })
-            },
+            }
+            ,
             upTimeFun() {
                 //修改生产计划单时，时间选择控件值发生变化时回调
                 this.upScheduleList.expectProcessTime = this.upTime[0]
                 this.upScheduleList.expectCompleteTime = this.upTime[1]
-            },
+            }
+            ,
             productionpag(val) {
                 //工艺单信息分页
 
                 this.pageNumQuery = val
                 this.ProduQueryPage()
-            },
+            }
+            ,
             closeFun() {
                 //数据修改验证
 
@@ -1326,7 +1442,8 @@
                 }
 
 
-            },
+            }
+            ,
             delProduction() {
                 //删除生产计划单
                 let that = this
@@ -1354,7 +1471,8 @@
 
 
                 })
-            },
+            }
+            ,
             upProceBtn(data) {
                 //生产计划单修改按钮
                 this.delID.push(data.produceId)//将id赋值.
@@ -1368,7 +1486,7 @@
                     this.upScheduleList.expectProcessTime = res.data.data.expectProcessTime//预计加工时间
                     this.upScheduleList.expectCompleteTime = res.data.data.expectCompleteTime//预计完工时间
 
-
+                    this.upTime = []
                     if (res.data.data.expectProcessTime != null && res.data.data.expectCompleteTime != null) {
                         this.upTime.push(res.data.data.expectProcessTime)//预计加工时间控件绑定值
                         this.upTime.push(res.data.data.expectCompleteTime)//预计完工时间绑定值
@@ -1377,7 +1495,8 @@
                     console.log(res.data)
                     this.typedata = JSON.stringify(this.upScheduleList)//将数据转为字符串，进行修改验证
                 })
-            },
+            }
+            ,
             ProduQueryPage() {
                 //生产计划单分页查询
 
@@ -1403,7 +1522,8 @@
                     this.totalRecordNum = res.data.totalRecord
                     console.log(res)
                 })
-            },
+            }
+            ,
             addProductiondata() {
                 //添加生产计划单
 
@@ -1433,7 +1553,8 @@
                     })
                 }
 
-            },
+            }
+            ,
 
 
             upaddProductiondata() {
@@ -1458,7 +1579,8 @@
                 })
 
                 console.log(this.upScheduleList)
-            },
+            }
+            ,
             delProdufuns() {
                 //批量移除  新建生产计单 工艺单信息多选
                 //批量移除原材料信息
@@ -1478,7 +1600,8 @@
 
                     })
                 })
-            },
+            }
+            ,
             updelProdufuns() {
                 //批量移除  新建生产计单 工艺单信息多选
                 //批量移除原材料信息
@@ -1506,17 +1629,20 @@
                     //判断要修改的数据，工艺单数据是否为空，为空就无法保存
                     this.upsaveShow = true
                 }
-            },
+            }
+            ,
             addProductionMultiple(data) {
                 //新建生产计单 工艺单信息多选
                 this.addProductionMultipleList = []
                 this.addProductionMultipleList = data
-            },
+            }
+            ,
             upaddProductionMultiple(data) {
                 //新建生产计单 工艺单信息多选
                 this.upaddProductionMultipleList = []
                 this.upaddProductionMultipleList = data
-            },
+            }
+            ,
             rmproduction(data) {
                 //移除工艺单信息（单个移除）
                 let index = this.ScheduleList.indexOf(data)
@@ -1533,7 +1659,8 @@
                 this.$refs.multipleTable.clearSelection();
 
 
-            },
+            }
+            ,
             uprmproduction(data) {
                 //移除工艺单信息（单个移除）
                 let index = this.upScheduleList.producePlanDetailBeanList.indexOf(data)
@@ -1553,7 +1680,8 @@
                     this.upsaveShow = true
                 }
 
-            },
+            }
+            ,
             MultiplePro(data) {
                 //多选工艺单信息
                 this.MultipleProList = []
@@ -1561,7 +1689,8 @@
 
                 console.log(this.MultipleProList)
 
-            },
+            }
+            ,
             upMultiplePro(data) {
                 //修改多选工艺单信息
                 this.upMultipleProList = []
@@ -1569,7 +1698,8 @@
 
                 console.log(this.upMultipleProList)
 
-            },
+            }
+            ,
             //
             BatchIntroduction() {
                 //批量引入
@@ -1590,7 +1720,8 @@
                 this.$refs.multipleTable.clearSelection();
 
 
-            },
+            }
+            ,
             upBatchIntroduction() {
                 //修改工艺单批量引入
                 //ScheduleList: [],//新建生产计划单数据
@@ -1610,7 +1741,8 @@
                 this.$refs.upmultipleTable.clearSelection();
 
 
-            },
+            }
+            ,
             selectable(row, index) {
                 //判断是否可选
                 if (row.show !== true) {
@@ -1618,37 +1750,44 @@
                 } else {
                     return false
                 }
-            },
+            }
+            ,
             Introduce(data) {
                 //工艺信息引入(单个)
                 data.show = true
                 this.ScheduleList.push(data)
-            },
+            }
+            ,
             upIntroduce(data) {
                 //修改工艺信息引入(单个)
                 data.show = true
                 this.upScheduleList.producePlanDetailBeanList.push(data)
-            },
+            }
+            ,
             addProductionBtn() {
                 //新建生产计划单
                 this.addProduction = true
 
-            },
+            }
+            ,
             upProcessIntroductionBtn() {
                 //工艺信息引入按钮
                 this.upProcessIntroduction = true
                 this.PricessQuery()//工艺单信息查询
-            },
+            }
+            ,
             ProcessIntroductionBtn() {
                 //工艺信息引入按钮
                 this.ProcessIntroduction = true
                 this.PricessQuery()//工艺单信息查询
-            },
+            }
+            ,
             Processlistpag(val) {
                 //工艺单分页
                 this.pageNumQuery = val
                 this.PricessQuery()
-            },
+            }
+            ,
             PricessQuery() {
                 //工艺单分页查询
 
@@ -1701,7 +1840,8 @@
                     })
 
                 })
-            },
+            }
+            ,
         },
         created: function () {
             this.ProduQueryPage()//生产计划单分页查询
@@ -1712,6 +1852,13 @@
 </script>
 
 <style scoped>
+    .el-dialog .el-checkbox-group {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        padding: 10px;
+    }
+
     .el-select, .el-input {
         width: 500px
     }

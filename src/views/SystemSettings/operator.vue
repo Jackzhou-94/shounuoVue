@@ -197,7 +197,7 @@
                     </el-form-item>
 
                     <el-form-item label="工厂" v-if="upfactorySelectShow" prop="factoryUuid">
-                        <el-select v-model="upaddUserData.factoryUuid" :disabled="factoryShow" clearable>
+                        <el-select v-model="upaddUserData.factoryUuid" :disabled="upfactoryShow" clearable>
                             <el-option
                                     v-for="item in factoryList"
                                     :key="item.value"
@@ -482,6 +482,15 @@
                 //修改操作员按钮
                 this.upaddUser = true
                 this.upaddUserData = data
+                if (data.role==="GENERAL") {
+                    this.upfactoryShow=false
+                    this.upfactorySelectShow=true
+                }else {
+                    this.upfactorySelectShow=false
+                    this.upfactoryShow=true
+                }
+                console.log(data)
+                // upfactoryShow
             },
             operatorpag(val) {
                 //操作员分页
