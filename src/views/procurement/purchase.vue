@@ -1837,7 +1837,7 @@
                                     v-if="receiveStatusmaterSet"
                                     label="收货状态">
                                 <template slot-scope="scope">
-                                    <span>{{scope.row.receiveStatus=='sh01'?'已收货':(scope.row.receiveStatus=='sh02'?'部分收货':'未收货')}}</span>
+                                    <span>{{scope.row.receiveStatus=='0'?'已收货':(scope.row.receiveStatus=='1'?'部分收货':'未收货')}}</span>
                                 </template>
                             </el-table-column>
                             <el-table-column

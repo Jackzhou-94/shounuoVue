@@ -554,8 +554,19 @@
                 this.$refs[upaddUserData].validate((valid) => {
                     if (valid) {
                         console.log(this.upaddUserData)
-                        this.$axios.post(this.$store.state.addSaveOperator, this.upaddUserData).then(res => {
-                            console.log(res)
+                        this.$axios.post(this.$store.state.updateoperator, this.upaddUserData).then(res => {
+                            if (res.data.code == 200) {
+                                this.$message({
+                                    message: '保存成功',
+                                    type: 'success',
+                                    onClose() {
+                                        that.OperatorQueryPage()
+                                        that.addUser = false
+                                    }
+                                });
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
                         })
                         console.log(this.addUserData)
                     } else {

@@ -1007,6 +1007,7 @@
 
 <style scoped>
     .el-select, .el-input {
-        width: 500px
+        width: 500px;
+
     }
 </style>

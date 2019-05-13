@@ -13,7 +13,7 @@ export default new Vuex.Store({
         OperatorQueryPages:'http://192.168.2.241:8099/supplychain/operator/getListPage',//操作员分页查询
         resetPassword:'http://192.168.2.241:8099/supplychain/operator/resetPassword',//批量重置密码
         deleteoperator:'http://192.168.2.241:8099/supplychain/operator/delete',//删除操作员
-
+        updateoperator:'http://192.168.2.241:8099/supplychain/operator/update',//修改操作员信息
 
         addmaterial: 'http://192.168.2.241:8099/supplychain/materialmessage/save',//添加原材料
         upmaterial: 'http://192.168.2.241:8099/supplychain/materialmessage/update',//修改原材料

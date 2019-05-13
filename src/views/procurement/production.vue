@@ -475,9 +475,9 @@
                 <el-col :span="10" :offset="14">
                     <el-pagination
                             @current-change="factorylistpag"
-                            :page-size="15"
+                            :page-size="5"
                             layout="prev, pager, next, jumper"
-                            :total="totalRecordNum">
+                            :total="totalRecordNumFactory">
                     </el-pagination>
                 </el-col>
             </el-row>
@@ -1168,6 +1168,7 @@
                 nameQuery: '',//工艺名称
                 categoryQuery: '',//类别
                 totalRecordNum: 0,//总条目数
+                totalRecordNumFactory:0,//派工设置工厂总条目数
                 categorySelect: [
                     //工艺单类别
                     {
@@ -1413,7 +1414,7 @@
                 }).then(res => {
                     console.log(res)
                     this.factoryList = res.data.list
-                    this.totalRecordNum = res.data.totalRecord
+                    this.totalRecordNumFactory = res.data.totalRecord
                 })
             }
             ,
