@@ -2,15 +2,15 @@
     <div class="deliveryProducts">
         <div class="menuBox">
             <div class="QueryConditions">
-                <el-button size="mini" type="primary" class="el-icon-plus" @click="dePro=true">新建
-                </el-button>
+                <!--<el-button size="mini" type="primary" class="el-icon-plus" @click="dePro=true">新建-->
+                <!--</el-button>-->
                 <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
-                <el-button size="mini" type="primary" :disabled="auditStatusBut">提交审核</el-button>
-                <el-button size="mini" type="primary" :disabled="submitStatusBut">审核通过
-                </el-button>
-                <el-button size="mini" type="primary" :disabled="submitStatusBut">审核驳回
-                </el-button>
-                <el-button size="mini" type="danger" :disabled="delStatusBut">批量删除</el-button>
+                <!--<el-button size="mini" type="primary" :disabled="auditStatusBut">提交审核</el-button>-->
+                <!--<el-button size="mini" type="primary" :disabled="submitStatusBut">审核通过-->
+                <!--</el-button>-->
+                <!--<el-button size="mini" type="primary" :disabled="submitStatusBut">审核驳回-->
+                <!--</el-button>-->
+                <!--<el-button size="mini" type="danger" :disabled="delStatusBut">批量删除</el-button>-->
             </div>
             <div class=" QueryConditions QueryInput">
 
@@ -80,12 +80,12 @@
 
             <el-table-column align="center" v-if="applicantShow" prop="documentMaker" label="制单人"></el-table-column>
             <el-table-column align="center" v-if="remarkShow" prop="remark" label="备注"></el-table-column>
-            <el-table-column align="center" label="操作" fixed="right" width="100">
-                <template slot-scope="scope">
-                    <el-button type="text" @click="upDelProdu(scope.row)">修改</el-button>
-                    <el-button type="text" :disabled="scope.row.recordState=='rs01'?(true):(false)" @click="delDelProdu(scope.row)">删除</el-button>
-                </template>
-            </el-table-column>
+            <!--<el-table-column align="center" label="操作" fixed="right" width="100">-->
+                <!--<template slot-scope="scope">-->
+                    <!--<el-button type="text" @click="upDelProdu(scope.row)">修改</el-button>-->
+                    <!--<el-button type="text" :disabled="scope.row.recordState=='rs01'?(true):(false)" @click="delDelProdu(scope.row)">删除</el-button>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
         </el-table>
         <!--分页-->
         <el-row>

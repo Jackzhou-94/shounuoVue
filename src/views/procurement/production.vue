@@ -6,12 +6,13 @@
 
                 <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
                 <!--:disabled="auditStatusBut" 提交审核显示控制-->
-                <el-button size="mini" type="primary">提交审核</el-button>
+                <el-button size="mini" :disabled="auditStatusBut" type="primary" @click="SubmitAudit">提交审核</el-button>
 
                 <!--:disabled="submitStatusBut" 审核通过显示控制-->
-                <el-button size="mini" type="primary">审核通过</el-button>
+                <el-button size="mini" :disabled="submitStatusBut" type="primary" @click="approved">审核通过</el-button>
                 <!--:disabled="submitStatusBut" 审核驳回显示控制-->
-                <el-button size="mini" type="primary">审核驳回</el-button>
+                <el-button size="mini" :disabled="submitStatusBut" type="primary" @click="approvedRejected">审核驳回
+                </el-button>
 
             </div>
             <div class=" QueryConditions QueryInput">
@@ -45,14 +46,14 @@
                 </div>
             </div>
         </div>
-
+        <!--@cell-dblclick="detailedQuery"-->
         <el-table
                 border
                 stripe
                 :data="ProductionList"
                 height="750px"
-                @cell-dblclick="detailedQuery"
-        >
+                @selection-change="ProductionSelect">
+            >
             <el-table-column align="center" type="selection"></el-table-column>
             <el-table-column align="center" type="index"></el-table-column>
             <el-table-column align="center" label="生产计划单编号" prop="produceCode"
@@ -61,14 +62,37 @@
                              width="170px"></el-table-column>
             <el-table-column align="center" label="预完工时间" prop="expectCompleteTime"
                              width="160px"></el-table-column>
+            <el-table-column
+                    align="center"
+                    prop="submitStatus"
+                    label="提交状态"
+                    width="150"
+            >
+                <template slot-scope="scope">
+                    <span>{{scope.row.submitStatus=='tj01'?'已提交':'未提交'}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    align="center"
+                    prop="auditStatus"
+                    label="审核状态"
+            >
+                <template slot-scope="scope">
+                    <span>{{scope.row.auditStatus=='sh01'?'已审核':scope.row.auditStatus=='sh02'?'未审核':'审核驳回'}}</span>
+                </template>
+            </el-table-column>
             <el-table-column align="center" label="创建时间" prop="createTime"
                              width="180px"></el-table-column>
             <el-table-column align="center" label="修改时间" prop="updateTime"
                              width="180px"></el-table-column>
             <el-table-column align="center" label="备注" prop="remark"></el-table-column>
-            <el-table-column align="center" label="操作" fixed="right">
+            <el-table-column align="center" label="操作" fixed="right" width="120px">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="upProceBtn(scope.row)">修改</el-button>
+
+                    <el-button type="text" @click="detailedQuery(scope.row)">详情</el-button>
+                    <el-button type="text" :disabled="scope.row.submitStatus=='tj01'?true:false"
+                               @click="upProceBtn(scope.row)">修改
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -92,7 +116,7 @@
                 width="1100px">
             <div class="QueryConditions">
                 <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
-                <el-button type="primary" icon="el-icon-view" size="mini" @click="workerSettingsBtn">派工设置</el-button>
+                <el-button type="primary" icon="el-icon-view" size="mini" :disabled="stateButton"  @click="workerSettingsBtn">派工设置</el-button>
             </div>
 
             <el-table
@@ -144,19 +168,54 @@
             </el-table>
             <el-divider>派工详情</el-divider>
 
+            <div class="QueryConditions">
+
+
+                <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
+                <!--:disabled="auditStatusBut" 提交审核显示控制-->
+                <el-button size="mini" :disabled="pruauditStatusBut" type="primary" @click="dispatchSubmitAudit">提交审核</el-button>
+
+                <!--:disabled="submitStatusBut" 审核通过显示控制-->
+                <el-button size="mini" :disabled="prusubmitStatusBut" type="primary" @click="dispatchapproved">审核通过</el-button>
+                <!--:disabled="submitStatusBut" 审核驳回显示控制-->
+                <el-button size="mini" :disabled="prusubmitStatusBut" type="primary" @click="dispatchapprovedRejected">审核驳回
+                </el-button>
+
+            </div>
             <el-table
                     border
                     stripe
                     :data="dispatchingDetailsData"
                     @selection-change="selectionDetailsPlanList"
+
             >
                 <el-table-column align="center" type="index"></el-table-column>
+                <el-table-column align="center" type="selection"></el-table-column>
                 <el-table-column align="center" v-if="ProductionOrderShow" label="生产计划单编号" prop="produceCode"
                                  width="160px"></el-table-column>
                 <el-table-column align="center" v-if="styleNumberShow" label="派工单号" prop="produceCode"
                                  width="170px"></el-table-column>
                 <el-table-column align="center" v-if="MerchantNumberShow" label="款式编号" prop="styleCode"
                                  width="160px"></el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="submitStatus"
+                        label="提交状态"
+                        width="150"
+                >
+                    <template slot-scope="scope">
+                        <span>{{scope.row.submitState=='tj01'?'已提交':'未提交'}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="auditStatus"
+                        label="审核状态"
+                >
+                    <template slot-scope="scope">
+                        <span>{{scope.row.auditState=='sh01'?'已审核':scope.row.auditState=='sh02'?'未审核':'审核驳回'}}</span>
+                    </template>
+                </el-table-column>
                 <el-table-column align="center" v-if="MerchantNameShow" label="工厂" prop="factoryName"></el-table-column>
                 <el-table-column
                         label="工艺流程"
@@ -915,7 +974,9 @@
                         fixed="right"
                 >
                     <template slot-scope="scope">
-                        <el-button type="text" @click="uprmproduction(scope.row)">移除</el-button>
+                        <el-button type="text" :disabled="scope.row.moveState===1?true:false"
+                                   @click="uprmproduction(scope.row)">移除
+                        </el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -1168,7 +1229,7 @@
                 nameQuery: '',//工艺名称
                 categoryQuery: '',//类别
                 totalRecordNum: 0,//总条目数
-                totalRecordNumFactory:0,//派工设置工厂总条目数
+                totalRecordNumFactory: 0,//派工设置工厂总条目数
                 categorySelect: [
                     //工艺单类别
                     {
@@ -1194,7 +1255,7 @@
 
                 upScheduleList: {
                     //修改生产计划单数据
-                    id: '',
+                    uuid: '',
                     producePlanDetailBeanList: [],
                     expectProcessTime: '',//预计加工时间
                     expectCompleteTime: '',//预计完工时间
@@ -1251,10 +1312,203 @@
                 dispatchingDetailsNum: 0,//派工详情总条目数
                 producitonUUID: '',//生产计划单双击获取的UUID
 
+                ProductionData: [],//生产计划单多选数据
+                submitStatusBut: true,//审核按钮
+                auditStatusBut: true,//提交按钮
+                delStatusBut: true,//删除按钮
+
+                prusubmitStatusBut: true,//派工审核按钮
+                pruauditStatusBut: true,//派工提交按钮
+                prudelStatusBut: true,//删除按钮
+
+
+                stateButton: false,//派工按钮
             }
         },
 
         methods: {
+            ProductionSelect(data) {
+                //生产计划单多选
+                this.ProductionData = data
+                console.log(this.ProductionData)
+
+                //采购单多选
+                if (data.length == 0) {
+                    this.submitStatusBut = true
+                    this.auditStatusBut = true
+                    this.delStatusBut = true
+                } else {
+                    this.delStatusBut = false
+                    let list = data.map(item => {
+                        return item.submitStatus
+                    })
+                    let lists = data.map(item => {
+                        return item.auditStatus
+                    })
+                    let num = list.indexOf('tj02')
+                    let nums = lists.indexOf('sh01')
+                    console.log(data)
+                    console.log(list)
+                    console.log(nums)
+                    if (num == -1) {
+                        this.submitStatusBut = false
+                        this.auditStatusBut = true
+                    } else if (num != -1) {
+                        this.submitStatusBut = true
+                        this.auditStatusBut = false
+                    }
+                    if (nums != -1) {
+                        this.submitStatusBut = true
+                        this.auditStatusBut = true
+                        this.delStatusBut = true
+                    }
+                }
+
+
+            },
+            SubmitAudit() {
+                //生产计划单提交审核
+                let data = {
+                    producePlanBeanList: this.ProductionData,
+                    submitStatus: 'tj01'
+                }
+                let that = this
+                this.$axios.post(this.$store.state.produceplanSaveState, data).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            onClose() {
+                                that.ProduQueryPage()
+                            }
+                        });
+                    }
+                    else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+            },
+            approvedRejected() {
+                //审核驳回
+                let data = {
+                    producePlanBeanList: this.ProductionData,
+                    auditStatus: 'sh03',
+                    submitStatus: 'tj02'
+                }
+                let that = this
+                this.$axios.post(this.$store.state.produceplanSaveState, data).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            onClose() {
+                                that.ProduQueryPage()
+                            }
+                        });
+                    }
+                    else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+            },
+            approved() {
+                //生产计划单通过审核
+                let data = {
+                    producePlanBeanList: this.ProductionData,
+                    auditStatus: 'sh01'
+                }
+                let that = this
+                this.$axios.post(this.$store.state.produceplanSaveState, data).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            onClose() {
+                                that.ProduQueryPage()
+                            }
+                        });
+                    }
+                    else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+
+            },
+
+
+
+            dispatchSubmitAudit() {
+                //生产计划单提交审核
+                let data = {
+                    dispatchDetailBeanList: this.Dispatched,
+                    submitState: 'tj01'
+                }
+                let that = this
+                this.$axios.post(this.$store.state.dispatchSaveState, data).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            onClose() {
+                                that.detailedQuery()
+                            }
+                        });
+                    }
+                    else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+            },
+            dispatchapprovedRejected() {
+                //审核驳回
+                let data = {
+                    dispatchDetailBeanList: this.Dispatched,
+                    auditState: 'sh03',
+                    submitState: 'tj02'
+                }
+                let that = this
+                this.$axios.post(this.$store.state.dispatchSaveState, data).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            onClose() {
+                                that.detailedQuery()
+                            }
+                        });
+                    }
+                    else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+            },
+            dispatchapproved() {
+                //生产计划单通过审核
+                let data = {
+                    dispatchDetailBeanList: this.Dispatched,
+                    auditState: 'sh01'
+                }
+                let that = this
+                this.$axios.post(this.$store.state.dispatchSaveState, data).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            onClose() {
+                                that.detailedQuery()
+                            }
+                        });
+                    }
+                    else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+
+            },
+
+
+
+
             generateDispatch() {
                 //生成派工单
                 let that = this
@@ -1338,13 +1592,58 @@
             ,
             selectionDetailsPlanList(data) {
                 //选中需要派单的信息
-
                 this.Dispatched = data
                 console.log(data)
                 // this.Dispatched.children=data.processNodeList
                 // this.Dispatched.forEach(item => {
                 //     item.dispatchedDetailList = []
                 // })
+
+
+                //采购单多选
+                if (data.length == 0) {
+                    this.prusubmitStatusBut = true
+                    this.pruauditStatusBut = true
+                    this.prudelStatusBut = true
+                } else {
+                    this.prudelStatusBut = false
+                    let list = data.map(item => {
+                        return item.submitState
+                    })
+                    let lists = data.map(item => {
+                        return item.auditState
+                    })
+                    let num = list.indexOf('tj02')
+                    let nums = lists.indexOf('sh01')
+                    console.log(data)
+                    console.log(list)
+                    console.log(nums)
+                    if (num == -1) {
+                        this.prusubmitStatusBut = false
+                        this.pruauditStatusBut = true
+                    } else if (num != -1) {
+                        this.prusubmitStatusBut = true
+                        this.pruauditStatusBut = false
+                    }
+                    if (nums != -1) {
+                        this.prusubmitStatusBut = true
+                        this.pruauditStatusBut = true
+                        this.prudelStatusBut = true
+                    }
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
             }
             ,
             workerSettingsBtn() {
@@ -1370,6 +1669,7 @@
                 //生产计划单双击事件
                 this.producitonUUID = data.uuid
                 this.DetailsPlan = true
+
                 /**
                  *
                  * 生产计划单明细
@@ -1378,7 +1678,14 @@
                     params: {uuid: data.uuid}
                 }).then(res => {
                     console.log(res)
+
+                    if (res.data.data.auditStatus !== 'sh01') {
+                        this.stateButton = true
+                    } else {
+                        this.stateButton = false
+                    }
                     this.DetailsPlanList = res.data.data.producePlanDetailBeanList
+                    console.log(this.DetailsPlanList)
                 })
                 this.dispatchingDetailsFun()
             }
@@ -1485,15 +1792,16 @@
             }
             ,
             upProceBtn(data) {
+
                 //生产计划单修改按钮
-                this.delID.push(data.produceId)//将id赋值.
+                this.delID.push(data.uuid)//将id赋值.
                 this.upsaveShow = false//显示修改保存按钮
                 this.$axios.get(this.$store.state.basicInformationPro, {
                     params: {uuid: data.uuid}
                 }).then(res => {
                     this.upaddProduction = true
                     this.upScheduleList.producePlanDetailBeanList = res.data.data.producePlanDetailBeanList
-                    this.upScheduleList.id = data.produceId
+                    this.upScheduleList.uuid = data.uuid
                     this.upScheduleList.expectProcessTime = res.data.data.expectProcessTime//预计加工时间
                     this.upScheduleList.expectCompleteTime = res.data.data.expectCompleteTime//预计完工时间
 
@@ -1571,9 +1879,8 @@
             upaddProductiondata() {
                 //修改生产计划单
 
-
                 let that = this
-                this.$axios.post(this.$store.state.addProduction, this.upScheduleList).then(res => {
+                this.$axios.post(this.$store.state.upProduction, this.upScheduleList).then(res => {
                     if (res.data.code == 200) {
                         this.$message({
                             message: '保存成功',

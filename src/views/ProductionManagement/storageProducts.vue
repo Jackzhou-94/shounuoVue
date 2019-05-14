@@ -2,17 +2,17 @@
     <div class="storageProducts">
         <div class="menuBox">
             <div class="QueryConditions">
-                <el-button size="mini" type="primary" class="el-icon-plus" @click="storePro=true">新建
-                </el-button>
+                <!--<el-button size="mini" type="primary" class="el-icon-plus" @click="storePro=true">新建-->
+                <!--</el-button>-->
 
 
                 <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
-                <el-button size="mini" type="primary" :disabled="auditStatusstoreBut">提交审核</el-button>
-                <el-button size="mini" type="primary" :disabled="submitStatusstoreBut">审核通过
-                </el-button>
-                <el-button size="mini" type="primary" :disabled="submitStatusstoreBut">审核驳回
-                </el-button>
-                <el-button size="mini" type="danger" :disabled="delStatusstoreBut" @click="delStockins">批量删除</el-button>
+                <!--<el-button size="mini" type="primary" :disabled="auditStatusstoreBut">提交审核</el-button>-->
+                <!--<el-button size="mini" type="primary" :disabled="submitStatusstoreBut">审核通过-->
+                <!--</el-button>-->
+                <!--<el-button size="mini" type="primary" :disabled="submitStatusstoreBut">审核驳回-->
+                <!--</el-button>-->
+                <!--<el-button size="mini" type="danger" :disabled="delStatusstoreBut" @click="delStockins">批量删除</el-button>-->
             </div>
             <div class=" QueryConditions QueryInput">
                 <div>
@@ -86,12 +86,12 @@
             <el-table-column align="center" v-if="SinglePersonShow" label="制单人" prop="documentMaker"
                              width="100px"></el-table-column>
             <el-table-column align="center" v-if="RemarksShow" label="备注" width="100px" prop="remark"></el-table-column>
-            <el-table-column align="center" label="操作" width="100px" fixed="right">
-                <template slot-scope="scope">
-                    <el-button type="text" @click="upStoreProducts(scope.row)">修改</el-button>
-                    <el-button type="text" @click="delStore(scope.row)">删除</el-button>
-                </template>
-            </el-table-column>
+            <!--<el-table-column align="center" label="操作" width="100px" fixed="right">-->
+                <!--<template slot-scope="scope">-->
+                    <!--<el-button type="text" @click="upStoreProducts(scope.row)">修改</el-button>-->
+                    <!--<el-button type="text" @click="delStore(scope.row)">删除</el-button>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
         </el-table>
         <!--分页-->
         <el-row>

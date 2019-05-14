@@ -2,16 +2,16 @@
     <div class="ProductionLog">
         <div class="menuBox">
             <div class="QueryConditions">
-                <el-button size="mini" type="primary" class="el-icon-plus" @click="ProLog=true">新建
-                </el-button>
+                <!--<el-button size="mini" type="primary" class="el-icon-plus" @click="ProLog=true">新建-->
+                <!--</el-button>-->
                 <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
-                <el-button size="mini" type="primary" :disabled="auditStatusBut">提交审核</el-button>
-                <el-button size="mini" type="primary" :disabled="submitStatusBut">审核通过
-                </el-button>
+                <!--<el-button size="mini" type="primary" :disabled="auditStatusBut">提交审核</el-button>-->
+                <!--<el-button size="mini" type="primary" :disabled="submitStatusBut">审核通过-->
+                <!--</el-button>-->
 
-                <el-button size="mini" type="primary" :disabled="submitStatusBut">审核驳回
-                </el-button>
-                <el-button size="mini" type="danger" :disabled="delStatusBut" @click="producelogDelete">批量删除</el-button>
+                <!--<el-button size="mini" type="primary" :disabled="submitStatusBut">审核驳回-->
+                <!--</el-button>-->
+                <!--<el-button size="mini" type="danger" :disabled="delStatusBut" @click="producelogDelete">批量删除</el-button>-->
             </div>
             <div class=" QueryConditions QueryInput">
 
@@ -80,12 +80,12 @@
             <el-table-column align="center" v-if="dispatchCodeShow" prop="dispatchCode" label="派工单号" width="160px"></el-table-column>
             <el-table-column align="center" v-if="applicantShow" prop="applicant" label="填报人"></el-table-column>
             <el-table-column align="center" v-if="remarkShow" prop="remark" label="备注"></el-table-column>
-            <el-table-column align="center" label="操作" fixed="right" width="100px">
-                <template slot-scope="scope">
-                    <el-button type="text" @click="upProdulog(scope.row)">修改</el-button>
-                    <el-button type="text" @click="proLogDelete(scope.row)">删除</el-button>
-                </template>
-            </el-table-column>
+            <!--<el-table-column align="center" label="操作" fixed="right" width="100px">-->
+                <!--<template slot-scope="scope">-->
+                    <!--<el-button type="text" @click="upProdulog(scope.row)">修改</el-button>-->
+                    <!--<el-button type="text" @click="proLogDelete(scope.row)">删除</el-button>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
         </el-table>
         <!--分页-->
         <el-row>

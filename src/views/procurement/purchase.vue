@@ -1,1501 +1,613 @@
 <template>
     <div class="purchase">
-        <el-tabs v-model="activeName2" tabPosition="left">
-            <el-tab-pane label="原材料采购" name="second">
-                <div>
-                    <!--新建与查询-->
-                    <div class="menuBox">
-
-                        <div class="QueryConditions">
-                            <el-button size="mini" type="primary" class="el-icon-plus"
-                                       @click="Newpurchaseorder_mater=true">新建
-                            </el-button>
-                            <el-button icon="el-icon-view" type="primary" size="mini" @click="SettingsMater=true">显示设置
-                            </el-button>
-                            <el-button size="mini" type="primary" :disabled="auditStatusBut" @click="SubmitAudit">提交审核
-                            </el-button>
-                            <el-button size="mini" type="primary" :disabled="submitStatusBut" @click="AuditPass">审核通过
-                            </el-button>
-                            <el-button size="mini" type="primary" :disabled="submitStatusBut" @click="AuditReject">
-                                审核驳回
-                            </el-button>
-                            <el-button size="mini" type="danger" :disabled="delStatusBut" @click="delMaterPur()">批量删除
-                            </el-button>
-                            <!--<el-button size="mini">导出</el-button>-->
-                        </div>
-                        <div class="QueryConditions QueryInput">
-                            <div>
-                                <el-select size="mini" v-model="materTimeType" placeholder="时间类型">
-                                    <el-option
-                                            v-for="item in TimeTypelist"
-                                            :key="item.value"
-                                            :label="item.label"
-                                            :value="item.value">
-                                    </el-option>
-                                </el-select>
-                                <el-date-picker
-                                        size="mini"
-                                        v-model="materpurchaseTime"
-                                        type="daterange"
-                                        range-separator="至"
-                                        format="yyyy 年 MM 月 dd 日"
-                                        value-format="yyyy-MM-dd"
-                                        start-placeholder="开始日期"
-                                        end-placeholder="结束日期">
-                                </el-date-picker>
-
-                                <el-select size="mini" clearable v-model="materAuditStatuss" placeholder="审核状态">
-                                    <el-option
-                                            v-for="item in Audit"
-                                            :key="item.value"
-                                            :label="item.label"
-                                            :value="item.value">
-                                    </el-option>
-                                </el-select>
-                                <el-select size="mini" clearable v-model="materSubmitstate" placeholder="提交状态">
-                                    <el-option
-                                            v-for="item in Submit"
-                                            :key="item.value"
-                                            :label="item.label"
-                                            :value="item.value">
-                                    </el-option>
-                                </el-select>
-
-                                <el-select size="mini" clearable v-model="materReceivingStatus" placeholder="收货状态">
-                                    <el-option
-                                            v-for="item in Receiving"
-                                            :key="item.value"
-                                            :label="item.label"
-                                            :value="item.value">
-                                    </el-option>
-                                </el-select>
-
-
-                                <el-input size="mini" style="width: 200px" placeholder="采购单号" clearable
-                                          v-model="materpurchaseNumbers"></el-input>
-                            </div>
-                            <div>
-                                <el-button type="primary" size="mini" icon="el-icon-edit"
-                                           @click="materpurchaseNumbers='',materSubmitstate='',materReceivingStatus='',materAuditStatuss='',materpurchaseTime='',materTimeType=''">
-                                    重置
-                                </el-button>
-
-                                <el-button type="primary" size="mini" icon="el-icon-search"
-                                           @click="materialQueryPage()">查询
-                                </el-button>
-                            </div>
-                        </div>
-
-                        <!--显示设置-->
-                        <el-dialog
-                                title="显示设置"
-                                :visible.sync="SettingsMater"
-                                width="450px"
-                                :show-close="false"
-
-                        >
-                            <div style="text-align: left">
-
-
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="purchaseNumbermaterSet">采购单号</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="purchaseSourcematerSet">采购订单来源</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="frequencymaterSet">入库次数</el-checkbox>
-                                    </el-col>
-                                </el-row>
-
-
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="auditStatusmaterSet">审核状态</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="receiveStatusmaterSet">收货状态</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="typematerSet">采购订单类型</el-checkbox>
-                                    </el-col>
-                                </el-row>
-
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="commodityTypematerSet">商品类型</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="receiveAddressmaterSet">收货地址</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="submittermaterSet">提交人</el-checkbox>
-                                    </el-col>
-                                </el-row>
-
-
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="contractTermmaterSet">合同条款</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="singlePersonmaterSet">制单人</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="financialJudgematerSet">财审人</el-checkbox>
-                                    </el-col>
-                                </el-row>
-
-
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="auditormaterSet">审核人</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="totalSummaterSet">总金额(不含税)</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="taxTotalSummaterSet">总金额（含税）</el-checkbox>
-                                    </el-col>
-
-                                </el-row>
-
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="totalQuantitymaterSet">总数量</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="completeStatusmaterSet">采购完成状态</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="remarkmaterSet">备注</el-checkbox>
-                                    </el-col>
-                                </el-row>
-
-
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="createTimematerSet">创建时间</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="updateTimematermaterSet">修改时间</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="freightmaterSet">运费</el-checkbox>
-                                    </el-col>
-                                </el-row>
-                                <el-row>
-                                    <el-col :span="8">
-
-                                        <el-checkbox v-model="invoicematerSet">发票</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="freightTransportationmaterSet">货运方式</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="taxRatematerSet">税率</el-checkbox>
-                                    </el-col>
-                                </el-row>
-
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="taxAmountmaterSet">税额</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="operationmaterSet">供应商</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="submitStatusmaterSet">提交状态</el-checkbox>
-                                    </el-col>
-                                </el-row>
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="submitTimematerSet">提交时间</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="auditTimematerSet">审核时间</el-checkbox>
-                                    </el-col>
-
-
-                                </el-row>
-
-                            </div>
-
-                        </el-dialog>
-
-
-                        <!--新建采购单-->
-                        <el-dialog
-                                title="新建采购单(原材料)"
-                                :visible.sync="Newpurchaseorder_mater"
-                                :show-close="false"
-                                width="1000px">
-                            <el-form :model="addProcurementMater" ref="addProcurementMater"
-                                     :rules="addProcurementsMater" label-width="100px" label-position="right"
-                            >
-
-
-                                <div style="display: flex;justify-content: space-between;flex-wrap: nowrap">
-                                    <el-form-item
-                                            label="供应商"
-                                            prop="supplier"
-                                    >
-                                        <!--供应商选择-->
-                                        <el-select size="mini" filterable clearable
-                                                   v-model="addProcurementMater.supplier"
-                                                   placeholder="供应商">
-                                            <el-option
-                                                    v-for="item in options"
-                                                    :key="item.value"
-                                                    :label="item.label"
-                                                    :value="item.value">
-                                            </el-option>
-                                        </el-select>
-                                    </el-form-item>
-
-                                    <el-form-item
-                                            label="工厂"
-                                            prop="factoryName"
-                                    >
-                                        <!--工厂选择-->
-                                        <el-select filterable size="mini" clearable
-                                                   v-model="addProcurementMater.factoryName"
-                                                   placeholder="工厂选择">
-                                            <el-option
-                                                    v-for="item in factorylist"
-                                                    :key="item.value"
-                                                    :label="item.label"
-                                                    :value="item.value">
-                                            </el-option>
-                                        </el-select>
-                                    </el-form-item>
-
-                                    <el-form-item label="发票" prop="invoice">
-                                        <el-select @change="materchoose" size="mini"
-
-                                                   v-model="addProcurementMater.invoice"
-                                                   placeholder="请选择发票">
-                                            <el-option
-                                                    v-for="item in addinvoice"
-                                                    :key="item.value"
-                                                    :label="item.label"
-                                                    :value="item.value">
-                                            </el-option>
-                                        </el-select>
-                                    </el-form-item>
-
-                                    <el-form-item label="货运方式" prop="freightTransportation">
-                                        <el-input clearable size="mini" placeholder="货运方式"
-                                                  v-model="addProcurementMater.freightTransportation"></el-input>
-                                    </el-form-item>
-                                    <!--<el-form-item label="运费" prop="freight">-->
-                                    <!--<el-input clearable  size="mini" v-model="addProcurementMater.freight"></el-input>-->
-                                    <!--</el-form-item>-->
-                                    <!--<el-form-item label="备注">-->
-                                    <!--<el-input  clearable size="mini" placeholder="备注"-->
-                                    <!--v-model="addProcurementMater.remark"></el-input>-->
-                                    <!--</el-form-item>-->
-                                </div>
-
-
-                                <el-row>
-                                    <el-col :span="6">
-                                        <el-form-item label="运费" prop="freight">
-                                            <el-input size="mini" v-model="addProcurementMater.freight"></el-input>
-                                        </el-form-item>
-                                    </el-col>
-
-
-                                    <el-col :span="6">
-                                        <el-form-item label="备注">
-                                            <el-input size="mini" placeholder="备注"
-                                                      v-model="addProcurementMater.remark"></el-input>
-                                        </el-form-item>
-                                    </el-col>
-                                </el-row>
-
-
-                            </el-form>
-                            <div class="QueryConditions">
-                                <el-button size="mini" @click="PurchasingAddmaterial_material=true">添加商品</el-button>
-                                <el-button size="mini" @click="batchMaterTime">批量添加预计入库时间</el-button>
-                                <el-date-picker
-                                        style="margin-left: 0.5em"
-                                        size="mini"
-                                        v-model="timematerData"
-                                        value-format="yyyy-MM-dd HH:mm:ss"
-                                        type="datetime"
-                                        placeholder="批量添加预计入库时间">
-                                </el-date-picker>
-                            </div>
-
-                            <el-table
-                                    :data="addProcurementMater.goodsList"
-                                    border
-                                    stripe
-                                    @selection-change="goodsmaterSelection"
-                                    style="width: 100%">
-
-                                <el-table-column align="center" type="selection"></el-table-column>
-                                <el-table-column
-                                        label="预计入库时间"
-                                        width="200"
-                                        align="center"
-                                >
-                                    <template slot-scope="scope">
-                                        <el-date-picker
-                                                style="width: 180px"
-                                                v-model="scope.row.warehouseTime"
-                                                size="mini"
-                                                type="datetime"
-                                                value-format="yyyy-MM-dd HH:mm:ss"
-                                                placeholder="预计入库时间">
-                                        </el-date-picker>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        label="数量"
-                                        width="200"
-                                        prop="number"
-                                >
-                                    <template slot-scope="scope">
-
-                                        <!--<el-input-number :min="0" @change="containtax(scope.row)"-->
-                                        <!--size="mini"-->
-                                        <!--@change="materNumber(scope.row)"-->
-                                        <!--v-model="scope.row.number"-->
-                                        <!--label="描述文字"></el-input-number>-->
-
-                                        <el-input-number size="mini"
-                                                         v-model="scope.row.number" @change="materNumber(scope.row)"
-                                                         :min="1" label="描述文字">
-
-                                        </el-input-number>
-
-                                    </template>
-                                </el-table-column>
-                                <el-table-column
-                                        label="操作"
-                                        fixed="left"
-                                        align="center"
-                                >
-                                    <template slot-scope="scope">
-                                        <!--删除from表单中商品数据-->
-                                        <el-button type="text" @click="deltetmaterPurchase(scope.row)">删除</el-button>
-                                    </template>
-                                </el-table-column>
-
-
-                                <el-table-column
-                                        label="创建时间"
-                                        prop="createTime"
-                                        width="180"
-                                        align="center"
-                                        sortable
-                                ></el-table-column>
-                                <el-table-column
-
-                                        label="修改时间"
-                                        prop="updateTime"
-                                        width="180"
-                                        align="center"
-                                        sortable
-                                ></el-table-column>
-                                <el-table-column
-                                        label="含税单价（元）"
-                                        width="200"
-                                        align="center"
-
-                                >
-                                    <template slot-scope="scope">
-
-                                        <el-input-number :min="0" @change="matercontaintax(scope.row)"
-                                                         :disabled="matercontaining"
-                                                         size="mini"
-                                                         v-model="scope.row.taxPrice"
-                                                         label="描述文字"></el-input-number>
-                                    </template>
-                                </el-table-column>
-
-                                <el-table-column
-                                        label="不含税单价（元）"
-                                        width="200"
-                                        align="center"
-                                >
-                                    <template slot-scope="scope">
-                                        <el-input-number :min="0" :disabled="maternocontaining" size="mini"
-                                                         v-model="scope.row.unitPrice"
-                                                         @change="materaddprocure(scope.row)"></el-input-number>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column
-                                        label="含税总价（元）"
-                                        width="120"
-                                        align="center"
-                                        prop="taxTotalPrice"
-                                >
-                                </el-table-column>
-                                <el-table-column
-                                        label="不含税总价（元）"
-                                        width="150"
-                                        align="center"
-                                        prop="totalPrice"
-                                >
-                                </el-table-column>
-
-
-                                <el-table-column
-                                        label="物料编号"
-                                        prop="materialCode"
-                                        width="180"
-                                        align="center"
-                                        sortable
-                                ></el-table-column>
-                                <el-table-column
-                                        label="物料名称"
-                                        prop="name"
-                                        width="200"
-                                        align="center"
-                                ></el-table-column>
-                                <el-table-column
-                                        prop="ingredients"
-                                        label="成分规格"
-                                        width="180"
-                                        align="center"
-                                ></el-table-column>
-                                <el-table-column
-                                        label="物料分类"
-                                        prop="type"
-                                        width="180"
-                                        align="center"
-                                ></el-table-column>
-                                <el-table-column
-                                        label="品牌"
-                                        prop="brand"
-                                        width="120"
-                                        align="center"
-                                ></el-table-column>
-                                <el-table-column
-                                        label="状态"
-                                        width="180"
-                                        align="center"
-                                >
-                                    <template slot-scope="scope">
-                                        {{scope.row.spare=='01'?'启用':'未启用'}}
-                                    </template>
-                                </el-table-column>
-                                <el-table-column
-                                        label="默认损耗"
-                                        prop="defaultLoss"
-                                        width="160"
-                                        align="center"
-                                        sortable
-                                ></el-table-column>
-                                <el-table-column
-                                        label="厂商"
-                                        prop="manufacturer"
-                                        width="180"
-                                        align="center"
-                                ></el-table-column>
-                                <el-table-column
-                                        label="基本计量单位"
-                                        prop="unit"
-                                        width="150"
-                                        align="center"
-                                        sortable
-                                ></el-table-column>
-                                <el-table-column
-                                        label="成本价"
-                                        prop="costPrice"
-                                        width="120"
-                                        align="center"
-                                        sortable
-                                ></el-table-column>
-                                <el-table-column
-                                        label="备注"
-                                        prop="note"
-                                        width="150"
-                                        align="center"
-                                ></el-table-column>
-
-
-                            </el-table>
-
-
-                            <div style="display: flex;justify-content: space-between;margin: 0.2em">
-                                <div>
-
-                                    总数量:{{matergoodsNum}},
-                                    总金额（含税）:{{matertaxgoodsMoney.toFixed(4)}},
-                                    总金额（不含税）:{{matergoodsMoney.toFixed(4)}}
-                                </div>
-                                <div>
-                                    <el-button type="primary" size="mini"
-                                               @click="SubmissionMater('addProcurementMater')">
-                                        保存
-                                    </el-button>
-                                    <el-button size="mini" @click="Newpurchaseorder_mater=false">取消</el-button>
-                                </div>
-
-                            </div>
-
-                        </el-dialog>
-
-                        <!--采购订单添加商品(原材料)-->
-                        <el-dialog
-                                title="采购订单添加原材料"
-                                :visible.sync="PurchasingAddmaterial_material"
-                                width="1000px"
-                                :show-close="false"
-                        >
-                            <!--新建与查询-->
-                            <div class="menuBox">
-                                <div class="QueryConditions QueryInput">
-                                    <div>
-                                        <el-input clearable placeholder="物料编号" size="mini"
-                                                  v-model="materialsNum"></el-input>
-
-                                        <el-input clearable placeholder="物料名称" size="mini"
-                                                  v-model="materialsName"></el-input>
-
-                                        <el-select clearable v-model="VendorQueries" placeholder="厂商" size="mini">
-                                            <el-option
-                                                    v-for="item in options"
-                                                    :key="item.value"
-                                                    :label="item.label"
-                                                    :value="item.value"
-                                            >
-                                            </el-option>
-                                        </el-select>
-                                    </div>
-                                    <div>
-                                        <el-button type="primary" icon="el-icon-delete" size="mini"
-                                                   @click="materialsNum='',materialsName='',VendorQueries=''">重置
-                                        </el-button>
-
-                                        <el-button type="primary" icon="el-icon-search" size="mini"
-                                                   @click="queryPage">查询
-                                        </el-button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <el-table
-                                        style="width: 100%"
-                                        border
-                                        stripe
-                                        :data="materialsList"
-                                        highlight-current-row
-                                >
-                                    <el-table-column
-                                            align="center"
-                                            label="操作"
-                                            width="80"
-                                            fixed="left"
-                                    >
-                                        <template slot-scope="scope">
-
-                                            <el-button type="text" @click="addmateTopurchase(scope.row)">添加</el-button>
-                                        </template>
-                                    </el-table-column>
-                                    <el-table-column
-                                            type="index"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-
-                                    <el-table-column
-                                            label="创建时间"
-                                            prop="createTime"
-                                            width="180"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-
-                                            label="修改时间"
-                                            prop="updateTime"
-                                            width="180"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-
-                                    <el-table-column
-                                            label="物料编号"
-                                            prop="materialCode"
-                                            width="180"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="物料名称"
-                                            prop="name"
-                                            width="200"
-                                            align="center"
-                                    ></el-table-column>
-                                    <el-table-column
-                                            prop="ingredients"
-                                            label="成分规格"
-                                            width="180"
-                                            align="center"
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="物料分类"
-                                            prop="type"
-                                            width="180"
-                                            align="center"
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="品牌"
-                                            prop="brand"
-                                            width="120"
-                                            align="center"
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="状态"
-                                            width="180"
-                                            align="center"
-                                    >
-                                        <template slot-scope="scope">
-                                            {{scope.row.spare=='01'?'启用':'未启用'}}
-                                        </template>
-                                    </el-table-column>
-                                    <el-table-column
-                                            label="默认损耗"
-                                            prop="defaultLoss"
-                                            width="160"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="厂商"
-                                            prop="manufacturer"
-                                            width="180"
-                                            align="center"
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="基本计量单位"
-                                            prop="unit"
-                                            width="150"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="成本价"
-                                            prop="costPrice"
-                                            width="120"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="备注"
-                                            prop="note"
-                                            width="150"
-                                            align="center"
-                                    ></el-table-column>
-
-                                </el-table>
-                                <!--分页-->
-                                <div class="PageLayout">
-                                    <el-pagination
-                                            @current-change="handleCurrentChange"
-                                            :page-size="5"
-                                            layout="prev, pager, next, jumper"
-                                            :total="totalRecord">
-                                    </el-pagination>
-
-                                </div>
-
-                                <el-table
-                                        :data="quiremateDataBox"
-                                        border
-                                        stripe
-                                        @selection-change="goodsSelection"
-                                        style="width: 100%">
-
-                                    <el-table-column
-                                            type="index"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-
-                                    <el-table-column
-                                            label="创建时间"
-                                            prop="createTime"
-                                            width="180"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-
-                                            label="修改时间"
-                                            prop="updateTime"
-                                            width="180"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-
-                                    <el-table-column
-                                            label="物料编号"
-                                            prop="materialCode"
-                                            width="180"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="物料名称"
-                                            prop="name"
-                                            width="200"
-                                            align="center"
-                                    ></el-table-column>
-                                    <el-table-column
-                                            prop="ingredients"
-                                            label="成分规格"
-                                            width="180"
-                                            align="center"
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="物料分类"
-                                            prop="type"
-                                            width="180"
-                                            align="center"
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="品牌"
-                                            prop="brand"
-                                            width="120"
-                                            align="center"
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="状态"
-                                            width="180"
-                                            align="center"
-                                    >
-                                        <template slot-scope="scope">
-                                            {{scope.row.spare=='01'?'启用':'未启用'}}
-                                        </template>
-                                    </el-table-column>
-                                    <el-table-column
-                                            label="默认损耗"
-                                            prop="defaultLoss"
-                                            width="160"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="厂商"
-                                            prop="manufacturer"
-                                            width="180"
-                                            align="center"
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="基本计量单位"
-                                            prop="unit"
-                                            width="150"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="成本价"
-                                            prop="costPrice"
-                                            width="120"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="备注"
-                                            prop="note"
-                                            width="150"
-                                            align="center"
-                                    ></el-table-column>
-
-                                    <el-table-column
-                                            label="操作"
-                                            fixed="left"
-                                            align="center"
-                                    >
-                                        <template slot-scope="scope">
-                                            <!--删除备选数组信息-->
-                                            <el-button type="text" @click="delpruchase(scope.row)">删除</el-button>
-                                        </template>
-                                    </el-table-column>
-
-
-                                </el-table>
-                                <div style="text-align: right;margin: 0.2em">
-                                    <el-button type="primary" size="mini" @click="PreservationMater">保存</el-button>
-                                    <el-button size="mini" @click="PurchasingAddmaterial_material=false">取消</el-button>
-                                </div>
-
-                            </div>
-
-
-                        </el-dialog>
-
-
-                        <!--修改采购单-->
-                        <el-dialog
-                                title="修改采购单(原材料)"
-                                :visible.sync="upNewpurchaseorder_mater"
-                                @closed="closeFunMater"
-                                :show-close="false"
-                                width="1000px">
-                            <el-form :model="upaddProcurementMater" ref="upaddProcurementMater"
-                                     :rules="upaddProcurementsMater"
-                                     label-position="right"
-                                     label-width="100px">
-                                <el-row>
-                                    <el-col :span="6">
-                                        <el-form-item
-                                                label="供应商"
-                                                prop="supplier"
-                                        >
-                                            <!--供应商选择-->
-                                            <el-select size="mini" filterable clearable
-                                                       v-model="upaddProcurementMater.supplier"
-                                                       placeholder="供应商">
-                                                <el-option
-                                                        v-for="item in options"
-                                                        :key="item.value"
-                                                        :label="item.label"
-                                                        :value="item.value">
-                                                </el-option>
-                                            </el-select>
-                                        </el-form-item>
-                                    </el-col>
-                                    <el-col :span="6">
-                                        <el-form-item
-                                                label="工厂"
-                                                prop="factoryName"
-                                        >
-                                            <!--工厂选择-->
-                                            <el-select filterable size="mini" clearable
-                                                       v-model="upaddProcurementMater.factoryName"
-                                                       placeholder="工厂选择">
-                                                <el-option
-                                                        v-for="item in factorylist"
-                                                        :key="item.value"
-                                                        :label="item.label"
-                                                        :value="item.value">
-                                                </el-option>
-                                            </el-select>
-                                        </el-form-item>
-                                    </el-col>
-                                    <el-col :span="6">
-                                        <el-form-item label="运费" prop="freight">
-                                            <el-input size="mini" v-model="upaddProcurementMater.freight"></el-input>
-                                        </el-form-item>
-
-                                    </el-col>
-                                    <el-col :span="6">
-                                        <el-form-item label="备注">
-                                            <el-input size="mini" placeholder="备注"
-                                                      v-model="upaddProcurementMater.remark"></el-input>
-                                        </el-form-item>
-                                    </el-col>
-
-                                </el-row>
-
-
-                                <el-row>
-                                    <el-col :span="6">
-                                        <el-form-item label="发票" prop="invoice">
-                                            <el-select @change="upmaterupchoose" size="mini"
-                                                       v-model="upaddProcurementMater.invoice"
-                                                       placeholder="请选择发票">
-                                                <el-option
-                                                        v-for="item in addinvoice"
-                                                        :key="item.value"
-                                                        :label="item.label"
-                                                        :value="item.value">
-                                                </el-option>
-                                            </el-select>
-                                        </el-form-item>
-                                    </el-col>
-
-                                    <el-col :span="6">
-                                        <el-form-item label="货运方式" prop="freightTransportation">
-                                            <el-input size="mini" placeholder="货运方式"
-                                                      v-model="upaddProcurementMater.freightTransportation"></el-input>
-                                        </el-form-item>
-                                    </el-col>
-
-                                </el-row>
-
-
-                            </el-form>
-                            <div class="QueryConditions">
-                                <el-button size="mini" @click="upPurchasingAddmaterial_material=true">添加商品</el-button>
-                                <el-button size="mini" @click="upbatchMaterTime">批量添加预计入库时间</el-button>
-                                <el-date-picker
-                                        style="margin-left: 0.5em"
-                                        size="mini"
-                                        v-model="uptimematerData"
-                                        type="datetime"
-                                        placeholder="批量添加预计入库时间">
-                                </el-date-picker>
-                            </div>
-
-                            <el-table
-                                    :data="upaddProcurementMater.goodsList"
-                                    border
-                                    stripe
-                                    @selection-change="upgoodsmaterSelection"
-                                    style="width: 100%">
-
-                                <el-table-column align="center" type="selection"></el-table-column>
-                                <el-table-column
-                                        label="预计入库时间"
-                                        width="200"
-                                        align="center"
-                                >
-                                    <template slot-scope="scope">
-                                        <el-date-picker
-                                                style="width: 180px"
-                                                v-model="scope.row.warehouseTime"
-                                                size="mini"
-                                                type="datetime"
-                                                value-format="yyyy-MM-dd HH:mm:ss"
-                                                placeholder="预计入库时间">
-                                        </el-date-picker>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        label="数量"
-                                        width="200"
-                                        prop="number"
-                                >
-                                    <template slot-scope="scope">
-
-                                        <!--<el-input-number :min="0" @change="containtax(scope.row)"-->
-                                        <!--size="mini"-->
-                                        <!--@change="materNumber(scope.row)"-->
-                                        <!--v-model="scope.row.number"-->
-                                        <!--label="描述文字"></el-input-number>-->
-
-                                        <el-input-number size="mini"
-                                                         v-model="scope.row.number" @change="materNumber(scope.row)"
-                                                         :min="1" label="描述文字">
-
-                                        </el-input-number>
-
-                                    </template>
-                                </el-table-column>
-                                <el-table-column
-                                        label="操作"
-                                        fixed="left"
-                                        align="center"
-                                >
-                                    <template slot-scope="scope">
-                                        <!--删除from表单中商品数据-->
-                                        <el-button type="text" @click="deltetmaterPurchase(scope.row)">删除</el-button>
-                                    </template>
-                                </el-table-column>
-
-
-                                <el-table-column
-                                        label="创建时间"
-                                        prop="createTime"
-                                        width="180"
-                                        align="center"
-                                        sortable
-                                ></el-table-column>
-                                <el-table-column
-
-                                        label="修改时间"
-                                        prop="updateTime"
-                                        width="180"
-                                        align="center"
-                                        sortable
-                                ></el-table-column>
-                                <el-table-column
-                                        label="含税单价（元）"
-                                        width="200"
-                                        align="center"
-
-                                >
-                                    <template slot-scope="scope">
-                                        <el-input-number :min="0" @change="upmatercontaintax(scope.row)"
-                                                         :disabled="upmatercontaining"
-                                                         size="mini"
-                                                         v-model="scope.row.taxPrice"
-                                                         label="描述文字"></el-input-number>
-                                    </template>
-                                </el-table-column>
-
-                                <el-table-column
-                                        label="不含税单价（元）"
-                                        width="200"
-                                        align="center"
-                                >
-                                    <template slot-scope="scope">
-                                        <el-input-number :min="0" :disabled="upmaternocontaining" size="mini"
-                                                         v-model="scope.row.unitPrice"
-                                                         @change="upmateraddprocure(scope.row)"></el-input-number>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column
-                                        label="含税总价（元）"
-                                        width="120"
-                                        align="center"
-                                        prop="taxTotalPrice"
-                                >
-                                </el-table-column>
-                                <el-table-column
-                                        label="不含税总价（元）"
-                                        width="150"
-                                        align="center"
-                                        prop="totalPrice"
-                                >
-                                </el-table-column>
-
-
-                                <el-table-column
-                                        label="物料编号"
-                                        prop="materialCode"
-                                        width="180"
-                                        align="center"
-                                        sortable
-                                ></el-table-column>
-                                <el-table-column
-                                        label="物料名称"
-                                        prop="name"
-                                        width="200"
-                                        align="center"
-                                ></el-table-column>
-                                <el-table-column
-                                        prop="ingredients"
-                                        label="成分规格"
-                                        width="180"
-                                        align="center"
-                                ></el-table-column>
-                                <el-table-column
-                                        label="物料分类"
-                                        prop="type"
-                                        width="180"
-                                        align="center"
-                                ></el-table-column>
-                                <el-table-column
-                                        label="品牌"
-                                        prop="brand"
-                                        width="120"
-                                        align="center"
-                                ></el-table-column>
-                                <el-table-column
-                                        label="状态"
-                                        width="180"
-                                        align="center"
-                                >
-                                    <template slot-scope="scope">
-                                        {{scope.row.spare=='01'?'启用':'未启用'}}
-                                    </template>
-                                </el-table-column>
-                                <el-table-column
-                                        label="默认损耗"
-                                        prop="defaultLoss"
-                                        width="160"
-                                        align="center"
-                                        sortable
-                                ></el-table-column>
-                                <el-table-column
-                                        label="厂商"
-                                        prop="manufacturer"
-                                        width="180"
-                                        align="center"
-                                ></el-table-column>
-                                <el-table-column
-                                        label="基本计量单位"
-                                        prop="unit"
-                                        width="150"
-                                        align="center"
-                                        sortable
-                                ></el-table-column>
-                                <el-table-column
-                                        label="成本价"
-                                        prop="costPrice"
-                                        width="120"
-                                        align="center"
-                                        sortable
-                                ></el-table-column>
-                                <el-table-column
-                                        label="备注"
-                                        prop="note"
-                                        width="150"
-                                        align="center"
-                                ></el-table-column>
-
-
-                            </el-table>
-
-
-                            <div style="display: flex;justify-content: space-between;margin: 0.2em">
-                                <div>
-
-                                    总数量:{{upmatergoodsNum}},
-                                    总金额（含税）:{{upmatergoodsMoney.toFixed(4)}},
-                                    总金额（不含税）:{{upmatertaxgoodsMoney.toFixed(4)}}
-
-                                </div>
-                                <div>
-                                    <el-button type="primary" size="mini"
-                                               @click="upSubmissionMater('upaddProcurementMater')">
-                                        保存
-                                    </el-button>
-                                    <el-button size="mini" @click="upNewpurchaseorder_mater=false">取消</el-button>
-                                </div>
-
-                            </div>
-
-                        </el-dialog>
-
-                        <!--修改采购订单添加商品-->
-                        <el-dialog
-                                title="采购订单添加原材料"
-                                :visible.sync="upPurchasingAddmaterial_material"
-                                width="1000px"
-                                :show-close="false"
-                        >
-                            <!--新建与查询-->
-                            <div class="menuBox">
-                                <div class="QueryConditions QueryInput">
-                                    <div>
-                                        <el-input clearable placeholder="物料编号" size="mini"
-                                                  v-model="materialsNum"></el-input>
-
-                                        <el-input clearable placeholder="物料名称" size="mini"
-                                                  v-model="materialsName"></el-input>
-
-                                        <el-select clearable v-model="VendorQueries" placeholder="厂商" size="mini">
-                                            <el-option
-                                                    v-for="item in options"
-                                                    :key="item.value"
-                                                    :label="item.label"
-                                                    :value="item.value"
-                                            >
-                                            </el-option>
-                                        </el-select>
-                                    </div>
-                                    <div>
-                                        <el-button type="primary" icon="el-icon-delete" size="mini"
-                                                   @click="materialsNum='',materialsName='',VendorQueries=''">重置
-                                        </el-button>
-
-                                        <el-button type="primary" icon="el-icon-search" size="mini"
-                                                   @click="queryPage">查询
-                                        </el-button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <el-table
-                                        style="width: 100%"
-                                        border
-                                        stripe
-                                        :data="materialsList"
-                                        highlight-current-row
-                                >
-                                    <el-table-column type="selection" align="center"></el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            label="操作"
-                                            width="80"
-                                            fixed="left"
-                                    >
-                                        <template slot-scope="scope">
-
-                                            <el-button type="text" @click="upaddmaterTopurchase(scope.row)">添加
-                                            </el-button>
-                                        </template>
-                                    </el-table-column>
-                                    <el-table-column
-                                            type="index"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-
-                                    <el-table-column
-                                            label="创建时间"
-                                            prop="createTime"
-                                            width="180"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-
-                                            label="修改时间"
-                                            prop="updateTime"
-                                            width="180"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-
-                                    <el-table-column
-                                            label="物料编号"
-                                            prop="materialCode"
-                                            width="180"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="物料名称"
-                                            prop="name"
-                                            width="200"
-                                            align="center"
-                                    ></el-table-column>
-                                    <el-table-column
-                                            prop="ingredients"
-                                            label="成分规格"
-                                            width="180"
-                                            align="center"
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="物料分类"
-                                            prop="type"
-                                            width="180"
-                                            align="center"
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="品牌"
-                                            prop="brand"
-                                            width="120"
-                                            align="center"
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="状态"
-                                            width="180"
-                                            align="center"
-                                    >
-                                        <template slot-scope="scope">
-                                            {{scope.row.spare=='01'?'启用':'未启用'}}
-                                        </template>
-                                    </el-table-column>
-                                    <el-table-column
-                                            label="默认损耗"
-                                            prop="defaultLoss"
-                                            width="160"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="厂商"
-                                            prop="manufacturer"
-                                            width="180"
-                                            align="center"
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="基本计量单位"
-                                            prop="unit"
-                                            width="150"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="成本价"
-                                            prop="costPrice"
-                                            width="120"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="备注"
-                                            prop="note"
-                                            width="150"
-                                            align="center"
-                                    ></el-table-column>
-
-                                </el-table>
-                                <!--分页-->
-                                <div class="PageLayout">
-                                    <el-pagination
-                                            @current-change="handleCurrentChange"
-                                            :page-size="5"
-                                            layout="prev, pager, next, jumper"
-                                            :total="totalRecord">
-                                    </el-pagination>
-
-                                </div>
-
-
-                                <el-table
-                                        :data="upquiremateDataBox"
-                                        border
-                                        stripe
-                                        @selection-change="upgoodsSelection"
-                                        style="width: 100%">
-                                    <el-table-column type="selection" align="center"></el-table-column>
-
-                                    <el-table-column
-                                            type="index"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-
-                                    <el-table-column
-                                            label="创建时间"
-                                            prop="createTime"
-                                            width="180"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-
-                                            label="修改时间"
-                                            prop="updateTime"
-                                            width="180"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-
-                                    <el-table-column
-                                            label="物料编号"
-                                            prop="materialCode"
-                                            width="180"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="物料名称"
-                                            prop="name"
-                                            width="200"
-                                            align="center"
-                                    ></el-table-column>
-                                    <el-table-column
-                                            prop="ingredients"
-                                            label="成分规格"
-                                            width="180"
-                                            align="center"
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="物料分类"
-                                            prop="type"
-                                            width="180"
-                                            align="center"
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="品牌"
-                                            prop="brand"
-                                            width="120"
-                                            align="center"
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="状态"
-                                            width="180"
-                                            align="center"
-                                    >
-                                        <template slot-scope="scope">
-                                            {{scope.row.spare=='01'?'启用':'未启用'}}
-                                        </template>
-                                    </el-table-column>
-                                    <el-table-column
-                                            label="默认损耗"
-                                            prop="defaultLoss"
-                                            width="160"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="厂商"
-                                            prop="manufacturer"
-                                            width="180"
-                                            align="center"
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="基本计量单位"
-                                            prop="unit"
-                                            width="150"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="成本价"
-                                            prop="costPrice"
-                                            width="120"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="备注"
-                                            prop="note"
-                                            width="150"
-                                            align="center"
-                                    ></el-table-column>
-
-                                    <el-table-column
-                                            label="操作"
-                                            fixed="left"
-                                            align="center"
-                                    >
-                                        <template slot-scope="scope">
-                                            <!--删除备选数组信息-->
-                                            <el-button type="text" @click="updelpruchase(scope.row)">删除</el-button>
-                                        </template>
-                                    </el-table-column>
-
-
-                                </el-table>
-                                <div style="text-align: right;margin: 0.2em">
-                                    <el-button type="primary" size="mini" @click="upPreservationMater">保存</el-button>
-                                    <el-button size="mini" @click="upPurchasingAddGoods=false">取消</el-button>
-                                </div>
-
-                            </div>
-
-
-                        </el-dialog>
-
+        <div>
+            <!--新建与查询-->
+            <div class="menuBox">
+
+                <div class="QueryConditions">
+                    <el-button size="mini" type="primary" class="el-icon-plus"
+                               @click="Newpurchaseorder_mater=true">新建
+                    </el-button>
+                    <el-button icon="el-icon-view" type="primary" size="mini" @click="SettingsMater=true">显示设置
+                    </el-button>
+                    <el-button size="mini" type="primary" :disabled="auditStatusBut" @click="SubmitAudit">提交审核
+                    </el-button>
+                    <el-button size="mini" type="primary" :disabled="submitStatusBut" @click="AuditPass">审核通过
+                    </el-button>
+                    <el-button size="mini" type="primary" :disabled="submitStatusBut" @click="AuditReject">
+                        审核驳回
+                    </el-button>
+                    <el-button size="mini" type="danger" :disabled="delStatusBut" @click="delMaterPur()">批量删除
+                    </el-button>
+                    <!--<el-button size="mini">导出</el-button>-->
+                </div>
+                <div class="QueryConditions QueryInput">
+                    <div>
+                        <el-select size="mini" v-model="materTimeType" placeholder="时间类型">
+                            <el-option
+                                    v-for="item in TimeTypelist"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                            </el-option>
+                        </el-select>
+                        <el-date-picker
+                                size="mini"
+                                v-model="materpurchaseTime"
+                                type="daterange"
+                                range-separator="至"
+                                format="yyyy 年 MM 月 dd 日"
+                                value-format="yyyy-MM-dd"
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期">
+                        </el-date-picker>
+
+                        <el-select size="mini" clearable v-model="materAuditStatuss" placeholder="审核状态">
+                            <el-option
+                                    v-for="item in Audit"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                            </el-option>
+                        </el-select>
+                        <el-select size="mini" clearable v-model="materSubmitstate" placeholder="提交状态">
+                            <el-option
+                                    v-for="item in Submit"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                            </el-option>
+                        </el-select>
+
+                        <el-select size="mini" clearable v-model="materReceivingStatus" placeholder="收货状态">
+                            <el-option
+                                    v-for="item in Receiving"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                            </el-option>
+                        </el-select>
+
+
+                        <el-input size="mini" style="width: 200px" placeholder="采购单号" clearable
+                                  v-model="materpurchaseNumbers"></el-input>
+                    </div>
+                    <div>
+                        <el-button type="primary" size="mini" icon="el-icon-edit"
+                                   @click="materpurchaseNumbers='',materSubmitstate='',materReceivingStatus='',materAuditStatuss='',materpurchaseTime='',materTimeType=''">
+                            重置
+                        </el-button>
+
+                        <el-button type="primary" size="mini" icon="el-icon-search"
+                                   @click="materialQueryPage()">查询
+                        </el-button>
+                    </div>
+                </div>
+
+                <!--显示设置-->
+                <el-dialog
+                        title="显示设置"
+                        :visible.sync="SettingsMater"
+                        width="450px"
+                        :show-close="false"
+
+                >
+                    <div style="text-align: left">
+
+
+                        <el-row>
+                            <el-col :span="8">
+                                <el-checkbox v-model="purchaseNumbermaterSet">采购单号</el-checkbox>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-checkbox v-model="purchaseSourcematerSet">采购订单来源</el-checkbox>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-checkbox v-model="frequencymaterSet">入库次数</el-checkbox>
+                            </el-col>
+                        </el-row>
+
+
+                        <el-row>
+                            <el-col :span="8">
+                                <el-checkbox v-model="auditStatusmaterSet">审核状态</el-checkbox>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-checkbox v-model="receiveStatusmaterSet">收货状态</el-checkbox>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-checkbox v-model="typematerSet">采购订单类型</el-checkbox>
+                            </el-col>
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="8">
+                                <el-checkbox v-model="commodityTypematerSet">商品类型</el-checkbox>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-checkbox v-model="receiveAddressmaterSet">收货地址</el-checkbox>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-checkbox v-model="submittermaterSet">提交人</el-checkbox>
+                            </el-col>
+                        </el-row>
+
+
+                        <el-row>
+                            <el-col :span="8">
+                                <el-checkbox v-model="contractTermmaterSet">合同条款</el-checkbox>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-checkbox v-model="singlePersonmaterSet">制单人</el-checkbox>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-checkbox v-model="financialJudgematerSet">财审人</el-checkbox>
+                            </el-col>
+                        </el-row>
+
+
+                        <el-row>
+                            <el-col :span="8">
+                                <el-checkbox v-model="auditormaterSet">审核人</el-checkbox>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-checkbox v-model="totalSummaterSet">总金额(不含税)</el-checkbox>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-checkbox v-model="taxTotalSummaterSet">总金额（含税）</el-checkbox>
+                            </el-col>
+
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="8">
+                                <el-checkbox v-model="totalQuantitymaterSet">总数量</el-checkbox>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-checkbox v-model="completeStatusmaterSet">采购完成状态</el-checkbox>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-checkbox v-model="remarkmaterSet">备注</el-checkbox>
+                            </el-col>
+                        </el-row>
+
+
+                        <el-row>
+                            <el-col :span="8">
+                                <el-checkbox v-model="createTimematerSet">创建时间</el-checkbox>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-checkbox v-model="updateTimematermaterSet">修改时间</el-checkbox>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-checkbox v-model="freightmaterSet">运费</el-checkbox>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="8">
+
+                                <el-checkbox v-model="invoicematerSet">发票</el-checkbox>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-checkbox v-model="freightTransportationmaterSet">货运方式</el-checkbox>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-checkbox v-model="taxRatematerSet">税率</el-checkbox>
+                            </el-col>
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="8">
+                                <el-checkbox v-model="taxAmountmaterSet">税额</el-checkbox>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-checkbox v-model="operationmaterSet">供应商</el-checkbox>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-checkbox v-model="submitStatusmaterSet">提交状态</el-checkbox>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="8">
+                                <el-checkbox v-model="submitTimematerSet">提交时间</el-checkbox>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-checkbox v-model="auditTimematerSet">审核时间</el-checkbox>
+                            </el-col>
+
+
+                        </el-row>
 
                     </div>
 
-                    <!--采购明细-->
-                    <el-dialog
-                            title="采购明细"
-                            :visible.sync="Purchasedetailmater"
-                            width="80%"
-                            :show-close="false"
+                </el-dialog>
+
+
+                <!--新建采购单-->
+                <el-dialog
+                        title="新建采购单(原材料)"
+                        :visible.sync="Newpurchaseorder_mater"
+                        :show-close="false"
+                        width="1000px">
+                    <el-form :model="addProcurementMater" ref="addProcurementMater"
+                             :rules="addProcurementsMater" label-width="100px" label-position="right"
                     >
-                        <div style="display: flex;justify-content: space-between;padding: 0.5em">
-                            <el-button icon="el-icon-view" size="mini" @click="detailSettingsmater=true">显示设置
-                            </el-button>
+
+
+                        <div style="display: flex;justify-content: space-between;flex-wrap: nowrap">
+                            <el-form-item
+                                    label="供应商"
+                                    prop="supplier"
+                            >
+                                <!--供应商选择-->
+                                <el-select size="mini" filterable clearable
+                                           v-model="addProcurementMater.supplier"
+                                           placeholder="供应商">
+                                    <el-option
+                                            v-for="item in options"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+
+                            <el-form-item
+                                    label="工厂"
+                                    prop="factoryName"
+                            >
+                                <!--工厂选择-->
+                                <el-select filterable size="mini" clearable
+                                           v-model="addProcurementMater.factoryName"
+                                           placeholder="工厂选择">
+                                    <el-option
+                                            v-for="item in factorylist"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+
+                            <el-form-item label="发票" prop="invoice">
+                                <el-select @change="materchoose" size="mini"
+
+                                           v-model="addProcurementMater.invoice"
+                                           placeholder="请选择发票">
+                                    <el-option
+                                            v-for="item in addinvoice"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+
+                            <el-form-item label="货运方式" prop="freightTransportation">
+                                <el-input clearable size="mini" placeholder="货运方式"
+                                          v-model="addProcurementMater.freightTransportation"></el-input>
+                            </el-form-item>
+                            <!--<el-form-item label="运费" prop="freight">-->
+                            <!--<el-input clearable  size="mini" v-model="addProcurementMater.freight"></el-input>-->
+                            <!--</el-form-item>-->
+                            <!--<el-form-item label="备注">-->
+                            <!--<el-input  clearable size="mini" placeholder="备注"-->
+                            <!--v-model="addProcurementMater.remark"></el-input>-->
+                            <!--</el-form-item>-->
                         </div>
 
+
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="运费" prop="freight">
+                                    <el-input size="mini" v-model="addProcurementMater.freight"></el-input>
+                                </el-form-item>
+                            </el-col>
+
+
+                            <el-col :span="6">
+                                <el-form-item label="备注">
+                                    <el-input size="mini" placeholder="备注"
+                                              v-model="addProcurementMater.remark"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+
+                    </el-form>
+                    <div class="QueryConditions">
+                        <el-button size="mini" @click="PurchasingAddmaterial_material=true">添加原材料</el-button>
+                        <el-button size="mini" @click="batchMaterTime">批量添加预计入库时间</el-button>
+                        <el-date-picker
+                                style="margin-left: 0.5em"
+                                size="mini"
+                                v-model="timematerData"
+                                value-format="yyyy-MM-dd HH:mm:ss"
+                                type="datetime"
+                                placeholder="批量添加预计入库时间">
+                        </el-date-picker>
+                    </div>
+
+                    <el-table
+                            :data="addProcurementMater.goodsList"
+                            border
+                            stripe
+                            @selection-change="goodsmaterSelection"
+                            style="width: 100%">
+
+                        <el-table-column align="center" type="selection"></el-table-column>
+                        <el-table-column
+                                label="预计入库时间"
+                                width="200"
+                                align="center"
+                        >
+                            <template slot-scope="scope">
+                                <el-date-picker
+                                        style="width: 180px"
+                                        v-model="scope.row.warehouseTime"
+                                        size="mini"
+                                        type="datetime"
+                                        value-format="yyyy-MM-dd HH:mm:ss"
+                                        placeholder="预计入库时间">
+                                </el-date-picker>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                label="数量"
+                                width="200"
+                                prop="number"
+                        >
+                            <template slot-scope="scope">
+
+                                <!--<el-input-number :min="0" @change="containtax(scope.row)"-->
+                                <!--size="mini"-->
+                                <!--@change="materNumber(scope.row)"-->
+                                <!--v-model="scope.row.number"-->
+                                <!--label="描述文字"></el-input-number>-->
+
+                                <el-input-number size="mini"
+                                                 v-model="scope.row.number" @change="materNumber(scope.row)"
+                                                 :min="1" label="描述文字">
+
+                                </el-input-number>
+
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                label="操作"
+                                fixed="left"
+                                align="center"
+                        >
+                            <template slot-scope="scope">
+                                <!--删除from表单中商品数据-->
+                                <el-button type="text" @click="deltetmaterPurchase(scope.row)">删除</el-button>
+                            </template>
+                        </el-table-column>
+
+
+                        <el-table-column
+                                label="创建时间"
+                                prop="createTime"
+                                width="180"
+                                align="center"
+                                sortable
+                        ></el-table-column>
+                        <el-table-column
+
+                                label="修改时间"
+                                prop="updateTime"
+                                width="180"
+                                align="center"
+                                sortable
+                        ></el-table-column>
+                        <el-table-column
+                                label="含税单价（元）"
+                                width="200"
+                                align="center"
+
+                        >
+                            <template slot-scope="scope">
+
+                                <el-input-number :min="0" @change="matercontaintax(scope.row)"
+                                                 :disabled="matercontaining"
+                                                 size="mini"
+                                                 v-model="scope.row.taxPrice"
+                                                 label="描述文字"></el-input-number>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column
+                                label="不含税单价（元）"
+                                width="200"
+                                align="center"
+                        >
+                            <template slot-scope="scope">
+                                <el-input-number :min="0" :disabled="maternocontaining" size="mini"
+                                                 v-model="scope.row.unitPrice"
+                                                 @change="materaddprocure(scope.row)"></el-input-number>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                label="含税总价（元）"
+                                width="120"
+                                align="center"
+                                prop="taxTotalPrice"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                label="不含税总价（元）"
+                                width="150"
+                                align="center"
+                                prop="totalPrice"
+                        >
+                        </el-table-column>
+
+
+                        <el-table-column
+                                label="物料编号"
+                                prop="materialCode"
+                                width="180"
+                                align="center"
+                                sortable
+                        ></el-table-column>
+                        <el-table-column
+                                label="物料名称"
+                                prop="name"
+                                width="200"
+                                align="center"
+                        ></el-table-column>
+                        <el-table-column
+                                prop="ingredients"
+                                label="成分规格"
+                                width="180"
+                                align="center"
+                        ></el-table-column>
+                        <el-table-column
+                                label="物料分类"
+                                prop="type"
+                                width="180"
+                                align="center"
+                        ></el-table-column>
+                        <el-table-column
+                                label="品牌"
+                                prop="brand"
+                                width="120"
+                                align="center"
+                        ></el-table-column>
+                        <el-table-column
+                                label="状态"
+                                width="180"
+                                align="center"
+                        >
+                            <template slot-scope="scope">
+                                {{scope.row.spare=='01'?'启用':'未启用'}}
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                label="默认损耗"
+                                prop="defaultLoss"
+                                width="160"
+                                align="center"
+                                sortable
+                        ></el-table-column>
+                        <el-table-column
+                                label="厂商"
+                                prop="manufacturer"
+                                width="180"
+                                align="center"
+                        ></el-table-column>
+                        <el-table-column
+                                label="基本计量单位"
+                                prop="unit"
+                                width="150"
+                                align="center"
+                                sortable
+                        ></el-table-column>
+                        <el-table-column
+                                label="成本价"
+                                prop="costPrice"
+                                width="120"
+                                align="center"
+                                sortable
+                        ></el-table-column>
+                        <el-table-column
+                                label="备注"
+                                prop="note"
+                                width="150"
+                                align="center"
+                        ></el-table-column>
+
+
+                    </el-table>
+
+
+                    <div style="display: flex;justify-content: space-between;margin: 0.2em">
+                        <div>
+
+                            总数量:{{matergoodsNum}},
+                            总金额（含税）:{{matertaxgoodsMoney.toFixed(4)}},
+                            总金额（不含税）:{{matergoodsMoney.toFixed(4)}}
+                        </div>
+                        <div>
+                            <el-button type="primary" size="mini"
+                                       @click="SubmissionMater('addProcurementMater')">
+                                保存
+                            </el-button>
+                            <el-button size="mini" @click="Newpurchaseorder_mater=false">取消</el-button>
+                        </div>
+
+                    </div>
+
+                </el-dialog>
+
+                <!--采购订单添加商品(原材料)-->
+                <el-dialog
+                        title="采购订单添加原材料"
+                        :visible.sync="PurchasingAddmaterial_material"
+                        width="1000px"
+                        :show-close="false"
+                >
+                    <!--新建与查询-->
+                    <div class="menuBox">
+                        <div class="QueryConditions QueryInput">
+                            <div>
+                                <el-input clearable placeholder="物料编号" size="mini"
+                                          v-model="materialsNum"></el-input>
+
+                                <el-input clearable placeholder="物料名称" size="mini"
+                                          v-model="materialsName"></el-input>
+
+                                <el-select clearable v-model="VendorQueries" placeholder="厂商" size="mini">
+                                    <el-option
+                                            v-for="item in options"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value"
+                                    >
+                                    </el-option>
+                                </el-select>
+                            </div>
+                            <div>
+                                <el-button type="primary" icon="el-icon-delete" size="mini"
+                                           @click="materialsNum='',materialsName='',VendorQueries=''">重置
+                                </el-button>
+
+                                <el-button type="primary" icon="el-icon-search" size="mini"
+                                           @click="queryPage">查询
+                                </el-button>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
                         <el-table
-                                :data="selsectdetailsListmater"
+                                style="width: 100%"
                                 border
                                 stripe
-                                style="width: 100%">
-
+                                :data="materialsList"
+                                highlight-current-row
+                        >
                             <el-table-column
                                     align="center"
+                                    label="操作"
+                                    width="80"
+                                    fixed="left"
+                            >
+                                <template slot-scope="scope">
+
+                                    <el-button type="text" @click="addmateTopurchase(scope.row)">添加</el-button>
+                                </template>
+                            </el-table-column>
+                            <el-table-column
                                     type="index"
-                                    width="50">
-                            </el-table-column>
-                            <el-table-column
-                                    label="预计入库时间"
-                                    width="200"
-                                    v-if="warehouseTimemater"
                                     align="center"
-                                    prop="warehouseTime"
-                            >
-
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    label="数量"
-                                    width="200"
-                                    v-if="numbermater"
-                                    prop="number"
-                            >
-                            </el-table-column>
-
+                                    sortable
+                            ></el-table-column>
 
                             <el-table-column
                                     label="创建时间"
                                     prop="createTime"
                                     width="180"
-                                    v-if="createTimemater"
                                     align="center"
                                     sortable
                             ></el-table-column>
@@ -1504,87 +616,44 @@
                                     label="修改时间"
                                     prop="updateTime"
                                     width="180"
-                                    v-if="updateTimemater"
                                     align="center"
                                     sortable
                             ></el-table-column>
 
                             <el-table-column
-                                    label="含税单价（元）"
-                                    width="150"
-                                    align="center"
-                                    prop="taxPrice"
-                                    v-if="taxPricemater"
-
-                            >
-                            </el-table-column>
-
-                            <el-table-column
-                                    label="不含税单价（元）"
-                                    width="150"
-                                    v-if="unitPricemater"
-                                    align="center"
-                                    prop="unitPrice"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    label="含税总价（元）"
-                                    width="150"
-                                    align="center"
-                                    v-if="taxTotalPricemater"
-                                    prop="taxTotalPrice"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    label="不含税总价（元）"
-                                    width="150"
-                                    align="center"
-                                    v-if="totalPricemater"
-                                    prop="totalPrice"
-                            >
-                            </el-table-column>
-
-
-                            <el-table-column
                                     label="物料编号"
                                     prop="materialCode"
                                     width="180"
-                                    v-if="materialCodemater"
                                     align="center"
                                     sortable
                             ></el-table-column>
                             <el-table-column
                                     label="物料名称"
                                     prop="name"
-                                    v-if="namemater"
                                     width="200"
                                     align="center"
                             ></el-table-column>
                             <el-table-column
                                     prop="ingredients"
                                     label="成分规格"
-                                    v-if="ingredientsmater"
                                     width="180"
                                     align="center"
                             ></el-table-column>
                             <el-table-column
                                     label="物料分类"
                                     prop="type"
-                                    v-if="typemater"
                                     width="180"
                                     align="center"
                             ></el-table-column>
                             <el-table-column
                                     label="品牌"
                                     prop="brand"
-                                    v-if="brandmater"
                                     width="120"
                                     align="center"
                             ></el-table-column>
                             <el-table-column
                                     label="状态"
                                     width="180"
-                                    v-if="sparemater"
                                     align="center"
                             >
                                 <template slot-scope="scope">
@@ -1595,14 +664,12 @@
                                     label="默认损耗"
                                     prop="defaultLoss"
                                     width="160"
-                                    v-if="defaultLossmater"
                                     align="center"
                                     sortable
                             ></el-table-column>
                             <el-table-column
                                     label="厂商"
                                     prop="manufacturer"
-                                    v-if="manufacturermater"
                                     width="180"
                                     align="center"
                             ></el-table-column>
@@ -1610,14 +677,12 @@
                                     label="基本计量单位"
                                     prop="unit"
                                     width="150"
-                                    v-if="unitmater"
                                     align="center"
                                     sortable
                             ></el-table-column>
                             <el-table-column
                                     label="成本价"
                                     prop="costPrice"
-                                    v-if="costPricemater"
                                     width="120"
                                     align="center"
                                     sortable
@@ -1625,2677 +690,5622 @@
                             <el-table-column
                                     label="备注"
                                     prop="note"
-                                    v-if="notemater"
                                     width="150"
                                     align="center"
                             ></el-table-column>
 
                         </el-table>
-                        <div style="text-align: left;margin-top: 0.5em">
-                            总数量:{{detailsNumbermater}},
-                            总金额（含税）:{{detailstaxgoodsMoneymater.toFixed(4)}},
-                            总金额（不含税）:{{detailsgoodsMoneymater.toFixed(4)}}
-                            <!--// detailsNumbermater: 0,//明细总数量,-->
-                            <!--//     detailsgoodsMoneymater: 0,//明细总金额(不含税)-->
-                            <!--//     detailstaxgoodsMoneymater: 0,//明细总金额(含税)-->
-                        </div>
-                    </el-dialog>
-
-                    <!--采购明细显示设置-->
-                    <el-dialog
-                            title="显示设置"
-                            :visible.sync="detailSettingsmater"
-                            width="450px"
-                            :show-close="false"
-
-                    >
-                        <div style="text-align: left">
-
-
-                            <el-row>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="warehouseTimemater">预计入库时间</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="numbermater">数量</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="createTimemater">创建时间</el-checkbox>
-                                </el-col>
-                            </el-row>
-
-
-                            <el-row>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="updateTimemater">修改时间</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="taxPricemater">含税单价</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="taxTotalPricemater">含税总价</el-checkbox>
-                                </el-col>
-                            </el-row>
-
-
-                            <el-row>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="totalPricemater">不含税总价</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="namemater">物料名称</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="ingredientsmater">成分规格</el-checkbox>
-                                </el-col>
-                            </el-row>
-
-
-                            <el-row>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="typemater">物料分类</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="brandmater">品牌</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="sparemater">状态</el-checkbox>
-                                </el-col>
-                            </el-row>
-
-
-                            <el-row>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="defaultLossmater">默认损耗</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="manufacturermater">厂商</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="unitmater">基本计量单位</el-checkbox>
-                                </el-col>
-                            </el-row>
-
-                            <el-row>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="materialCodemater">物料编号</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="costPricemater">成本价</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="notemater">备注</el-checkbox>
-                                </el-col>
-
-                            </el-row>
-
+                        <!--分页-->
+                        <div class="PageLayout">
+                            <el-pagination
+                                    @current-change="handleCurrentChange"
+                                    :page-size="5"
+                                    layout="prev, pager, next, jumper"
+                                    :total="totalRecord">
+                            </el-pagination>
 
                         </div>
 
-                    </el-dialog>
-                    <div>
                         <el-table
-                                :data="materpurchaseList"
+                                :data="quiremateDataBox"
                                 border
                                 stripe
-                                height="750px"
-                                @row-dblclick="Purchasedetailsmater"
-                                @selection-change="Multipleselection"
+                                @selection-change="goodsSelection"
+                                style="width: 100%">
 
-                        >
                             <el-table-column
-                                    align="center"
-                                    type="selection"
-                                    width="50"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
                                     type="index"
-                                    width="40">
-                            </el-table-column>
+                                    align="center"
+                                    sortable
+                            ></el-table-column>
+
                             <el-table-column
                                     label="创建时间"
                                     prop="createTime"
-                                    v-if="createTimematerSet"
                                     width="180"
                                     align="center"
                                     sortable
                             ></el-table-column>
                             <el-table-column
+
                                     label="修改时间"
                                     prop="updateTime"
-                                    v-if="updateTimematermaterSet"
+                                    width="180"
+                                    align="center"
+                                    sortable
+                            ></el-table-column>
+
+                            <el-table-column
+                                    label="物料编号"
+                                    prop="materialCode"
                                     width="180"
                                     align="center"
                                     sortable
                             ></el-table-column>
                             <el-table-column
-                                    align="center"
-                                    prop="purchaseNumber"
-                                    label="采购单号"
+                                    label="物料名称"
+                                    prop="name"
                                     width="200"
-                                    v-if="purchaseNumbermaterSet"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    label="供应商"
-                                    prop="supplier"
                                     align="center"
-                                    width="150"
-                                    v-if="operationmaterSet"
                             ></el-table-column>
                             <el-table-column
-                                    align="center"
-                                    prop="purchaseSource"
-                                    label="采购订单来源"
-                                    v-if="purchaseSourcematerSet"
-                                    width="150"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="submitStatus"
-                                    label="提交状态"
-                                    width="150"
-                                    v-if="submitStatusmaterSet"
-                            >
-                                <template slot-scope="scope">
-                                    <span>{{scope.row.submitStatus=='tj01'?'已提交':'未提交'}}</span>
-                                </template>
-                            </el-table-column>
-
-                            <el-table-column
-                                    align="center"
-                                    prop="submitTime"
-                                    label="提交时间"
+                                    prop="ingredients"
+                                    label="成分规格"
                                     width="180"
-                                    v-if="submitTimematerSet"
-                            >
-                            </el-table-column>
-                            <el-table-column
                                     align="center"
-                                    prop="auditStatus"
-                                    label="审核状态"
-                                    v-if="auditStatusmaterSet"
-                            >
-                                <template slot-scope="scope">
-                                    <span>{{scope.row.auditStatus=='sh01'?'已审核':scope.row.auditStatus=='sh02'?'未审核':'审核驳回'}}</span>
-                                </template>
-                            </el-table-column>
+                            ></el-table-column>
                             <el-table-column
-                                    align="center"
-                                    prop="auditTime"
-                                    label="审核时间"
-                                    width="180"
-                                    v-if="auditTimematerSet"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="receiveStatus"
-                                    v-if="receiveStatusmaterSet"
-                                    label="收货状态">
-                                <template slot-scope="scope">
-                                    <span>{{scope.row.receiveStatus=='0'?'已收货':(scope.row.receiveStatus=='1'?'部分收货':'未收货')}}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="invoice"
-                                    v-if="invoicematerSet"
-                                    width="120"
-                                    label="发票">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="freight"
-                                    v-if="freightmaterSet"
-                                    label="运费">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="freightTransportation"
-                                    v-if="freightTransportationmaterSet"
-                                    label="货运方式">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="frequency"
-                                    v-if="frequencymaterSet"
-                                    width="120"
-                                    label="已入库数量">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
+                                    label="物料分类"
                                     prop="type"
                                     width="180"
-                                    v-if="typematerSet"
-                                    label="采购订单类型">
-                            </el-table-column>
-                            <el-table-column
-                                    prop="commodityType"
-                                    label="商品类型"
                                     align="center"
+                            ></el-table-column>
+                            <el-table-column
+                                    label="品牌"
+                                    prop="brand"
                                     width="120"
-                                    v-if="commodityTypematerSet"
-                            >
-                            </el-table-column>
-                            <el-table-column
                                     align="center"
-                                    prop="receiveAddress"
-                                    label="收货地址"
+                            ></el-table-column>
+                            <el-table-column
+                                    label="状态"
                                     width="180"
-                                    v-if="receiveAddressmaterSet"
+                                    align="center"
                             >
+                                <template slot-scope="scope">
+                                    {{scope.row.spare=='01'?'启用':'未启用'}}
+                                </template>
                             </el-table-column>
                             <el-table-column
+                                    label="默认损耗"
+                                    prop="defaultLoss"
+                                    width="160"
                                     align="center"
-                                    prop="contractTerm"
-                                    label="合同条款"
-                                    v-if="contractTermmaterSet"
-                            >
-                            </el-table-column>
+                                    sortable
+                            ></el-table-column>
                             <el-table-column
-                                    align="center"
-                                    prop="singlePerson"
-                                    label="制单人"
-                                    v-if="singlePersonmaterSet"
-
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="submitter"
-                                    label="提交人"
-                                    v-if="submittermaterSet"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="financialJudge"
-                                    v-if="financialJudgematerSet"
-                                    label="财审人">
-
-                            </el-table-column>
-                            <el-table-column
-                                    align="frequency"
-                                    prop="auditor"
-                                    v-if="auditormaterSet"
-                                    label="审核人">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="totalSum"
+                                    label="厂商"
+                                    prop="manufacturer"
                                     width="180"
-                                    v-if="totalSummaterSet"
-                                    label="总金额(不含税)">
-                            </el-table-column>
-                            <el-table-column
                                     align="center"
-                                    prop="taxTotalSum"
-                                    width="180"
-                                    v-if="taxTotalSummaterSet"
-                                    label="总金额(含税)">
-                            </el-table-column>
+                            ></el-table-column>
                             <el-table-column
+                                    label="基本计量单位"
+                                    prop="unit"
+                                    width="150"
                                     align="center"
-                                    label="总数量"
-                                    v-if="totalQuantitymaterSet"
+                                    sortable
+                            ></el-table-column>
+                            <el-table-column
+                                    label="成本价"
+                                    prop="costPrice"
                                     width="120"
-                                    prop="totalQuantity"
-                            >
-                            </el-table-column>
-
-                            <el-table-column
                                     align="center"
-                                    prop="completeStatus"
-                                    width="120"
-                                    v-if="completeStatusmaterSet"
-                                    label="采购完成状态">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="taxAmount"
-                                    width="100"
-                                    v-if="taxAmountmaterSet"
-                                    label="税额">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="taxRate"
-                                    width="100"
-                                    v-if="taxRatematerSet"
-                                    label="税率">
-                            </el-table-column>
+                                    sortable
+                            ></el-table-column>
                             <el-table-column
                                     label="备注"
+                                    prop="note"
+                                    width="150"
                                     align="center"
-                                    width="120"
-                                    v-if="remarkmaterSet"
-                                    prop="remark"
-                            >
-                            </el-table-column>
+                            ></el-table-column>
 
                             <el-table-column
                                     label="操作"
-                                    fixed="right"
-                                    width="120"
+                                    fixed="left"
                                     align="center"
                             >
-
                                 <template slot-scope="scope">
-                                    <!--purchOperation-->
-                                    <!--{{scope.row.auditStatus=='sh01'?(purchOperation=true):(purchOperation=false)}}-->
-
-                                    <el-button :disabled="scope.row.auditStatus=='sh01'?(true):(false)" type="text"
-                                               @click="updatamater(scope.row)">修改
-                                    </el-button>
-                                    <el-button :disabled="scope.row.auditStatus=='sh01'?(true):(false)" type="text"
-                                               @click="delpurMaterList(scope.row)">删除
-                                    </el-button>
-
-
+                                    <!--删除备选数组信息-->
+                                    <el-button type="text" @click="delpruchase(scope.row)">删除</el-button>
                                 </template>
-
                             </el-table-column>
+
+
                         </el-table>
-                        <!--分页-->
-                        <el-row>
-                            <el-col :span="10" :offset="14">
-                                <el-pagination
-                                        @current-change="materfactorylistpag"
-                                        :page-size="15"
-                                        layout="prev, pager, next, jumper"
-                                        :total="totalRecordNum">
-                                </el-pagination>
-                            </el-col>
-                        </el-row>
+                        <div style="text-align: right;margin: 0.2em">
+                            <el-button type="primary" size="mini" @click="PreservationMater">保存</el-button>
+                            <el-button size="mini" @click="PurchasingAddmaterial_material=false">取消</el-button>
+                        </div>
+
                     </div>
-                </div>
-            </el-tab-pane>
-            <el-tab-pane label="商品采购" name="first">
-                <div>
-                    <!--新建与查询-->
-                    <div class="menuBox">
-                        <div class="QueryConditions">
-                            <el-button size="mini" type="primary" class="el-icon-plus" @click="Newpurchaseorder=true">
-                                新建
-                            </el-button>
-                            <el-button icon="el-icon-view" type="primary" size="mini" @click="Settings=true">显示设置
-                            </el-button>
 
-                            <el-button size="mini" type="primary" :disabled="auditStatusButGoods"
-                                       @click="SubmitAuditGoods">提交审核
-                            </el-button>
-                            <el-button size="mini" type="primary" :disabled="submitStatusButGoods"
-                                       @click="AuditPassGoods">审核通过
-                            </el-button>
-                            <el-button size="mini" type="primary" :disabled="submitStatusButGoods"
-                                       @click="AuditRejectGoods">审核驳回
-                            </el-button>
-                            <el-button size="mini" type="danger" :disabled="delStatusButGoods"
-                                       @click="delpurchaseList()">批量删除
-                            </el-button>
-                            <!--<el-button size="mini">导出</el-button>-->
-                        </div>
-                        <div class="QueryConditions QueryInput">
-                            <div>
-                                <el-select size="mini" v-model="TimeType" placeholder="时间类型">
-                                    <el-option
-                                            v-for="item in TimeTypelist"
-                                            :key="item.value"
-                                            :label="item.label"
-                                            :value="item.value">
-                                    </el-option>
-                                </el-select>
+
+                </el-dialog>
+
+
+                <!--修改采购单-->
+                <el-dialog
+                        title="修改采购单(原材料)"
+                        :visible.sync="upNewpurchaseorder_mater"
+                        @closed="closeFunMater"
+                        :show-close="false"
+                        width="1000px">
+                    <el-form :model="upaddProcurementMater" ref="upaddProcurementMater"
+                             :rules="upaddProcurementsMater"
+                             label-position="right"
+                             label-width="100px">
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item
+                                        label="供应商"
+                                        prop="supplier"
+                                >
+                                    <!--供应商选择-->
+                                    <el-select size="mini" filterable clearable
+                                               v-model="upaddProcurementMater.supplier"
+                                               placeholder="供应商">
+                                        <el-option
+                                                v-for="item in options"
+                                                :key="item.value"
+                                                :label="item.label"
+                                                :value="item.value">
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item
+                                        label="工厂"
+                                        prop="factoryName"
+                                >
+                                    <!--工厂选择-->
+                                    <el-select filterable size="mini" clearable
+                                               v-model="upaddProcurementMater.factoryName"
+                                               placeholder="工厂选择">
+                                        <el-option
+                                                v-for="item in factorylist"
+                                                :key="item.value"
+                                                :label="item.label"
+                                                :value="item.value">
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="运费" prop="freight">
+                                    <el-input size="mini" v-model="upaddProcurementMater.freight"></el-input>
+                                </el-form-item>
+
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="备注">
+                                    <el-input size="mini" placeholder="备注"
+                                              v-model="upaddProcurementMater.remark"></el-input>
+                                </el-form-item>
+                            </el-col>
+
+                        </el-row>
+
+
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="发票" prop="invoice">
+                                    <el-select @change="upmaterupchoose" size="mini"
+                                               v-model="upaddProcurementMater.invoice"
+                                               placeholder="请选择发票">
+                                        <el-option
+                                                v-for="item in addinvoice"
+                                                :key="item.value"
+                                                :label="item.label"
+                                                :value="item.value">
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+
+                            <el-col :span="6">
+                                <el-form-item label="货运方式" prop="freightTransportation">
+                                    <el-input size="mini" placeholder="货运方式"
+                                              v-model="upaddProcurementMater.freightTransportation"></el-input>
+                                </el-form-item>
+                            </el-col>
+
+                        </el-row>
+
+
+                    </el-form>
+                    <div class="QueryConditions">
+                        <el-button size="mini" @click="upPurchasingAddmaterial_material=true">添加原材料</el-button>
+                        <el-button size="mini" @click="upbatchMaterTime">批量添加预计入库时间</el-button>
+                        <el-date-picker
+                                style="margin-left: 0.5em"
+                                size="mini"
+                                v-model="uptimematerData"
+                                type="datetime"
+                                placeholder="批量添加预计入库时间">
+                        </el-date-picker>
+                    </div>
+
+                    <el-table
+                            :data="upaddProcurementMater.goodsList"
+                            border
+                            stripe
+                            @selection-change="upgoodsmaterSelection"
+                            style="width: 100%">
+
+                        <el-table-column align="center" type="selection"></el-table-column>
+                        <el-table-column
+                                label="预计入库时间"
+                                width="200"
+                                align="center"
+                        >
+                            <template slot-scope="scope">
                                 <el-date-picker
+                                        style="width: 180px"
+                                        v-model="scope.row.warehouseTime"
                                         size="mini"
-                                        v-model="purchaseTime"
-                                        type="daterange"
-                                        range-separator="至"
-                                        format="yyyy 年 MM 月 dd 日"
-                                        value-format="yyyy-MM-dd"
-                                        start-placeholder="开始日期"
-                                        end-placeholder="结束日期">
+                                        type="datetime"
+                                        value-format="yyyy-MM-dd HH:mm:ss"
+                                        placeholder="预计入库时间">
                                 </el-date-picker>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                label="数量"
+                                width="200"
+                                prop="number"
+                        >
+                            <template slot-scope="scope">
 
-                                <el-select size="mini" clearable v-model="AuditStatuss" placeholder="审核状态">
-                                    <el-option
-                                            v-for="item in Audit"
-                                            :key="item.value"
-                                            :label="item.label"
-                                            :value="item.value">
-                                    </el-option>
-                                </el-select>
-                                <el-select size="mini" clearable v-model="Submitstate" placeholder="提交状态">
-                                    <el-option
-                                            v-for="item in Submit"
-                                            :key="item.value"
-                                            :label="item.label"
-                                            :value="item.value">
-                                    </el-option>
-                                </el-select>
+                                <!--<el-input-number :min="0" @change="containtax(scope.row)"-->
+                                <!--size="mini"-->
+                                <!--@change="materNumber(scope.row)"-->
+                                <!--v-model="scope.row.number"-->
+                                <!--label="描述文字"></el-input-number>-->
 
-                                <el-select size="mini" clearable v-model="ReceivingStatus" placeholder="收货状态">
-                                    <el-option
-                                            v-for="item in Receiving"
-                                            :key="item.value"
-                                            :label="item.label"
-                                            :value="item.value">
-                                    </el-option>
-                                </el-select>
+                                <el-input-number size="mini"
+                                                 v-model="scope.row.number" @change="upmaterNumber(scope.row)"
+                                                 :min="1" label="描述文字">
+                                </el-input-number>
 
-                                <el-input size="mini" style="width: 200px" placeholder="采购单号" clearable
-                                          v-model="purchaseNumbers"></el-input>
-                            </div>
-                            <div>
-                                <el-button type="primary" size="mini" icon="el-icon-edit"
-                                           @click="purchaseNumbers='',ReceivingStatus='',AuditStatuss='',purchaseTime='',TimeType=''">
-                                    重置
-                                </el-button>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                label="操作"
+                                fixed="left"
+                                align="center"
+                        >
+                            <template slot-scope="scope">
+                                <!--删除from表单中商品数据-->
+                                <el-button type="text" @click="deltetmaterPurchase(scope.row)">删除</el-button>
+                            </template>
+                        </el-table-column>
 
-                                <el-button type="primary" size="mini" icon="el-icon-search"
-                                           @click="purchaseQueryPage()">查询
-                                </el-button>
-                            </div>
-                        </div>
-                        <!--显示设置-->
-                        <el-dialog
-                                title="显示设置"
-                                :visible.sync="Settings"
-                                width="450px"
-                                :show-close="false"
+
+                        <el-table-column
+                                label="创建时间"
+                                prop="createTime"
+                                width="180"
+                                align="center"
+                                sortable
+                        ></el-table-column>
+                        <el-table-column
+
+                                label="修改时间"
+                                prop="updateTime"
+                                width="180"
+                                align="center"
+                                sortable
+                        ></el-table-column>
+                        <el-table-column
+                                label="含税单价（元）"
+                                width="200"
+                                align="center"
 
                         >
-                            <div style="text-align: left">
+                            <template slot-scope="scope">
+                                <el-input-number :min="0" @change="upmatercontaintax(scope.row)"
+                                                 :disabled="upmatercontaining"
+                                                 size="mini"
+                                                 v-model="scope.row.taxPrice"
+                                                 label="描述文字"></el-input-number>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column
+                                label="不含税单价（元）"
+                                width="200"
+                                align="center"
+                        >
+                            <template slot-scope="scope">
+                                <el-input-number :min="0" :disabled="upmaternocontaining" size="mini"
+                                                 v-model="scope.row.unitPrice"
+                                                 @change="upmateraddprocure(scope.row)"></el-input-number>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                label="含税总价（元）"
+                                width="120"
+                                align="center"
+                                prop="taxTotalPrice"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                label="不含税总价（元）"
+                                width="150"
+                                align="center"
+                                prop="totalPrice"
+                        >
+                        </el-table-column>
 
 
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="purchaseNumber">采购单号</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="purchaseSource">采购订单来源</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="frequency">入库次数</el-checkbox>
-                                    </el-col>
-                                </el-row>
+                        <el-table-column
+                                label="物料编号"
+                                prop="materialCode"
+                                width="180"
+                                align="center"
+                                sortable
+                        ></el-table-column>
+                        <el-table-column
+                                label="物料名称"
+                                prop="name"
+                                width="200"
+                                align="center"
+                        ></el-table-column>
+                        <el-table-column
+                                prop="ingredients"
+                                label="成分规格"
+                                width="180"
+                                align="center"
+                        ></el-table-column>
+                        <el-table-column
+                                label="物料分类"
+                                prop="type"
+                                width="180"
+                                align="center"
+                        ></el-table-column>
+                        <el-table-column
+                                label="品牌"
+                                prop="brand"
+                                width="120"
+                                align="center"
+                        ></el-table-column>
+                        <el-table-column
+                                label="状态"
+                                width="180"
+                                align="center"
+                        >
+                            <template slot-scope="scope">
+                                {{scope.row.spare=='01'?'启用':'未启用'}}
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                label="默认损耗"
+                                prop="defaultLoss"
+                                width="160"
+                                align="center"
+                                sortable
+                        ></el-table-column>
+                        <el-table-column
+                                label="厂商"
+                                prop="manufacturer"
+                                width="180"
+                                align="center"
+                        ></el-table-column>
+                        <el-table-column
+                                label="基本计量单位"
+                                prop="unit"
+                                width="150"
+                                align="center"
+                                sortable
+                        ></el-table-column>
+                        <el-table-column
+                                label="成本价"
+                                prop="costPrice"
+                                width="120"
+                                align="center"
+                                sortable
+                        ></el-table-column>
+                        <el-table-column
+                                label="备注"
+                                prop="note"
+                                width="150"
+                                align="center"
+                        ></el-table-column>
 
 
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="auditStatus">审核状态</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="receiveStatus">收货状态</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="type">采购订单类型</el-checkbox>
-                                    </el-col>
-                                </el-row>
-
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="commodityType">商品类型</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="receiveAddress">收货地址</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="submitter">提交人</el-checkbox>
-                                    </el-col>
-                                </el-row>
+                    </el-table>
 
 
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="contractTerm">合同条款</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="singlePerson">制单人</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="financialJudge">财审人</el-checkbox>
-                                    </el-col>
-                                </el-row>
+                    <div style="display: flex;justify-content: space-between;margin: 0.2em">
+                        <div>
 
+                            总数量:{{upmatergoodsNum}},
+                            总金额（含税）:{{upmatergoodsMoney.toFixed(4)}},
+                            总金额（不含税）:{{upmatertaxgoodsMoney.toFixed(4)}}
 
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="auditor">审核人</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="totalSum">总金额(不含税)</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="taxTotalSum">总金额（含税）</el-checkbox>
-                                    </el-col>
+                        </div>
+                        <div>
+                            <el-button type="primary" size="mini"
+                                       @click="upSubmissionMater('upaddProcurementMater')">
+                                保存
+                            </el-button>
+                            <el-button size="mini" @click="upNewpurchaseorder_mater=false">取消</el-button>
+                        </div>
 
-                                </el-row>
+                    </div>
 
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="totalQuantity">总数量</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="completeStatus">采购完成状态</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="remark">备注</el-checkbox>
-                                    </el-col>
-                                </el-row>
+                </el-dialog>
 
+                <!--修改采购订单添加商品-->
+                <el-dialog
+                        title="采购订单添加原材料"
+                        :visible.sync="upPurchasingAddmaterial_material"
+                        width="1000px"
+                        :show-close="false"
+                >
+                    <!--新建与查询-->
+                    <div class="menuBox">
+                        <div class="QueryConditions QueryInput">
+                            <div>
+                                <el-input clearable placeholder="物料编号" size="mini"
+                                          v-model="materialsNum"></el-input>
 
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="createTime">创建时间</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="updateTime">修改时间</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="freight">运费</el-checkbox>
-                                    </el-col>
-                                </el-row>
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="invoice">发票</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="freightTransportation">货运方式</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="taxRate">税率</el-checkbox>
-                                    </el-col>
-                                </el-row>
+                                <el-input clearable placeholder="物料名称" size="mini"
+                                          v-model="materialsName"></el-input>
 
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="taxAmount">税额</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="operation">供应商</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="submitStatus">提交状态</el-checkbox>
-                                    </el-col>
-                                </el-row>
-                                <el-row>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="submitTime">提交时间</el-checkbox>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-checkbox v-model="auditTime">审核时间</el-checkbox>
-                                    </el-col>
-
-
-                                </el-row>
-
+                                <el-select clearable v-model="VendorQueries" placeholder="厂商" size="mini">
+                                    <el-option
+                                            v-for="item in options"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value"
+                                    >
+                                    </el-option>
+                                </el-select>
                             </div>
+                            <div>
+                                <el-button type="primary" icon="el-icon-delete" size="mini"
+                                           @click="materialsNum='',materialsName='',VendorQueries=''">重置
+                                </el-button>
 
-                        </el-dialog>
+                                <el-button type="primary" icon="el-icon-search" size="mini"
+                                           @click="queryPage">查询
+                                </el-button>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <el-table
+                                style="width: 100%"
+                                border
+                                stripe
+                                :data="materialsList"
+                                highlight-current-row
+                        >
+                            <el-table-column type="selection" align="center"></el-table-column>
+                            <el-table-column
+                                    align="center"
+                                    label="操作"
+                                    width="80"
+                                    fixed="left"
+                            >
+                                <template slot-scope="scope">
+
+                                    <el-button type="text" @click="upaddmaterTopurchase(scope.row)">添加
+                                    </el-button>
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    type="index"
+                                    align="center"
+                                    sortable
+                            ></el-table-column>
+
+                            <el-table-column
+                                    label="创建时间"
+                                    prop="createTime"
+                                    width="180"
+                                    align="center"
+                                    sortable
+                            ></el-table-column>
+                            <el-table-column
+
+                                    label="修改时间"
+                                    prop="updateTime"
+                                    width="180"
+                                    align="center"
+                                    sortable
+                            ></el-table-column>
+
+                            <el-table-column
+                                    label="物料编号"
+                                    prop="materialCode"
+                                    width="180"
+                                    align="center"
+                                    sortable
+                            ></el-table-column>
+                            <el-table-column
+                                    label="物料名称"
+                                    prop="name"
+                                    width="200"
+                                    align="center"
+                            ></el-table-column>
+                            <el-table-column
+                                    prop="ingredients"
+                                    label="成分规格"
+                                    width="180"
+                                    align="center"
+                            ></el-table-column>
+                            <el-table-column
+                                    label="物料分类"
+                                    prop="type"
+                                    width="180"
+                                    align="center"
+                            ></el-table-column>
+                            <el-table-column
+                                    label="品牌"
+                                    prop="brand"
+                                    width="120"
+                                    align="center"
+                            ></el-table-column>
+                            <el-table-column
+                                    label="状态"
+                                    width="180"
+                                    align="center"
+                            >
+                                <template slot-scope="scope">
+                                    {{scope.row.spare=='01'?'启用':'未启用'}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    label="默认损耗"
+                                    prop="defaultLoss"
+                                    width="160"
+                                    align="center"
+                                    sortable
+                            ></el-table-column>
+                            <el-table-column
+                                    label="厂商"
+                                    prop="manufacturer"
+                                    width="180"
+                                    align="center"
+                            ></el-table-column>
+                            <el-table-column
+                                    label="基本计量单位"
+                                    prop="unit"
+                                    width="150"
+                                    align="center"
+                                    sortable
+                            ></el-table-column>
+                            <el-table-column
+                                    label="成本价"
+                                    prop="costPrice"
+                                    width="120"
+                                    align="center"
+                                    sortable
+                            ></el-table-column>
+                            <el-table-column
+                                    label="备注"
+                                    prop="note"
+                                    width="150"
+                                    align="center"
+                            ></el-table-column>
+
+                        </el-table>
+                        <!--分页-->
+                        <div class="PageLayout">
+                            <el-pagination
+                                    @current-change="handleCurrentChange"
+                                    :page-size="5"
+                                    layout="prev, pager, next, jumper"
+                                    :total="totalRecord">
+                            </el-pagination>
+
+                        </div>
 
 
-                        <!--新建采购单-->
-                        <el-dialog
-                                title="新建采购单(商品)"
-                                :visible.sync="Newpurchaseorder"
-                                :show-close="false"
-                                width="1000px">
-                            <el-form :model="addProcurement" ref="addProcurement" :rules="addProcurements"
-                                     label-position="right"
-                                     label-width="100px">
-                                <el-row>
-                                    <el-col :span="6">
-                                        <el-form-item
-                                                label="供应商"
-                                                prop="supplier"
-                                        >
-                                            <!--供应商选择-->
-                                            <el-select size="mini" filterable clearable
-                                                       v-model="addProcurement.supplier"
-                                                       placeholder="供应商">
-                                                <el-option
-                                                        v-for="item in options"
-                                                        :key="item.value"
-                                                        :label="item.label"
-                                                        :value="item.value">
-                                                </el-option>
-                                            </el-select>
-                                        </el-form-item>
-                                    </el-col>
-                                    <el-col :span="6">
-                                        <el-form-item
-                                                label="工厂"
-                                                prop="factoryName"
-                                        >
-                                            <!--工厂选择-->
-                                            <el-select filterable size="mini" clearable
-                                                       v-model="addProcurement.factoryName"
-                                                       placeholder="工厂选择">
-                                                <el-option
-                                                        v-for="item in factorylist"
-                                                        :key="item.value"
-                                                        :label="item.label"
-                                                        :value="item.value">
-                                                </el-option>
-                                            </el-select>
-                                        </el-form-item>
-                                    </el-col>
-                                    <el-col :span="6">
-                                        <el-form-item label="运费" prop="freight">
-                                            <el-input size="mini" v-model="addProcurement.freight"></el-input>
-                                        </el-form-item>
+                        <el-table
+                                :data="upquiremateDataBox"
+                                border
+                                stripe
+                                @selection-change="upgoodsSelection"
+                                style="width: 100%">
+                            <el-table-column type="selection" align="center"></el-table-column>
 
-                                    </el-col>
-                                    <el-col :span="6">
-                                        <el-form-item label="备注">
-                                            <el-input size="mini" placeholder="备注"
-                                                      v-model="addProcurement.remark"></el-input>
-                                        </el-form-item>
-                                    </el-col>
+                            <el-table-column
+                                    type="index"
+                                    align="center"
+                                    sortable
+                            ></el-table-column>
 
-                                </el-row>
+                            <el-table-column
+                                    label="创建时间"
+                                    prop="createTime"
+                                    width="180"
+                                    align="center"
+                                    sortable
+                            ></el-table-column>
+                            <el-table-column
+
+                                    label="修改时间"
+                                    prop="updateTime"
+                                    width="180"
+                                    align="center"
+                                    sortable
+                            ></el-table-column>
+
+                            <el-table-column
+                                    label="物料编号"
+                                    prop="materialCode"
+                                    width="180"
+                                    align="center"
+                                    sortable
+                            ></el-table-column>
+                            <el-table-column
+                                    label="物料名称"
+                                    prop="name"
+                                    width="200"
+                                    align="center"
+                            ></el-table-column>
+                            <el-table-column
+                                    prop="ingredients"
+                                    label="成分规格"
+                                    width="180"
+                                    align="center"
+                            ></el-table-column>
+                            <el-table-column
+                                    label="物料分类"
+                                    prop="type"
+                                    width="180"
+                                    align="center"
+                            ></el-table-column>
+                            <el-table-column
+                                    label="品牌"
+                                    prop="brand"
+                                    width="120"
+                                    align="center"
+                            ></el-table-column>
+                            <el-table-column
+                                    label="状态"
+                                    width="180"
+                                    align="center"
+                            >
+                                <template slot-scope="scope">
+                                    {{scope.row.spare=='01'?'启用':'未启用'}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    label="默认损耗"
+                                    prop="defaultLoss"
+                                    width="160"
+                                    align="center"
+                                    sortable
+                            ></el-table-column>
+                            <el-table-column
+                                    label="厂商"
+                                    prop="manufacturer"
+                                    width="180"
+                                    align="center"
+                            ></el-table-column>
+                            <el-table-column
+                                    label="基本计量单位"
+                                    prop="unit"
+                                    width="150"
+                                    align="center"
+                                    sortable
+                            ></el-table-column>
+                            <el-table-column
+                                    label="成本价"
+                                    prop="costPrice"
+                                    width="120"
+                                    align="center"
+                                    sortable
+                            ></el-table-column>
+                            <el-table-column
+                                    label="备注"
+                                    prop="note"
+                                    width="150"
+                                    align="center"
+                            ></el-table-column>
+
+                            <el-table-column
+                                    label="操作"
+                                    fixed="left"
+                                    align="center"
+                            >
+                                <template slot-scope="scope">
+                                    <!--删除备选数组信息-->
+                                    <el-button type="text" @click="updelpruchase(scope.row)">删除</el-button>
+                                </template>
+                            </el-table-column>
 
 
-                                <el-row>
-                                    <el-col :span="6">
-                                        <el-form-item label="发票" prop="invoice">
-                                            <el-select @change="choose" size="mini" v-model="addProcurement.invoice"
-                                                       placeholder="请选择发票">
-                                                <el-option
-                                                        v-for="item in addinvoice"
-                                                        :key="item.value"
-                                                        :label="item.label"
-                                                        :value="item.value">
-                                                </el-option>
-                                            </el-select>
-                                        </el-form-item>
-                                    </el-col>
+                        </el-table>
+                        <div style="text-align: right;margin: 0.2em">
+                            <el-button type="primary" size="mini" @click="upPreservationMater">保存</el-button>
+                            <el-button size="mini" @click="upPurchasingAddGoods=false">取消</el-button>
+                        </div>
 
-                                    <el-col :span="6">
-                                        <el-form-item label="货运方式" prop="freightTransportation">
-                                            <el-input size="mini" placeholder="货运方式"
-                                                      v-model="addProcurement.freightTransportation"></el-input>
-                                        </el-form-item>
-                                    </el-col>
-                                    <!--<el-col :span="6">-->
-                                    <!--<el-form-item label="预计入库" prop="distanceDate">-->
-                                    <!--&lt;!&ndash;<el-input size="mini" placeholder="合同条款"&ndash;&gt;-->
-                                    <!--&lt;!&ndash;v-model="addProcurement.contract"></el-input>&ndash;&gt;-->
-                                    <!--<el-date-picker-->
-                                    <!--style="width: 180px"-->
-                                    <!--v-model="distanceDate"-->
-                                    <!--size="mini"-->
-                                    <!--type="datetime"-->
-                                    <!--value-format="yyyy-MM-dd HH:mm:ss"-->
-                                    <!--placeholder="预计入库时间">-->
-                                    <!--</el-date-picker>-->
-                                    <!--</el-form-item>-->
+                    </div>
+
+
+                </el-dialog>
+
+
+            </div>
+
+            <!--采购明细-->
+            <el-dialog
+                    title="采购明细"
+                    :visible.sync="Purchasedetailmater"
+                    width="80%"
+                    :show-close="false"
+            >
+                <div style="display: flex;justify-content: space-between;padding: 0.5em">
+                    <el-button icon="el-icon-view" size="mini" @click="detailSettingsmater=true">显示设置
+                    </el-button>
+                </div>
+
+                <el-table
+                        :data="selsectdetailsListmater"
+                        border
+                        stripe
+                        style="width: 100%">
+
+                    <el-table-column
+                            align="center"
+                            type="index"
+                            width="50">
+                    </el-table-column>
+                    <el-table-column
+                            label="预计入库时间"
+                            width="200"
+                            v-if="warehouseTimemater"
+                            align="center"
+                            prop="warehouseTime"
+                    >
+
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            label="数量"
+                            width="200"
+                            v-if="numbermater"
+                            prop="number"
+                    >
+                    </el-table-column>
+
+
+                    <el-table-column
+                            label="创建时间"
+                            prop="createTime"
+                            width="180"
+                            v-if="createTimemater"
+                            align="center"
+                            sortable
+                    ></el-table-column>
+                    <el-table-column
+
+                            label="修改时间"
+                            prop="updateTime"
+                            width="180"
+                            v-if="updateTimemater"
+                            align="center"
+                            sortable
+                    ></el-table-column>
+
+                    <el-table-column
+                            label="含税单价（元）"
+                            width="150"
+                            align="center"
+                            prop="taxPrice"
+                            v-if="taxPricemater"
+
+                    >
+                    </el-table-column>
+
+                    <el-table-column
+                            label="不含税单价（元）"
+                            width="150"
+                            v-if="unitPricemater"
+                            align="center"
+                            prop="unitPrice"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            label="含税总价（元）"
+                            width="150"
+                            align="center"
+                            v-if="taxTotalPricemater"
+                            prop="taxTotalPrice"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            label="不含税总价（元）"
+                            width="150"
+                            align="center"
+                            v-if="totalPricemater"
+                            prop="totalPrice"
+                    >
+                    </el-table-column>
+
+
+                    <el-table-column
+                            label="物料编号"
+                            prop="materialCode"
+                            width="180"
+                            v-if="materialCodemater"
+                            align="center"
+                            sortable
+                    ></el-table-column>
+                    <el-table-column
+                            label="物料名称"
+                            prop="name"
+                            v-if="namemater"
+                            width="200"
+                            align="center"
+                    ></el-table-column>
+                    <el-table-column
+                            prop="ingredients"
+                            label="成分规格"
+                            v-if="ingredientsmater"
+                            width="180"
+                            align="center"
+                    ></el-table-column>
+                    <el-table-column
+                            label="物料分类"
+                            prop="type"
+                            v-if="typemater"
+                            width="180"
+                            align="center"
+                    ></el-table-column>
+                    <el-table-column
+                            label="品牌"
+                            prop="brand"
+                            v-if="brandmater"
+                            width="120"
+                            align="center"
+                    ></el-table-column>
+                    <el-table-column
+                            label="状态"
+                            width="180"
+                            v-if="sparemater"
+                            align="center"
+                    >
+                        <template slot-scope="scope">
+                            {{scope.row.spare=='01'?'启用':'未启用'}}
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            label="默认损耗"
+                            prop="defaultLoss"
+                            width="160"
+                            v-if="defaultLossmater"
+                            align="center"
+                            sortable
+                    ></el-table-column>
+                    <el-table-column
+                            label="厂商"
+                            prop="manufacturer"
+                            v-if="manufacturermater"
+                            width="180"
+                            align="center"
+                    ></el-table-column>
+                    <el-table-column
+                            label="基本计量单位"
+                            prop="unit"
+                            width="150"
+                            v-if="unitmater"
+                            align="center"
+                            sortable
+                    ></el-table-column>
+                    <el-table-column
+                            label="成本价"
+                            prop="costPrice"
+                            v-if="costPricemater"
+                            width="120"
+                            align="center"
+                            sortable
+                    ></el-table-column>
+                    <el-table-column
+                            label="备注"
+                            prop="note"
+                            v-if="notemater"
+                            width="150"
+                            align="center"
+                    ></el-table-column>
+
+                </el-table>
+                <div style="text-align: left;margin-top: 0.5em">
+                    总数量:{{detailsNumbermater}},
+                    总金额（含税）:{{detailstaxgoodsMoneymater.toFixed(4)}},
+                    总金额（不含税）:{{detailsgoodsMoneymater.toFixed(4)}}
+                    <!--// detailsNumbermater: 0,//明细总数量,-->
+                    <!--//     detailsgoodsMoneymater: 0,//明细总金额(不含税)-->
+                    <!--//     detailstaxgoodsMoneymater: 0,//明细总金额(含税)-->
+                </div>
+            </el-dialog>
+
+            <!--采购明细显示设置-->
+            <el-dialog
+                    title="显示设置"
+                    :visible.sync="detailSettingsmater"
+                    width="450px"
+                    :show-close="false"
+
+            >
+                <div style="text-align: left">
+
+
+                    <el-row>
+                        <el-col :span="8">
+                            <el-checkbox v-model="warehouseTimemater">预计入库时间</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="numbermater">数量</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="createTimemater">创建时间</el-checkbox>
+                        </el-col>
+                    </el-row>
+
+
+                    <el-row>
+                        <el-col :span="8">
+                            <el-checkbox v-model="updateTimemater">修改时间</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="taxPricemater">含税单价</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="taxTotalPricemater">含税总价</el-checkbox>
+                        </el-col>
+                    </el-row>
+
+
+                    <el-row>
+                        <el-col :span="8">
+                            <el-checkbox v-model="totalPricemater">不含税总价</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="namemater">物料名称</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="ingredientsmater">成分规格</el-checkbox>
+                        </el-col>
+                    </el-row>
+
+
+                    <el-row>
+                        <el-col :span="8">
+                            <el-checkbox v-model="typemater">物料分类</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="brandmater">品牌</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="sparemater">状态</el-checkbox>
+                        </el-col>
+                    </el-row>
+
+
+                    <el-row>
+                        <el-col :span="8">
+                            <el-checkbox v-model="defaultLossmater">默认损耗</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="manufacturermater">厂商</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="unitmater">基本计量单位</el-checkbox>
+                        </el-col>
+                    </el-row>
+
+                    <el-row>
+                        <el-col :span="8">
+                            <el-checkbox v-model="materialCodemater">物料编号</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="costPricemater">成本价</el-checkbox>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-checkbox v-model="notemater">备注</el-checkbox>
+                        </el-col>
+
+                    </el-row>
+
+
+                </div>
+
+            </el-dialog>
+            <div>
+                <el-table
+                        :data="materpurchaseList"
+                        border
+                        stripe
+                        height="750px"
+                        @row-dblclick="Purchasedetailsmater"
+                        @selection-change="Multipleselection"
+
+                >
+                    <el-table-column
+                            align="center"
+                            type="selection"
+                            width="50"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            type="index"
+                            width="40">
+                    </el-table-column>
+                    <el-table-column
+                            label="创建时间"
+                            prop="createTime"
+                            v-if="createTimematerSet"
+                            width="180"
+                            align="center"
+                            sortable
+                    ></el-table-column>
+                    <el-table-column
+                            label="修改时间"
+                            prop="updateTime"
+                            v-if="updateTimematermaterSet"
+                            width="180"
+                            align="center"
+                            sortable
+                    ></el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="purchaseNumber"
+                            label="采购单号"
+                            width="200"
+                            v-if="purchaseNumbermaterSet"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            label="供应商"
+                            prop="supplier"
+                            align="center"
+                            width="150"
+                            v-if="operationmaterSet"
+                    ></el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="purchaseSource"
+                            label="采购订单来源"
+                            v-if="purchaseSourcematerSet"
+                            width="150"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="submitStatus"
+                            label="提交状态"
+                            width="150"
+                            v-if="submitStatusmaterSet"
+                    >
+                        <template slot-scope="scope">
+                            <span>{{scope.row.submitStatus=='tj01'?'已提交':'未提交'}}</span>
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column
+                            align="center"
+                            prop="submitTime"
+                            label="提交时间"
+                            width="180"
+                            v-if="submitTimematerSet"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="auditStatus"
+                            label="审核状态"
+                            v-if="auditStatusmaterSet"
+                    >
+                        <template slot-scope="scope">
+                            <span>{{scope.row.auditStatus=='sh01'?'已审核':scope.row.auditStatus=='sh02'?'未审核':'审核驳回'}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="auditTime"
+                            label="审核时间"
+                            width="180"
+                            v-if="auditTimematerSet"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="receiveStatus"
+                            v-if="receiveStatusmaterSet"
+                            label="收货状态">
+                        <template slot-scope="scope">
+                            <span>{{scope.row.receiveStatus=='0'?'已收货':(scope.row.receiveStatus=='1'?'部分收货':'未收货')}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="invoice"
+                            v-if="invoicematerSet"
+                            width="120"
+                            label="发票">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="freight"
+                            v-if="freightmaterSet"
+                            label="运费">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="freightTransportation"
+                            v-if="freightTransportationmaterSet"
+                            label="货运方式">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="frequency"
+                            v-if="frequencymaterSet"
+                            width="120"
+                            label="已入库数量">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="type"
+                            width="180"
+                            v-if="typematerSet"
+                            label="采购订单类型">
+                    </el-table-column>
+                    <el-table-column
+                            prop="commodityType"
+                            label="商品类型"
+                            align="center"
+                            width="120"
+                            v-if="commodityTypematerSet"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="receiveAddress"
+                            label="收货地址"
+                            width="180"
+                            v-if="receiveAddressmaterSet"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="contractTerm"
+                            label="合同条款"
+                            v-if="contractTermmaterSet"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="singlePerson"
+                            label="制单人"
+                            v-if="singlePersonmaterSet"
+
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="submitter"
+                            label="提交人"
+                            v-if="submittermaterSet"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="financialJudge"
+                            v-if="financialJudgematerSet"
+                            label="财审人">
+
+                    </el-table-column>
+                    <el-table-column
+                            align="frequency"
+                            prop="auditor"
+                            v-if="auditormaterSet"
+                            label="审核人">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="totalSum"
+                            width="180"
+                            v-if="totalSummaterSet"
+                            label="总金额(不含税)">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="taxTotalSum"
+                            width="180"
+                            v-if="taxTotalSummaterSet"
+                            label="总金额(含税)">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            label="总数量"
+                            v-if="totalQuantitymaterSet"
+                            width="120"
+                            prop="totalQuantity"
+                    >
+                    </el-table-column>
+
+                    <el-table-column
+                            align="center"
+                            prop="completeStatus"
+                            width="120"
+                            v-if="completeStatusmaterSet"
+                            label="采购完成状态">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="taxAmount"
+                            width="100"
+                            v-if="taxAmountmaterSet"
+                            label="税额">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="taxRate"
+                            width="100"
+                            v-if="taxRatematerSet"
+                            label="税率">
+                    </el-table-column>
+                    <el-table-column
+                            label="备注"
+                            align="center"
+                            width="120"
+                            v-if="remarkmaterSet"
+                            prop="remark"
+                    >
+                    </el-table-column>
+
+                    <el-table-column
+                            label="操作"
+                            fixed="right"
+                            width="120"
+                            align="center"
+                    >
+
+                        <template slot-scope="scope">
+                            <!--purchOperation-->
+                            <!--{{scope.row.auditStatus=='sh01'?(purchOperation=true):(purchOperation=false)}}-->
+
+                            <el-button :disabled="scope.row.auditStatus=='sh01'?(true):(false)" type="text"
+                                       @click="updatamater(scope.row)">修改
+                            </el-button>
+                            <el-button :disabled="scope.row.auditStatus=='sh01'?(true):(false)" type="text"
+                                       @click="delpurMaterList(scope.row)">删除
+                            </el-button>
+
+
+                        </template>
+
+                    </el-table-column>
+                </el-table>
+                <!--分页-->
+                <el-row>
+                    <el-col :span="10" :offset="14">
+                        <el-pagination
+                                @current-change="materfactorylistpag"
+                                :page-size="15"
+                                layout="prev, pager, next, jumper"
+                                :total="totalRecordNum">
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+            </div>
+        </div>
+        <!--<el-tabs v-model="activeName2" tabPosition="left">-->
+            <!--<el-tab-pane label="原材料采购" name="second">-->
+                <!--<div>-->
+                    <!--&lt;!&ndash;新建与查询&ndash;&gt;-->
+                    <!--<div class="menuBox">-->
+
+                        <!--<div class="QueryConditions">-->
+                            <!--<el-button size="mini" type="primary" class="el-icon-plus"-->
+                                       <!--@click="Newpurchaseorder_mater=true">新建-->
+                            <!--</el-button>-->
+                            <!--<el-button icon="el-icon-view" type="primary" size="mini" @click="SettingsMater=true">显示设置-->
+                            <!--</el-button>-->
+                            <!--<el-button size="mini" type="primary" :disabled="auditStatusBut" @click="SubmitAudit">提交审核-->
+                            <!--</el-button>-->
+                            <!--<el-button size="mini" type="primary" :disabled="submitStatusBut" @click="AuditPass">审核通过-->
+                            <!--</el-button>-->
+                            <!--<el-button size="mini" type="primary" :disabled="submitStatusBut" @click="AuditReject">-->
+                                <!--审核驳回-->
+                            <!--</el-button>-->
+                            <!--<el-button size="mini" type="danger" :disabled="delStatusBut" @click="delMaterPur()">批量删除-->
+                            <!--</el-button>-->
+                            <!--&lt;!&ndash;<el-button size="mini">导出</el-button>&ndash;&gt;-->
+                        <!--</div>-->
+                        <!--<div class="QueryConditions QueryInput">-->
+                            <!--<div>-->
+                                <!--<el-select size="mini" v-model="materTimeType" placeholder="时间类型">-->
+                                    <!--<el-option-->
+                                            <!--v-for="item in TimeTypelist"-->
+                                            <!--:key="item.value"-->
+                                            <!--:label="item.label"-->
+                                            <!--:value="item.value">-->
+                                    <!--</el-option>-->
+                                <!--</el-select>-->
+                                <!--<el-date-picker-->
+                                        <!--size="mini"-->
+                                        <!--v-model="materpurchaseTime"-->
+                                        <!--type="daterange"-->
+                                        <!--range-separator="至"-->
+                                        <!--format="yyyy 年 MM 月 dd 日"-->
+                                        <!--value-format="yyyy-MM-dd"-->
+                                        <!--start-placeholder="开始日期"-->
+                                        <!--end-placeholder="结束日期">-->
+                                <!--</el-date-picker>-->
+
+                                <!--<el-select size="mini" clearable v-model="materAuditStatuss" placeholder="审核状态">-->
+                                    <!--<el-option-->
+                                            <!--v-for="item in Audit"-->
+                                            <!--:key="item.value"-->
+                                            <!--:label="item.label"-->
+                                            <!--:value="item.value">-->
+                                    <!--</el-option>-->
+                                <!--</el-select>-->
+                                <!--<el-select size="mini" clearable v-model="materSubmitstate" placeholder="提交状态">-->
+                                    <!--<el-option-->
+                                            <!--v-for="item in Submit"-->
+                                            <!--:key="item.value"-->
+                                            <!--:label="item.label"-->
+                                            <!--:value="item.value">-->
+                                    <!--</el-option>-->
+                                <!--</el-select>-->
+
+                                <!--<el-select size="mini" clearable v-model="materReceivingStatus" placeholder="收货状态">-->
+                                    <!--<el-option-->
+                                            <!--v-for="item in Receiving"-->
+                                            <!--:key="item.value"-->
+                                            <!--:label="item.label"-->
+                                            <!--:value="item.value">-->
+                                    <!--</el-option>-->
+                                <!--</el-select>-->
+
+
+                                <!--<el-input size="mini" style="width: 200px" placeholder="采购单号" clearable-->
+                                          <!--v-model="materpurchaseNumbers"></el-input>-->
+                            <!--</div>-->
+                            <!--<div>-->
+                                <!--<el-button type="primary" size="mini" icon="el-icon-edit"-->
+                                           <!--@click="materpurchaseNumbers='',materSubmitstate='',materReceivingStatus='',materAuditStatuss='',materpurchaseTime='',materTimeType=''">-->
+                                    <!--重置-->
+                                <!--</el-button>-->
+
+                                <!--<el-button type="primary" size="mini" icon="el-icon-search"-->
+                                           <!--@click="materialQueryPage()">查询-->
+                                <!--</el-button>-->
+                            <!--</div>-->
+                        <!--</div>-->
+
+                        <!--&lt;!&ndash;显示设置&ndash;&gt;-->
+                        <!--<el-dialog-->
+                                <!--title="显示设置"-->
+                                <!--:visible.sync="SettingsMater"-->
+                                <!--width="450px"-->
+                                <!--:show-close="false"-->
+
+                        <!--&gt;-->
+                            <!--<div style="text-align: left">-->
+
+
+                                <!--<el-row>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="purchaseNumbermaterSet">采购单号</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="purchaseSourcematerSet">采购订单来源</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="frequencymaterSet">入库次数</el-checkbox>-->
+                                    <!--</el-col>-->
+                                <!--</el-row>-->
+
+
+                                <!--<el-row>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="auditStatusmaterSet">审核状态</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="receiveStatusmaterSet">收货状态</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="typematerSet">采购订单类型</el-checkbox>-->
+                                    <!--</el-col>-->
+                                <!--</el-row>-->
+
+                                <!--<el-row>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="commodityTypematerSet">商品类型</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="receiveAddressmaterSet">收货地址</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="submittermaterSet">提交人</el-checkbox>-->
+                                    <!--</el-col>-->
+                                <!--</el-row>-->
+
+
+                                <!--<el-row>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="contractTermmaterSet">合同条款</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="singlePersonmaterSet">制单人</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="financialJudgematerSet">财审人</el-checkbox>-->
+                                    <!--</el-col>-->
+                                <!--</el-row>-->
+
+
+                                <!--<el-row>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="auditormaterSet">审核人</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="totalSummaterSet">总金额(不含税)</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="taxTotalSummaterSet">总金额（含税）</el-checkbox>-->
                                     <!--</el-col>-->
 
-                                </el-row>
+                                <!--</el-row>-->
+
+                                <!--<el-row>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="totalQuantitymaterSet">总数量</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="completeStatusmaterSet">采购完成状态</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="remarkmaterSet">备注</el-checkbox>-->
+                                    <!--</el-col>-->
+                                <!--</el-row>-->
 
 
-                            </el-form>
-                            <div class="QueryConditions">
-                                <el-button size="mini" @click="PurchasingAddGoods=true">添加商品</el-button>
-                                <el-button size="mini" @click="batchTime">批量添加预计入库时间</el-button>
-                                <el-date-picker
-                                        style="margin-left: 0.5em"
-                                        size="mini"
-                                        v-model="timeData"
-                                        type="datetime"
-                                        placeholder="批量添加预计入库时间">
-                                </el-date-picker>
-                            </div>
+                                <!--<el-row>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="createTimematerSet">创建时间</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="updateTimematermaterSet">修改时间</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="freightmaterSet">运费</el-checkbox>-->
+                                    <!--</el-col>-->
+                                <!--</el-row>-->
+                                <!--<el-row>-->
+                                    <!--<el-col :span="8">-->
 
-                            <el-table
-                                    :data="addProcurement.goodsList"
-                                    border
-                                    stripe
-                                    @selection-change="goodsSelection"
-                                    style="width: 100%">
+                                        <!--<el-checkbox v-model="invoicematerSet">发票</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="freightTransportationmaterSet">货运方式</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="taxRatematerSet">税率</el-checkbox>-->
+                                    <!--</el-col>-->
+                                <!--</el-row>-->
 
-                                <el-table-column
-                                        align="center"
-                                        type="selection"
-                                        width="50"
-                                >
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        type="index"
-                                        width="50">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="merchantCode"
-                                        label="商家编码"
-                                        width="180">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="name"
-                                        label="商品名称"
-                                        width="180">
-                                </el-table-column>
+                                <!--<el-row>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="taxAmountmaterSet">税额</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="operationmaterSet">供应商</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="submitStatusmaterSet">提交状态</el-checkbox>-->
+                                    <!--</el-col>-->
+                                <!--</el-row>-->
+                                <!--<el-row>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="submitTimematerSet">提交时间</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="auditTimematerSet">审核时间</el-checkbox>-->
+                                    <!--</el-col>-->
 
-                                <el-table-column
-                                        align="center"
-                                        prop="itemCode"
-                                        label="货品编号"
-                                        width="180"
-                                >
-                                </el-table-column>
-                                <el-table-column
-                                        label="预计入库时间"
-                                        width="200"
-                                        align="center"
-                                >
-                                    <template slot-scope="scope">
-                                        <el-date-picker
-                                                style="width: 180px"
-                                                v-model="scope.row.warehouseTime"
-                                                size="mini"
-                                                type="datetime"
-                                                value-format="yyyy-MM-dd HH:mm:ss"
-                                                placeholder="预计入库时间">
-                                        </el-date-picker>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        label="数量"
-                                        width="200"
-                                        prop="number"
-                                >
-                                    <template slot-scope="scope">
-                                        <el-input-number size="mini" :min="1" v-model="scope.row.number"
-                                                         @change="addprocureNumber(scope.row)"></el-input-number>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column
-                                        label="操作"
-                                        fixed="left"
-                                        align="center"
-                                >
-                                    <template slot-scope="scope">
-                                        <!--删除from表单中商品数据-->
-                                        <el-button type="text" @click="deltetPurchase(scope.row)">删除</el-button>
-                                    </template>
-                                </el-table-column>
+
+                                <!--</el-row>-->
+
+                            <!--</div>-->
+
+                        <!--</el-dialog>-->
+
+
+                        <!--&lt;!&ndash;新建采购单&ndash;&gt;-->
+                        <!--<el-dialog-->
+                                <!--title="新建采购单(原材料)"-->
+                                <!--:visible.sync="Newpurchaseorder_mater"-->
+                                <!--:show-close="false"-->
+                                <!--width="1000px">-->
+                            <!--<el-form :model="addProcurementMater" ref="addProcurementMater"-->
+                                     <!--:rules="addProcurementsMater" label-width="100px" label-position="right"-->
+                            <!--&gt;-->
+
+
+                                <!--<div style="display: flex;justify-content: space-between;flex-wrap: nowrap">-->
+                                    <!--<el-form-item-->
+                                            <!--label="供应商"-->
+                                            <!--prop="supplier"-->
+                                    <!--&gt;-->
+                                        <!--&lt;!&ndash;供应商选择&ndash;&gt;-->
+                                        <!--<el-select size="mini" filterable clearable-->
+                                                   <!--v-model="addProcurementMater.supplier"-->
+                                                   <!--placeholder="供应商">-->
+                                            <!--<el-option-->
+                                                    <!--v-for="item in options"-->
+                                                    <!--:key="item.value"-->
+                                                    <!--:label="item.label"-->
+                                                    <!--:value="item.value">-->
+                                            <!--</el-option>-->
+                                        <!--</el-select>-->
+                                    <!--</el-form-item>-->
+
+                                    <!--<el-form-item-->
+                                            <!--label="工厂"-->
+                                            <!--prop="factoryName"-->
+                                    <!--&gt;-->
+                                        <!--&lt;!&ndash;工厂选择&ndash;&gt;-->
+                                        <!--<el-select filterable size="mini" clearable-->
+                                                   <!--v-model="addProcurementMater.factoryName"-->
+                                                   <!--placeholder="工厂选择">-->
+                                            <!--<el-option-->
+                                                    <!--v-for="item in factorylist"-->
+                                                    <!--:key="item.value"-->
+                                                    <!--:label="item.label"-->
+                                                    <!--:value="item.value">-->
+                                            <!--</el-option>-->
+                                        <!--</el-select>-->
+                                    <!--</el-form-item>-->
+
+                                    <!--<el-form-item label="发票" prop="invoice">-->
+                                        <!--<el-select @change="materchoose" size="mini"-->
+
+                                                   <!--v-model="addProcurementMater.invoice"-->
+                                                   <!--placeholder="请选择发票">-->
+                                            <!--<el-option-->
+                                                    <!--v-for="item in addinvoice"-->
+                                                    <!--:key="item.value"-->
+                                                    <!--:label="item.label"-->
+                                                    <!--:value="item.value">-->
+                                            <!--</el-option>-->
+                                        <!--</el-select>-->
+                                    <!--</el-form-item>-->
+
+                                    <!--<el-form-item label="货运方式" prop="freightTransportation">-->
+                                        <!--<el-input clearable size="mini" placeholder="货运方式"-->
+                                                  <!--v-model="addProcurementMater.freightTransportation"></el-input>-->
+                                    <!--</el-form-item>-->
+                                    <!--&lt;!&ndash;<el-form-item label="运费" prop="freight">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<el-input clearable  size="mini" v-model="addProcurementMater.freight"></el-input>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</el-form-item>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<el-form-item label="备注">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<el-input  clearable size="mini" placeholder="备注"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;v-model="addProcurementMater.remark"></el-input>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</el-form-item>&ndash;&gt;-->
+                                <!--</div>-->
+
+
+                                <!--<el-row>-->
+                                    <!--<el-col :span="6">-->
+                                        <!--<el-form-item label="运费" prop="freight">-->
+                                            <!--<el-input size="mini" v-model="addProcurementMater.freight"></el-input>-->
+                                        <!--</el-form-item>-->
+                                    <!--</el-col>-->
+
+
+                                    <!--<el-col :span="6">-->
+                                        <!--<el-form-item label="备注">-->
+                                            <!--<el-input size="mini" placeholder="备注"-->
+                                                      <!--v-model="addProcurementMater.remark"></el-input>-->
+                                        <!--</el-form-item>-->
+                                    <!--</el-col>-->
+                                <!--</el-row>-->
+
+
+                            <!--</el-form>-->
+                            <!--<div class="QueryConditions">-->
+                                <!--<el-button size="mini" @click="PurchasingAddmaterial_material=true">添加商品</el-button>-->
+                                <!--<el-button size="mini" @click="batchMaterTime">批量添加预计入库时间</el-button>-->
+                                <!--<el-date-picker-->
+                                        <!--style="margin-left: 0.5em"-->
+                                        <!--size="mini"-->
+                                        <!--v-model="timematerData"-->
+                                        <!--value-format="yyyy-MM-dd HH:mm:ss"-->
+                                        <!--type="datetime"-->
+                                        <!--placeholder="批量添加预计入库时间">-->
+                                <!--</el-date-picker>-->
+                            <!--</div>-->
+
+                            <!--<el-table-->
+                                    <!--:data="addProcurementMater.goodsList"-->
+                                    <!--border-->
+                                    <!--stripe-->
+                                    <!--@selection-change="goodsmaterSelection"-->
+                                    <!--style="width: 100%">-->
+
+                                <!--<el-table-column align="center" type="selection"></el-table-column>-->
                                 <!--<el-table-column-->
-                                <!--label="含税单价（元）"-->
-                                <!--width="120"-->
-                                <!--prop="taxPrice"-->
-                                <!--align="center"-->
+                                        <!--label="预计入库时间"-->
+                                        <!--width="200"-->
+                                        <!--align="center"-->
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--<el-date-picker-->
+                                                <!--style="width: 180px"-->
+                                                <!--v-model="scope.row.warehouseTime"-->
+                                                <!--size="mini"-->
+                                                <!--type="datetime"-->
+                                                <!--value-format="yyyy-MM-dd HH:mm:ss"-->
+                                                <!--placeholder="预计入库时间">-->
+                                        <!--</el-date-picker>-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--label="数量"-->
+                                        <!--width="200"-->
+                                        <!--prop="number"-->
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+
+                                        <!--&lt;!&ndash;<el-input-number :min="0" @change="containtax(scope.row)"&ndash;&gt;-->
+                                        <!--&lt;!&ndash;size="mini"&ndash;&gt;-->
+                                        <!--&lt;!&ndash;@change="materNumber(scope.row)"&ndash;&gt;-->
+                                        <!--&lt;!&ndash;v-model="scope.row.number"&ndash;&gt;-->
+                                        <!--&lt;!&ndash;label="描述文字"></el-input-number>&ndash;&gt;-->
+
+                                        <!--<el-input-number size="mini"-->
+                                                         <!--v-model="scope.row.number" @change="materNumber(scope.row)"-->
+                                                         <!--:min="1" label="描述文字">-->
+
+                                        <!--</el-input-number>-->
+
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="操作"-->
+                                        <!--fixed="left"-->
+                                        <!--align="center"-->
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--&lt;!&ndash;删除from表单中商品数据&ndash;&gt;-->
+                                        <!--<el-button type="text" @click="deltetmaterPurchase(scope.row)">删除</el-button>-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+
+
+                                <!--<el-table-column-->
+                                        <!--label="创建时间"-->
+                                        <!--prop="createTime"-->
+                                        <!--width="180"-->
+                                        <!--align="center"-->
+                                        <!--sortable-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+
+                                        <!--label="修改时间"-->
+                                        <!--prop="updateTime"-->
+                                        <!--width="180"-->
+                                        <!--align="center"-->
+                                        <!--sortable-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="含税单价（元）"-->
+                                        <!--width="200"-->
+                                        <!--align="center"-->
+
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+
+                                        <!--<el-input-number :min="0" @change="matercontaintax(scope.row)"-->
+                                                         <!--:disabled="matercontaining"-->
+                                                         <!--size="mini"-->
+                                                         <!--v-model="scope.row.taxPrice"-->
+                                                         <!--label="描述文字"></el-input-number>-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+
+                                <!--<el-table-column-->
+                                        <!--label="不含税单价（元）"-->
+                                        <!--width="200"-->
+                                        <!--align="center"-->
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--<el-input-number :min="0" :disabled="maternocontaining" size="mini"-->
+                                                         <!--v-model="scope.row.unitPrice"-->
+                                                         <!--@change="materaddprocure(scope.row)"></el-input-number>-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="含税总价（元）"-->
+                                        <!--width="120"-->
+                                        <!--align="center"-->
+                                        <!--prop="taxTotalPrice"-->
+                                <!--&gt;-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="不含税总价（元）"-->
+                                        <!--width="150"-->
+                                        <!--align="center"-->
+                                        <!--prop="totalPrice"-->
                                 <!--&gt;-->
                                 <!--</el-table-column>-->
 
 
-                                <el-table-column
-                                        label="含税单价（元）"
-                                        width="200"
-                                        align="center"
-
-                                >
-                                    <template slot-scope="scope">
-                                        <el-input-number :min="0" @change="containtax(scope.row)" :disabled="containing"
-                                                         size="mini"
-                                                         v-model="scope.row.taxPrice"
-                                                         label="描述文字"></el-input-number>
-                                    </template>
-                                </el-table-column>
-
-                                <el-table-column
-                                        label="不含税单价（元）"
-                                        width="200"
-                                        align="center"
-                                >
-                                    <template slot-scope="scope">
-                                        <el-input-number :min="0" :disabled="nocontaining" size="mini"
-                                                         v-model="scope.row.unitPrice"
-                                                         @change="addprocure(scope.row)"></el-input-number>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column
-                                        label="含税总价（元）"
-                                        width="120"
-                                        align="center"
-                                        prop="taxTotalPrice"
-                                >
-                                </el-table-column>
-                                <el-table-column
-                                        label="不含税总价（元）"
-                                        width="150"
-                                        align="center"
-                                        prop="totalPrice"
-                                >
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="type"
-                                        label="分类"
-                                        width="180">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="sku"
-                                        width="180"
-                                        label="盒装SKU">
-
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="brand"
-                                        width="180"
-                                        label="品牌">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="unit"
-                                        width="100"
-                                        label="单位">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="process"
-                                        width="180"
-                                        label="工艺流程">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="season"
-                                        width="180"
-                                        label="季节">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="costPrice"
-                                        width="180"
-                                        label="商品成本价">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="unit"
-                                        width="180"
-                                        label="基本单位">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="packag"
-                                        width="180"
-                                        label="包装材料">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="weight"
-                                        width="180"
-                                        label="重量">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="barCode"
-                                        width="180"
-                                        label="条形码">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="ingredients"
-                                        width="180"
-                                        label="面料成份">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="standard"
-                                        width="180"
-                                        label="执行工艺标准">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="remark"
-                                        width="180"
-                                        label="备注">
-                                </el-table-column>
-
-                            </el-table>
-
-                            <div style="display: flex;justify-content: space-between;margin: 0.2em">
-                                <div>
-                                    总数量:{{goodsNum}},
-                                    总金额（含税）:{{taxgoodsMoney.toFixed(4)}},
-                                    总金额（不含税）:{{goodsMoney.toFixed(4)}}
-
-                                </div>
-                                <div>
-                                    <el-button type="primary" size="mini" @click="SubmissionPurchase('addProcurement')">
-                                        保存
-                                    </el-button>
-                                    <el-button size="mini" @click="Newpurchaseorder=false">取消</el-button>
-                                </div>
-
-                            </div>
-
-                        </el-dialog>
-
-                        <!--采购订单添加商品-->
-                        <el-dialog
-                                title="采购订单添加商品"
-                                :visible.sync="PurchasingAddGoods"
-                                width="1000px"
-                                :show-close="false"
-                        >
-                            <!--新建与查询-->
-                            <div class="menuBox">
-                                <div class="QueryConditions QueryInput">
-                                    <el-input size="mini" placeholder="商家编码"
-                                              v-model="querymerchantCode"></el-input>
-
-                                    <el-input size="mini" placeholder="商品名称" v-model="queryname"></el-input>
-
-                                    <el-input size="mini" placeholder="货品编号" v-model="queryitemCode"></el-input>
-
-                                    <el-input size="mini" placeholder="盒装SKU" v-model="querysku"></el-input>
-
-                                    <el-input size="mini" placeholder="其他" v-model="queryother"></el-input>
-
-                                    <el-button type="primary" size="mini"
-                                               @click="queryother='',querysku='',queryitemCode='',queryname='',querymerchantCode=''">
-                                        重置
-                                    </el-button>
-
-                                    <el-button type="primary" size="mini" icon="el-icon-search"
-                                               @click="queryGoods()">查询
-                                    </el-button>
-
-                                </div>
-                            </div>
-                            <div>
-                                <el-table
-                                        :data="quireGoodsData"
-                                        border
-                                        stripe
-                                        @selection-change="goodsSelection"
-                                        style="width: 100%">
-                                    <el-table-column
-                                            align="center"
-                                            type="index"
-                                            width="30">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            label="操作"
-                                            width="80"
-                                            fixed="left"
-                                    >
-                                        <template slot-scope="scope">
-
-                                            <el-button type="text" @click="addgoodsTopurchase(scope.row)">添加</el-button>
-                                        </template>
-                                    </el-table-column>
-
-                                    <el-table-column
-                                            align="center"
-                                            prop="merchantCode"
-                                            label="商家编码"
-                                            width="180">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="name"
-                                            label="商品名称"
-                                            width="180">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="itemCode"
-                                            label="货品编号"
-                                            width="180"
-                                    >
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="sku"
-                                            width="180"
-                                            label="盒装SKU">
-                                    </el-table-column>
+                                <!--<el-table-column-->
+                                        <!--label="物料编号"-->
+                                        <!--prop="materialCode"-->
+                                        <!--width="180"-->
+                                        <!--align="center"-->
+                                        <!--sortable-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="物料名称"-->
+                                        <!--prop="name"-->
+                                        <!--width="200"-->
+                                        <!--align="center"-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--prop="ingredients"-->
+                                        <!--label="成分规格"-->
+                                        <!--width="180"-->
+                                        <!--align="center"-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="物料分类"-->
+                                        <!--prop="type"-->
+                                        <!--width="180"-->
+                                        <!--align="center"-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="品牌"-->
+                                        <!--prop="brand"-->
+                                        <!--width="120"-->
+                                        <!--align="center"-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="状态"-->
+                                        <!--width="180"-->
+                                        <!--align="center"-->
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--{{scope.row.spare=='01'?'启用':'未启用'}}-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="默认损耗"-->
+                                        <!--prop="defaultLoss"-->
+                                        <!--width="160"-->
+                                        <!--align="center"-->
+                                        <!--sortable-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="厂商"-->
+                                        <!--prop="manufacturer"-->
+                                        <!--width="180"-->
+                                        <!--align="center"-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="基本计量单位"-->
+                                        <!--prop="unit"-->
+                                        <!--width="150"-->
+                                        <!--align="center"-->
+                                        <!--sortable-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="成本价"-->
+                                        <!--prop="costPrice"-->
+                                        <!--width="120"-->
+                                        <!--align="center"-->
+                                        <!--sortable-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="备注"-->
+                                        <!--prop="note"-->
+                                        <!--width="150"-->
+                                        <!--align="center"-->
+                                <!--&gt;</el-table-column>-->
 
 
-                                    <el-table-column
-                                            align="center"
-                                            prop="type"
-                                            label="分类"
-                                            width="180">
-                                    </el-table-column>
+                            <!--</el-table>-->
 
-                                    <el-table-column
-                                            align="center"
-                                            prop="brand"
-                                            width="180"
-                                            label="品牌">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="unit"
-                                            width="100"
-                                            label="单位">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="process"
-                                            width="180"
-                                            label="工艺流程">
-                                    </el-table-column>
-                                    <el-table-column
 
-                                            label="创建时间"
-                                            prop="createTime"
-                                            width="180"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="修改时间"
-                                            prop="updateTime"
-                                            width="180"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="season"
-                                            width="180"
-                                            label="季节">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="costPrice"
-                                            width="180"
-                                            label="商品成本价">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="unit"
-                                            width="180"
-                                            label="基本单位">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="packag"
-                                            width="180"
-                                            label="包装材料">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="weight"
-                                            width="180"
-                                            label="重量">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="barCode"
-                                            width="180"
-                                            label="条形码">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="ingredients"
-                                            width="180"
-                                            label="面料成份">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="standard"
-                                            width="180"
-                                            label="执行工艺标准">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="remark"
-                                            width="180"
-                                            label="备注">
-                                    </el-table-column>
+                            <!--<div style="display: flex;justify-content: space-between;margin: 0.2em">-->
+                                <!--<div>-->
 
-                                </el-table>
-                                <!--分页-->
-                                <div class="PageLayout">
+                                    <!--总数量:{{matergoodsNum}},-->
+                                    <!--总金额（含税）:{{matertaxgoodsMoney.toFixed(4)}},-->
+                                    <!--总金额（不含税）:{{matergoodsMoney.toFixed(4)}}-->
+                                <!--</div>-->
+                                <!--<div>-->
+                                    <!--<el-button type="primary" size="mini"-->
+                                               <!--@click="SubmissionMater('addProcurementMater')">-->
+                                        <!--保存-->
+                                    <!--</el-button>-->
+                                    <!--<el-button size="mini" @click="Newpurchaseorder_mater=false">取消</el-button>-->
+                                <!--</div>-->
 
-                                        <el-pagination
-                                                @current-change="goodslistpag"
-                                                :page-size="5"
-                                                layout="prev, pager, next, jumper"
-                                                :total="totalRecordNum">
-                                        </el-pagination>
+                            <!--</div>-->
 
-                                </div>
-                                <el-table
-                                        :data="quireGoodsDataBox"
-                                        border
-                                        stripe
-                                        @selection-change="goodsSelection"
-                                        style="width: 100%">
-                                    <el-table-column
-                                            align="center"
-                                            type="index"
-                                            width="30">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="merchantCode"
-                                            label="商家编码"
-                                            width="180">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="name"
-                                            label="商品名称"
-                                            width="180">
-                                    </el-table-column>
+                        <!--</el-dialog>-->
 
-                                    <el-table-column
-                                            align="center"
-                                            prop="itemCode"
-                                            label="货品编号"
-                                            width="180"
-                                    >
-                                    </el-table-column>
+                        <!--&lt;!&ndash;采购订单添加商品(原材料)&ndash;&gt;-->
+                        <!--<el-dialog-->
+                                <!--title="采购订单添加原材料"-->
+                                <!--:visible.sync="PurchasingAddmaterial_material"-->
+                                <!--width="1000px"-->
+                                <!--:show-close="false"-->
+                        <!--&gt;-->
+                            <!--&lt;!&ndash;新建与查询&ndash;&gt;-->
+                            <!--<div class="menuBox">-->
+                                <!--<div class="QueryConditions QueryInput">-->
+                                    <!--<div>-->
+                                        <!--<el-input clearable placeholder="物料编号" size="mini"-->
+                                                  <!--v-model="materialsNum"></el-input>-->
+
+                                        <!--<el-input clearable placeholder="物料名称" size="mini"-->
+                                                  <!--v-model="materialsName"></el-input>-->
+
+                                        <!--<el-select clearable v-model="VendorQueries" placeholder="厂商" size="mini">-->
+                                            <!--<el-option-->
+                                                    <!--v-for="item in options"-->
+                                                    <!--:key="item.value"-->
+                                                    <!--:label="item.label"-->
+                                                    <!--:value="item.value"-->
+                                            <!--&gt;-->
+                                            <!--</el-option>-->
+                                        <!--</el-select>-->
+                                    <!--</div>-->
+                                    <!--<div>-->
+                                        <!--<el-button type="primary" icon="el-icon-delete" size="mini"-->
+                                                   <!--@click="materialsNum='',materialsName='',VendorQueries=''">重置-->
+                                        <!--</el-button>-->
+
+                                        <!--<el-button type="primary" icon="el-icon-search" size="mini"-->
+                                                   <!--@click="queryPage">查询-->
+                                        <!--</el-button>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div>-->
+                                <!--<el-table-->
+                                        <!--style="width: 100%"-->
+                                        <!--border-->
+                                        <!--stripe-->
+                                        <!--:data="materialsList"-->
+                                        <!--highlight-current-row-->
+                                <!--&gt;-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--label="操作"-->
+                                            <!--width="80"-->
+                                            <!--fixed="left"-->
+                                    <!--&gt;-->
+                                        <!--<template slot-scope="scope">-->
+
+                                            <!--<el-button type="text" @click="addmateTopurchase(scope.row)">添加</el-button>-->
+                                        <!--</template>-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--type="index"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
 
                                     <!--<el-table-column-->
-                                    <!--label="预计入库时间"-->
-                                    <!--width="200"-->
-                                    <!--align="center"-->
+                                            <!--label="创建时间"-->
+                                            <!--prop="createTime"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+
+                                            <!--label="修改时间"-->
+                                            <!--prop="updateTime"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+
+                                    <!--<el-table-column-->
+                                            <!--label="物料编号"-->
+                                            <!--prop="materialCode"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="物料名称"-->
+                                            <!--prop="name"-->
+                                            <!--width="200"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--prop="ingredients"-->
+                                            <!--label="成分规格"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="物料分类"-->
+                                            <!--prop="type"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="品牌"-->
+                                            <!--prop="brand"-->
+                                            <!--width="120"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="状态"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
                                     <!--&gt;-->
-                                    <!--<template slot-scope="scope">-->
-                                    <!--<el-date-picker-->
-                                    <!--style="width: 180px"-->
-                                    <!--type="datetime"-->
-                                    <!--v-model="scope.row.warehouseTime"-->
-                                    <!--size="mini"-->
-                                    <!--value-format="yyyy-MM-dd HH:mm:ss"-->
-                                    <!--placeholder="预计入库时间">-->
-                                    <!--</el-date-picker>-->
-                                    <!--</template>-->
+                                        <!--<template slot-scope="scope">-->
+                                            <!--{{scope.row.spare=='01'?'启用':'未启用'}}-->
+                                        <!--</template>-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="默认损耗"-->
+                                            <!--prop="defaultLoss"-->
+                                            <!--width="160"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="厂商"-->
+                                            <!--prop="manufacturer"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="基本计量单位"-->
+                                            <!--prop="unit"-->
+                                            <!--width="150"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="成本价"-->
+                                            <!--prop="costPrice"-->
+                                            <!--width="120"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="备注"-->
+                                            <!--prop="note"-->
+                                            <!--width="150"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+
+                                <!--</el-table>-->
+                                <!--&lt;!&ndash;分页&ndash;&gt;-->
+                                <!--<div class="PageLayout">-->
+                                    <!--<el-pagination-->
+                                            <!--@current-change="handleCurrentChange"-->
+                                            <!--:page-size="5"-->
+                                            <!--layout="prev, pager, next, jumper"-->
+                                            <!--:total="totalRecord">-->
+                                    <!--</el-pagination>-->
+
+                                <!--</div>-->
+
+                                <!--<el-table-->
+                                        <!--:data="quiremateDataBox"-->
+                                        <!--border-->
+                                        <!--stripe-->
+                                        <!--@selection-change="goodsSelection"-->
+                                        <!--style="width: 100%">-->
+
+                                    <!--<el-table-column-->
+                                            <!--type="index"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+
+                                    <!--<el-table-column-->
+                                            <!--label="创建时间"-->
+                                            <!--prop="createTime"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+
+                                            <!--label="修改时间"-->
+                                            <!--prop="updateTime"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+
+                                    <!--<el-table-column-->
+                                            <!--label="物料编号"-->
+                                            <!--prop="materialCode"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="物料名称"-->
+                                            <!--prop="name"-->
+                                            <!--width="200"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--prop="ingredients"-->
+                                            <!--label="成分规格"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="物料分类"-->
+                                            <!--prop="type"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="品牌"-->
+                                            <!--prop="brand"-->
+                                            <!--width="120"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="状态"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                    <!--&gt;-->
+                                        <!--<template slot-scope="scope">-->
+                                            <!--{{scope.row.spare=='01'?'启用':'未启用'}}-->
+                                        <!--</template>-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="默认损耗"-->
+                                            <!--prop="defaultLoss"-->
+                                            <!--width="160"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="厂商"-->
+                                            <!--prop="manufacturer"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="基本计量单位"-->
+                                            <!--prop="unit"-->
+                                            <!--width="150"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="成本价"-->
+                                            <!--prop="costPrice"-->
+                                            <!--width="120"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="备注"-->
+                                            <!--prop="note"-->
+                                            <!--width="150"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+
+                                    <!--<el-table-column-->
+                                            <!--label="操作"-->
+                                            <!--fixed="left"-->
+                                            <!--align="center"-->
+                                    <!--&gt;-->
+                                        <!--<template slot-scope="scope">-->
+                                            <!--&lt;!&ndash;删除备选数组信息&ndash;&gt;-->
+                                            <!--<el-button type="text" @click="delpruchase(scope.row)">删除</el-button>-->
+                                        <!--</template>-->
                                     <!--</el-table-column>-->
 
 
+                                <!--</el-table>-->
+                                <!--<div style="text-align: right;margin: 0.2em">-->
+                                    <!--<el-button type="primary" size="mini" @click="PreservationMater">保存</el-button>-->
+                                    <!--<el-button size="mini" @click="PurchasingAddmaterial_material=false">取消</el-button>-->
+                                <!--</div>-->
+
+                            <!--</div>-->
+
+
+                        <!--</el-dialog>-->
+
+
+                        <!--&lt;!&ndash;修改采购单&ndash;&gt;-->
+                        <!--<el-dialog-->
+                                <!--title="修改采购单(原材料)"-->
+                                <!--:visible.sync="upNewpurchaseorder_mater"-->
+                                <!--@closed="closeFunMater"-->
+                                <!--:show-close="false"-->
+                                <!--width="1000px">-->
+                            <!--<el-form :model="upaddProcurementMater" ref="upaddProcurementMater"-->
+                                     <!--:rules="upaddProcurementsMater"-->
+                                     <!--label-position="right"-->
+                                     <!--label-width="100px">-->
+                                <!--<el-row>-->
+                                    <!--<el-col :span="6">-->
+                                        <!--<el-form-item-->
+                                                <!--label="供应商"-->
+                                                <!--prop="supplier"-->
+                                        <!--&gt;-->
+                                            <!--&lt;!&ndash;供应商选择&ndash;&gt;-->
+                                            <!--<el-select size="mini" filterable clearable-->
+                                                       <!--v-model="upaddProcurementMater.supplier"-->
+                                                       <!--placeholder="供应商">-->
+                                                <!--<el-option-->
+                                                        <!--v-for="item in options"-->
+                                                        <!--:key="item.value"-->
+                                                        <!--:label="item.label"-->
+                                                        <!--:value="item.value">-->
+                                                <!--</el-option>-->
+                                            <!--</el-select>-->
+                                        <!--</el-form-item>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="6">-->
+                                        <!--<el-form-item-->
+                                                <!--label="工厂"-->
+                                                <!--prop="factoryName"-->
+                                        <!--&gt;-->
+                                            <!--&lt;!&ndash;工厂选择&ndash;&gt;-->
+                                            <!--<el-select filterable size="mini" clearable-->
+                                                       <!--v-model="upaddProcurementMater.factoryName"-->
+                                                       <!--placeholder="工厂选择">-->
+                                                <!--<el-option-->
+                                                        <!--v-for="item in factorylist"-->
+                                                        <!--:key="item.value"-->
+                                                        <!--:label="item.label"-->
+                                                        <!--:value="item.value">-->
+                                                <!--</el-option>-->
+                                            <!--</el-select>-->
+                                        <!--</el-form-item>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="6">-->
+                                        <!--<el-form-item label="运费" prop="freight">-->
+                                            <!--<el-input size="mini" v-model="upaddProcurementMater.freight"></el-input>-->
+                                        <!--</el-form-item>-->
+
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="6">-->
+                                        <!--<el-form-item label="备注">-->
+                                            <!--<el-input size="mini" placeholder="备注"-->
+                                                      <!--v-model="upaddProcurementMater.remark"></el-input>-->
+                                        <!--</el-form-item>-->
+                                    <!--</el-col>-->
+
+                                <!--</el-row>-->
+
+
+                                <!--<el-row>-->
+                                    <!--<el-col :span="6">-->
+                                        <!--<el-form-item label="发票" prop="invoice">-->
+                                            <!--<el-select @change="upmaterupchoose" size="mini"-->
+                                                       <!--v-model="upaddProcurementMater.invoice"-->
+                                                       <!--placeholder="请选择发票">-->
+                                                <!--<el-option-->
+                                                        <!--v-for="item in addinvoice"-->
+                                                        <!--:key="item.value"-->
+                                                        <!--:label="item.label"-->
+                                                        <!--:value="item.value">-->
+                                                <!--</el-option>-->
+                                            <!--</el-select>-->
+                                        <!--</el-form-item>-->
+                                    <!--</el-col>-->
+
+                                    <!--<el-col :span="6">-->
+                                        <!--<el-form-item label="货运方式" prop="freightTransportation">-->
+                                            <!--<el-input size="mini" placeholder="货运方式"-->
+                                                      <!--v-model="upaddProcurementMater.freightTransportation"></el-input>-->
+                                        <!--</el-form-item>-->
+                                    <!--</el-col>-->
+
+                                <!--</el-row>-->
+
+
+                            <!--</el-form>-->
+                            <!--<div class="QueryConditions">-->
+                                <!--<el-button size="mini" @click="upPurchasingAddmaterial_material=true">添加商品</el-button>-->
+                                <!--<el-button size="mini" @click="upbatchMaterTime">批量添加预计入库时间</el-button>-->
+                                <!--<el-date-picker-->
+                                        <!--style="margin-left: 0.5em"-->
+                                        <!--size="mini"-->
+                                        <!--v-model="uptimematerData"-->
+                                        <!--type="datetime"-->
+                                        <!--placeholder="批量添加预计入库时间">-->
+                                <!--</el-date-picker>-->
+                            <!--</div>-->
+
+                            <!--<el-table-->
+                                    <!--:data="upaddProcurementMater.goodsList"-->
+                                    <!--border-->
+                                    <!--stripe-->
+                                    <!--@selection-change="upgoodsmaterSelection"-->
+                                    <!--style="width: 100%">-->
+
+                                <!--<el-table-column align="center" type="selection"></el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="预计入库时间"-->
+                                        <!--width="200"-->
+                                        <!--align="center"-->
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--<el-date-picker-->
+                                                <!--style="width: 180px"-->
+                                                <!--v-model="scope.row.warehouseTime"-->
+                                                <!--size="mini"-->
+                                                <!--type="datetime"-->
+                                                <!--value-format="yyyy-MM-dd HH:mm:ss"-->
+                                                <!--placeholder="预计入库时间">-->
+                                        <!--</el-date-picker>-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--label="数量"-->
+                                        <!--width="200"-->
+                                        <!--prop="number"-->
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+
+                                        <!--&lt;!&ndash;<el-input-number :min="0" @change="containtax(scope.row)"&ndash;&gt;-->
+                                        <!--&lt;!&ndash;size="mini"&ndash;&gt;-->
+                                        <!--&lt;!&ndash;@change="materNumber(scope.row)"&ndash;&gt;-->
+                                        <!--&lt;!&ndash;v-model="scope.row.number"&ndash;&gt;-->
+                                        <!--&lt;!&ndash;label="描述文字"></el-input-number>&ndash;&gt;-->
+
+                                        <!--<el-input-number size="mini"-->
+                                                         <!--v-model="scope.row.number" @change="materNumber(scope.row)"-->
+                                                         <!--:min="1" label="描述文字">-->
+
+                                        <!--</el-input-number>-->
+
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="操作"-->
+                                        <!--fixed="left"-->
+                                        <!--align="center"-->
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--&lt;!&ndash;删除from表单中商品数据&ndash;&gt;-->
+                                        <!--<el-button type="text" @click="deltetmaterPurchase(scope.row)">删除</el-button>-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+
+
+                                <!--<el-table-column-->
+                                        <!--label="创建时间"-->
+                                        <!--prop="createTime"-->
+                                        <!--width="180"-->
+                                        <!--align="center"-->
+                                        <!--sortable-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+
+                                        <!--label="修改时间"-->
+                                        <!--prop="updateTime"-->
+                                        <!--width="180"-->
+                                        <!--align="center"-->
+                                        <!--sortable-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="含税单价（元）"-->
+                                        <!--width="200"-->
+                                        <!--align="center"-->
+
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--<el-input-number :min="0" @change="upmatercontaintax(scope.row)"-->
+                                                         <!--:disabled="upmatercontaining"-->
+                                                         <!--size="mini"-->
+                                                         <!--v-model="scope.row.taxPrice"-->
+                                                         <!--label="描述文字"></el-input-number>-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+
+                                <!--<el-table-column-->
+                                        <!--label="不含税单价（元）"-->
+                                        <!--width="200"-->
+                                        <!--align="center"-->
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--<el-input-number :min="0" :disabled="upmaternocontaining" size="mini"-->
+                                                         <!--v-model="scope.row.unitPrice"-->
+                                                         <!--@change="upmateraddprocure(scope.row)"></el-input-number>-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="含税总价（元）"-->
+                                        <!--width="120"-->
+                                        <!--align="center"-->
+                                        <!--prop="taxTotalPrice"-->
+                                <!--&gt;-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="不含税总价（元）"-->
+                                        <!--width="150"-->
+                                        <!--align="center"-->
+                                        <!--prop="totalPrice"-->
+                                <!--&gt;-->
+                                <!--</el-table-column>-->
+
+
+                                <!--<el-table-column-->
+                                        <!--label="物料编号"-->
+                                        <!--prop="materialCode"-->
+                                        <!--width="180"-->
+                                        <!--align="center"-->
+                                        <!--sortable-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="物料名称"-->
+                                        <!--prop="name"-->
+                                        <!--width="200"-->
+                                        <!--align="center"-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--prop="ingredients"-->
+                                        <!--label="成分规格"-->
+                                        <!--width="180"-->
+                                        <!--align="center"-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="物料分类"-->
+                                        <!--prop="type"-->
+                                        <!--width="180"-->
+                                        <!--align="center"-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="品牌"-->
+                                        <!--prop="brand"-->
+                                        <!--width="120"-->
+                                        <!--align="center"-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="状态"-->
+                                        <!--width="180"-->
+                                        <!--align="center"-->
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--{{scope.row.spare=='01'?'启用':'未启用'}}-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="默认损耗"-->
+                                        <!--prop="defaultLoss"-->
+                                        <!--width="160"-->
+                                        <!--align="center"-->
+                                        <!--sortable-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="厂商"-->
+                                        <!--prop="manufacturer"-->
+                                        <!--width="180"-->
+                                        <!--align="center"-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="基本计量单位"-->
+                                        <!--prop="unit"-->
+                                        <!--width="150"-->
+                                        <!--align="center"-->
+                                        <!--sortable-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="成本价"-->
+                                        <!--prop="costPrice"-->
+                                        <!--width="120"-->
+                                        <!--align="center"-->
+                                        <!--sortable-->
+                                <!--&gt;</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="备注"-->
+                                        <!--prop="note"-->
+                                        <!--width="150"-->
+                                        <!--align="center"-->
+                                <!--&gt;</el-table-column>-->
+
+
+                            <!--</el-table>-->
+
+
+                            <!--<div style="display: flex;justify-content: space-between;margin: 0.2em">-->
+                                <!--<div>-->
+
+                                    <!--总数量:{{upmatergoodsNum}},-->
+                                    <!--总金额（含税）:{{upmatergoodsMoney.toFixed(4)}},-->
+                                    <!--总金额（不含税）:{{upmatertaxgoodsMoney.toFixed(4)}}-->
+
+                                <!--</div>-->
+                                <!--<div>-->
+                                    <!--<el-button type="primary" size="mini"-->
+                                               <!--@click="upSubmissionMater('upaddProcurementMater')">-->
+                                        <!--保存-->
+                                    <!--</el-button>-->
+                                    <!--<el-button size="mini" @click="upNewpurchaseorder_mater=false">取消</el-button>-->
+                                <!--</div>-->
+
+                            <!--</div>-->
+
+                        <!--</el-dialog>-->
+
+                        <!--&lt;!&ndash;修改采购订单添加商品&ndash;&gt;-->
+                        <!--<el-dialog-->
+                                <!--title="采购订单添加原材料"-->
+                                <!--:visible.sync="upPurchasingAddmaterial_material"-->
+                                <!--width="1000px"-->
+                                <!--:show-close="false"-->
+                        <!--&gt;-->
+                            <!--&lt;!&ndash;新建与查询&ndash;&gt;-->
+                            <!--<div class="menuBox">-->
+                                <!--<div class="QueryConditions QueryInput">-->
+                                    <!--<div>-->
+                                        <!--<el-input clearable placeholder="物料编号" size="mini"-->
+                                                  <!--v-model="materialsNum"></el-input>-->
+
+                                        <!--<el-input clearable placeholder="物料名称" size="mini"-->
+                                                  <!--v-model="materialsName"></el-input>-->
+
+                                        <!--<el-select clearable v-model="VendorQueries" placeholder="厂商" size="mini">-->
+                                            <!--<el-option-->
+                                                    <!--v-for="item in options"-->
+                                                    <!--:key="item.value"-->
+                                                    <!--:label="item.label"-->
+                                                    <!--:value="item.value"-->
+                                            <!--&gt;-->
+                                            <!--</el-option>-->
+                                        <!--</el-select>-->
+                                    <!--</div>-->
+                                    <!--<div>-->
+                                        <!--<el-button type="primary" icon="el-icon-delete" size="mini"-->
+                                                   <!--@click="materialsNum='',materialsName='',VendorQueries=''">重置-->
+                                        <!--</el-button>-->
+
+                                        <!--<el-button type="primary" icon="el-icon-search" size="mini"-->
+                                                   <!--@click="queryPage">查询-->
+                                        <!--</el-button>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div>-->
+                                <!--<el-table-->
+                                        <!--style="width: 100%"-->
+                                        <!--border-->
+                                        <!--stripe-->
+                                        <!--:data="materialsList"-->
+                                        <!--highlight-current-row-->
+                                <!--&gt;-->
+                                    <!--<el-table-column type="selection" align="center"></el-table-column>-->
                                     <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--label="操作"-->
+                                            <!--width="80"-->
+                                            <!--fixed="left"-->
+                                    <!--&gt;-->
+                                        <!--<template slot-scope="scope">-->
+
+                                            <!--<el-button type="text" @click="upaddmaterTopurchase(scope.row)">添加-->
+                                            <!--</el-button>-->
+                                        <!--</template>-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--type="index"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+
+                                    <!--<el-table-column-->
+                                            <!--label="创建时间"-->
+                                            <!--prop="createTime"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+
+                                            <!--label="修改时间"-->
+                                            <!--prop="updateTime"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+
+                                    <!--<el-table-column-->
+                                            <!--label="物料编号"-->
+                                            <!--prop="materialCode"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="物料名称"-->
+                                            <!--prop="name"-->
+                                            <!--width="200"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--prop="ingredients"-->
+                                            <!--label="成分规格"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="物料分类"-->
+                                            <!--prop="type"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="品牌"-->
+                                            <!--prop="brand"-->
+                                            <!--width="120"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="状态"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                    <!--&gt;-->
+                                        <!--<template slot-scope="scope">-->
+                                            <!--{{scope.row.spare=='01'?'启用':'未启用'}}-->
+                                        <!--</template>-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="默认损耗"-->
+                                            <!--prop="defaultLoss"-->
+                                            <!--width="160"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="厂商"-->
+                                            <!--prop="manufacturer"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="基本计量单位"-->
+                                            <!--prop="unit"-->
+                                            <!--width="150"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="成本价"-->
+                                            <!--prop="costPrice"-->
+                                            <!--width="120"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="备注"-->
+                                            <!--prop="note"-->
+                                            <!--width="150"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+
+                                <!--</el-table>-->
+                                <!--&lt;!&ndash;分页&ndash;&gt;-->
+                                <!--<div class="PageLayout">-->
+                                    <!--<el-pagination-->
+                                            <!--@current-change="handleCurrentChange"-->
+                                            <!--:page-size="5"-->
+                                            <!--layout="prev, pager, next, jumper"-->
+                                            <!--:total="totalRecord">-->
+                                    <!--</el-pagination>-->
+
+                                <!--</div>-->
+
+
+                                <!--<el-table-->
+                                        <!--:data="upquiremateDataBox"-->
+                                        <!--border-->
+                                        <!--stripe-->
+                                        <!--@selection-change="upgoodsSelection"-->
+                                        <!--style="width: 100%">-->
+                                    <!--<el-table-column type="selection" align="center"></el-table-column>-->
+
+                                    <!--<el-table-column-->
+                                            <!--type="index"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+
+                                    <!--<el-table-column-->
+                                            <!--label="创建时间"-->
+                                            <!--prop="createTime"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+
+                                            <!--label="修改时间"-->
+                                            <!--prop="updateTime"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+
+                                    <!--<el-table-column-->
+                                            <!--label="物料编号"-->
+                                            <!--prop="materialCode"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="物料名称"-->
+                                            <!--prop="name"-->
+                                            <!--width="200"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--prop="ingredients"-->
+                                            <!--label="成分规格"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="物料分类"-->
+                                            <!--prop="type"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="品牌"-->
+                                            <!--prop="brand"-->
+                                            <!--width="120"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="状态"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                    <!--&gt;-->
+                                        <!--<template slot-scope="scope">-->
+                                            <!--{{scope.row.spare=='01'?'启用':'未启用'}}-->
+                                        <!--</template>-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="默认损耗"-->
+                                            <!--prop="defaultLoss"-->
+                                            <!--width="160"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="厂商"-->
+                                            <!--prop="manufacturer"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="基本计量单位"-->
+                                            <!--prop="unit"-->
+                                            <!--width="150"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="成本价"-->
+                                            <!--prop="costPrice"-->
+                                            <!--width="120"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="备注"-->
+                                            <!--prop="note"-->
+                                            <!--width="150"-->
+                                            <!--align="center"-->
+                                    <!--&gt;</el-table-column>-->
+
+                                    <!--<el-table-column-->
+                                            <!--label="操作"-->
+                                            <!--fixed="left"-->
+                                            <!--align="center"-->
+                                    <!--&gt;-->
+                                        <!--<template slot-scope="scope">-->
+                                            <!--&lt;!&ndash;删除备选数组信息&ndash;&gt;-->
+                                            <!--<el-button type="text" @click="updelpruchase(scope.row)">删除</el-button>-->
+                                        <!--</template>-->
+                                    <!--</el-table-column>-->
+
+
+                                <!--</el-table>-->
+                                <!--<div style="text-align: right;margin: 0.2em">-->
+                                    <!--<el-button type="primary" size="mini" @click="upPreservationMater">保存</el-button>-->
+                                    <!--<el-button size="mini" @click="upPurchasingAddGoods=false">取消</el-button>-->
+                                <!--</div>-->
+
+                            <!--</div>-->
+
+
+                        <!--</el-dialog>-->
+
+
+                    <!--</div>-->
+
+                    <!--&lt;!&ndash;采购明细&ndash;&gt;-->
+                    <!--<el-dialog-->
+                            <!--title="采购明细"-->
+                            <!--:visible.sync="Purchasedetailmater"-->
+                            <!--width="80%"-->
+                            <!--:show-close="false"-->
+                    <!--&gt;-->
+                        <!--<div style="display: flex;justify-content: space-between;padding: 0.5em">-->
+                            <!--<el-button icon="el-icon-view" size="mini" @click="detailSettingsmater=true">显示设置-->
+                            <!--</el-button>-->
+                        <!--</div>-->
+
+                        <!--<el-table-->
+                                <!--:data="selsectdetailsListmater"-->
+                                <!--border-->
+                                <!--stripe-->
+                                <!--style="width: 100%">-->
+
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--type="index"-->
+                                    <!--width="50">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="预计入库时间"-->
+                                    <!--width="200"-->
+                                    <!--v-if="warehouseTimemater"-->
+                                    <!--align="center"-->
+                                    <!--prop="warehouseTime"-->
+                            <!--&gt;-->
+
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
                                     <!--align="center"-->
                                     <!--label="数量"-->
                                     <!--width="200"-->
-                                    <!--&gt;-->
-                                    <!--<template slot-scope="scope">-->
-                                    <!--<el-input-number size="mini" v-model="scope.row.number" :min="1" :max="100000"-->
-                                    <!--label="描述文字"></el-input-number>-->
-                                    <!--</template>-->
-                                    <!--</el-table-column>-->
-                                    <el-table-column
-                                            label="操作"
-                                            fixed="left"
-                                            align="center"
-                                    >
-                                        <template slot-scope="scope">
-                                            <!--删除备选数组信息-->
-                                            <el-button type="text" @click="delGoodspruchase(scope.row)">删除</el-button>
-                                        </template>
-                                    </el-table-column>
-
-
-                                    <!--<el-input-number size="mini" v-model="scope.row.spare04"  :min="1"-->
-                                    <!--:max="100000" label="描述文字"></el-input-number>-->
-                                    <!--</template>-->
-                                    <!--</el-table-column>-->
-
-
-                                    <!--<el-table-column-->
-                                    <!--label="不含税单价（元）"-->
-                                    <!--width="200"-->
-                                    <!--align="center"-->
-                                    <!--&gt;-->
-                                    <!--<template slot-scope="scope">-->
-
-                                    <!--<el-input-number :change="CalculationPrice(scope.row)" size="mini"-->
-                                    <!--v-model="scope.row.unitPrice" :min="1"-->
-                                    <!--:max="100000" label="描述文字"></el-input-number>-->
-
-                                    <!--</template>-->
-                                    <!--</el-table-column>-->
-                                    <!--<el-table-column-->
-                                    <!--label="含税单价（元）"-->
-                                    <!--width="200"-->
-                                    <!--align="center"-->
-
-                                    <!--&gt;-->
-                                    <!--<template slot-scope="scope">-->
-                                    <!--<el-input-number disabled size="mini" v-model="scope.row.taxPrice"-->
-                                    <!--label="描述文字"></el-input-number>-->
-                                    <!--</template>-->
-                                    <!--</el-table-column>-->
-                                    <!--<el-table-column-->
-                                    <!--label="含税总价（元）"-->
-                                    <!--width="120"-->
-                                    <!--align="center"-->
-                                    <!--prop="taxTotalPrice"-->
-                                    <!--&gt;-->
-                                    <!--</el-table-column>-->
-                                    <!--<el-table-column-->
-                                    <!--label="不含税总价（元）"-->
-                                    <!--width="150"-->
-                                    <!--align="center"-->
-                                    <!--prop="totalPrice"-->
-                                    <!--&gt;-->
-                                    <!--</el-table-column>-->
-
-                                    <el-table-column
-
-                                            label="创建时间"
-                                            prop="createTime"
-                                            width="180"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="修改时间"
-                                            prop="updateTime"
-                                            width="180"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-
-                                    <el-table-column
-                                            align="center"
-                                            prop="type"
-                                            label="分类"
-                                            width="180">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="sku"
-                                            width="180"
-                                            label="盒装SKU">
-
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="brand"
-                                            width="180"
-                                            label="品牌">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="unit"
-                                            width="100"
-                                            label="单位">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="process"
-                                            width="180"
-                                            label="工艺流程">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="season"
-                                            width="180"
-                                            label="季节">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="costPrice"
-                                            width="180"
-                                            label="商品成本价">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="unit"
-                                            width="180"
-                                            label="基本单位">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="packag"
-                                            width="180"
-                                            label="包装材料">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="weight"
-                                            width="180"
-                                            label="重量">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="barCode"
-                                            width="180"
-                                            label="条形码">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="ingredients"
-                                            width="180"
-                                            label="面料成份">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="standard"
-                                            width="180"
-                                            label="执行工艺标准">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="remark"
-                                            width="180"
-                                            label="备注">
-                                    </el-table-column>
-
-                                </el-table>
-                                <div style="text-align: right;margin: 0.2em">
-                                    <el-button type="primary" size="mini" @click="PreservationGoods">保存</el-button>
-                                    <el-button size="mini" @click="PurchasingAddGoods=false">取消</el-button>
-                                </div>
-
-                            </div>
-
-
-                        </el-dialog>
-
-
-                        <!--修改采购单-->
-                        <el-dialog
-                                title="修改采购单(商品)"
-                                :visible.sync="upNewpurchaseorder"
-                                :show-close="false"
-                                @closed="closeFunGoods"
-                                width="1000px">
-
-                            <el-form :model="upaddProcurement" :rules="upaddProcurements" label-width="100px"
-                                     ref="upaddProcurement" label-position="right">
-                                <el-row>
-                                    <el-col :span="6">
-                                        <el-form-item
-                                                label="供应商"
-                                                clearable
-                                                prop="supplier"
-                                        >
-                                            <!--供应商选择-->
-                                            <el-select size="mini" filterable clearable
-                                                       v-model="upaddProcurement.supplier"
-                                                       placeholder="供应商">
-                                                <el-option
-                                                        v-for="item in options"
-                                                        :key="item.value"
-                                                        :label="item.label"
-                                                        :value="item.value">
-                                                </el-option>
-                                            </el-select>
-                                        </el-form-item>
-                                    </el-col>
-                                    <el-col :span="6">
-                                        <el-form-item
-                                                label="工厂"
-                                                clearable
-                                                prop="factoryName"
-                                        >
-                                            <!--工厂选择-->
-                                            <el-select size="mini" filterable clearable
-                                                       v-model="upaddProcurement.factoryName"
-                                                       placeholder="工厂选择">
-                                                <el-option
-                                                        v-for="item in factorylist"
-                                                        :key="item.value"
-                                                        :label="item.label"
-                                                        :value="item.value">
-                                                </el-option>
-                                            </el-select>
-                                        </el-form-item>
-                                    </el-col>
-                                    <el-col :span="6">
-                                        <el-form-item label="运费" prop="freight">
-                                            <el-input size="mini" placeholder="运费"
-                                                      v-model="upaddProcurement.freight"></el-input>
-                                        </el-form-item>
-                                    </el-col>
-                                    <el-col :span="6">
-                                        <el-form-item label="备注">
-                                            <el-input size="mini" placeholder="备注"
-                                                      v-model="upaddProcurement.remark"></el-input>
-                                        </el-form-item>
-                                    </el-col>
-
-                                </el-row>
-
-
-                                <el-row>
-                                    <!--freightTransportation: '',//货运方式-->
-                                    <!--invoice: '',//发票-->
-                                    <el-col :span="6">
-                                        <el-form-item label="发票" prop="invoice">
-                                            <el-select @change="upchoose" size="mini" v-model="upaddProcurement.invoice"
-                                                       placeholder="请选择发票">
-                                                <el-option
-                                                        v-for="item in addinvoice"
-                                                        :key="item.value"
-                                                        :label="item.label"
-                                                        :value="item.value">
-                                                </el-option>
-                                            </el-select>
-                                        </el-form-item>
-                                    </el-col>
-                                    <el-col :span="6">
-                                        <el-form-item label="货运方式" prop="freightTransportation">
-                                            <el-input size="mini" placeholder="货运方式"
-                                                      v-model="upaddProcurement.freightTransportation"></el-input>
-                                        </el-form-item>
-                                    </el-col>
-                                    <!--<el-col :span="6">-->
-                                    <!--<el-form-item label="预计入库" prop="distanceDate">-->
-                                    <!--<el-date-picker-->
-                                    <!--style="width: 180px"-->
-                                    <!--v-model="updistanceDate"-->
-                                    <!--size="mini"-->
-                                    <!--type="datetime"-->
-                                    <!--value-format="yyyy-MM-dd HH:mm:ss"-->
-                                    <!--placeholder="预计入库时间">-->
-                                    <!--</el-date-picker>-->
-                                    <!--</el-form-item>-->
-                                    <!--</el-col>-->
-
-                                </el-row>
-                            </el-form>
-                            <div class="QueryConditions">
-                                <el-button size="mini" @click="upPurchasingAddGoods=true">添加商品</el-button>
-                                <el-button size="mini" @click="upbatchTime">批量添加预计入库时间</el-button>
-                                <el-date-picker
-                                        style="margin-left: 0.5em"
-                                        size="mini"
-                                        v-model="uptimeData"
-                                        type="datetime"
-                                        placeholder="批量添加预计入库时间">
-                                </el-date-picker>
-                            </div>
-
-                            <el-table
-                                    :data="upaddProcurement.goodsList"
-                                    border
-                                    stripe
-                                    @selection-change="upgoodsSelection"
-                                    style="width: 100%">
-
-                                <el-table-column
-                                        align="center"
-                                        type="selection"
-                                        width="50"
-                                >
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        type="index"
-                                        width="50">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="merchantCode"
-                                        label="商家编码"
-                                        width="180">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="name"
-                                        label="商品名称"
-                                        width="180">
-                                </el-table-column>
-
-                                <el-table-column
-                                        align="center"
-                                        prop="itemCode"
-                                        label="货品编号"
-                                        width="180"
-                                >
-                                </el-table-column>
-                                <el-table-column
-                                        label="预计入库时间"
-                                        width="200"
-                                        align="center"
-                                >
-                                    <template slot-scope="scope">
-                                        <el-date-picker
-                                                style="width: 180px"
-                                                v-model="scope.row.warehouseTime"
-                                                size="mini"
-                                                type="datetime"
-                                                value-format="yyyy-MM-dd HH:mm:ss"
-                                                placeholder="预计入库时间">
-                                        </el-date-picker>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        label="数量"
-                                        width="200"
-                                        prop="number"
-                                >
-                                    <template slot-scope="scope">
-                                        <el-input-number size="mini" v-model="scope.row.number"
-                                                         @change="upaddprocureNumber(scope.row)"></el-input-number>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column
-                                        label="操作"
-                                        fixed="left"
-                                        align="center"
-                                >
-                                    <template slot-scope="scope">
-                                        <!--删除from表单中商品数据-->
-                                        <el-button type="text" @click="updeltetPurchase(scope.row)">删除</el-button>
-                                    </template>
-                                </el-table-column>
-
-
-                                <el-table-column
-                                        label="含税单价（元）"
-                                        width="200"
-                                        align="center"
-
-                                >
-                                    <template slot-scope="scope">
-                                        <el-input-number @change="upcontaintax(scope.row)" :mini="1"
-                                                         :disabled="upcontaining" size="mini"
-                                                         v-model="scope.row.taxPrice"
-                                                         label="描述文字"></el-input-number>
-                                    </template>
-                                </el-table-column>
-
-                                <el-table-column
-                                        label="不含税单价（元）"
-                                        width="200"
-                                        align="center"
-                                >
-                                    <template slot-scope="scope">
-                                        <el-input-number size="mini" v-model="scope.row.unitPrice"
-                                                         :disabled="upnocontaining" :mini="1"
-                                                         @change="upaddprocure(scope.row)"></el-input-number>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column
-                                        label="含税总价（元）"
-                                        width="120"
-                                        align="center"
-                                        prop="taxTotalPrice"
-                                >
-                                    <template slot-scope="scope">
-                                        {{scope.row.taxTotalPrice.toFixed(2)}}
-                                    </template>
-                                </el-table-column>
-
-                                <el-table-column
-                                        label="不含税总价（元）"
-                                        width="120"
-                                        align="center"
-                                        prop="totalPrice"
-                                >
-                                    <template slot-scope="scope">
-                                        {{scope.row.totalPrice.toFixed(2)}}
-                                    </template>
-                                </el-table-column>
-
-                                <el-table-column
-                                        align="center"
-                                        prop="type"
-                                        label="分类"
-                                        width="180">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="sku"
-                                        width="180"
-                                        label="盒装SKU">
-
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="brand"
-                                        width="180"
-                                        label="品牌">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="unit"
-                                        width="100"
-                                        label="单位">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="process"
-                                        width="180"
-                                        label="工艺流程">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="season"
-                                        width="180"
-                                        label="季节">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="costPrice"
-                                        width="180"
-                                        label="商品成本价">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="unit"
-                                        width="180"
-                                        label="基本单位">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="packag"
-                                        width="180"
-                                        label="包装材料">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="weight"
-                                        width="180"
-                                        label="重量">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="barCode"
-                                        width="180"
-                                        label="条形码">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="ingredients"
-                                        width="180"
-                                        label="面料成份">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="standard"
-                                        width="180"
-                                        label="执行工艺标准">
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        prop="remark"
-                                        width="180"
-                                        label="备注">
-                                </el-table-column>
-
-                            </el-table>
-                            <div style="display: flex;justify-content: space-between;margin: 0.2em">
-                                <div>
-                                    总数量{{upgoodsNum}},
-                                    总金额（含税）{{uptaxgoodsMoney.toFixed(4)}}
-                                    总金额（不含税）:{{upgoodsMoney.toFixed(4)}}
-                                </div>
-                                <div>
-                                    <el-button type="primary" size="mini"
-                                               @click="upSubmissionPurchase('upaddProcurement')">保存
-                                    </el-button>
-                                    <el-button size="mini" @click="upNewpurchaseorder=false">取消</el-button>
-                                </div>
-
-                            </div>
-
-                        </el-dialog>
-
-                        <!--修改采购订单添加商品-->
-                        <el-dialog
-                                title="修改采购订单添加商品"
-
-                                :visible.sync="upPurchasingAddGoods"
-                                width="1000px"
-                                :show-close="false"
-
-                        >
-                            <!--新建与查询-->
-                            <div class="menuBox">
-                                <div class="QueryConditions QueryInput">
-                                    <el-input size="mini" placeholder="商家编码"
-                                              v-model="querymerchantCode"></el-input>
-
-                                    <el-input size="mini" placeholder="商品名称" v-model="queryname"></el-input>
-
-                                    <el-input size="mini" placeholder="货品编号" v-model="queryitemCode"></el-input>
-
-                                    <el-input size="mini" placeholder="盒装SKU" v-model="querysku"></el-input>
-
-                                    <el-input size="mini" placeholder="其他" v-model="queryother"></el-input>
-
-                                    <el-button type="primary" size="mini"
-                                               @click="queryother='',querysku='',queryitemCode='',queryname='',querymerchantCode=''">
-                                        重置
-                                    </el-button>
-
-                                    <el-button type="primary" size="mini" icon="el-icon-search"
-                                               @click="queryGoods()">查询
-                                    </el-button>
-
-                                </div>
-                            </div>
-                            <div>
-                                <el-table
-                                        :data="quireGoodsData"
-                                        border
-                                        stripe
-                                        @selection-change="goodsSelection"
-                                        style="width: 100%">
-                                    <el-table-column
-                                            align="center"
-                                            type="index"
-                                            width="30">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            label="操作"
-                                            width="60"
-                                            fixed="left"
-                                    >
-                                        <template slot-scope="scope">
-                                            <el-button type="text" @click="upaddgoodsTopurchase(scope.row)">添加
-                                            </el-button>
-                                        </template>
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="merchantCode"
-                                            label="商家编码"
-                                            width="180">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="name"
-                                            label="商品名称"
-                                            width="180">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="itemCode"
-                                            label="货品编号"
-                                            width="180"
-                                    >
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="sku"
-                                            width="180"
-                                            label="盒装SKU">
-                                    </el-table-column>
-
-
-                                    <el-table-column
-                                            align="center"
-                                            prop="type"
-                                            label="分类"
-                                            width="180">
-                                    </el-table-column>
-
-                                    <el-table-column
-                                            align="center"
-                                            prop="brand"
-                                            width="180"
-                                            label="品牌">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="unit"
-                                            width="100"
-                                            label="单位">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="process"
-                                            width="180"
-                                            label="工艺流程">
-                                    </el-table-column>
-                                    <el-table-column
-
-                                            label="创建时间"
-                                            prop="createTime"
-                                            width="180"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="修改时间"
-                                            prop="updateTime"
-                                            width="180"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="season"
-                                            width="180"
-                                            label="季节">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="costPrice"
-                                            width="180"
-                                            label="商品成本价">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="unit"
-                                            width="180"
-                                            label="基本单位">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="packag"
-                                            width="180"
-                                            label="包装材料">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="weight"
-                                            width="180"
-                                            label="重量">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="barCode"
-                                            width="180"
-                                            label="条形码">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="ingredients"
-                                            width="180"
-                                            label="面料成份">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="standard"
-                                            width="180"
-                                            label="执行工艺标准">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="remark"
-                                            width="180"
-                                            label="备注">
-                                    </el-table-column>
-                                </el-table>
-                                <!--分页-->
-                                <div class="PageLayout">
-
-                                        <el-pagination
-                                                @current-change="goodslistpag"
-                                                :page-size="5"
-                                                layout="prev, pager, next, jumper"
-                                                :total="totalRecordNum">
-                                        </el-pagination>
-
-                                </div>
-                                <el-table
-                                        :data="upquireGoodsDataBox"
-                                        border
-                                        stripe
-                                        @selection-change="goodsSelection"
-                                        style="width: 100%">
-
-                                    <el-table-column
-                                            align="center"
-                                            type="index"
-                                            width="30">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="merchantCode"
-                                            label="商家编码"
-                                            width="150">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="name"
-                                            label="商品名称"
-                                            width="180">
-                                    </el-table-column>
-
-                                    <el-table-column
-                                            align="center"
-                                            prop="itemCode"
-                                            label="货品编号"
-                                            width="150"
-                                    >
-                                    </el-table-column>
-
-                                    <el-table-column
-                                            label="操作"
-                                            fixed="left"
-                                            align="center"
-                                            width="50"
-                                    >
-                                        <template slot-scope="scope">
-                                            <!--删除备选数组信息-->
-                                            <el-button type="text" @click="updelGoodspruchase(scope.row)">删除</el-button>
-                                        </template>
-                                    </el-table-column>
-
-
-                                    <el-table-column
-
-                                            label="创建时间"
-                                            prop="createTime"
-                                            width="180"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-                                    <el-table-column
-                                            label="修改时间"
-                                            prop="updateTime"
-                                            width="180"
-                                            align="center"
-                                            sortable
-                                    ></el-table-column>
-
-                                    <el-table-column
-                                            align="center"
-                                            prop="type"
-                                            label="分类"
-                                            width="180">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="sku"
-                                            width="180"
-                                            label="盒装SKU">
-
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="brand"
-                                            width="180"
-                                            label="品牌">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="unit"
-                                            width="100"
-                                            label="单位">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="process"
-                                            width="180"
-                                            label="工艺流程">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="season"
-                                            width="180"
-                                            label="季节">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="costPrice"
-                                            width="180"
-                                            label="商品成本价">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="unit"
-                                            width="180"
-                                            label="基本单位">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="packag"
-                                            width="180"
-                                            label="包装材料">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="weight"
-                                            width="180"
-                                            label="重量">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="barCode"
-                                            width="180"
-                                            label="条形码">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="ingredients"
-                                            width="180"
-                                            label="面料成份">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="standard"
-                                            width="180"
-                                            label="执行工艺标准">
-                                    </el-table-column>
-                                    <el-table-column
-                                            align="center"
-                                            prop="remark"
-                                            width="180"
-                                            label="备注">
-                                    </el-table-column>
-
-                                </el-table>
-
-                                <div style="text-align: right;margin: 0.2em">
-
-                                    <div>
-                                        <el-button type="primary" size="mini" @click="upPreservationGoods">保存
-                                        </el-button>
-                                        <el-button size="mini" @click="upPurchasingAddGoods=false">取消</el-button>
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-
-                        </el-dialog>
-
-
-                    </div>
-
-                    <!--采购明细-->
-                    <el-dialog
-                            title="采购明细"
-                            :visible.sync="Purchasedetail"
-                            width="80%"
-                            :show-close="false"
-                    >
-                        <div style="display: flex;justify-content: space-between;padding: 0.5em">
-                            <el-button icon="el-icon-view" size="mini" @click="detailSettings=true">显示设置</el-button>
-                        </div>
-
-                        <el-table
-                                :data="selsectdetailsList"
-                                border
-                                stripe
-                                style="width: 100%">
-
-                            <el-table-column
-                                    align="center"
-                                    type="index"
-                                    width="50">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="merchantCode"
-                                    v-if="detailmerchantCode"
-                                    label="商家编码"
-                                    width="180">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="name"
-                                    v-if="detailname"
-                                    label="商品名称"
-                                    width="180">
-                            </el-table-column>
-
-                            <el-table-column
-                                    align="center"
-                                    prop="itemCode"
-                                    v-if="detailitemCode"
-                                    label="货品编号"
-                                    width="180"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    label="预计入库时间"
-                                    width="200"
-                                    v-if="detailwarehouseTime"
-                                    align="center"
-                                    prop="warehouseTime"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    label="数量"
-                                    width="200"
-                                    v-if="detailnumber"
-                                    prop="number"
-                            >
-                            </el-table-column>
-
-                            <!--<el-table-column-->
-                            <!--label="含税单价（元）"-->
-                            <!--width="120"-->
-                            <!--prop="taxPrice"-->
-                            <!--align="center"-->
+                                    <!--v-if="numbermater"-->
+                                    <!--prop="number"-->
                             <!--&gt;-->
                             <!--</el-table-column>-->
 
 
-                            <el-table-column
-                                    label="含税单价（元）"
-                                    width="200"
-                                    align="center"
-                                    v-if="detailtaxPrice"
-                                    prop="taxPrice"
+                            <!--<el-table-column-->
+                                    <!--label="创建时间"-->
+                                    <!--prop="createTime"-->
+                                    <!--width="180"-->
+                                    <!--v-if="createTimemater"-->
+                                    <!--align="center"-->
+                                    <!--sortable-->
+                            <!--&gt;</el-table-column>-->
+                            <!--<el-table-column-->
 
-                            >
-                            </el-table-column>
+                                    <!--label="修改时间"-->
+                                    <!--prop="updateTime"-->
+                                    <!--width="180"-->
+                                    <!--v-if="updateTimemater"-->
+                                    <!--align="center"-->
+                                    <!--sortable-->
+                            <!--&gt;</el-table-column>-->
 
-                            <el-table-column
-                                    label="不含税单价（元）"
-                                    width="200"
-                                    align="center"
-                                    v-if="detailunitPrice"
-                                    prop="unitPrice"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    label="含税总价（元）"
-                                    width="120"
-                                    align="center"
-                                    v-if="detailtaxTotalPrice"
-                                    prop="taxTotalPrice"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    label="不含税总价（元）"
-                                    width="200"
-                                    align="center"
-                                    v-if="detailtotalPrice"
-                                    prop="totalPrice"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="type"
-                                    v-if="detailtype"
-                                    label="分类"
-                                    width="180">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="sku"
-                                    v-if="detailsku"
-                                    width="180"
-                                    label="盒装SKU">
+                            <!--<el-table-column-->
+                                    <!--label="含税单价（元）"-->
+                                    <!--width="150"-->
+                                    <!--align="center"-->
+                                    <!--prop="taxPrice"-->
+                                    <!--v-if="taxPricemater"-->
 
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="brand"
-                                    v-if="detailbrand"
-                                    width="180"
-                                    label="品牌">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="process"
-                                    v-if="detailprocess"
-                                    width="180"
-                                    label="工艺流程">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="season"
-                                    v-if="detailseason"
-                                    width="180"
-                                    label="季节">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="costPrice"
-                                    v-if="detailcostPrice"
-                                    width="180"
-                                    label="商品成本价">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="unit"
-                                    v-if="detailunit"
-                                    width="180"
-                                    label="基本单位">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="packag"
-                                    v-if="detailpackag"
-                                    width="180"
-                                    label="包装材料">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="weight"
-                                    v-if="detailweight"
-                                    width="180"
-                                    label="重量">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="barCode"
-                                    v-if="detailbarCode"
-                                    width="180"
-                                    label="条形码">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="ingredients"
-                                    v-if="detailingredients"
-                                    width="180"
-                                    label="面料成份">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="standard"
-                                    v-if="detailstandard"
-                                    width="180"
-                                    label="执行工艺标准">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="remark"
-                                    v-if="detailremark"
-                                    width="180"
-                                    label="备注">
-                            </el-table-column>
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
 
-                        </el-table>
-                        <div style="text-align: left;margin-top: 0.5em">
-                            总数量:{{detailsNumber}},
-                            总金额（含税）:{{detailstaxgoodsMoney.toFixed(4)}},
-                            总金额（不含税）:{{detailsgoodsMoney.toFixed(4)}}
-
-                        </div>
-                    </el-dialog>
+                            <!--<el-table-column-->
+                                    <!--label="不含税单价（元）"-->
+                                    <!--width="150"-->
+                                    <!--v-if="unitPricemater"-->
+                                    <!--align="center"-->
+                                    <!--prop="unitPrice"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="含税总价（元）"-->
+                                    <!--width="150"-->
+                                    <!--align="center"-->
+                                    <!--v-if="taxTotalPricemater"-->
+                                    <!--prop="taxTotalPrice"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="不含税总价（元）"-->
+                                    <!--width="150"-->
+                                    <!--align="center"-->
+                                    <!--v-if="totalPricemater"-->
+                                    <!--prop="totalPrice"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
 
 
-                    <!--采购明细显示设置-->
-                    <el-dialog
-                            title="显示设置"
-                            :visible.sync="detailSettings"
-                            width="30%"
-                            :show-close="false"
+                            <!--<el-table-column-->
+                                    <!--label="物料编号"-->
+                                    <!--prop="materialCode"-->
+                                    <!--width="180"-->
+                                    <!--v-if="materialCodemater"-->
+                                    <!--align="center"-->
+                                    <!--sortable-->
+                            <!--&gt;</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="物料名称"-->
+                                    <!--prop="name"-->
+                                    <!--v-if="namemater"-->
+                                    <!--width="200"-->
+                                    <!--align="center"-->
+                            <!--&gt;</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--prop="ingredients"-->
+                                    <!--label="成分规格"-->
+                                    <!--v-if="ingredientsmater"-->
+                                    <!--width="180"-->
+                                    <!--align="center"-->
+                            <!--&gt;</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="物料分类"-->
+                                    <!--prop="type"-->
+                                    <!--v-if="typemater"-->
+                                    <!--width="180"-->
+                                    <!--align="center"-->
+                            <!--&gt;</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="品牌"-->
+                                    <!--prop="brand"-->
+                                    <!--v-if="brandmater"-->
+                                    <!--width="120"-->
+                                    <!--align="center"-->
+                            <!--&gt;</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="状态"-->
+                                    <!--width="180"-->
+                                    <!--v-if="sparemater"-->
+                                    <!--align="center"-->
+                            <!--&gt;-->
+                                <!--<template slot-scope="scope">-->
+                                    <!--{{scope.row.spare=='01'?'启用':'未启用'}}-->
+                                <!--</template>-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="默认损耗"-->
+                                    <!--prop="defaultLoss"-->
+                                    <!--width="160"-->
+                                    <!--v-if="defaultLossmater"-->
+                                    <!--align="center"-->
+                                    <!--sortable-->
+                            <!--&gt;</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="厂商"-->
+                                    <!--prop="manufacturer"-->
+                                    <!--v-if="manufacturermater"-->
+                                    <!--width="180"-->
+                                    <!--align="center"-->
+                            <!--&gt;</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="基本计量单位"-->
+                                    <!--prop="unit"-->
+                                    <!--width="150"-->
+                                    <!--v-if="unitmater"-->
+                                    <!--align="center"-->
+                                    <!--sortable-->
+                            <!--&gt;</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="成本价"-->
+                                    <!--prop="costPrice"-->
+                                    <!--v-if="costPricemater"-->
+                                    <!--width="120"-->
+                                    <!--align="center"-->
+                                    <!--sortable-->
+                            <!--&gt;</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="备注"-->
+                                    <!--prop="note"-->
+                                    <!--v-if="notemater"-->
+                                    <!--width="150"-->
+                                    <!--align="center"-->
+                            <!--&gt;</el-table-column>-->
 
-                    >
-                        <div style="text-align: left">
+                        <!--</el-table>-->
+                        <!--<div style="text-align: left;margin-top: 0.5em">-->
+                            <!--总数量:{{detailsNumbermater}},-->
+                            <!--总金额（含税）:{{detailstaxgoodsMoneymater.toFixed(4)}},-->
+                            <!--总金额（不含税）:{{detailsgoodsMoneymater.toFixed(4)}}-->
+                            <!--&lt;!&ndash;// detailsNumbermater: 0,//明细总数量,&ndash;&gt;-->
+                            <!--&lt;!&ndash;//     detailsgoodsMoneymater: 0,//明细总金额(不含税)&ndash;&gt;-->
+                            <!--&lt;!&ndash;//     detailstaxgoodsMoneymater: 0,//明细总金额(含税)&ndash;&gt;-->
+                        <!--</div>-->
+                    <!--</el-dialog>-->
+
+                    <!--&lt;!&ndash;采购明细显示设置&ndash;&gt;-->
+                    <!--<el-dialog-->
+                            <!--title="显示设置"-->
+                            <!--:visible.sync="detailSettingsmater"-->
+                            <!--width="450px"-->
+                            <!--:show-close="false"-->
+
+                    <!--&gt;-->
+                        <!--<div style="text-align: left">-->
 
 
-                            <el-row>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailmerchantCode">商家编码</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailname">商品名称</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailitemCode">货品编号</el-checkbox>
-                                </el-col>
-                            </el-row>
+                            <!--<el-row>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="warehouseTimemater">预计入库时间</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="numbermater">数量</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="createTimemater">创建时间</el-checkbox>-->
+                                <!--</el-col>-->
+                            <!--</el-row>-->
 
 
-                            <el-row>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailwarehouseTime">预计入库时间</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailnumber">数量</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailtaxPrice">含税单价</el-checkbox>
-                                </el-col>
-                            </el-row>
-
-                            <el-row>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailunitPrice">不含税单价</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailtaxTotalPrice">含税总价</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailtotalPrice">不含税总价</el-checkbox>
-                                </el-col>
-                            </el-row>
+                            <!--<el-row>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="updateTimemater">修改时间</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="taxPricemater">含税单价</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="taxTotalPricemater">含税总价</el-checkbox>-->
+                                <!--</el-col>-->
+                            <!--</el-row>-->
 
 
-                            <el-row>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailtype">分类</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailsku">盒装SKU</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailbrand">品牌</el-checkbox>
-                                </el-col>
-                            </el-row>
+                            <!--<el-row>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="totalPricemater">不含税总价</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="namemater">物料名称</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="ingredientsmater">成分规格</el-checkbox>-->
+                                <!--</el-col>-->
+                            <!--</el-row>-->
 
 
-                            <el-row>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailprocess">工艺流程</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailseason">季节</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailcostPrice">商品成本价</el-checkbox>
-                                </el-col>
-                            </el-row>
-
-                            <el-row>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailunit">基本单位</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailpackag">包装材料</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailweight">重量</el-checkbox>
-                                </el-col>
-                            </el-row>
+                            <!--<el-row>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="typemater">物料分类</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="brandmater">品牌</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="sparemater">状态</el-checkbox>-->
+                                <!--</el-col>-->
+                            <!--</el-row>-->
 
 
-                            <el-row>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailbarCode">条形码</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailingredients">面料成份</el-checkbox>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailstandard">执行工艺标准</el-checkbox>
-                                </el-col>
-                            </el-row>
-                            <el-row>
-                                <el-col :span="8">
-                                    <el-checkbox v-model="detailremark">备注</el-checkbox>
-                                </el-col>
-                            </el-row>
+                            <!--<el-row>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="defaultLossmater">默认损耗</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="manufacturermater">厂商</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="unitmater">基本计量单位</el-checkbox>-->
+                                <!--</el-col>-->
+                            <!--</el-row>-->
+
+                            <!--<el-row>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="materialCodemater">物料编号</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="costPricemater">成本价</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="notemater">备注</el-checkbox>-->
+                                <!--</el-col>-->
+
+                            <!--</el-row>-->
 
 
-                        </div>
+                        <!--</div>-->
 
-                    </el-dialog>
-                    <div>
-                        <el-table
-                                :data="purchaseList"
-                                border
-                                stripe
-                                height="750px"
-                                @row-dblclick="Purchasedetails"
-                                @selection-change="MultipleselectionGoods"
+                    <!--</el-dialog>-->
+                    <!--<div>-->
+                        <!--<el-table-->
+                                <!--:data="materpurchaseList"-->
+                                <!--border-->
+                                <!--stripe-->
+                                <!--height="750px"-->
+                                <!--@row-dblclick="Purchasedetailsmater"-->
+                                <!--@selection-change="Multipleselection"-->
 
-                        >
-                            <el-table-column
-                                    align="center"
-                                    type="selection"
-                                    width="50"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    type="index"
-                                    width="40">
-                            </el-table-column>
-                            <el-table-column
-                                    label="创建时间"
-                                    prop="createTime"
-                                    v-if="createTime"
-                                    width="180"
-                                    align="center"
-                                    sortable
-                            ></el-table-column>
-                            <el-table-column
-                                    label="修改时间"
-                                    prop="updateTime"
-                                    v-if="updateTime"
-                                    width="180"
-                                    align="center"
-                                    sortable
-                            ></el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="purchaseNumber"
-                                    label="采购单号"
-                                    width="200"
-                                    v-if="purchaseNumber"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    label="供应商"
-                                    prop="supplier"
-                                    align="center"
-                                    width="150"
-                                    v-if="operation"
-                            ></el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="purchaseSource"
-                                    label="采购订单来源"
-                                    v-if="purchaseSource"
-                                    width="150"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="submitStatus"
-                                    label="提交状态"
-                                    width="150"
-                                    v-if="submitStatus"
-                            >
-                                <template slot-scope="scope">
-                                    <span>{{scope.row.submitStatus=='tj01'?'已提交':'未提交'}}</span>
-                                </template>
-                            </el-table-column>
+                        <!--&gt;-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--type="selection"-->
+                                    <!--width="50"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--type="index"-->
+                                    <!--width="40">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="创建时间"-->
+                                    <!--prop="createTime"-->
+                                    <!--v-if="createTimematerSet"-->
+                                    <!--width="180"-->
+                                    <!--align="center"-->
+                                    <!--sortable-->
+                            <!--&gt;</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="修改时间"-->
+                                    <!--prop="updateTime"-->
+                                    <!--v-if="updateTimematermaterSet"-->
+                                    <!--width="180"-->
+                                    <!--align="center"-->
+                                    <!--sortable-->
+                            <!--&gt;</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="purchaseNumber"-->
+                                    <!--label="采购单号"-->
+                                    <!--width="200"-->
+                                    <!--v-if="purchaseNumbermaterSet"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="供应商"-->
+                                    <!--prop="supplier"-->
+                                    <!--align="center"-->
+                                    <!--width="150"-->
+                                    <!--v-if="operationmaterSet"-->
+                            <!--&gt;</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="purchaseSource"-->
+                                    <!--label="采购订单来源"-->
+                                    <!--v-if="purchaseSourcematerSet"-->
+                                    <!--width="150"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="submitStatus"-->
+                                    <!--label="提交状态"-->
+                                    <!--width="150"-->
+                                    <!--v-if="submitStatusmaterSet"-->
+                            <!--&gt;-->
+                                <!--<template slot-scope="scope">-->
+                                    <!--<span>{{scope.row.submitStatus=='tj01'?'已提交':'未提交'}}</span>-->
+                                <!--</template>-->
+                            <!--</el-table-column>-->
 
-                            <el-table-column
-                                    align="center"
-                                    prop="submitTime"
-                                    label="提交时间"
-                                    width="180"
-                                    v-if="submitTime"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="auditStatus"
-                                    label="审核状态"
-                                    v-if="auditStatus"
-                            >
-                                <template slot-scope="scope">
-                                    <span>{{scope.row.auditStatus=='sh01'?'已审核':scope.row.auditStatus=='sh02'?'未审核':'审核驳回'}}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="auditTime"
-                                    label="审核时间"
-                                    width="180"
-                                    v-if="auditTime"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="receiveStatus"
-                                    v-if="receiveStatus"
-                                    label="收货状态">
-                                <template slot-scope="scope">
-                                    <span>{{scope.row.receiveStatus=='sh01'?'已收货':(scope.row.receiveStatus=='sh02'?'部分收货':'未收货')}}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="invoice"
-                                    v-if="invoice"
-                                    width="120"
-                                    label="发票">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="freight"
-                                    v-if="freight"
-                                    label="运费">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="freightTransportation"
-                                    v-if="freightTransportation"
-                                    label="货运方式">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="frequency"
-                                    v-if="frequency"
-                                    width="120"
-                                    label="已入库数量">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="type"
-                                    width="180"
-                                    v-if="type"
-                                    label="采购订单类型">
-                            </el-table-column>
-                            <el-table-column
-                                    prop="commodityType"
-                                    label="商品类型"
-                                    align="center"
-                                    width="120"
-                                    v-if="commodityType"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="receiveAddress"
-                                    label="收货地址"
-                                    width="180"
-                                    v-if="receiveAddress"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="contractTerm"
-                                    label="合同条款"
-                                    v-if="contractTerm"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="singlePerson"
-                                    label="制单人"
-                                    v-if="singlePerson"
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="submitTime"-->
+                                    <!--label="提交时间"-->
+                                    <!--width="180"-->
+                                    <!--v-if="submitTimematerSet"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="auditStatus"-->
+                                    <!--label="审核状态"-->
+                                    <!--v-if="auditStatusmaterSet"-->
+                            <!--&gt;-->
+                                <!--<template slot-scope="scope">-->
+                                    <!--<span>{{scope.row.auditStatus=='sh01'?'已审核':scope.row.auditStatus=='sh02'?'未审核':'审核驳回'}}</span>-->
+                                <!--</template>-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="auditTime"-->
+                                    <!--label="审核时间"-->
+                                    <!--width="180"-->
+                                    <!--v-if="auditTimematerSet"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="receiveStatus"-->
+                                    <!--v-if="receiveStatusmaterSet"-->
+                                    <!--label="收货状态">-->
+                                <!--<template slot-scope="scope">-->
+                                    <!--<span>{{scope.row.receiveStatus=='0'?'已收货':(scope.row.receiveStatus=='1'?'部分收货':'未收货')}}</span>-->
+                                <!--</template>-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="invoice"-->
+                                    <!--v-if="invoicematerSet"-->
+                                    <!--width="120"-->
+                                    <!--label="发票">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="freight"-->
+                                    <!--v-if="freightmaterSet"-->
+                                    <!--label="运费">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="freightTransportation"-->
+                                    <!--v-if="freightTransportationmaterSet"-->
+                                    <!--label="货运方式">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="frequency"-->
+                                    <!--v-if="frequencymaterSet"-->
+                                    <!--width="120"-->
+                                    <!--label="已入库数量">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="type"-->
+                                    <!--width="180"-->
+                                    <!--v-if="typematerSet"-->
+                                    <!--label="采购订单类型">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--prop="commodityType"-->
+                                    <!--label="商品类型"-->
+                                    <!--align="center"-->
+                                    <!--width="120"-->
+                                    <!--v-if="commodityTypematerSet"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="receiveAddress"-->
+                                    <!--label="收货地址"-->
+                                    <!--width="180"-->
+                                    <!--v-if="receiveAddressmaterSet"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="contractTerm"-->
+                                    <!--label="合同条款"-->
+                                    <!--v-if="contractTermmaterSet"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="singlePerson"-->
+                                    <!--label="制单人"-->
+                                    <!--v-if="singlePersonmaterSet"-->
 
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="submitter"
-                                    label="提交人"
-                                    v-if="submitter"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="financialJudge"
-                                    v-if="financialJudge"
-                                    label="财审人">
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="submitter"-->
+                                    <!--label="提交人"-->
+                                    <!--v-if="submittermaterSet"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="financialJudge"-->
+                                    <!--v-if="financialJudgematerSet"-->
+                                    <!--label="财审人">-->
 
-                            </el-table-column>
-                            <el-table-column
-                                    align="frequency"
-                                    prop="auditor"
-                                    v-if="auditor"
-                                    label="审核人">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="totalSum"
-                                    width="180"
-                                    v-if="totalSum"
-                                    label="总金额(不含税)">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="taxTotalSum"
-                                    width="180"
-                                    v-if="taxTotalSum"
-                                    label="总金额(含税)">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    label="总数量"
-                                    v-if="totalQuantity"
-                                    width="120"
-                                    prop="totalQuantity"
-                            >
-                            </el-table-column>
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="frequency"-->
+                                    <!--prop="auditor"-->
+                                    <!--v-if="auditormaterSet"-->
+                                    <!--label="审核人">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="totalSum"-->
+                                    <!--width="180"-->
+                                    <!--v-if="totalSummaterSet"-->
+                                    <!--label="总金额(不含税)">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="taxTotalSum"-->
+                                    <!--width="180"-->
+                                    <!--v-if="taxTotalSummaterSet"-->
+                                    <!--label="总金额(含税)">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--label="总数量"-->
+                                    <!--v-if="totalQuantitymaterSet"-->
+                                    <!--width="120"-->
+                                    <!--prop="totalQuantity"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
 
-                            <el-table-column
-                                    align="center"
-                                    prop="completeStatus"
-                                    width="120"
-                                    v-if="completeStatus"
-                                    label="采购完成状态">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="taxAmount"
-                                    width="100"
-                                    v-if="taxAmount"
-                                    label="税额">
-                            </el-table-column>
-                            <el-table-column
-                                    align="center"
-                                    prop="taxRate"
-                                    width="100"
-                                    v-if="taxRate"
-                                    label="税率">
-                            </el-table-column>
-                            <el-table-column
-                                    label="备注"
-                                    align="center"
-                                    width="120"
-                                    v-if="remark"
-                                    prop="remark"
-                            >
-                            </el-table-column>
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="completeStatus"-->
+                                    <!--width="120"-->
+                                    <!--v-if="completeStatusmaterSet"-->
+                                    <!--label="采购完成状态">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="taxAmount"-->
+                                    <!--width="100"-->
+                                    <!--v-if="taxAmountmaterSet"-->
+                                    <!--label="税额">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="taxRate"-->
+                                    <!--width="100"-->
+                                    <!--v-if="taxRatematerSet"-->
+                                    <!--label="税率">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="备注"-->
+                                    <!--align="center"-->
+                                    <!--width="120"-->
+                                    <!--v-if="remarkmaterSet"-->
+                                    <!--prop="remark"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
 
-                            <el-table-column
-                                    label="操作"
-                                    fixed="right"
-                                    width="120"
-                                    align="center"
-                            >
-                                <!--scope.row.auditStatus=='sh01'?'已审核':scope.row.auditStatus=='sh02'?'未审核':'审核驳回'-->
-                                <template slot-scope="scope">
+                            <!--<el-table-column-->
+                                    <!--label="操作"-->
+                                    <!--fixed="right"-->
+                                    <!--width="120"-->
+                                    <!--align="center"-->
+                            <!--&gt;-->
 
-                                    <el-button :disabled="scope.row.auditStatus=='sh01'?(true):(false)" type="text"
-                                               @click="updata(scope.row)">修改
-                                    </el-button>
-                                    <el-button :disabled="scope.row.auditStatus=='sh01'?(true):(false)" type="text"
-                                               @click="delpurchase(scope.row)">删除
-                                    </el-button>
-                                </template>
+                                <!--<template slot-scope="scope">-->
+                                    <!--&lt;!&ndash;purchOperation&ndash;&gt;-->
+                                    <!--&lt;!&ndash;{{scope.row.auditStatus=='sh01'?(purchOperation=true):(purchOperation=false)}}&ndash;&gt;-->
 
-                            </el-table-column>
-                        </el-table>
-                        <!--分页-->
-                        <el-row>
-                            <el-col :span="10" :offset="14">
-                                <el-pagination
-                                        @current-change="factorylistpag"
-                                        :page-size="15"
-                                        layout="prev, pager, next, jumper"
-                                        :total="totalRecordNum">
-                                </el-pagination>
-                            </el-col>
-                        </el-row>
-                    </div>
-                </div>
-            </el-tab-pane>
-        </el-tabs>
+                                    <!--<el-button :disabled="scope.row.auditStatus=='sh01'?(true):(false)" type="text"-->
+                                               <!--@click="updatamater(scope.row)">修改-->
+                                    <!--</el-button>-->
+                                    <!--<el-button :disabled="scope.row.auditStatus=='sh01'?(true):(false)" type="text"-->
+                                               <!--@click="delpurMaterList(scope.row)">删除-->
+                                    <!--</el-button>-->
+
+
+                                <!--</template>-->
+
+                            <!--</el-table-column>-->
+                        <!--</el-table>-->
+                        <!--&lt;!&ndash;分页&ndash;&gt;-->
+                        <!--<el-row>-->
+                            <!--<el-col :span="10" :offset="14">-->
+                                <!--<el-pagination-->
+                                        <!--@current-change="materfactorylistpag"-->
+                                        <!--:page-size="15"-->
+                                        <!--layout="prev, pager, next, jumper"-->
+                                        <!--:total="totalRecordNum">-->
+                                <!--</el-pagination>-->
+                            <!--</el-col>-->
+                        <!--</el-row>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</el-tab-pane>-->
+            <!--<el-tab-pane label="商品采购" name="first">-->
+                <!--<div>-->
+                    <!--&lt;!&ndash;新建与查询&ndash;&gt;-->
+                    <!--<div class="menuBox">-->
+                        <!--<div class="QueryConditions">-->
+                            <!--<el-button size="mini" type="primary" class="el-icon-plus" @click="Newpurchaseorder=true">-->
+                                <!--新建-->
+                            <!--</el-button>-->
+                            <!--<el-button icon="el-icon-view" type="primary" size="mini" @click="Settings=true">显示设置-->
+                            <!--</el-button>-->
+
+                            <!--<el-button size="mini" type="primary" :disabled="auditStatusButGoods"-->
+                                       <!--@click="SubmitAuditGoods">提交审核-->
+                            <!--</el-button>-->
+                            <!--<el-button size="mini" type="primary" :disabled="submitStatusButGoods"-->
+                                       <!--@click="AuditPassGoods">审核通过-->
+                            <!--</el-button>-->
+                            <!--<el-button size="mini" type="primary" :disabled="submitStatusButGoods"-->
+                                       <!--@click="AuditRejectGoods">审核驳回-->
+                            <!--</el-button>-->
+                            <!--<el-button size="mini" type="danger" :disabled="delStatusButGoods"-->
+                                       <!--@click="delpurchaseList()">批量删除-->
+                            <!--</el-button>-->
+                            <!--&lt;!&ndash;<el-button size="mini">导出</el-button>&ndash;&gt;-->
+                        <!--</div>-->
+                        <!--<div class="QueryConditions QueryInput">-->
+                            <!--<div>-->
+                                <!--<el-select size="mini" v-model="TimeType" placeholder="时间类型">-->
+                                    <!--<el-option-->
+                                            <!--v-for="item in TimeTypelist"-->
+                                            <!--:key="item.value"-->
+                                            <!--:label="item.label"-->
+                                            <!--:value="item.value">-->
+                                    <!--</el-option>-->
+                                <!--</el-select>-->
+                                <!--<el-date-picker-->
+                                        <!--size="mini"-->
+                                        <!--v-model="purchaseTime"-->
+                                        <!--type="daterange"-->
+                                        <!--range-separator="至"-->
+                                        <!--format="yyyy 年 MM 月 dd 日"-->
+                                        <!--value-format="yyyy-MM-dd"-->
+                                        <!--start-placeholder="开始日期"-->
+                                        <!--end-placeholder="结束日期">-->
+                                <!--</el-date-picker>-->
+
+                                <!--<el-select size="mini" clearable v-model="AuditStatuss" placeholder="审核状态">-->
+                                    <!--<el-option-->
+                                            <!--v-for="item in Audit"-->
+                                            <!--:key="item.value"-->
+                                            <!--:label="item.label"-->
+                                            <!--:value="item.value">-->
+                                    <!--</el-option>-->
+                                <!--</el-select>-->
+                                <!--<el-select size="mini" clearable v-model="Submitstate" placeholder="提交状态">-->
+                                    <!--<el-option-->
+                                            <!--v-for="item in Submit"-->
+                                            <!--:key="item.value"-->
+                                            <!--:label="item.label"-->
+                                            <!--:value="item.value">-->
+                                    <!--</el-option>-->
+                                <!--</el-select>-->
+
+                                <!--<el-select size="mini" clearable v-model="ReceivingStatus" placeholder="收货状态">-->
+                                    <!--<el-option-->
+                                            <!--v-for="item in Receiving"-->
+                                            <!--:key="item.value"-->
+                                            <!--:label="item.label"-->
+                                            <!--:value="item.value">-->
+                                    <!--</el-option>-->
+                                <!--</el-select>-->
+
+                                <!--<el-input size="mini" style="width: 200px" placeholder="采购单号" clearable-->
+                                          <!--v-model="purchaseNumbers"></el-input>-->
+                            <!--</div>-->
+                            <!--<div>-->
+                                <!--<el-button type="primary" size="mini" icon="el-icon-edit"-->
+                                           <!--@click="purchaseNumbers='',ReceivingStatus='',AuditStatuss='',purchaseTime='',TimeType=''">-->
+                                    <!--重置-->
+                                <!--</el-button>-->
+
+                                <!--<el-button type="primary" size="mini" icon="el-icon-search"-->
+                                           <!--@click="purchaseQueryPage()">查询-->
+                                <!--</el-button>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--&lt;!&ndash;显示设置&ndash;&gt;-->
+                        <!--<el-dialog-->
+                                <!--title="显示设置"-->
+                                <!--:visible.sync="Settings"-->
+                                <!--width="450px"-->
+                                <!--:show-close="false"-->
+
+                        <!--&gt;-->
+                            <!--<div style="text-align: left">-->
+
+
+                                <!--<el-row>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="purchaseNumber">采购单号</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="purchaseSource">采购订单来源</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="frequency">入库次数</el-checkbox>-->
+                                    <!--</el-col>-->
+                                <!--</el-row>-->
+
+
+                                <!--<el-row>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="auditStatus">审核状态</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="receiveStatus">收货状态</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="type">采购订单类型</el-checkbox>-->
+                                    <!--</el-col>-->
+                                <!--</el-row>-->
+
+                                <!--<el-row>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="commodityType">商品类型</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="receiveAddress">收货地址</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="submitter">提交人</el-checkbox>-->
+                                    <!--</el-col>-->
+                                <!--</el-row>-->
+
+
+                                <!--<el-row>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="contractTerm">合同条款</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="singlePerson">制单人</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="financialJudge">财审人</el-checkbox>-->
+                                    <!--</el-col>-->
+                                <!--</el-row>-->
+
+
+                                <!--<el-row>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="auditor">审核人</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="totalSum">总金额(不含税)</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="taxTotalSum">总金额（含税）</el-checkbox>-->
+                                    <!--</el-col>-->
+
+                                <!--</el-row>-->
+
+                                <!--<el-row>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="totalQuantity">总数量</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="completeStatus">采购完成状态</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="remark">备注</el-checkbox>-->
+                                    <!--</el-col>-->
+                                <!--</el-row>-->
+
+
+                                <!--<el-row>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="createTime">创建时间</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="updateTime">修改时间</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="freight">运费</el-checkbox>-->
+                                    <!--</el-col>-->
+                                <!--</el-row>-->
+                                <!--<el-row>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="invoice">发票</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="freightTransportation">货运方式</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="taxRate">税率</el-checkbox>-->
+                                    <!--</el-col>-->
+                                <!--</el-row>-->
+
+                                <!--<el-row>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="taxAmount">税额</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="operation">供应商</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="submitStatus">提交状态</el-checkbox>-->
+                                    <!--</el-col>-->
+                                <!--</el-row>-->
+                                <!--<el-row>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="submitTime">提交时间</el-checkbox>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="8">-->
+                                        <!--<el-checkbox v-model="auditTime">审核时间</el-checkbox>-->
+                                    <!--</el-col>-->
+
+
+                                <!--</el-row>-->
+
+                            <!--</div>-->
+
+                        <!--</el-dialog>-->
+
+
+                        <!--&lt;!&ndash;新建采购单&ndash;&gt;-->
+                        <!--<el-dialog-->
+                                <!--title="新建采购单(商品)"-->
+                                <!--:visible.sync="Newpurchaseorder"-->
+                                <!--:show-close="false"-->
+                                <!--width="1000px">-->
+                            <!--<el-form :model="addProcurement" ref="addProcurement" :rules="addProcurements"-->
+                                     <!--label-position="right"-->
+                                     <!--label-width="100px">-->
+                                <!--<el-row>-->
+                                    <!--<el-col :span="6">-->
+                                        <!--<el-form-item-->
+                                                <!--label="供应商"-->
+                                                <!--prop="supplier"-->
+                                        <!--&gt;-->
+                                            <!--&lt;!&ndash;供应商选择&ndash;&gt;-->
+                                            <!--<el-select size="mini" filterable clearable-->
+                                                       <!--v-model="addProcurement.supplier"-->
+                                                       <!--placeholder="供应商">-->
+                                                <!--<el-option-->
+                                                        <!--v-for="item in options"-->
+                                                        <!--:key="item.value"-->
+                                                        <!--:label="item.label"-->
+                                                        <!--:value="item.value">-->
+                                                <!--</el-option>-->
+                                            <!--</el-select>-->
+                                        <!--</el-form-item>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="6">-->
+                                        <!--<el-form-item-->
+                                                <!--label="工厂"-->
+                                                <!--prop="factoryName"-->
+                                        <!--&gt;-->
+                                            <!--&lt;!&ndash;工厂选择&ndash;&gt;-->
+                                            <!--<el-select filterable size="mini" clearable-->
+                                                       <!--v-model="addProcurement.factoryName"-->
+                                                       <!--placeholder="工厂选择">-->
+                                                <!--<el-option-->
+                                                        <!--v-for="item in factorylist"-->
+                                                        <!--:key="item.value"-->
+                                                        <!--:label="item.label"-->
+                                                        <!--:value="item.value">-->
+                                                <!--</el-option>-->
+                                            <!--</el-select>-->
+                                        <!--</el-form-item>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="6">-->
+                                        <!--<el-form-item label="运费" prop="freight">-->
+                                            <!--<el-input size="mini" v-model="addProcurement.freight"></el-input>-->
+                                        <!--</el-form-item>-->
+
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="6">-->
+                                        <!--<el-form-item label="备注">-->
+                                            <!--<el-input size="mini" placeholder="备注"-->
+                                                      <!--v-model="addProcurement.remark"></el-input>-->
+                                        <!--</el-form-item>-->
+                                    <!--</el-col>-->
+
+                                <!--</el-row>-->
+
+
+                                <!--<el-row>-->
+                                    <!--<el-col :span="6">-->
+                                        <!--<el-form-item label="发票" prop="invoice">-->
+                                            <!--<el-select @change="choose" size="mini" v-model="addProcurement.invoice"-->
+                                                       <!--placeholder="请选择发票">-->
+                                                <!--<el-option-->
+                                                        <!--v-for="item in addinvoice"-->
+                                                        <!--:key="item.value"-->
+                                                        <!--:label="item.label"-->
+                                                        <!--:value="item.value">-->
+                                                <!--</el-option>-->
+                                            <!--</el-select>-->
+                                        <!--</el-form-item>-->
+                                    <!--</el-col>-->
+
+                                    <!--<el-col :span="6">-->
+                                        <!--<el-form-item label="货运方式" prop="freightTransportation">-->
+                                            <!--<el-input size="mini" placeholder="货运方式"-->
+                                                      <!--v-model="addProcurement.freightTransportation"></el-input>-->
+                                        <!--</el-form-item>-->
+                                    <!--</el-col>-->
+                                    <!--&lt;!&ndash;<el-col :span="6">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<el-form-item label="预计入库" prop="distanceDate">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;&lt;!&ndash;<el-input size="mini" placeholder="合同条款"&ndash;&gt;&ndash;&gt;-->
+                                    <!--&lt;!&ndash;&lt;!&ndash;v-model="addProcurement.contract"></el-input>&ndash;&gt;&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<el-date-picker&ndash;&gt;-->
+                                    <!--&lt;!&ndash;style="width: 180px"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;v-model="distanceDate"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;size="mini"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;type="datetime"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;value-format="yyyy-MM-dd HH:mm:ss"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;placeholder="预计入库时间">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</el-date-picker>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</el-form-item>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</el-col>&ndash;&gt;-->
+
+                                <!--</el-row>-->
+
+
+                            <!--</el-form>-->
+                            <!--<div class="QueryConditions">-->
+                                <!--<el-button size="mini" @click="PurchasingAddGoods=true">添加商品</el-button>-->
+                                <!--<el-button size="mini" @click="batchTime">批量添加预计入库时间</el-button>-->
+                                <!--<el-date-picker-->
+                                        <!--style="margin-left: 0.5em"-->
+                                        <!--size="mini"-->
+                                        <!--v-model="timeData"-->
+                                        <!--type="datetime"-->
+                                        <!--placeholder="批量添加预计入库时间">-->
+                                <!--</el-date-picker>-->
+                            <!--</div>-->
+
+                            <!--<el-table-->
+                                    <!--:data="addProcurement.goodsList"-->
+                                    <!--border-->
+                                    <!--stripe-->
+                                    <!--@selection-change="goodsSelection"-->
+                                    <!--style="width: 100%">-->
+
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--type="selection"-->
+                                        <!--width="50"-->
+                                <!--&gt;-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--type="index"-->
+                                        <!--width="50">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="merchantCode"-->
+                                        <!--label="商家编码"-->
+                                        <!--width="180">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="name"-->
+                                        <!--label="商品名称"-->
+                                        <!--width="180">-->
+                                <!--</el-table-column>-->
+
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="itemCode"-->
+                                        <!--label="货品编号"-->
+                                        <!--width="180"-->
+                                <!--&gt;-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="预计入库时间"-->
+                                        <!--width="200"-->
+                                        <!--align="center"-->
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--<el-date-picker-->
+                                                <!--style="width: 180px"-->
+                                                <!--v-model="scope.row.warehouseTime"-->
+                                                <!--size="mini"-->
+                                                <!--type="datetime"-->
+                                                <!--value-format="yyyy-MM-dd HH:mm:ss"-->
+                                                <!--placeholder="预计入库时间">-->
+                                        <!--</el-date-picker>-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--label="数量"-->
+                                        <!--width="200"-->
+                                        <!--prop="number"-->
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--<el-input-number size="mini" :min="1" v-model="scope.row.number"-->
+                                                         <!--@change="addprocureNumber(scope.row)"></el-input-number>-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="操作"-->
+                                        <!--fixed="left"-->
+                                        <!--align="center"-->
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--&lt;!&ndash;删除from表单中商品数据&ndash;&gt;-->
+                                        <!--<el-button type="text" @click="deltetPurchase(scope.row)">删除</el-button>-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+                                <!--&lt;!&ndash;<el-table-column&ndash;&gt;-->
+                                <!--&lt;!&ndash;label="含税单价（元）"&ndash;&gt;-->
+                                <!--&lt;!&ndash;width="120"&ndash;&gt;-->
+                                <!--&lt;!&ndash;prop="taxPrice"&ndash;&gt;-->
+                                <!--&lt;!&ndash;align="center"&ndash;&gt;-->
+                                <!--&lt;!&ndash;&gt;&ndash;&gt;-->
+                                <!--&lt;!&ndash;</el-table-column>&ndash;&gt;-->
+
+
+                                <!--<el-table-column-->
+                                        <!--label="含税单价（元）"-->
+                                        <!--width="200"-->
+                                        <!--align="center"-->
+
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--<el-input-number :min="0" @change="containtax(scope.row)" :disabled="containing"-->
+                                                         <!--size="mini"-->
+                                                         <!--v-model="scope.row.taxPrice"-->
+                                                         <!--label="描述文字"></el-input-number>-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+
+                                <!--<el-table-column-->
+                                        <!--label="不含税单价（元）"-->
+                                        <!--width="200"-->
+                                        <!--align="center"-->
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--<el-input-number :min="0" :disabled="nocontaining" size="mini"-->
+                                                         <!--v-model="scope.row.unitPrice"-->
+                                                         <!--@change="addprocure(scope.row)"></el-input-number>-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="含税总价（元）"-->
+                                        <!--width="120"-->
+                                        <!--align="center"-->
+                                        <!--prop="taxTotalPrice"-->
+                                <!--&gt;-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="不含税总价（元）"-->
+                                        <!--width="150"-->
+                                        <!--align="center"-->
+                                        <!--prop="totalPrice"-->
+                                <!--&gt;-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="type"-->
+                                        <!--label="分类"-->
+                                        <!--width="180">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="sku"-->
+                                        <!--width="180"-->
+                                        <!--label="盒装SKU">-->
+
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="brand"-->
+                                        <!--width="180"-->
+                                        <!--label="品牌">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="unit"-->
+                                        <!--width="100"-->
+                                        <!--label="单位">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="process"-->
+                                        <!--width="180"-->
+                                        <!--label="工艺流程">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="season"-->
+                                        <!--width="180"-->
+                                        <!--label="季节">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="costPrice"-->
+                                        <!--width="180"-->
+                                        <!--label="商品成本价">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="unit"-->
+                                        <!--width="180"-->
+                                        <!--label="基本单位">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="packag"-->
+                                        <!--width="180"-->
+                                        <!--label="包装材料">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="weight"-->
+                                        <!--width="180"-->
+                                        <!--label="重量">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="barCode"-->
+                                        <!--width="180"-->
+                                        <!--label="条形码">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="ingredients"-->
+                                        <!--width="180"-->
+                                        <!--label="面料成份">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="standard"-->
+                                        <!--width="180"-->
+                                        <!--label="执行工艺标准">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="remark"-->
+                                        <!--width="180"-->
+                                        <!--label="备注">-->
+                                <!--</el-table-column>-->
+
+                            <!--</el-table>-->
+
+                            <!--<div style="display: flex;justify-content: space-between;margin: 0.2em">-->
+                                <!--<div>-->
+                                    <!--总数量:{{goodsNum}},-->
+                                    <!--总金额（含税）:{{taxgoodsMoney.toFixed(4)}},-->
+                                    <!--总金额（不含税）:{{goodsMoney.toFixed(4)}}-->
+
+                                <!--</div>-->
+                                <!--<div>-->
+                                    <!--<el-button type="primary" size="mini" @click="SubmissionPurchase('addProcurement')">-->
+                                        <!--保存-->
+                                    <!--</el-button>-->
+                                    <!--<el-button size="mini" @click="Newpurchaseorder=false">取消</el-button>-->
+                                <!--</div>-->
+
+                            <!--</div>-->
+
+                        <!--</el-dialog>-->
+
+                        <!--&lt;!&ndash;采购订单添加商品&ndash;&gt;-->
+                        <!--<el-dialog-->
+                                <!--title="采购订单添加商品"-->
+                                <!--:visible.sync="PurchasingAddGoods"-->
+                                <!--width="1000px"-->
+                                <!--:show-close="false"-->
+                        <!--&gt;-->
+                            <!--&lt;!&ndash;新建与查询&ndash;&gt;-->
+                            <!--<div class="menuBox">-->
+                                <!--<div class="QueryConditions QueryInput">-->
+                                    <!--<el-input size="mini" placeholder="商家编码"-->
+                                              <!--v-model="querymerchantCode"></el-input>-->
+
+                                    <!--<el-input size="mini" placeholder="商品名称" v-model="queryname"></el-input>-->
+
+                                    <!--<el-input size="mini" placeholder="货品编号" v-model="queryitemCode"></el-input>-->
+
+                                    <!--<el-input size="mini" placeholder="盒装SKU" v-model="querysku"></el-input>-->
+
+                                    <!--<el-input size="mini" placeholder="其他" v-model="queryother"></el-input>-->
+
+                                    <!--<el-button type="primary" size="mini"-->
+                                               <!--@click="queryother='',querysku='',queryitemCode='',queryname='',querymerchantCode=''">-->
+                                        <!--重置-->
+                                    <!--</el-button>-->
+
+                                    <!--<el-button type="primary" size="mini" icon="el-icon-search"-->
+                                               <!--@click="queryGoods()">查询-->
+                                    <!--</el-button>-->
+
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div>-->
+                                <!--<el-table-->
+                                        <!--:data="quireGoodsData"-->
+                                        <!--border-->
+                                        <!--stripe-->
+                                        <!--@selection-change="goodsSelection"-->
+                                        <!--style="width: 100%">-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--type="index"-->
+                                            <!--width="30">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--label="操作"-->
+                                            <!--width="80"-->
+                                            <!--fixed="left"-->
+                                    <!--&gt;-->
+                                        <!--<template slot-scope="scope">-->
+
+                                            <!--<el-button type="text" @click="addgoodsTopurchase(scope.row)">添加</el-button>-->
+                                        <!--</template>-->
+                                    <!--</el-table-column>-->
+
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="merchantCode"-->
+                                            <!--label="商家编码"-->
+                                            <!--width="180">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="name"-->
+                                            <!--label="商品名称"-->
+                                            <!--width="180">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="itemCode"-->
+                                            <!--label="货品编号"-->
+                                            <!--width="180"-->
+                                    <!--&gt;-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="sku"-->
+                                            <!--width="180"-->
+                                            <!--label="盒装SKU">-->
+                                    <!--</el-table-column>-->
+
+
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="type"-->
+                                            <!--label="分类"-->
+                                            <!--width="180">-->
+                                    <!--</el-table-column>-->
+
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="brand"-->
+                                            <!--width="180"-->
+                                            <!--label="品牌">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="unit"-->
+                                            <!--width="100"-->
+                                            <!--label="单位">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="process"-->
+                                            <!--width="180"-->
+                                            <!--label="工艺流程">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+
+                                            <!--label="创建时间"-->
+                                            <!--prop="createTime"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="修改时间"-->
+                                            <!--prop="updateTime"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="season"-->
+                                            <!--width="180"-->
+                                            <!--label="季节">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="costPrice"-->
+                                            <!--width="180"-->
+                                            <!--label="商品成本价">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="unit"-->
+                                            <!--width="180"-->
+                                            <!--label="基本单位">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="packag"-->
+                                            <!--width="180"-->
+                                            <!--label="包装材料">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="weight"-->
+                                            <!--width="180"-->
+                                            <!--label="重量">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="barCode"-->
+                                            <!--width="180"-->
+                                            <!--label="条形码">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="ingredients"-->
+                                            <!--width="180"-->
+                                            <!--label="面料成份">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="standard"-->
+                                            <!--width="180"-->
+                                            <!--label="执行工艺标准">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="remark"-->
+                                            <!--width="180"-->
+                                            <!--label="备注">-->
+                                    <!--</el-table-column>-->
+
+                                <!--</el-table>-->
+                                <!--&lt;!&ndash;分页&ndash;&gt;-->
+                                <!--<div class="PageLayout">-->
+
+                                        <!--<el-pagination-->
+                                                <!--@current-change="goodslistpag"-->
+                                                <!--:page-size="5"-->
+                                                <!--layout="prev, pager, next, jumper"-->
+                                                <!--:total="totalRecordNum">-->
+                                        <!--</el-pagination>-->
+
+                                <!--</div>-->
+                                <!--<el-table-->
+                                        <!--:data="quireGoodsDataBox"-->
+                                        <!--border-->
+                                        <!--stripe-->
+                                        <!--@selection-change="goodsSelection"-->
+                                        <!--style="width: 100%">-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--type="index"-->
+                                            <!--width="30">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="merchantCode"-->
+                                            <!--label="商家编码"-->
+                                            <!--width="180">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="name"-->
+                                            <!--label="商品名称"-->
+                                            <!--width="180">-->
+                                    <!--</el-table-column>-->
+
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="itemCode"-->
+                                            <!--label="货品编号"-->
+                                            <!--width="180"-->
+                                    <!--&gt;-->
+                                    <!--</el-table-column>-->
+
+                                    <!--&lt;!&ndash;<el-table-column&ndash;&gt;-->
+                                    <!--&lt;!&ndash;label="预计入库时间"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;width="200"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;align="center"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;&gt;&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<template slot-scope="scope">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<el-date-picker&ndash;&gt;-->
+                                    <!--&lt;!&ndash;style="width: 180px"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;type="datetime"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;v-model="scope.row.warehouseTime"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;size="mini"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;value-format="yyyy-MM-dd HH:mm:ss"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;placeholder="预计入库时间">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</el-date-picker>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</template>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</el-table-column>&ndash;&gt;-->
+
+
+                                    <!--&lt;!&ndash;<el-table-column&ndash;&gt;-->
+                                    <!--&lt;!&ndash;align="center"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;label="数量"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;width="200"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;&gt;&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<template slot-scope="scope">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<el-input-number size="mini" v-model="scope.row.number" :min="1" :max="100000"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;label="描述文字"></el-input-number>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</template>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</el-table-column>&ndash;&gt;-->
+                                    <!--<el-table-column-->
+                                            <!--label="操作"-->
+                                            <!--fixed="left"-->
+                                            <!--align="center"-->
+                                    <!--&gt;-->
+                                        <!--<template slot-scope="scope">-->
+                                            <!--&lt;!&ndash;删除备选数组信息&ndash;&gt;-->
+                                            <!--<el-button type="text" @click="delGoodspruchase(scope.row)">删除</el-button>-->
+                                        <!--</template>-->
+                                    <!--</el-table-column>-->
+
+
+                                    <!--&lt;!&ndash;<el-input-number size="mini" v-model="scope.row.spare04"  :min="1"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;:max="100000" label="描述文字"></el-input-number>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</template>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</el-table-column>&ndash;&gt;-->
+
+
+                                    <!--&lt;!&ndash;<el-table-column&ndash;&gt;-->
+                                    <!--&lt;!&ndash;label="不含税单价（元）"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;width="200"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;align="center"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;&gt;&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<template slot-scope="scope">&ndash;&gt;-->
+
+                                    <!--&lt;!&ndash;<el-input-number :change="CalculationPrice(scope.row)" size="mini"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;v-model="scope.row.unitPrice" :min="1"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;:max="100000" label="描述文字"></el-input-number>&ndash;&gt;-->
+
+                                    <!--&lt;!&ndash;</template>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</el-table-column>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<el-table-column&ndash;&gt;-->
+                                    <!--&lt;!&ndash;label="含税单价（元）"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;width="200"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;align="center"&ndash;&gt;-->
+
+                                    <!--&lt;!&ndash;&gt;&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<template slot-scope="scope">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<el-input-number disabled size="mini" v-model="scope.row.taxPrice"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;label="描述文字"></el-input-number>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</template>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</el-table-column>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<el-table-column&ndash;&gt;-->
+                                    <!--&lt;!&ndash;label="含税总价（元）"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;width="120"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;align="center"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;prop="taxTotalPrice"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;&gt;&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</el-table-column>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<el-table-column&ndash;&gt;-->
+                                    <!--&lt;!&ndash;label="不含税总价（元）"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;width="150"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;align="center"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;prop="totalPrice"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;&gt;&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</el-table-column>&ndash;&gt;-->
+
+                                    <!--<el-table-column-->
+
+                                            <!--label="创建时间"-->
+                                            <!--prop="createTime"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="修改时间"-->
+                                            <!--prop="updateTime"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="type"-->
+                                            <!--label="分类"-->
+                                            <!--width="180">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="sku"-->
+                                            <!--width="180"-->
+                                            <!--label="盒装SKU">-->
+
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="brand"-->
+                                            <!--width="180"-->
+                                            <!--label="品牌">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="unit"-->
+                                            <!--width="100"-->
+                                            <!--label="单位">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="process"-->
+                                            <!--width="180"-->
+                                            <!--label="工艺流程">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="season"-->
+                                            <!--width="180"-->
+                                            <!--label="季节">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="costPrice"-->
+                                            <!--width="180"-->
+                                            <!--label="商品成本价">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="unit"-->
+                                            <!--width="180"-->
+                                            <!--label="基本单位">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="packag"-->
+                                            <!--width="180"-->
+                                            <!--label="包装材料">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="weight"-->
+                                            <!--width="180"-->
+                                            <!--label="重量">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="barCode"-->
+                                            <!--width="180"-->
+                                            <!--label="条形码">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="ingredients"-->
+                                            <!--width="180"-->
+                                            <!--label="面料成份">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="standard"-->
+                                            <!--width="180"-->
+                                            <!--label="执行工艺标准">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="remark"-->
+                                            <!--width="180"-->
+                                            <!--label="备注">-->
+                                    <!--</el-table-column>-->
+
+                                <!--</el-table>-->
+                                <!--<div style="text-align: right;margin: 0.2em">-->
+                                    <!--<el-button type="primary" size="mini" @click="PreservationGoods">保存</el-button>-->
+                                    <!--<el-button size="mini" @click="PurchasingAddGoods=false">取消</el-button>-->
+                                <!--</div>-->
+
+                            <!--</div>-->
+
+
+                        <!--</el-dialog>-->
+
+
+                        <!--&lt;!&ndash;修改采购单&ndash;&gt;-->
+                        <!--<el-dialog-->
+                                <!--title="修改采购单(商品)"-->
+                                <!--:visible.sync="upNewpurchaseorder"-->
+                                <!--:show-close="false"-->
+                                <!--@closed="closeFunGoods"-->
+                                <!--width="1000px">-->
+
+                            <!--<el-form :model="upaddProcurement" :rules="upaddProcurements" label-width="100px"-->
+                                     <!--ref="upaddProcurement" label-position="right">-->
+                                <!--<el-row>-->
+                                    <!--<el-col :span="6">-->
+                                        <!--<el-form-item-->
+                                                <!--label="供应商"-->
+                                                <!--clearable-->
+                                                <!--prop="supplier"-->
+                                        <!--&gt;-->
+                                            <!--&lt;!&ndash;供应商选择&ndash;&gt;-->
+                                            <!--<el-select size="mini" filterable clearable-->
+                                                       <!--v-model="upaddProcurement.supplier"-->
+                                                       <!--placeholder="供应商">-->
+                                                <!--<el-option-->
+                                                        <!--v-for="item in options"-->
+                                                        <!--:key="item.value"-->
+                                                        <!--:label="item.label"-->
+                                                        <!--:value="item.value">-->
+                                                <!--</el-option>-->
+                                            <!--</el-select>-->
+                                        <!--</el-form-item>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="6">-->
+                                        <!--<el-form-item-->
+                                                <!--label="工厂"-->
+                                                <!--clearable-->
+                                                <!--prop="factoryName"-->
+                                        <!--&gt;-->
+                                            <!--&lt;!&ndash;工厂选择&ndash;&gt;-->
+                                            <!--<el-select size="mini" filterable clearable-->
+                                                       <!--v-model="upaddProcurement.factoryName"-->
+                                                       <!--placeholder="工厂选择">-->
+                                                <!--<el-option-->
+                                                        <!--v-for="item in factorylist"-->
+                                                        <!--:key="item.value"-->
+                                                        <!--:label="item.label"-->
+                                                        <!--:value="item.value">-->
+                                                <!--</el-option>-->
+                                            <!--</el-select>-->
+                                        <!--</el-form-item>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="6">-->
+                                        <!--<el-form-item label="运费" prop="freight">-->
+                                            <!--<el-input size="mini" placeholder="运费"-->
+                                                      <!--v-model="upaddProcurement.freight"></el-input>-->
+                                        <!--</el-form-item>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="6">-->
+                                        <!--<el-form-item label="备注">-->
+                                            <!--<el-input size="mini" placeholder="备注"-->
+                                                      <!--v-model="upaddProcurement.remark"></el-input>-->
+                                        <!--</el-form-item>-->
+                                    <!--</el-col>-->
+
+                                <!--</el-row>-->
+
+
+                                <!--<el-row>-->
+                                    <!--&lt;!&ndash;freightTransportation: '',//货运方式&ndash;&gt;-->
+                                    <!--&lt;!&ndash;invoice: '',//发票&ndash;&gt;-->
+                                    <!--<el-col :span="6">-->
+                                        <!--<el-form-item label="发票" prop="invoice">-->
+                                            <!--<el-select @change="upchoose" size="mini" v-model="upaddProcurement.invoice"-->
+                                                       <!--placeholder="请选择发票">-->
+                                                <!--<el-option-->
+                                                        <!--v-for="item in addinvoice"-->
+                                                        <!--:key="item.value"-->
+                                                        <!--:label="item.label"-->
+                                                        <!--:value="item.value">-->
+                                                <!--</el-option>-->
+                                            <!--</el-select>-->
+                                        <!--</el-form-item>-->
+                                    <!--</el-col>-->
+                                    <!--<el-col :span="6">-->
+                                        <!--<el-form-item label="货运方式" prop="freightTransportation">-->
+                                            <!--<el-input size="mini" placeholder="货运方式"-->
+                                                      <!--v-model="upaddProcurement.freightTransportation"></el-input>-->
+                                        <!--</el-form-item>-->
+                                    <!--</el-col>-->
+                                    <!--&lt;!&ndash;<el-col :span="6">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<el-form-item label="预计入库" prop="distanceDate">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<el-date-picker&ndash;&gt;-->
+                                    <!--&lt;!&ndash;style="width: 180px"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;v-model="updistanceDate"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;size="mini"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;type="datetime"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;value-format="yyyy-MM-dd HH:mm:ss"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;placeholder="预计入库时间">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</el-date-picker>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</el-form-item>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</el-col>&ndash;&gt;-->
+
+                                <!--</el-row>-->
+                            <!--</el-form>-->
+                            <!--<div class="QueryConditions">-->
+                                <!--<el-button size="mini" @click="upPurchasingAddGoods=true">添加商品</el-button>-->
+                                <!--<el-button size="mini" @click="upbatchTime">批量添加预计入库时间</el-button>-->
+                                <!--<el-date-picker-->
+                                        <!--style="margin-left: 0.5em"-->
+                                        <!--size="mini"-->
+                                        <!--v-model="uptimeData"-->
+                                        <!--type="datetime"-->
+                                        <!--placeholder="批量添加预计入库时间">-->
+                                <!--</el-date-picker>-->
+                            <!--</div>-->
+
+                            <!--<el-table-->
+                                    <!--:data="upaddProcurement.goodsList"-->
+                                    <!--border-->
+                                    <!--stripe-->
+                                    <!--@selection-change="upgoodsSelection"-->
+                                    <!--style="width: 100%">-->
+
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--type="selection"-->
+                                        <!--width="50"-->
+                                <!--&gt;-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--type="index"-->
+                                        <!--width="50">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="merchantCode"-->
+                                        <!--label="商家编码"-->
+                                        <!--width="180">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="name"-->
+                                        <!--label="商品名称"-->
+                                        <!--width="180">-->
+                                <!--</el-table-column>-->
+
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="itemCode"-->
+                                        <!--label="货品编号"-->
+                                        <!--width="180"-->
+                                <!--&gt;-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="预计入库时间"-->
+                                        <!--width="200"-->
+                                        <!--align="center"-->
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--<el-date-picker-->
+                                                <!--style="width: 180px"-->
+                                                <!--v-model="scope.row.warehouseTime"-->
+                                                <!--size="mini"-->
+                                                <!--type="datetime"-->
+                                                <!--value-format="yyyy-MM-dd HH:mm:ss"-->
+                                                <!--placeholder="预计入库时间">-->
+                                        <!--</el-date-picker>-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--label="数量"-->
+                                        <!--width="200"-->
+                                        <!--prop="number"-->
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--<el-input-number size="mini" v-model="scope.row.number"-->
+                                                         <!--@change="upaddprocureNumber(scope.row)"></el-input-number>-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="操作"-->
+                                        <!--fixed="left"-->
+                                        <!--align="center"-->
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--&lt;!&ndash;删除from表单中商品数据&ndash;&gt;-->
+                                        <!--<el-button type="text" @click="updeltetPurchase(scope.row)">删除</el-button>-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+
+
+                                <!--<el-table-column-->
+                                        <!--label="含税单价（元）"-->
+                                        <!--width="200"-->
+                                        <!--align="center"-->
+
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--<el-input-number @change="upcontaintax(scope.row)" :mini="1"-->
+                                                         <!--:disabled="upcontaining" size="mini"-->
+                                                         <!--v-model="scope.row.taxPrice"-->
+                                                         <!--label="描述文字"></el-input-number>-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+
+                                <!--<el-table-column-->
+                                        <!--label="不含税单价（元）"-->
+                                        <!--width="200"-->
+                                        <!--align="center"-->
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--<el-input-number size="mini" v-model="scope.row.unitPrice"-->
+                                                         <!--:disabled="upnocontaining" :mini="1"-->
+                                                         <!--@change="upaddprocure(scope.row)"></el-input-number>-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--label="含税总价（元）"-->
+                                        <!--width="120"-->
+                                        <!--align="center"-->
+                                        <!--prop="taxTotalPrice"-->
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--{{scope.row.taxTotalPrice.toFixed(2)}}-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+
+                                <!--<el-table-column-->
+                                        <!--label="不含税总价（元）"-->
+                                        <!--width="120"-->
+                                        <!--align="center"-->
+                                        <!--prop="totalPrice"-->
+                                <!--&gt;-->
+                                    <!--<template slot-scope="scope">-->
+                                        <!--{{scope.row.totalPrice.toFixed(2)}}-->
+                                    <!--</template>-->
+                                <!--</el-table-column>-->
+
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="type"-->
+                                        <!--label="分类"-->
+                                        <!--width="180">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="sku"-->
+                                        <!--width="180"-->
+                                        <!--label="盒装SKU">-->
+
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="brand"-->
+                                        <!--width="180"-->
+                                        <!--label="品牌">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="unit"-->
+                                        <!--width="100"-->
+                                        <!--label="单位">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="process"-->
+                                        <!--width="180"-->
+                                        <!--label="工艺流程">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="season"-->
+                                        <!--width="180"-->
+                                        <!--label="季节">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="costPrice"-->
+                                        <!--width="180"-->
+                                        <!--label="商品成本价">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="unit"-->
+                                        <!--width="180"-->
+                                        <!--label="基本单位">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="packag"-->
+                                        <!--width="180"-->
+                                        <!--label="包装材料">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="weight"-->
+                                        <!--width="180"-->
+                                        <!--label="重量">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="barCode"-->
+                                        <!--width="180"-->
+                                        <!--label="条形码">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="ingredients"-->
+                                        <!--width="180"-->
+                                        <!--label="面料成份">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="standard"-->
+                                        <!--width="180"-->
+                                        <!--label="执行工艺标准">-->
+                                <!--</el-table-column>-->
+                                <!--<el-table-column-->
+                                        <!--align="center"-->
+                                        <!--prop="remark"-->
+                                        <!--width="180"-->
+                                        <!--label="备注">-->
+                                <!--</el-table-column>-->
+
+                            <!--</el-table>-->
+                            <!--<div style="display: flex;justify-content: space-between;margin: 0.2em">-->
+                                <!--<div>-->
+                                    <!--总数量{{upgoodsNum}},-->
+                                    <!--总金额（含税）{{uptaxgoodsMoney.toFixed(4)}}-->
+                                    <!--总金额（不含税）:{{upgoodsMoney.toFixed(4)}}-->
+                                <!--</div>-->
+                                <!--<div>-->
+                                    <!--<el-button type="primary" size="mini"-->
+                                               <!--@click="upSubmissionPurchase('upaddProcurement')">保存-->
+                                    <!--</el-button>-->
+                                    <!--<el-button size="mini" @click="upNewpurchaseorder=false">取消</el-button>-->
+                                <!--</div>-->
+
+                            <!--</div>-->
+
+                        <!--</el-dialog>-->
+
+                        <!--&lt;!&ndash;修改采购订单添加商品&ndash;&gt;-->
+                        <!--<el-dialog-->
+                                <!--title="修改采购订单添加商品"-->
+
+                                <!--:visible.sync="upPurchasingAddGoods"-->
+                                <!--width="1000px"-->
+                                <!--:show-close="false"-->
+
+                        <!--&gt;-->
+                            <!--&lt;!&ndash;新建与查询&ndash;&gt;-->
+                            <!--<div class="menuBox">-->
+                                <!--<div class="QueryConditions QueryInput">-->
+                                    <!--<el-input size="mini" placeholder="商家编码"-->
+                                              <!--v-model="querymerchantCode"></el-input>-->
+
+                                    <!--<el-input size="mini" placeholder="商品名称" v-model="queryname"></el-input>-->
+
+                                    <!--<el-input size="mini" placeholder="货品编号" v-model="queryitemCode"></el-input>-->
+
+                                    <!--<el-input size="mini" placeholder="盒装SKU" v-model="querysku"></el-input>-->
+
+                                    <!--<el-input size="mini" placeholder="其他" v-model="queryother"></el-input>-->
+
+                                    <!--<el-button type="primary" size="mini"-->
+                                               <!--@click="queryother='',querysku='',queryitemCode='',queryname='',querymerchantCode=''">-->
+                                        <!--重置-->
+                                    <!--</el-button>-->
+
+                                    <!--<el-button type="primary" size="mini" icon="el-icon-search"-->
+                                               <!--@click="queryGoods()">查询-->
+                                    <!--</el-button>-->
+
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div>-->
+                                <!--<el-table-->
+                                        <!--:data="quireGoodsData"-->
+                                        <!--border-->
+                                        <!--stripe-->
+                                        <!--@selection-change="goodsSelection"-->
+                                        <!--style="width: 100%">-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--type="index"-->
+                                            <!--width="30">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--label="操作"-->
+                                            <!--width="60"-->
+                                            <!--fixed="left"-->
+                                    <!--&gt;-->
+                                        <!--<template slot-scope="scope">-->
+                                            <!--<el-button type="text" @click="upaddgoodsTopurchase(scope.row)">添加-->
+                                            <!--</el-button>-->
+                                        <!--</template>-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="merchantCode"-->
+                                            <!--label="商家编码"-->
+                                            <!--width="180">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="name"-->
+                                            <!--label="商品名称"-->
+                                            <!--width="180">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="itemCode"-->
+                                            <!--label="货品编号"-->
+                                            <!--width="180"-->
+                                    <!--&gt;-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="sku"-->
+                                            <!--width="180"-->
+                                            <!--label="盒装SKU">-->
+                                    <!--</el-table-column>-->
+
+
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="type"-->
+                                            <!--label="分类"-->
+                                            <!--width="180">-->
+                                    <!--</el-table-column>-->
+
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="brand"-->
+                                            <!--width="180"-->
+                                            <!--label="品牌">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="unit"-->
+                                            <!--width="100"-->
+                                            <!--label="单位">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="process"-->
+                                            <!--width="180"-->
+                                            <!--label="工艺流程">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+
+                                            <!--label="创建时间"-->
+                                            <!--prop="createTime"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="修改时间"-->
+                                            <!--prop="updateTime"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="season"-->
+                                            <!--width="180"-->
+                                            <!--label="季节">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="costPrice"-->
+                                            <!--width="180"-->
+                                            <!--label="商品成本价">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="unit"-->
+                                            <!--width="180"-->
+                                            <!--label="基本单位">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="packag"-->
+                                            <!--width="180"-->
+                                            <!--label="包装材料">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="weight"-->
+                                            <!--width="180"-->
+                                            <!--label="重量">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="barCode"-->
+                                            <!--width="180"-->
+                                            <!--label="条形码">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="ingredients"-->
+                                            <!--width="180"-->
+                                            <!--label="面料成份">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="standard"-->
+                                            <!--width="180"-->
+                                            <!--label="执行工艺标准">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="remark"-->
+                                            <!--width="180"-->
+                                            <!--label="备注">-->
+                                    <!--</el-table-column>-->
+                                <!--</el-table>-->
+                                <!--&lt;!&ndash;分页&ndash;&gt;-->
+                                <!--<div class="PageLayout">-->
+
+                                        <!--<el-pagination-->
+                                                <!--@current-change="goodslistpag"-->
+                                                <!--:page-size="5"-->
+                                                <!--layout="prev, pager, next, jumper"-->
+                                                <!--:total="totalRecordNum">-->
+                                        <!--</el-pagination>-->
+
+                                <!--</div>-->
+                                <!--<el-table-->
+                                        <!--:data="upquireGoodsDataBox"-->
+                                        <!--border-->
+                                        <!--stripe-->
+                                        <!--@selection-change="goodsSelection"-->
+                                        <!--style="width: 100%">-->
+
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--type="index"-->
+                                            <!--width="30">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="merchantCode"-->
+                                            <!--label="商家编码"-->
+                                            <!--width="150">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="name"-->
+                                            <!--label="商品名称"-->
+                                            <!--width="180">-->
+                                    <!--</el-table-column>-->
+
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="itemCode"-->
+                                            <!--label="货品编号"-->
+                                            <!--width="150"-->
+                                    <!--&gt;-->
+                                    <!--</el-table-column>-->
+
+                                    <!--<el-table-column-->
+                                            <!--label="操作"-->
+                                            <!--fixed="left"-->
+                                            <!--align="center"-->
+                                            <!--width="50"-->
+                                    <!--&gt;-->
+                                        <!--<template slot-scope="scope">-->
+                                            <!--&lt;!&ndash;删除备选数组信息&ndash;&gt;-->
+                                            <!--<el-button type="text" @click="updelGoodspruchase(scope.row)">删除</el-button>-->
+                                        <!--</template>-->
+                                    <!--</el-table-column>-->
+
+
+                                    <!--<el-table-column-->
+
+                                            <!--label="创建时间"-->
+                                            <!--prop="createTime"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--label="修改时间"-->
+                                            <!--prop="updateTime"-->
+                                            <!--width="180"-->
+                                            <!--align="center"-->
+                                            <!--sortable-->
+                                    <!--&gt;</el-table-column>-->
+
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="type"-->
+                                            <!--label="分类"-->
+                                            <!--width="180">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="sku"-->
+                                            <!--width="180"-->
+                                            <!--label="盒装SKU">-->
+
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="brand"-->
+                                            <!--width="180"-->
+                                            <!--label="品牌">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="unit"-->
+                                            <!--width="100"-->
+                                            <!--label="单位">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="process"-->
+                                            <!--width="180"-->
+                                            <!--label="工艺流程">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="season"-->
+                                            <!--width="180"-->
+                                            <!--label="季节">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="costPrice"-->
+                                            <!--width="180"-->
+                                            <!--label="商品成本价">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="unit"-->
+                                            <!--width="180"-->
+                                            <!--label="基本单位">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="packag"-->
+                                            <!--width="180"-->
+                                            <!--label="包装材料">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="weight"-->
+                                            <!--width="180"-->
+                                            <!--label="重量">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="barCode"-->
+                                            <!--width="180"-->
+                                            <!--label="条形码">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="ingredients"-->
+                                            <!--width="180"-->
+                                            <!--label="面料成份">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="standard"-->
+                                            <!--width="180"-->
+                                            <!--label="执行工艺标准">-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                            <!--align="center"-->
+                                            <!--prop="remark"-->
+                                            <!--width="180"-->
+                                            <!--label="备注">-->
+                                    <!--</el-table-column>-->
+
+                                <!--</el-table>-->
+
+                                <!--<div style="text-align: right;margin: 0.2em">-->
+
+                                    <!--<div>-->
+                                        <!--<el-button type="primary" size="mini" @click="upPreservationGoods">保存-->
+                                        <!--</el-button>-->
+                                        <!--<el-button size="mini" @click="upPurchasingAddGoods=false">取消</el-button>-->
+                                    <!--</div>-->
+
+                                <!--</div>-->
+
+                            <!--</div>-->
+
+
+                        <!--</el-dialog>-->
+
+
+                    <!--</div>-->
+
+                    <!--&lt;!&ndash;采购明细&ndash;&gt;-->
+                    <!--<el-dialog-->
+                            <!--title="采购明细"-->
+                            <!--:visible.sync="Purchasedetail"-->
+                            <!--width="80%"-->
+                            <!--:show-close="false"-->
+                    <!--&gt;-->
+                        <!--<div style="display: flex;justify-content: space-between;padding: 0.5em">-->
+                            <!--<el-button icon="el-icon-view" size="mini" @click="detailSettings=true">显示设置</el-button>-->
+                        <!--</div>-->
+
+                        <!--<el-table-->
+                                <!--:data="selsectdetailsList"-->
+                                <!--border-->
+                                <!--stripe-->
+                                <!--style="width: 100%">-->
+
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--type="index"-->
+                                    <!--width="50">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="merchantCode"-->
+                                    <!--v-if="detailmerchantCode"-->
+                                    <!--label="商家编码"-->
+                                    <!--width="180">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="name"-->
+                                    <!--v-if="detailname"-->
+                                    <!--label="商品名称"-->
+                                    <!--width="180">-->
+                            <!--</el-table-column>-->
+
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="itemCode"-->
+                                    <!--v-if="detailitemCode"-->
+                                    <!--label="货品编号"-->
+                                    <!--width="180"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="预计入库时间"-->
+                                    <!--width="200"-->
+                                    <!--v-if="detailwarehouseTime"-->
+                                    <!--align="center"-->
+                                    <!--prop="warehouseTime"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--label="数量"-->
+                                    <!--width="200"-->
+                                    <!--v-if="detailnumber"-->
+                                    <!--prop="number"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+
+                            <!--&lt;!&ndash;<el-table-column&ndash;&gt;-->
+                            <!--&lt;!&ndash;label="含税单价（元）"&ndash;&gt;-->
+                            <!--&lt;!&ndash;width="120"&ndash;&gt;-->
+                            <!--&lt;!&ndash;prop="taxPrice"&ndash;&gt;-->
+                            <!--&lt;!&ndash;align="center"&ndash;&gt;-->
+                            <!--&lt;!&ndash;&gt;&ndash;&gt;-->
+                            <!--&lt;!&ndash;</el-table-column>&ndash;&gt;-->
+
+
+                            <!--<el-table-column-->
+                                    <!--label="含税单价（元）"-->
+                                    <!--width="200"-->
+                                    <!--align="center"-->
+                                    <!--v-if="detailtaxPrice"-->
+                                    <!--prop="taxPrice"-->
+
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+
+                            <!--<el-table-column-->
+                                    <!--label="不含税单价（元）"-->
+                                    <!--width="200"-->
+                                    <!--align="center"-->
+                                    <!--v-if="detailunitPrice"-->
+                                    <!--prop="unitPrice"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="含税总价（元）"-->
+                                    <!--width="120"-->
+                                    <!--align="center"-->
+                                    <!--v-if="detailtaxTotalPrice"-->
+                                    <!--prop="taxTotalPrice"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="不含税总价（元）"-->
+                                    <!--width="200"-->
+                                    <!--align="center"-->
+                                    <!--v-if="detailtotalPrice"-->
+                                    <!--prop="totalPrice"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="type"-->
+                                    <!--v-if="detailtype"-->
+                                    <!--label="分类"-->
+                                    <!--width="180">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="sku"-->
+                                    <!--v-if="detailsku"-->
+                                    <!--width="180"-->
+                                    <!--label="盒装SKU">-->
+
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="brand"-->
+                                    <!--v-if="detailbrand"-->
+                                    <!--width="180"-->
+                                    <!--label="品牌">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="process"-->
+                                    <!--v-if="detailprocess"-->
+                                    <!--width="180"-->
+                                    <!--label="工艺流程">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="season"-->
+                                    <!--v-if="detailseason"-->
+                                    <!--width="180"-->
+                                    <!--label="季节">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="costPrice"-->
+                                    <!--v-if="detailcostPrice"-->
+                                    <!--width="180"-->
+                                    <!--label="商品成本价">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="unit"-->
+                                    <!--v-if="detailunit"-->
+                                    <!--width="180"-->
+                                    <!--label="基本单位">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="packag"-->
+                                    <!--v-if="detailpackag"-->
+                                    <!--width="180"-->
+                                    <!--label="包装材料">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="weight"-->
+                                    <!--v-if="detailweight"-->
+                                    <!--width="180"-->
+                                    <!--label="重量">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="barCode"-->
+                                    <!--v-if="detailbarCode"-->
+                                    <!--width="180"-->
+                                    <!--label="条形码">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="ingredients"-->
+                                    <!--v-if="detailingredients"-->
+                                    <!--width="180"-->
+                                    <!--label="面料成份">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="standard"-->
+                                    <!--v-if="detailstandard"-->
+                                    <!--width="180"-->
+                                    <!--label="执行工艺标准">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="remark"-->
+                                    <!--v-if="detailremark"-->
+                                    <!--width="180"-->
+                                    <!--label="备注">-->
+                            <!--</el-table-column>-->
+
+                        <!--</el-table>-->
+                        <!--<div style="text-align: left;margin-top: 0.5em">-->
+                            <!--总数量:{{detailsNumber}},-->
+                            <!--总金额（含税）:{{detailstaxgoodsMoney.toFixed(4)}},-->
+                            <!--总金额（不含税）:{{detailsgoodsMoney.toFixed(4)}}-->
+
+                        <!--</div>-->
+                    <!--</el-dialog>-->
+
+
+                    <!--&lt;!&ndash;采购明细显示设置&ndash;&gt;-->
+                    <!--<el-dialog-->
+                            <!--title="显示设置"-->
+                            <!--:visible.sync="detailSettings"-->
+                            <!--width="30%"-->
+                            <!--:show-close="false"-->
+
+                    <!--&gt;-->
+                        <!--<div style="text-align: left">-->
+
+
+                            <!--<el-row>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailmerchantCode">商家编码</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailname">商品名称</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailitemCode">货品编号</el-checkbox>-->
+                                <!--</el-col>-->
+                            <!--</el-row>-->
+
+
+                            <!--<el-row>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailwarehouseTime">预计入库时间</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailnumber">数量</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailtaxPrice">含税单价</el-checkbox>-->
+                                <!--</el-col>-->
+                            <!--</el-row>-->
+
+                            <!--<el-row>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailunitPrice">不含税单价</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailtaxTotalPrice">含税总价</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailtotalPrice">不含税总价</el-checkbox>-->
+                                <!--</el-col>-->
+                            <!--</el-row>-->
+
+
+                            <!--<el-row>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailtype">分类</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailsku">盒装SKU</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailbrand">品牌</el-checkbox>-->
+                                <!--</el-col>-->
+                            <!--</el-row>-->
+
+
+                            <!--<el-row>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailprocess">工艺流程</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailseason">季节</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailcostPrice">商品成本价</el-checkbox>-->
+                                <!--</el-col>-->
+                            <!--</el-row>-->
+
+                            <!--<el-row>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailunit">基本单位</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailpackag">包装材料</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailweight">重量</el-checkbox>-->
+                                <!--</el-col>-->
+                            <!--</el-row>-->
+
+
+                            <!--<el-row>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailbarCode">条形码</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailingredients">面料成份</el-checkbox>-->
+                                <!--</el-col>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailstandard">执行工艺标准</el-checkbox>-->
+                                <!--</el-col>-->
+                            <!--</el-row>-->
+                            <!--<el-row>-->
+                                <!--<el-col :span="8">-->
+                                    <!--<el-checkbox v-model="detailremark">备注</el-checkbox>-->
+                                <!--</el-col>-->
+                            <!--</el-row>-->
+
+
+                        <!--</div>-->
+
+                    <!--</el-dialog>-->
+                    <!--<div>-->
+                        <!--<el-table-->
+                                <!--:data="purchaseList"-->
+                                <!--border-->
+                                <!--stripe-->
+                                <!--height="750px"-->
+                                <!--@row-dblclick="Purchasedetails"-->
+                                <!--@selection-change="MultipleselectionGoods"-->
+
+                        <!--&gt;-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--type="selection"-->
+                                    <!--width="50"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--type="index"-->
+                                    <!--width="40">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="创建时间"-->
+                                    <!--prop="createTime"-->
+                                    <!--v-if="createTime"-->
+                                    <!--width="180"-->
+                                    <!--align="center"-->
+                                    <!--sortable-->
+                            <!--&gt;</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="修改时间"-->
+                                    <!--prop="updateTime"-->
+                                    <!--v-if="updateTime"-->
+                                    <!--width="180"-->
+                                    <!--align="center"-->
+                                    <!--sortable-->
+                            <!--&gt;</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="purchaseNumber"-->
+                                    <!--label="采购单号"-->
+                                    <!--width="200"-->
+                                    <!--v-if="purchaseNumber"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="供应商"-->
+                                    <!--prop="supplier"-->
+                                    <!--align="center"-->
+                                    <!--width="150"-->
+                                    <!--v-if="operation"-->
+                            <!--&gt;</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="purchaseSource"-->
+                                    <!--label="采购订单来源"-->
+                                    <!--v-if="purchaseSource"-->
+                                    <!--width="150"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="submitStatus"-->
+                                    <!--label="提交状态"-->
+                                    <!--width="150"-->
+                                    <!--v-if="submitStatus"-->
+                            <!--&gt;-->
+                                <!--<template slot-scope="scope">-->
+                                    <!--<span>{{scope.row.submitStatus=='tj01'?'已提交':'未提交'}}</span>-->
+                                <!--</template>-->
+                            <!--</el-table-column>-->
+
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="submitTime"-->
+                                    <!--label="提交时间"-->
+                                    <!--width="180"-->
+                                    <!--v-if="submitTime"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="auditStatus"-->
+                                    <!--label="审核状态"-->
+                                    <!--v-if="auditStatus"-->
+                            <!--&gt;-->
+                                <!--<template slot-scope="scope">-->
+                                    <!--<span>{{scope.row.auditStatus=='sh01'?'已审核':scope.row.auditStatus=='sh02'?'未审核':'审核驳回'}}</span>-->
+                                <!--</template>-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="auditTime"-->
+                                    <!--label="审核时间"-->
+                                    <!--width="180"-->
+                                    <!--v-if="auditTime"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="receiveStatus"-->
+                                    <!--v-if="receiveStatus"-->
+                                    <!--label="收货状态">-->
+                                <!--<template slot-scope="scope">-->
+                                    <!--<span>{{scope.row.receiveStatus=='sh01'?'已收货':(scope.row.receiveStatus=='sh02'?'部分收货':'未收货')}}</span>-->
+                                <!--</template>-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="invoice"-->
+                                    <!--v-if="invoice"-->
+                                    <!--width="120"-->
+                                    <!--label="发票">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="freight"-->
+                                    <!--v-if="freight"-->
+                                    <!--label="运费">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="freightTransportation"-->
+                                    <!--v-if="freightTransportation"-->
+                                    <!--label="货运方式">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="frequency"-->
+                                    <!--v-if="frequency"-->
+                                    <!--width="120"-->
+                                    <!--label="已入库数量">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="type"-->
+                                    <!--width="180"-->
+                                    <!--v-if="type"-->
+                                    <!--label="采购订单类型">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--prop="commodityType"-->
+                                    <!--label="商品类型"-->
+                                    <!--align="center"-->
+                                    <!--width="120"-->
+                                    <!--v-if="commodityType"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="receiveAddress"-->
+                                    <!--label="收货地址"-->
+                                    <!--width="180"-->
+                                    <!--v-if="receiveAddress"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="contractTerm"-->
+                                    <!--label="合同条款"-->
+                                    <!--v-if="contractTerm"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="singlePerson"-->
+                                    <!--label="制单人"-->
+                                    <!--v-if="singlePerson"-->
+
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="submitter"-->
+                                    <!--label="提交人"-->
+                                    <!--v-if="submitter"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="financialJudge"-->
+                                    <!--v-if="financialJudge"-->
+                                    <!--label="财审人">-->
+
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="frequency"-->
+                                    <!--prop="auditor"-->
+                                    <!--v-if="auditor"-->
+                                    <!--label="审核人">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="totalSum"-->
+                                    <!--width="180"-->
+                                    <!--v-if="totalSum"-->
+                                    <!--label="总金额(不含税)">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="taxTotalSum"-->
+                                    <!--width="180"-->
+                                    <!--v-if="taxTotalSum"-->
+                                    <!--label="总金额(含税)">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--label="总数量"-->
+                                    <!--v-if="totalQuantity"-->
+                                    <!--width="120"-->
+                                    <!--prop="totalQuantity"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="completeStatus"-->
+                                    <!--width="120"-->
+                                    <!--v-if="completeStatus"-->
+                                    <!--label="采购完成状态">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="taxAmount"-->
+                                    <!--width="100"-->
+                                    <!--v-if="taxAmount"-->
+                                    <!--label="税额">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--align="center"-->
+                                    <!--prop="taxRate"-->
+                                    <!--width="100"-->
+                                    <!--v-if="taxRate"-->
+                                    <!--label="税率">-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                                    <!--label="备注"-->
+                                    <!--align="center"-->
+                                    <!--width="120"-->
+                                    <!--v-if="remark"-->
+                                    <!--prop="remark"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+
+                            <!--<el-table-column-->
+                                    <!--label="操作"-->
+                                    <!--fixed="right"-->
+                                    <!--width="120"-->
+                                    <!--align="center"-->
+                            <!--&gt;-->
+                                <!--&lt;!&ndash;scope.row.auditStatus=='sh01'?'已审核':scope.row.auditStatus=='sh02'?'未审核':'审核驳回'&ndash;&gt;-->
+                                <!--<template slot-scope="scope">-->
+
+                                    <!--<el-button :disabled="scope.row.auditStatus=='sh01'?(true):(false)" type="text"-->
+                                               <!--@click="updata(scope.row)">修改-->
+                                    <!--</el-button>-->
+                                    <!--<el-button :disabled="scope.row.auditStatus=='sh01'?(true):(false)" type="text"-->
+                                               <!--@click="delpurchase(scope.row)">删除-->
+                                    <!--</el-button>-->
+                                <!--</template>-->
+
+                            <!--</el-table-column>-->
+                        <!--</el-table>-->
+                        <!--&lt;!&ndash;分页&ndash;&gt;-->
+                        <!--<el-row>-->
+                            <!--<el-col :span="10" :offset="14">-->
+                                <!--<el-pagination-->
+                                        <!--@current-change="factorylistpag"-->
+                                        <!--:page-size="15"-->
+                                        <!--layout="prev, pager, next, jumper"-->
+                                        <!--:total="totalRecordNum">-->
+                                <!--</el-pagination>-->
+                            <!--</el-col>-->
+                        <!--</el-row>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</el-tab-pane>-->
+        <!--</el-tabs>-->
 
     </div>
 </template>
@@ -4347,13 +6357,13 @@
                     /**
                      * 收货状态
                      * **/
-                    value: 'sh03',
+                    value: '2',
                     label: '未收货'
                 }, {
-                    value: 'sh02',
+                    value: '1',
                     label: '部分收货'
                 }, {
-                    value: 'sh01',
+                    value: '0',
                     label: '已收货'
                 }],
                 TimeTypelist: [
@@ -4992,6 +7002,20 @@
                 this.upmatergoodsMoney = 0
                 this.upmatertaxgoodsMoney = 0
 
+                // upmatercontaining: true,//修改含税(原材料)
+                //     upmaternocontaining: true,//修改不含税(原材料)
+                console.log(data)
+                if (data.invoice==='增值税普通发票'){
+                    this.upmatercontaining=false
+                    this.upmaternocontaining=true
+                } else if (data.invoice==='增值税专用发票'){
+                    this.upmatercontaining=false
+                    this.upmaternocontaining=true
+                } else {
+                    this.upmatercontaining=true
+                    this.upmaternocontaining=false
+                }
+                
                 // upgoodsNum: 0,//总数量,
                 //     upgoodsMoney: 0,//总金额(不含税)
                 //     uptaxgoodsMoney: 0,//总金额(含税)
@@ -5568,8 +7592,33 @@
 
 
             },
+            upmaterNumber(data) {
+                //修改最后调整原材料数量
+
+                // upmatergoodsNum: 0,//总数量,（原材料）(修改)
+                //     upmatergoodsMoney: 0,//总金额(不含税)（原材料）(修改)
+                //     upmatertaxgoodsMoney: 0,//总金额(含税)（原材料）(修改)
+
+
+
+
+
+                this.upmatergoodsNum = 0,//总数量,
+                    this.upmatergoodsMoney = 0//总金额(不含税)
+                this.upmatertaxgoodsMoney = 0//总金额(含税)
+                let list = this.upaddProcurementMater.goodsList
+                data.totalPrice = data.number * data.unitPrice //不含税单条记录总价
+                data.taxTotalPrice = data.number * data.taxPrice//含税单条记录总价
+                list.forEach(item => {
+                    this.upmatergoodsNum += item.number //总数量
+                    this.upmatergoodsMoney += item.number * item.unitPrice  //不含税总价
+                    this.upmatertaxgoodsMoney += item.number * item.taxPrice  //含税总价
+                })
+
+
+            },
             upaddprocureNumber(data) {
-                //最后调整数量
+                //最后调整数量(商品)
                 // upgoodsNum: 0,//总数量,
                 //     upgoodsMoney: 0,//总金额(不含税)
                 //     uptaxgoodsMoney: 0,//总金额(含税)
@@ -6055,10 +8104,10 @@
         },
         created: function () {
             // materialqueryPage
-            this.purchaseQueryPage()//分页(商品)
+            // this.purchaseQueryPage()//分页(商品)
             this.supplierQuery()//供应商列表
             this.factoryQuery()//工厂列表
-            this.queryGoods()//商品信息查询
+            // this.queryGoods()//商品信息查询
             this.queryPage()//原材料信息查询
             this.materialQueryPage()//分页(原材料)
         }

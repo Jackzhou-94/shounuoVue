@@ -84,7 +84,9 @@
                 <template slot-scope="scope">
                     <el-button type="text" @click="operatorUpdate(scope.row)">编辑</el-button>
                     <el-button type="text" @click="resetUpPassword(scope.row)">重置密码</el-button>
-                    <el-button type="text" v-if="scope.row.nickname==judgeName?false:true" @click="delOpera(scope.row)">删除</el-button>
+                    <el-button type="text" v-if="scope.row.nickname==judgeName?false:true" @click="delOpera(scope.row)">
+                        删除
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -238,7 +240,7 @@
             return {
                 addUser: false,//新建用户面板
                 upaddUser: false,//修改用户面板
-                judgeName:'',//用于身份判断，自己无法删除
+                judgeName: '',//用于身份判断，自己无法删除
                 phoneNumber: '',//手机号
                 email: '',//邮箱
                 role: '',//角色
@@ -419,7 +421,7 @@
             },
             passReset() {
                 //密码重置
-                let that=this
+                let that = this
                 this.$axios.post(this.$store.state.resetPassword, this.operatorData).then(res => {
                     if (res.data.code == 200) {
                         this.$message({
@@ -438,14 +440,13 @@
             },
             resetUpPassword(data) {
                 //单个重置
-                this.operatorData=[]
+                this.operatorData = []
                 this.operatorData.push(data)
                 this.passReset()
             },
-            delOpera(data){
-              //删除操作员
-                let that=this
-
+            delOpera(data) {
+                //删除操作员
+                let that = this
 
                 this.$confirm('确定删除此用户？', '确认信息', {
                     confirmButtonText: '确定',
@@ -453,7 +454,7 @@
                     type: 'warning'
                 })
                     .then(() => {
-                        this.$axios.post(this.$store.state.deleteoperator,{uuid:data.uuid}).then(res=>{
+                        this.$axios.get(this.$store.state.deleteoperator, {params: {uuid: data.uuid}}).then(res => {
                             if (res.data.code == 200) {
                                 this.$message({
                                     message: '操作成功',
@@ -469,9 +470,6 @@
                     })
 
 
-
-
-
             },
             Multipleselection(data) {
                 //操作员多选
@@ -482,12 +480,12 @@
                 //修改操作员按钮
                 this.upaddUser = true
                 this.upaddUserData = data
-                if (data.role==="GENERAL") {
-                    this.upfactoryShow=false
-                    this.upfactorySelectShow=true
-                }else {
-                    this.upfactorySelectShow=false
-                    this.upfactoryShow=true
+                if (data.role === "GENERAL") {
+                    this.upfactoryShow = false
+                    this.upfactorySelectShow = true
+                } else {
+                    this.upfactorySelectShow = false
+                    this.upfactoryShow = true
                 }
                 console.log(data)
                 // upfactoryShow
@@ -654,7 +652,7 @@
         },
 
         created: function () {
-            this.judgeName=this.$cookies.get('nickname')
+            this.judgeName = this.$cookies.get('nickname')
             console.log(this.judgeName)
             this.OperatorQueryPage();//操作员信息分页查询
             this.factoryQuery()//工厂信息
