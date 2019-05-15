@@ -9,7 +9,7 @@
             <div class="QueryConditions QueryInput">
                 <div>
 
-                    <el-input clearable size="mini" v-model="styleCodeQuery" placeholder="款式编号"></el-input>
+                    <el-input clearable size="mini" v-model="styleCodeQuery" placeholder="工艺编号"></el-input>
                     <el-input clearable size="mini" v-model="merchantCodeQuery" placeholder="商家编码"></el-input>
                     <el-input clearable size="mini" v-model="nameQuery" placeholder="名称"></el-input>
 
@@ -2026,7 +2026,8 @@
 
         <el-table
                 border
-                height="750px"
+                ref="table"
+                :height="tableHeight"
                 :data="ProcessList"
                 stripe
                 @cell-dblclick="detailsQuery"
@@ -2043,7 +2044,7 @@
             </el-table-column>
 
             <el-table-column
-                    label="款式编号"
+                    label="工艺编号"
                     width="200"
                     prop="styleCode"
                     align="center">
@@ -2116,7 +2117,8 @@
         name: "ProcessManagement",
         data() {
             return {
-
+                screenWidth: document.body.clientWidth,
+                tableHeight: 0,//表格高度
                 pageNumQuery: 1,//分页查询默认显示页数
                 ProcessList: [],//工艺单数据
                 addprocess: false,//新建工艺单面板
@@ -2363,7 +2365,37 @@
                 DetailsMaterList: [],//工艺明细（原材料）
             }
         },
+        mounted() {
+
+            const that = this
+            window.onresize = () => {
+                return (() => {
+                    window.screenWidth = document.body.clientWidth
+                    that.screenWidth = window.screenWidth
+                })()
+            }
+        },
+        watch: {
+            screenWidth(val) {
+                if (!this.timer) {
+                    this.screenWidth = val
+                    this.timer = true
+                    let that = this
+                    setTimeout(function () {
+                        that.size()
+                        that.timer = false
+                        console.log(1)
+                    }, 400)
+                }
+            }
+        },
         methods: {
+            size(){
+                //监听窗口函数
+                setTimeout(() => {
+                    this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 150;
+                }, 100)
+            },
             detailsQuery(data) {
                 //工艺明细查询明细
                 this.ProcessDetails = true
@@ -2869,7 +2901,7 @@
         created: function () {
             this.PricessQuery()//工艺单分页查询
             this.queryMater();//原材料信息分页查询
-
+            this.size()
         }
     }
 </script>

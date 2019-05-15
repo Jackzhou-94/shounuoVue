@@ -41,25 +41,25 @@
             </div>
         </div>
 
-        <div>
+        <div class="tableBox">
             <el-table
                     id="aaa"
                     :data="quireGoodsData"
                     border
                     stripe
-                    height="750px"
+                    ref="table"
+                    :height="tableHeight"
                     @selection-change="goodsSelection"
                     style="width: 100%">
                 <el-table-column
                         align="center"
                         type="selection"
-                        width="50"
                 >
                 </el-table-column>
                 <el-table-column
                         align="center"
                         type="index"
-                        width="50">
+                >
                 </el-table-column>
                 <el-table-column
                         align="center"
@@ -130,35 +130,29 @@
                         align="center"
                         prop="unit"
                         v-if="unit"
-                        width="180"
+                        width="100"
                         label="基本单位">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         v-if="packag"
                         prop="packag"
-                        width="180"
+                        width="100"
                         label="包装材料">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         prop="weight"
                         v-if="weight"
-                        width="180"
+                        width="100"
                         label="重量">
                 </el-table-column>
-                <el-table-column
-                        align="center"
-                        prop="barCode"
-                        v-if="barCode"
-                        width="180"
-                        label="条形码">
-                </el-table-column>
+
                 <el-table-column
                         align="center"
                         prop="ingredients"
                         v-if="ingredients"
-                        width="180"
+                        width="100"
                         label="面料成份">
                 </el-table-column>
                 <el-table-column
@@ -206,19 +200,18 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <!--分页-->
-            <el-row>
-                <el-col :span="10" :offset="14">
-                    <el-pagination
-                            @current-change="goodslistpag"
-                            :page-size="15"
-                            layout="prev, pager, next, jumper"
-                            :total="totalRecordNum">
-                    </el-pagination>
-                </el-col>
-            </el-row>
         </div>
-
+        <!--分页-->
+        <el-row>
+            <el-col :span="10" :offset="14">
+                <el-pagination
+                        @current-change="goodslistpag"
+                        :page-size="15"
+                        layout="prev, pager, next, jumper"
+                        :total="totalRecordNum">
+                </el-pagination>
+            </el-col>
+        </el-row>
         <!--新建商品信息-->
         <el-dialog
                 title="新建商品信息"
@@ -243,8 +236,8 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="条形码" prop="barCode">
-                            <el-input size="mini" v-model="addgoodsForm.barCode"></el-input>
+                        <el-form-item label="货品编号" prop="itemCode">
+                            <el-input size="mini" v-model="addgoodsForm.itemCode"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -294,7 +287,8 @@
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="商品成本">
-                            <el-input-number size="mini" controls-position="right" v-model="addgoodsForm.costPrice" :precision="2" :step="0.1"></el-input-number>
+                            <el-input-number size="mini" controls-position="right" v-model="addgoodsForm.costPrice"
+                                             :precision="2" :step="0.1"></el-input-number>
                             <!--<el-input size="mini" v-model="addgoodsForm.costPrice"></el-input>-->
                         </el-form-item>
                     </el-col>
@@ -356,8 +350,8 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="条形码" prop="barCode">
-                            <el-input disabled size="mini" v-model="upgoodsForm.barCode"></el-input>
+                        <el-form-item label="货品编号" prop="itemCode">
+                            <el-input disabled size="mini" v-model="upgoodsForm.itemCode"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -418,7 +412,8 @@
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="商品成本">
-                            <el-input-number size="mini" controls-position="right" v-model="upgoodsForm.costPrice" :precision="2" :step="0.1"></el-input-number>
+                            <el-input-number size="mini" controls-position="right" v-model="upgoodsForm.costPrice"
+                                             :precision="2" :step="0.1"></el-input-number>
                             <!--<el-input size="mini" v-model="upgoodsForm.costPrice"></el-input>-->
                         </el-form-item>
                     </el-col>
@@ -721,6 +716,8 @@
         name: "goods",
         data() {
             return {
+                screenWidth: document.body.clientWidth,
+                tableHeight: 0,
                 queryname: '',//查询商品名称
                 querysku: '',//查询盒装SKU
                 queryitemCode: '',//查询货品编号
@@ -744,7 +741,7 @@
                     unit: '',//基本单位
                     packag: '',//包装材料
                     weight: '',//重量
-                    barCode: '',//条形码
+                    itemCode: '',//货品编号
                     ingredients: '',//面料成分
                     standard: '',//工艺标准
                     remark: '',//备注
@@ -754,30 +751,30 @@
                     //新建商品信息表单验证
                     name: [
                         {required: true, message: '请输入商品名称', trigger: 'blur'},
-                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+
                     ],
                     sku: [
                         {required: true, message: '请输入盒装SKU', trigger: 'blur'},
-                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+
                     ],
                     brand: [
                         {required: true, message: '请输入品牌', trigger: 'blur'},
-                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+
                     ],
                     process: [
                         {required: true, message: '请输入对应工艺流程', trigger: 'blur'},
-                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+
                     ],
-                    barCode: [
-                        {required: true, message: '请输入条形码', trigger: 'blur'},
-                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+                    itemCode: [
+                        {required: true, message: '请输货品编号', trigger: 'blur'},
+
                     ],
                     type: [
                         {required: true, message: '请输入条形码', trigger: 'change'},
                     ],
                     merchantCode: [
                         {required: true, message: '请输入商家编码', trigger: 'blur'},
-                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+
                     ]
                 },
                 addgoodsclassification: [
@@ -881,7 +878,7 @@
                     unit: '',//基本单位
                     packag: '',//包装材料
                     weight: '',//重量
-                    barCode: '',//条形码
+                    itemCode: '',//货品编号
                     ingredients: '',//面料成分
                     standard: '',//工艺标准
                     remark: '',//备注
@@ -891,23 +888,23 @@
                     //修改商品信息表单验证
                     name: [
                         {required: true, message: '请输入商品名称', trigger: 'blur'},
-                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+
                     ],
                     sku: [
                         {required: true, message: '请输入盒装SKU', trigger: 'blur'},
-                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+
                     ],
                     brand: [
                         {required: true, message: '请输入品牌', trigger: 'blur'},
-                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+
                     ],
                     process: [
                         {required: true, message: '请输入对应工艺流程', trigger: 'blur'},
-                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+
                     ],
-                    barCode: [
+                    itemCode: [
                         {required: true, message: '请输入条形码', trigger: 'blur'},
-                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+
                     ],
                     type: [
                         {required: true, message: '请输入条形码', trigger: 'change'},
@@ -1039,7 +1036,37 @@
                 flag: '',//用于记录是否保存修改数据
             }
         },
+        mounted() {
+
+            const that = this
+            window.onresize = () => {
+                return (() => {
+                    window.screenWidth = document.body.clientWidth
+                    that.screenWidth = window.screenWidth
+                })()
+            }
+        },
+        watch: {
+            screenWidth(val) {
+                if (!this.timer) {
+                    this.screenWidth = val
+                    this.timer = true
+                    let that = this
+                    setTimeout(function () {
+                        that.size()
+                        that.timer = false
+                        console.log(1)
+                    }, 400)
+                }
+            }
+        },
         methods: {
+            size(){
+              //监听窗口函数
+                setTimeout(() => {
+                    this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 150;
+                }, 100)
+            },
             closeFun() {
                 let obj = JSON.stringify(this.upgoodsForm)
                 let state = (obj == this.typedata)
@@ -1292,6 +1319,8 @@
         },
         created: function () {
             this.queryGoods()
+            this.size()
+
 
         }
     }

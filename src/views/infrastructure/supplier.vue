@@ -745,7 +745,8 @@
                     style="width: 100%"
                     border
                     stripe
-                    height="750px"
+                    ref="table"
+                    :height="tableHeight"
                     :data="supplierList"
                     highlight-current-row
                     @selection-change="supplierSelection"
@@ -1016,6 +1017,8 @@
         name: "supplier",
         data() {
             return {
+                screenWidth: document.body.clientWidth,
+                tableHeight: 0,//表格高度
                 data: [{
                     //供应商分类查询
                     label: '全部',
@@ -1070,7 +1073,7 @@
                     //表单验证
                     unitName: [
                         {required: true, message: '请输入单位名称', trigger: 'blur'},
-                        {min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur'}
+
                     ],
                     unitCode: [
                         {required: true, message: '请输入单位编码', trigger: 'blur'}
@@ -1170,7 +1173,37 @@
                 typedata: [],////用于储存数据，当表单发生改变时校验
             }
         },
+        mounted() {
+
+            const that = this
+            window.onresize = () => {
+                return (() => {
+                    window.screenWidth = document.body.clientWidth
+                    that.screenWidth = window.screenWidth
+                })()
+            }
+        },
+        watch: {
+            screenWidth(val) {
+                if (!this.timer) {
+                    this.screenWidth = val
+                    this.timer = true
+                    let that = this
+                    setTimeout(function () {
+                        that.size()
+                        that.timer = false
+                        console.log(1)
+                    }, 400)
+                }
+            }
+        },
         methods: {
+            size(){
+                //监听窗口函数
+                setTimeout(() => {
+                    this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 150;
+                }, 100)
+            },
             closeFun() {
                 let obj = JSON.stringify(this.upSupplierList)
                 let state = (obj == this.typedata)
@@ -1328,7 +1361,7 @@
         },
         created: function () {
             this.querySupplier()
-
+            this.size()
         }
     }
 </script>

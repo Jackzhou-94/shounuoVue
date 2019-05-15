@@ -61,7 +61,8 @@
                 stripe
                 :data="OperatorList"
                 @selection-change="Multipleselection"
-                height="750px">
+                ref="table"
+                :height="tableHeight">
             <el-table-column type="selection" align="center"></el-table-column>
             <el-table-column type="index" align="center"></el-table-column>
             <el-table-column prop="username" label="登录账号" align="center"></el-table-column>
@@ -238,6 +239,8 @@
 
 
             return {
+                screenWidth: document.body.clientWidth,
+                tableHeight: 0,//表格高度
                 addUser: false,//新建用户面板
                 upaddUser: false,//修改用户面板
                 judgeName: '',//用于身份判断，自己无法删除
@@ -345,7 +348,37 @@
                 operatorData: [],//选中操作员信息
             }
         },
+        mounted() {
+
+            const that = this
+            window.onresize = () => {
+                return (() => {
+                    window.screenWidth = document.body.clientWidth
+                    that.screenWidth = window.screenWidth
+                })()
+            }
+        },
+        watch: {
+            screenWidth(val) {
+                if (!this.timer) {
+                    this.screenWidth = val
+                    this.timer = true
+                    let that = this
+                    setTimeout(function () {
+                        that.size()
+                        that.timer = false
+                        console.log(1)
+                    }, 400)
+                }
+            }
+        },
         methods: {
+            size() {
+                //监听窗口函数
+                setTimeout(() => {
+                    this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 150;
+                }, 100)
+            },
             operatorEnable() {
                 //启用
                 let that = this
@@ -653,9 +686,10 @@
 
         created: function () {
             this.judgeName = this.$cookies.get('nickname')
-            console.log(this.judgeName)
+
             this.OperatorQueryPage();//操作员信息分页查询
             this.factoryQuery()//工厂信息
+            this.size()
 
         }
     }

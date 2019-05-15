@@ -51,7 +51,8 @@
                 border
                 stripe
                 :data="ProductionList"
-                height="750px"
+                ref="table"
+                :height="tableHeight"
                 @selection-change="ProductionSelect">
             >
             <el-table-column align="center" type="selection"></el-table-column>
@@ -116,7 +117,9 @@
                 width="1100px">
             <div class="QueryConditions">
                 <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
-                <el-button type="primary" icon="el-icon-view" size="mini" :disabled="stateButton"  @click="workerSettingsBtn">派工设置</el-button>
+                <el-button type="primary" icon="el-icon-view" size="mini" :disabled="stateButton"
+                           @click="workerSettingsBtn">派工设置
+                </el-button>
             </div>
 
             <el-table
@@ -173,12 +176,15 @@
 
                 <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
                 <!--:disabled="auditStatusBut" 提交审核显示控制-->
-                <el-button size="mini" :disabled="pruauditStatusBut" type="primary" @click="dispatchSubmitAudit">提交审核</el-button>
+                <el-button size="mini" :disabled="pruauditStatusBut" type="primary" @click="dispatchSubmitAudit">提交审核
+                </el-button>
 
                 <!--:disabled="submitStatusBut" 审核通过显示控制-->
-                <el-button size="mini" :disabled="prusubmitStatusBut" type="primary" @click="dispatchapproved">审核通过</el-button>
+                <el-button size="mini" :disabled="prusubmitStatusBut" type="primary" @click="dispatchapproved">审核通过
+                </el-button>
                 <!--:disabled="submitStatusBut" 审核驳回显示控制-->
-                <el-button size="mini" :disabled="prusubmitStatusBut" type="primary" @click="dispatchapprovedRejected">审核驳回
+                <el-button size="mini" :disabled="prusubmitStatusBut" type="primary" @click="dispatchapprovedRejected">
+                    审核驳回
                 </el-button>
 
             </div>
@@ -186,7 +192,7 @@
                     border
                     stripe
                     :data="dispatchingDetailsData"
-                    @selection-change="selectionDetailsPlanList"
+                    @selection-change="dispatchingDetails"
 
             >
                 <el-table-column align="center" type="index"></el-table-column>
@@ -1138,6 +1144,8 @@
         name: "production",
         data() {
             return {
+                screenWidth: document.body.clientWidth,
+                tableHeight: 0,//表格高度
                 //时间选择
                 pickerOptions: {
                     shortcuts: [{
@@ -1303,7 +1311,8 @@
                 remarkShow: true,//备注
 
 
-                Dispatched: [],//选择的派工单信息
+                Dispatched: [],//选择需要派单的信息
+                dispatchingList: [],//选择派工单的信息
                 functionsSelect: false,//选择工厂职能面板
                 DispatchedFactory: '',//选择的工厂数据
                 checkList: [],//选择工厂时选中的工厂职能
@@ -1325,8 +1334,37 @@
                 stateButton: false,//派工按钮
             }
         },
+        mounted() {
 
+            const that = this
+            window.onresize = () => {
+                return (() => {
+                    window.screenWidth = document.body.clientWidth
+                    that.screenWidth = window.screenWidth
+                })()
+            }
+        },
+        watch: {
+            screenWidth(val) {
+                if (!this.timer) {
+                    this.screenWidth = val
+                    this.timer = true
+                    let that = this
+                    setTimeout(function () {
+                        that.size()
+                        that.timer = false
+                        console.log(1)
+                    }, 400)
+                }
+            }
+        },
         methods: {
+            size(){
+                //监听窗口函数
+                setTimeout(() => {
+                    this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 150;
+                }, 100)
+            },
             ProductionSelect(data) {
                 //生产计划单多选
                 this.ProductionData = data
@@ -1434,13 +1472,10 @@
                 })
 
             },
-
-
-
             dispatchSubmitAudit() {
                 //生产计划单提交审核
                 let data = {
-                    dispatchDetailBeanList: this.Dispatched,
+                    dispatchDetailBeanList: this.dispatchingList,
                     submitState: 'tj01'
                 }
                 let that = this
@@ -1462,7 +1497,7 @@
             dispatchapprovedRejected() {
                 //审核驳回
                 let data = {
-                    dispatchDetailBeanList: this.Dispatched,
+                    dispatchDetailBeanList: this.dispatchingList,
                     auditState: 'sh03',
                     submitState: 'tj02'
                 }
@@ -1485,7 +1520,7 @@
             dispatchapproved() {
                 //生产计划单通过审核
                 let data = {
-                    dispatchDetailBeanList: this.Dispatched,
+                    dispatchDetailBeanList: this.dispatchingList,
                     auditState: 'sh01'
                 }
                 let that = this
@@ -1505,8 +1540,6 @@
                 })
 
             },
-
-
 
 
             generateDispatch() {
@@ -1594,13 +1627,11 @@
                 //选中需要派单的信息
                 this.Dispatched = data
                 console.log(data)
-                // this.Dispatched.children=data.processNodeList
-                // this.Dispatched.forEach(item => {
-                //     item.dispatchedDetailList = []
-                // })
-
-
+            },
+            dispatchingDetails(data) {
+                //选择派工详情
                 //采购单多选
+                this.dispatchingList = data
                 if (data.length == 0) {
                     this.prusubmitStatusBut = true
                     this.pruauditStatusBut = true
@@ -1615,9 +1646,6 @@
                     })
                     let num = list.indexOf('tj02')
                     let nums = lists.indexOf('sh01')
-                    console.log(data)
-                    console.log(list)
-                    console.log(nums)
                     if (num == -1) {
                         this.prusubmitStatusBut = false
                         this.pruauditStatusBut = true
@@ -1631,21 +1659,7 @@
                         this.prudelStatusBut = true
                     }
                 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-            }
-            ,
+            },
             workerSettingsBtn() {
                 //派工设置按钮
                 if (this.Dispatched.length != 0) {
@@ -1675,7 +1689,7 @@
                  * 生产计划单明细
                  * */
                 this.$axios.get(this.$store.state.produceplanselect, {
-                    params: {uuid: data.uuid}
+                    params: {uuid: this.producitonUUID}
                 }).then(res => {
                     console.log(res)
 
@@ -2163,6 +2177,7 @@
         },
         created: function () {
             this.ProduQueryPage()//生产计划单分页查询
+            this.size()
         }
 
 

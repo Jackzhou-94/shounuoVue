@@ -1275,7 +1275,8 @@
                 stripe
                 @row-dblclick="doubleClickStorage"
                 @selection-change="handleStorage"
-                height="720"
+                ref="table"
+                :height="tableHeight"
         >
             <el-table-column type="selection" align="center"></el-table-column>
             <el-table-column type="index" align="center"></el-table-column>
@@ -1497,6 +1498,8 @@
         name: "storage",
         data() {
             return {
+                screenWidth: document.body.clientWidth,
+                tableHeight: 0,//表格高度
                 /**
                  * 显示设置
                  * **/
@@ -1827,7 +1830,37 @@
                 typedata: [],////用于储存数据，当表单发生改变时校验
             }
         },
+        mounted() {
+
+            const that = this
+            window.onresize = () => {
+                return (() => {
+                    window.screenWidth = document.body.clientWidth
+                    that.screenWidth = window.screenWidth
+                })()
+            }
+        },
+        watch: {
+            screenWidth(val) {
+                if (!this.timer) {
+                    this.screenWidth = val
+                    this.timer = true
+                    let that = this
+                    setTimeout(function () {
+                        that.size()
+                        that.timer = false
+                        console.log(1)
+                    }, 400)
+                }
+            }
+        },
         methods: {
+            size(){
+                //监听窗口函数
+                setTimeout(() => {
+                    this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 150;
+                }, 100)
+            },
             closeFun() {
                 let obj = JSON.stringify(this.upNewWarehousing)
                 let state = (obj == this.typedata)
@@ -2405,7 +2438,7 @@
             this.supplierQuery()//供应商列表查询
 
             this.storageQuery() //分页列表入库单查询
-
+            this.size()
         }
     }
 </script>

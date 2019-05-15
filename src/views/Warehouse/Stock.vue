@@ -124,7 +124,8 @@
         <el-table
                 border
                 :data="stocList"
-                height="750"
+                ref="table"
+                :height="tableHeight"
                 stripe
                 width="100%"
         >
@@ -243,6 +244,8 @@
         name: "Stock",
         data() {
             return {
+                screenWidth: document.body.clientWidth,
+                tableHeight: 0,//表格高度
                 pickerOptions2: {
                     //查询时间快捷选项
                     shortcuts: [{
@@ -313,7 +316,37 @@
             }
 
         },
+        mounted() {
+
+            const that = this
+            window.onresize = () => {
+                return (() => {
+                    window.screenWidth = document.body.clientWidth
+                    that.screenWidth = window.screenWidth
+                })()
+            }
+        },
+        watch: {
+            screenWidth(val) {
+                if (!this.timer) {
+                    this.screenWidth = val
+                    this.timer = true
+                    let that = this
+                    setTimeout(function () {
+                        that.size()
+                        that.timer = false
+                        console.log(1)
+                    }, 400)
+                }
+            }
+        },
         methods: {
+            size(){
+                //监听窗口函数
+                setTimeout(() => {
+                    this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 150;
+                }, 100)
+            },
             factorylistpags(val) {
                 //库存分页查询
                 this.pageNum = val
@@ -353,6 +386,7 @@
         created: function () {
             this.factoryQuery();//工厂信息查询
             this.stockQuery();//库存分页查询
+            this.size()
         }
     }
 </script>

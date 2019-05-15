@@ -67,7 +67,7 @@ export default new Vuex.Store({
         deleteStorage: 'http://192.168.2.189:8099/supplychain/warehouse/material/delete',//删除入库单
         storageAudit: 'http://192.168.2.189:8099/supplychain/warehouse/material/updateSubmit',//入库单提交审核
         throughStorage: 'http://192.168.2.189:8099/supplychain/warehouse/material/updateAudit',//入库单审核通过
-        RejectStorage: 'http://192.168.2.189:8099/supplychain/warehouse/material/updateUnSubmit',//入库单审核驳回
+        RejectStorage: 'http://192.168.2.189:8099/supplychain/warehouse/material/updateUnAudit',//入库单审核驳回
 
 
         stockQuery: 'http://192.168.2.189:8099/supplychain/warehouse/stock/material/queryPage',//库存分页查询

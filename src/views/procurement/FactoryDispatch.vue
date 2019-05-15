@@ -2,15 +2,15 @@
     <div class="FactoryDispatch">
         <div class="menuBox">
             <div class="QueryConditions">
-                <el-button size="mini" type="primary" class="el-icon-plus" @click="addfactoryDispath=true">新建
-                </el-button>
+                <!--<el-button size="mini" type="primary" class="el-icon-plus" @click="addfactoryDispath=true">新建-->
+                <!--</el-button>-->
                 <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
-                <el-button size="mini" type="primary" :disabled="auditStatusBut">提交审核</el-button>
-                <el-button size="mini" type="primary" :disabled="submitStatusBut">审核通过
-                </el-button>
-                <el-button size="mini" type="primary" :disabled="submitStatusBut">审核驳回
-                </el-button>
-                <el-button size="mini" type="danger" :disabled="delStatusBut" @click="delFactory">批量删除</el-button>
+                <!--<el-button size="mini" type="primary" :disabled="auditStatusBut">提交审核</el-button>-->
+                <!--<el-button size="mini" type="primary" :disabled="submitStatusBut">审核通过-->
+                <!--</el-button>-->
+                <!--<el-button size="mini" type="primary" :disabled="submitStatusBut">审核驳回-->
+                <!--</el-button>-->
+                <!--<el-button size="mini" type="danger" :disabled="delStatusBut" @click="delFactory">批量删除</el-button>-->
             </div>
             <div class=" QueryConditions QueryInput">
                 <div>
@@ -47,7 +47,8 @@
                 stripe
                 :data="FaDidsList"
                 style="width: 100%"
-                height="720px"
+                ref="table"
+                :height="tableHeight"
                 @selection-change="Multipleselection"
         >
             <el-table-column type="selection" align="center"></el-table-column>
@@ -55,18 +56,10 @@
             <el-table-column label="派工单编号" width="160px" prop="dispatchCode" v-if="DistributionNumberShow"
                              align="center"></el-table-column>
             <el-table-column label="工厂" v-if="factoryShow" prop="factoryName" align="center"></el-table-column>
-            <!--<el-table-column label="工艺" v-if="TechnologyShow" prop="processNode" align="center">-->
-
-            <!--<template slot-scope="scope">-->
-
-            <!--{{scope.row.processNode}}-->
-            <!--</template>-->
-
-
-            <!--</el-table-column>-->
+            <el-table-column label="款式编号" width="170px" v-if="styleCodeShow" prop="styleCode" align="center"></el-table-column>
             <el-table-column
-                    label="工艺流程"
-                    width="230"
+                    label="工艺"
+                    width="100"
                     v-if="TechnologyShow"
                     align="center">
                 <template slot-scope="scope">
@@ -86,19 +79,19 @@
             <el-table-column label="加工数量" v-if="ProcessingQuantityShow" prop="totalNumber"
                              align="center"></el-table-column>
 
-            <el-table-column label="提交状态" v-if="submitShow" prop="totalNumber"
-                             align="center">
-                <template slot-scope="scope">
-                    <span>{{scope.row.submitStatus=='tj01'?'已提交':'未提交'}}</span>
-                </template>
-            </el-table-column>
+            <!--<el-table-column label="提交状态" v-if="submitShow" prop="totalNumber"-->
+                             <!--align="center">-->
+                <!--<template slot-scope="scope">-->
+                    <!--<span>{{scope.row.submitStatus=='tj01'?'已提交':'未提交'}}</span>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
 
-            <el-table-column label="审核状态" v-if="auditShow" prop="totalNumber"
-                             align="center">
-                <template slot-scope="scope">
-                    <span>{{scope.row.auditStatus=='sh01'?'已审核':scope.row.auditStatus=='sh02'?'未审核':'审核驳回'}}</span>
-                </template>
-            </el-table-column>
+            <!--<el-table-column label="审核状态" v-if="auditShow" prop="totalNumber"-->
+                             <!--align="center">-->
+                <!--<template slot-scope="scope">-->
+                    <!--<span>{{scope.row.auditStatus=='sh01'?'已审核':scope.row.auditStatus=='sh02'?'未审核':'审核驳回'}}</span>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
 
 
             <el-table-column label="单位" v-if="uintShow" align="center" prop="goodsUnit"></el-table-column>
@@ -537,6 +530,7 @@
                     </el-col>
 
                 </el-row>
+
                 <el-row>
                     <el-col :span="12">
                         <el-checkbox v-model="submitShow">提交状态</el-checkbox>
@@ -545,6 +539,11 @@
                         <el-checkbox v-model="auditShow">审核状态</el-checkbox>
                     </el-col>
 
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-checkbox v-model="styleCodeShow">款式编号</el-checkbox>
+                    </el-col>
                 </el-row>
             </div>
 
@@ -557,6 +556,8 @@
         name: "FactoryDispatch",
         data() {
             return {
+                screenWidth: document.body.clientWidth,
+                tableHeight: 0,//表格高度
                 Settings: false,//显示设置面板
                 addfactoryDispath: false,//新建派工单面板
 
@@ -571,8 +572,9 @@
                  * */
                 ProductionOrderShow: true,//生产计划单编号
                 DistributionNumberShow: true,//派工单编号
+                styleCodeShow: true,//款式编号
                 factoryShow: true,//工厂
-                TechnologyShow: true,//工艺
+                TechnologyShow:true,//工艺
                 PreprocessingShow: true,//预加工时间
                 PrecompletionShow: true,//预完工时间
                 ProcessingQuantityShow: true,//加工数量
@@ -708,7 +710,37 @@
                 uuidList: [],//删除IDs
             }
         },
+        mounted() {
+
+            const that = this
+            window.onresize = () => {
+                return (() => {
+                    window.screenWidth = document.body.clientWidth
+                    that.screenWidth = window.screenWidth
+                })()
+            }
+        },
+        watch: {
+            screenWidth(val) {
+                if (!this.timer) {
+                    this.screenWidth = val
+                    this.timer = true
+                    let that = this
+                    setTimeout(function () {
+                        that.size()
+                        that.timer = false
+                        console.log(1)
+                    }, 400)
+                }
+            }
+        },
         methods: {
+            size(){
+                //监听窗口函数
+                setTimeout(() => {
+                    this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 150;
+                }, 100)
+            },
             delFadis(data) {
                 //单条删除派工单
                 this.uuidList = []
@@ -1000,7 +1032,7 @@
         },
         created: function () {
             this.dispatchPageQuery()//派工单分页查询
-
+            this.size()
         }
     }
 </script>

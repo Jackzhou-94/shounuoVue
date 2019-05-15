@@ -39,7 +39,8 @@
                 stripe
                 :data="storeDataList"
                 style="width: 100%"
-                height="720px"
+                ref="table"
+                :height="tableHeight"
                 @selection-change="Multipleselection"
         >
             <el-table-column align="center" type="selection"></el-table-column>
@@ -691,6 +692,8 @@
         name: "storageProducts",
         data() {
             return {
+                screenWidth: document.body.clientWidth,
+                tableHeight: 0,//表格高度
                 submitStatusstoreBut: true,//审核按钮
                 auditStatusstoreBut: true,//提交按钮
                 delStatusstoreBut: true,//删除按钮
@@ -859,7 +862,37 @@
                 typedata: '',//用于储存数据，当表单发生改变时校验
             }
         },
+        mounted() {
+
+            const that = this
+            window.onresize = () => {
+                return (() => {
+                    window.screenWidth = document.body.clientWidth
+                    that.screenWidth = window.screenWidth
+                })()
+            }
+        },
+        watch: {
+            screenWidth(val) {
+                if (!this.timer) {
+                    this.screenWidth = val
+                    this.timer = true
+                    let that = this
+                    setTimeout(function () {
+                        that.size()
+                        that.timer = false
+                        console.log(1)
+                    }, 400)
+                }
+            }
+        },
         methods: {
+            size(){
+                //监听窗口函数
+                setTimeout(() => {
+                    this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 150;
+                }, 100)
+            },
             closeFun() {
                 let obj = JSON.stringify(this.upaddstorageProductsData)
                 let state = (obj == this.typedata)
@@ -1101,7 +1134,7 @@
         },
         created: function () {
             this.stockinQueryPage()//入库单分页查询
-
+            this.size()
         }
     }
 </script>

@@ -48,7 +48,8 @@
                 stripe
                 :data="ProductionLogData"
                 style="width: 100%"
-                height="720px"
+                ref="table"
+                :height="tableHeight"
                 @selection-change="Multipleselection"
         >
             <el-table-column align="center" type="selection"></el-table-column>
@@ -62,19 +63,19 @@
                              width="130px"></el-table-column>
             <el-table-column align="center" v-if="actualProduceQuantityShow" prop="actualProduceQuantity" label="实际生产总量"
                              width="130px"></el-table-column>
-            <el-table-column label="提交状态" v-if="submitShows" prop="totalNumber"
-                             align="center">
-                <template slot-scope="scope">
-                    <span>{{scope.row.submitStatus=='tj01'?'已提交':'未提交'}}</span>
-                </template>
-            </el-table-column>
+            <!--<el-table-column label="提交状态" v-if="submitShows" prop="totalNumber"-->
+                             <!--align="center">-->
+                <!--<template slot-scope="scope">-->
+                    <!--<span>{{scope.row.submitStatus=='tj01'?'已提交':'未提交'}}</span>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
 
-            <el-table-column label="审核状态" v-if="auditSshow" prop="totalNumber"
-                             align="center">
-                <template slot-scope="scope">
-                    <span>{{scope.row.auditStatus=='sh01'?'已审核':scope.row.auditStatus=='sh02'?'未审核':'审核驳回'}}</span>
-                </template>
-            </el-table-column>
+            <!--<el-table-column label="审核状态" v-if="auditSshow" prop="totalNumber"-->
+                             <!--align="center">-->
+                <!--<template slot-scope="scope">-->
+                    <!--<span>{{scope.row.auditStatus=='sh01'?'已审核':scope.row.auditStatus=='sh02'?'未审核':'审核驳回'}}</span>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
             <el-table-column align="center" v-if="actualProduceTimeShow" prop="actualProduceTime" label="实际生产时间" width="160px"></el-table-column>
             <el-table-column align="center" v-if="produceCodeShow" prop="produceCode" label="生产计划单编号" width="160px"></el-table-column>
             <el-table-column align="center" v-if="dispatchCodeShow" prop="dispatchCode" label="派工单号" width="160px"></el-table-column>
@@ -682,6 +683,8 @@
         name: "ProductionLog",
         data() {
             return {
+                screenWidth: document.body.clientWidth,
+                tableHeight: 0,//表格高度
                 submitStatusBut: true,//审核按钮
                 auditStatusBut: true,//提交按钮
                 delStatusBut: true,//删除按钮
@@ -840,7 +843,37 @@
                 ids:[],//生产日志ids用于删除
             }
         },
+        mounted() {
+
+            const that = this
+            window.onresize = () => {
+                return (() => {
+                    window.screenWidth = document.body.clientWidth
+                    that.screenWidth = window.screenWidth
+                })()
+            }
+        },
+        watch: {
+            screenWidth(val) {
+                if (!this.timer) {
+                    this.screenWidth = val
+                    this.timer = true
+                    let that = this
+                    setTimeout(function () {
+                        that.size()
+                        that.timer = false
+                        console.log(1)
+                    }, 400)
+                }
+            }
+        },
         methods: {
+            size(){
+                //监听窗口函数
+                setTimeout(() => {
+                    this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 150;
+                }, 100)
+            },
             upProdulog(data){
               //生产日志修改按钮
                 console.log(data)
@@ -1068,7 +1101,7 @@
         },
         created: function () {
             this.producelogQuery()//生产日志查询
-
+            this.size()
         }
     }
 </script>

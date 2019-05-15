@@ -46,7 +46,7 @@
                 <div class="QueryConditions QueryInput">
 
                     <div>
-                        <el-input  style="width: 150px" placeholder="物料编号" size="mini" v-model="materialsNum"></el-input>
+                        <el-input style="width: 150px" placeholder="物料编号" size="mini" v-model="materialsNum"></el-input>
 
                         <el-input style="width: 150px" placeholder="物料名称" size="mini"
                                   v-model="materialsName"></el-input>
@@ -139,7 +139,8 @@
             </div>
             <!--右侧表格数据-->
             <el-table
-                    height="750px"
+                    ref="table"
+                    :height="tableHeight"
                     border
                     stripe
                     id="out-table"
@@ -294,17 +295,17 @@
                      label-width="100px" label-position="right">
 
                 <el-row>
-
-                    <el-col :span="8">
-                        <el-form-item label="物料名称" prop="name">
-                            <el-input size="mini" v-model="addmaterial.name"></el-input>
-                        </el-form-item>
-                    </el-col>
                     <el-col :span="8">
                         <el-form-item label="物料编码" prop="materialCode">
                             <el-input size="mini" @blur="itemCodeCopy" v-model="addmaterial.materialCode"></el-input>
                         </el-form-item>
                     </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="物料名称" prop="name">
+                            <el-input size="mini" v-model="addmaterial.name"></el-input>
+                        </el-form-item>
+                    </el-col>
+
                     <el-col :span="8">
                         <el-form-item label="物料分类" prop="materials">
                             <el-cascader
@@ -320,9 +321,9 @@
 
                 <el-row>
                     <el-col :span="8">
-                        <el-form-item label="默认损耗" prop="defaultLoss">
-                            <el-input size="mini" type="number" v-model="addmaterial.defaultLoss"
-                                      placeholder="%"></el-input>
+                        <el-form-item label="成本价" prop="cost">
+                            <el-input size="mini" type="number" v-model="addmaterial.costPrice"
+                                      placeholder="元"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -364,20 +365,15 @@
                             <el-input size="mini" v-model="addmaterial.ingredients"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="成本价" prop="cost">
-                            <el-input size="mini" type="number" v-model="addmaterial.costPrice"
-                                      placeholder="元"></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row>
+
+
                     <el-col :span="8">
                         <el-form-item label="备注" prop="note">
                             <el-input size="mini" v-model="addmaterial.note"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
+
 
             </el-form>
 
@@ -390,18 +386,18 @@
             <el-form :model="updaData" ref="updaData" :rules="ruless"
                      label-width="100px" label-position="right">
                 <el-row>
-
-                    <el-col :span="8">
-                        <el-form-item label="物料名称" prop="name">
-                            <el-input size="mini" v-model="updaData.name"></el-input>
-                        </el-form-item>
-                    </el-col>
                     <el-col :span="8">
                         <el-form-item label="物料编码" prop="materialCode">
                             <el-input size="mini" @blur="itemCodeCopy" :disabled="true"
                                       v-model="updaData.materialCode"></el-input>
                         </el-form-item>
                     </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="物料名称" prop="name">
+                            <el-input size="mini" v-model="updaData.name"></el-input>
+                        </el-form-item>
+                    </el-col>
+
                     <el-col :span="8">
                         <el-form-item label="物料分类" prop="materials">
                             <el-cascader
@@ -419,9 +415,9 @@
 
                 <el-row>
                     <el-col :span="8">
-                        <el-form-item label="默认损耗" prop="defaultLoss">
-                            <el-input size="mini" type="number" v-model="updaData.defaultLoss"
-                                      placeholder="%"></el-input>
+                        <el-form-item label="成本价" prop="cost">
+                            <el-input size="mini" type="number" v-model="updaData.costPrice"
+                                      placeholder="元"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -465,21 +461,14 @@
                         </el-form-item>
                     </el-col>
 
-                    <el-col :span="8">
-                        <el-form-item label="成本价" prop="cost">
-                            <el-input size="mini" type="number" v-model="updaData.costPrice"
-                                      placeholder="元"></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
 
-                <el-row>
                     <el-col :span="8">
                         <el-form-item label="备注" prop="note">
                             <el-input size="mini" v-model="updaData.note"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
+
 
             </el-form>
             <el-button type="primary" size="mini" @click="upsubmitForm('updaData')">立即修改</el-button>
@@ -633,6 +622,8 @@
         name: "materials",
         data() {
             return {
+                screenWidth: document.body.clientWidth,
+                tableHeight: 0,//表格高度
                 recycle: false,//回收站面板
                 recycleData: [],//回收站数据
                 recycleDataID: [],//回收站数据id
@@ -668,7 +659,6 @@
                     materialCode: '',//物料编码
                     type: 'cc',//物料选择
                     costPrice: '',//成本价
-                    defaultLoss: '',//损耗
                     unit: '',//基本计量单位
                     ingredients: '',//成份
                     manufacturer: '',//厂商
@@ -680,7 +670,7 @@
                 rules: {
                     name: [
                         {required: true, message: '请输入物料名称', trigger: 'blur'},
-                        {min: 3, max: 5, message: '长度在3到5个字符之间', trigger: 'blur'}
+
                     ],
                     materialCode: [
                         {required: true, message: '请输入物料编码', trigger: 'blur'},
@@ -688,9 +678,7 @@
                     materials: [
                         {required: true, message: '请选择物料', trigger: 'change'}
                     ],
-                    defaultLoss: [
-                        {required: true, message: '请输入默认损耗', trigger: 'blur'}
-                    ],
+
                     unit: [
                         {required: true, message: '请输入基本计量单位', trigger: 'blur'}
                     ],
@@ -701,7 +689,7 @@
                 ruless: {
                     name: [
                         {required: true, message: '请输入物料名称', trigger: 'blur'},
-                        {min: 3, max: 5, message: '长度在3到5个字符之间', trigger: 'blur'}
+
                     ],
                     materialCode: [
                         {required: true, message: '请输入物料编码', trigger: 'blur'},
@@ -709,9 +697,7 @@
                     materials: [
                         {required: true, message: '请选择物料', trigger: 'change'}
                     ],
-                    defaultLoss: [
-                        {required: true, message: '请输入默认损耗', trigger: 'blur'}
-                    ],
+
                     unit: [
                         {required: true, message: '请输入基本计量单位', trigger: 'blur'}
                     ],
@@ -863,7 +849,37 @@
                 typedata: '',////用于储存数据，当表单发生改变时校验
             }
         },
+        mounted() {
+
+            const that = this
+            window.onresize = () => {
+                return (() => {
+                    window.screenWidth = document.body.clientWidth
+                    that.screenWidth = window.screenWidth
+                })()
+            }
+        },
+        watch: {
+            screenWidth(val) {
+                if (!this.timer) {
+                    this.screenWidth = val
+                    this.timer = true
+                    let that = this
+                    setTimeout(function () {
+                        that.size()
+                        that.timer = false
+                        console.log(1)
+                    }, 400)
+                }
+            }
+        },
         methods: {
+            size(){
+                //监听窗口函数
+                setTimeout(() => {
+                    this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 150;
+                }, 100)
+            },
             closeFun() {
                 let obj = JSON.stringify(this.updaData)
                 console.log(obj)
@@ -1381,7 +1397,7 @@
 
             //供应商列表信息
             this.supplierQuery()
-
+            this.size()
         }
 
     }
@@ -1413,8 +1429,6 @@
         width: 88%;
         height: 100%;
     }
-
-
 
     .selsectInput .el-input, .selsectInput .el-cascader .selsectInput .el-select {
         width: 150px;

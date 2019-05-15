@@ -46,7 +46,8 @@
                     :data="factoryList"
                     border
                     stripe
-                    height="750px"
+                    ref="table"
+                    :height="tableHeight"
                     @selection-change="factorySelection"
                     style="width: 100%">
                 <el-table-column
@@ -259,9 +260,9 @@
                     </el-col>
                     <el-col :span="8">
 
-                        <el-form-item label="收货城市" prop="address">
+                        <el-form-item label="工厂地址" prop="address">
                             <el-cascader
-                                    placeholder="收货城市"
+                                    placeholder="工厂地址"
                                     :options="option"
                                     v-model="address"
                                     @change="handleChange">
@@ -279,14 +280,14 @@
                                       v-model="addfactoryForm.detailedAddress"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="所属公司" prop="company">
-                            <el-input placeholder="所属公司" v-model="addfactoryForm.company"></el-input>
-                        </el-form-item>
-                    </el-col>
 
                     <el-col :span="8">
-                        <el-form-item label="手机号码">
+                        <el-form-item label="联系人" prop="contact">
+                            <el-input placeholder="联系人" v-model="addfactoryForm.contact"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="手机号码" prop="phoneNumber">
                             <el-input placeholder="手机号码" v-model="addfactoryForm.phoneNumber"></el-input>
                         </el-form-item>
                     </el-col>
@@ -294,8 +295,8 @@
 
                 <el-row>
                     <el-col :span="8">
-                        <el-form-item label="联系人">
-                            <el-input placeholder="联系人" v-model="addfactoryForm.contact"></el-input>
+                        <el-form-item label="所属公司" prop="company">
+                            <el-input placeholder="所属公司" v-model="addfactoryForm.company"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -350,11 +351,6 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <!--<el-form-item label="地址" prop="address">-->
-                        <!--<el-input size="mini" v-model="upfactoryForm.address"></el-input>-->
-                        <!--</el-form-item>-->
-
-
                         <el-form-item label="收货城市" prop="address">
                             <el-cascader
                                     placeholder="收货城市"
@@ -374,14 +370,14 @@
                             <el-input placeholder="收货地址" v-model="upfactoryForm.detailedAddress"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="所属公司" prop="company">
-                            <el-input placeholder="所属公司" v-model="upfactoryForm.company"></el-input>
-                        </el-form-item>
-                    </el-col>
 
                     <el-col :span="8">
-                        <el-form-item label="手机号码">
+                        <el-form-item label="联系人" prop="contact">
+                            <el-input placeholder="联系人" v-model="upfactoryForm.contact"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="手机号码" prop="phoneNumber">
                             <el-input placeholder="手机号码" v-model="upfactoryForm.phoneNumber"></el-input>
                         </el-form-item>
                     </el-col>
@@ -389,8 +385,8 @@
 
                 <el-row>
                     <el-col :span="8">
-                        <el-form-item label="联系人">
-                            <el-input placeholder="联系人" v-model="upfactoryForm.contact"></el-input>
+                        <el-form-item label="所属公司" prop="company">
+                            <el-input placeholder="所属公司" v-model="upfactoryForm.company"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -443,6 +439,8 @@
         name: "factory",
         data() {
             return {
+                screenWidth: document.body.clientWidth,
+                tableHeight: 0,//表格高度
                 Settings: false,//显示设置
                 pageSizeFactory: 15,//每页条目数
                 pageNumFactory: 1,//当前页数
@@ -491,17 +489,23 @@
                     //新建厂商信息表单验证
                     name: [
                         {required: true, message: '请输入厂商名称', trigger: 'blur'},
-                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+
                     ],
                     code: [
                         {required: true, message: '请输入厂商编码', trigger: 'blur'},
-                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+
                     ],
                     address: [
                         {required: true, message: '请选择收货城市', trigger: 'blur'}
                     ],
+                    phoneNumber: [
+                        {required: true, message: '手机号不能为空', trigger: 'blur'}
+                    ],
+                    contact: [
+                        {required: true, message: '联系人不能为空', trigger: 'blur'}
+                    ],
                     detailedAddress: [
-                        {required: true, message: '收货地址不能为空', trigger: 'blur'}
+                        {required: true, message: '工厂地址不能为空', trigger: 'blur'}
                     ],
                     technologys: [
                         {required: true, message: '工艺不能为空', trigger: 'blur'}
@@ -527,17 +531,23 @@
                     //新建厂商信息表单验证
                     name: [
                         {required: true, message: '请输入厂商名称', trigger: 'blur'},
-                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+
                     ],
                     code: [
                         {required: true, message: '请输入厂商编码', trigger: 'blur'},
-                        {min: 3, max: 8, message: '长度在3到8个字符', trigger: 'blur'}
+
+                    ],
+                    phoneNumber: [
+                        {required: true, message: '手机号不能为空', trigger: 'blur'}
+                    ],
+                    contact: [
+                        {required: true, message: '联系人不能为空', trigger: 'blur'}
                     ],
                     address: [
                         {required: true, message: '请选择收货城市', trigger: 'blur'}
                     ],
                     detailedAddress: [
-                        {required: true, message: '收货地址不能为空', trigger: 'blur'}
+                        {required: true, message: '工厂地址不能为空', trigger: 'blur'}
                     ],
                     technologys: [
                         {required: true, message: '工艺不能为空', trigger: 'blur'}
@@ -548,7 +558,7 @@
                  * **/
                 nameShow: true,//名称
                 codeShow: true,//编码
-                functionShow:true,//工厂职能
+                functionShow: true,//工厂职能
                 addressShow: true,//城市
                 detailedAddressShow: true,//详细地址
                 companyShow: true,//所属公司
@@ -565,7 +575,37 @@
 
             }
         },
+        mounted() {
+
+            const that = this
+            window.onresize = () => {
+                return (() => {
+                    window.screenWidth = document.body.clientWidth
+                    that.screenWidth = window.screenWidth
+                })()
+            }
+        },
+        watch: {
+            screenWidth(val) {
+                if (!this.timer) {
+                    this.screenWidth = val
+                    this.timer = true
+                    let that = this
+                    setTimeout(function () {
+                        that.size()
+                        that.timer = false
+                        console.log(1)
+                    }, 400)
+                }
+            }
+        },
         methods: {
+            size(){
+                //监听窗口函数
+                setTimeout(() => {
+                    this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 150;
+                }, 100)
+            },
             closeFun() {
                 let obj = JSON.stringify(this.upfactoryForm)
                 let state = (obj == this.typedata)
@@ -728,7 +768,7 @@
         },
         created: function () {
             this.factoryquery()
-
+            this.size()
         }
 
     }

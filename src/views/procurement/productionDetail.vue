@@ -50,7 +50,8 @@
                 border
                 stripe
                 :data="ProductionList"
-                height="750px"
+                ref="table"
+                :height="tableHeight"
         >
             <el-table-column align="center" type="selection"></el-table-column>
             <el-table-column align="center" type="index"></el-table-column>
@@ -688,6 +689,8 @@
         name: "production",
         data() {
             return {
+                screenWidth: document.body.clientWidth,
+                tableHeight: 0,//表格高度
                 //时间选择
                 pickerOptions: {
                     shortcuts: [{
@@ -821,8 +824,37 @@
                 str: '',//生产计划单 工艺查询将数组转字符串
             }
         },
+        mounted() {
 
+            const that = this
+            window.onresize = () => {
+                return (() => {
+                    window.screenWidth = document.body.clientWidth
+                    that.screenWidth = window.screenWidth
+                })()
+            }
+        },
+        watch: {
+            screenWidth(val) {
+                if (!this.timer) {
+                    this.screenWidth = val
+                    this.timer = true
+                    let that = this
+                    setTimeout(function () {
+                        that.size()
+                        that.timer = false
+                        console.log(1)
+                    }, 400)
+                }
+            }
+        },
         methods: {
+            size(){
+                //监听窗口函数
+                setTimeout(() => {
+                    this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 150;
+                }, 100)
+            },
             upTimeFun() {
                 //修改生产计划单时，时间选择控件值发生变化时回调
                 this.upScheduleList.expectProcessTime = this.upTime[0]
@@ -1237,6 +1269,7 @@
         },
         created: function () {
             this.ProduQueryPage()//生产计划单分页查询
+            this.size()
         }
 
 
