@@ -904,11 +904,9 @@
                             this.$message({
                                 message: '删除成功',
                                 type: 'success',
-                                onClose() {
-                                    that.ProduQueryPage()
-                                    that.upaddProduction = false
-                                }
                             });
+                            that.ProduQueryPage()
+                            that.upaddProduction = false
                         } else {
                             this.$message.error(res.data.msg);
                         }
@@ -986,11 +984,9 @@
                             this.$message({
                                 message: '保存成功',
                                 type: 'success',
-                                onClose() {
-                                    that.ProduQueryPage()
-                                    that.addProduction = false
-                                }
                             });
+                            that.ProduQueryPage()
+                            that.addProduction = false
                         } else {
                             this.$message.error(res.data.msg);
                         }
@@ -1010,12 +1006,10 @@
                         this.$message({
                             message: '保存成功',
                             type: 'success',
-                            onClose() {
-                                that.typedata = JSON.stringify(that.upScheduleList)
-                                that.ProduQueryPage()
-                                that.upaddProduction = false
-                            }
                         });
+                        that.typedata = JSON.stringify(that.upScheduleList)
+                        that.ProduQueryPage()
+                        that.upaddProduction = false
                     } else {
                         this.$message.error(res.data.msg);
                     }

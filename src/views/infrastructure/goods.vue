@@ -262,6 +262,20 @@
 
                 <el-row>
                     <el-col :span="8">
+                        <el-form-item label="商品颜色" prop="color">
+                            <el-select size="mini" v-model="addgoodsForm.color" placeholder="请选择">
+                                <el-option
+                                        v-for="item in goodsColors"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                        :disabled="item.disabled">
+                                </el-option>
+                            </el-select>
+
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
                         <el-form-item label="基本单位">
                             <el-input size="mini" v-model="addgoodsForm.unit"></el-input>
                         </el-form-item>
@@ -271,20 +285,16 @@
                             <el-input size="mini" v-model="addgoodsForm.packag"></el-input>
                         </el-form-item>
                     </el-col>
+
+                </el-row>
+
+                <el-row>
                     <el-col :span="8">
                         <el-form-item label="面料成分">
                             <el-input size="mini" v-model="addgoodsForm.ingredients"></el-input>
                         </el-form-item>
                     </el-col>
-                </el-row>
 
-                <el-row>
-
-                    <el-col :span="8">
-                        <el-form-item label="重量">
-                            <el-input size="mini" v-model="addgoodsForm.weight"></el-input>
-                        </el-form-item>
-                    </el-col>
                     <el-col :span="8">
                         <el-form-item label="商品成本">
                             <el-input-number size="mini" controls-position="right" v-model="addgoodsForm.costPrice"
@@ -301,10 +311,17 @@
 
                 <el-row>
                     <el-col :span="8">
-                        <el-form-item label="季节">
-                            <el-input size="mini" v-model="addgoodsForm.season"></el-input>
+                        <el-form-item label="克重">
+                            <el-input size="mini" v-model="addgoodsForm.weight"></el-input>
                         </el-form-item>
                     </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="针数">
+                            <el-input size="mini" v-model="addgoodsForm.pinNumber"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+
                     <el-col :span="8">
                         <el-form-item label="分类">
                             <el-cascader
@@ -315,13 +332,20 @@
                             ></el-cascader>
                         </el-form-item>
                     </el-col>
+
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="季节">
+                            <el-input size="mini" v-model="addgoodsForm.season"></el-input>
+                        </el-form-item>
+                    </el-col>
                     <el-col :span="8">
                         <el-form-item label="备注">
                             <el-input size="mini" v-model="addgoodsForm.remark"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
-
             </el-form>
             <el-button size="mini" type="primary" @click="submitForm('addgoodsForm')">立即创建</el-button>
             <el-button size="mini" @click="addgoods=false">取消</el-button>
@@ -377,6 +401,20 @@
 
                 <el-row>
                     <el-col :span="8">
+                        <el-form-item label="商品颜色" prop="color">
+                            <el-select size="mini" v-model="upgoodsForm.color" placeholder="请选择">
+                                <el-option
+                                        v-for="item in goodsColors"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                        :disabled="item.disabled">
+                                </el-option>
+                            </el-select>
+
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
                         <el-form-item label="基本单位">
                             <el-input size="mini" v-model="upgoodsForm.unit"></el-input>
                         </el-form-item>
@@ -386,15 +424,45 @@
                             <el-input size="mini" v-model="upgoodsForm.packag"></el-input>
                         </el-form-item>
                     </el-col>
+
+                </el-row>
+
+
+                <el-row>
                     <el-col :span="8">
                         <el-form-item label="面料成分">
                             <el-input size="mini" v-model="upgoodsForm.ingredients"></el-input>
                         </el-form-item>
                     </el-col>
+
+
+                    <el-col :span="8">
+                        <el-form-item label="商品成本">
+                            <el-input-number size="mini" controls-position="right" v-model="upgoodsForm.costPrice"
+                                             :precision="2" :step="0.1"></el-input-number>
+                            <!--<el-input size="mini" v-model="upgoodsForm.costPrice"></el-input>-->
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="工艺标准">
+                            <el-input size="mini" v-model="upgoodsForm.standard"></el-input>
+                        </el-form-item>
+                    </el-col>
                 </el-row>
 
-
                 <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="克重">
+                            <el-input size="mini" v-model="upgoodsForm.weight"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="针数">
+                            <el-input size="mini" v-model="upgoodsForm.pinNumber"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+
                     <el-col :span="8">
                         <el-form-item label="分类">
                             <el-cascader
@@ -405,26 +473,8 @@
                             ></el-cascader>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="重量">
-                            <el-input size="mini" v-model="upgoodsForm.weight"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="商品成本">
-                            <el-input-number size="mini" controls-position="right" v-model="upgoodsForm.costPrice"
-                                             :precision="2" :step="0.1"></el-input-number>
-                            <!--<el-input size="mini" v-model="upgoodsForm.costPrice"></el-input>-->
-                        </el-form-item>
-                    </el-col>
                 </el-row>
-
                 <el-row>
-                    <el-col :span="8">
-                        <el-form-item label="工艺标准">
-                            <el-input size="mini" v-model="upgoodsForm.standard"></el-input>
-                        </el-form-item>
-                    </el-col>
                     <el-col :span="8">
                         <el-form-item label="季节">
                             <el-input size="mini" v-model="upgoodsForm.season"></el-input>
@@ -435,8 +485,8 @@
                             <el-input size="mini" v-model="upgoodsForm.remark"></el-input>
                         </el-form-item>
                     </el-col>
-                </el-row>
 
+                </el-row>
             </el-form>
             <el-button size="mini" type="primary" @click="upsubmitForm('upgoodsForm')">立即修改</el-button>
             <el-button size="mini" @click="upgoods=false">取消</el-button>
@@ -729,6 +779,16 @@
                 totalRecordNum: 0,//总条目数
                 addgoods: false,//新建商品信息面板
                 upgoods: false,//修改商品信息面板
+                goodsColors: [
+                    {
+                        label: '纯色',
+                        value: '纯色'
+                    },
+                    {
+                        label: '混色',
+                        value: '混色'
+                    }
+                ],
                 addgoodsForm: {
                     //新建商品信息表单数据
                     name: '',
@@ -746,6 +806,8 @@
                     standard: '',//工艺标准
                     remark: '',//备注
                     type: '',//分类
+                    color: '',//颜色分类
+                    pinNumber: '',//针数
                 },
                 addgoodsrules: {
                     //新建商品信息表单验证
@@ -775,6 +837,9 @@
                     merchantCode: [
                         {required: true, message: '请输入商家编码', trigger: 'blur'},
 
+                    ],
+                    color: [
+                        {required: true, message: '请选择商品颜色类别', trigger: 'blur'},
                     ]
                 },
                 addgoodsclassification: [
@@ -881,8 +946,10 @@
                     itemCode: '',//货品编号
                     ingredients: '',//面料成分
                     standard: '',//工艺标准
+                    color: '',//颜色
                     remark: '',//备注
                     type: '',//分类
+                    pinNumber: '',//针数
                 },
                 upgoodsrules: {
                     //修改商品信息表单验证
@@ -908,6 +975,9 @@
                     ],
                     type: [
                         {required: true, message: '请输入条形码', trigger: 'change'},
+                    ],
+                    color: [
+                        {required: true, message: '请选择商品颜色类别', trigger: 'change'},
                     ],
                     merchantCode: [
                         {required: true, message: '请输入商家编码', trigger: 'change'}
@@ -1061,8 +1131,8 @@
             }
         },
         methods: {
-            size(){
-              //监听窗口函数
+            size() {
+                //监听窗口函数
                 setTimeout(() => {
                     this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 150;
                 }, 100)
@@ -1109,11 +1179,10 @@
                         this.$message({
                             message: '操作成功',
                             type: 'success',
-                            onClose() {
-                                that.queryGoodsRecycle()
-                                that.queryGoods()
-                            }
+
                         });
+                        that.queryGoodsRecycle()
+                        that.queryGoods()
                     } else {
                         this.$message.error('操作错误！');
                     }
@@ -1147,7 +1216,6 @@
                     this.upgoodsForm.type += item
                 })
                 this.upgoodsForm.type = this.upgoodsForm.types[0] + '/' + this.upgoodsForm.types[1]
-                console.log(val)
             },
             goodsSelection(val) {
                 //商品信息多选
@@ -1173,10 +1241,8 @@
                         this.$message({
                             message: '删除成功',
                             type: 'success',
-                            onClose() {
-                                that.queryGoods()
-                            }
                         });
+                        that.queryGoods()
                     }
                     else {
                         this.$message.error('删除失败！');
@@ -1195,11 +1261,9 @@
                                 this.$message({
                                     message: '添加成功',
                                     type: 'success',
-                                    onClose() {
-                                        that.queryGoods();
-                                        that.addgoods = false
-                                    }
                                 });
+                                that.queryGoods();
+                                that.addgoods = false
                             } else {
                                 this.$message.error(res.data.msg);
                             }
@@ -1248,13 +1312,9 @@
                                 this.$message({
                                     message: '修改成功',
                                     type: 'success',
-                                    onClose() {
-
-                                        that.queryGoods()
-                                        that.upgoods = false
-
-                                    }
                                 });
+                                that.queryGoods()
+                                that.upgoods = false
                             }
                             else {
                                 this.$message.error(res.data.msg);

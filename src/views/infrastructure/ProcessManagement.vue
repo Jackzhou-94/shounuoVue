@@ -4,7 +4,8 @@
             <div class="QueryConditions">
                 <el-button size="mini" type="primary" class="el-icon-plus" @click="addprocess=true">新建</el-button>
                 <!--<el-button size="mini" type="primary" class="el-icon-plus" @click="upaddprocess=true">修改</el-button>-->
-                <el-button size="mini" type="danger" @click="delProcessfuns" :disabled="delStatusButPro">批量删除</el-button>
+                <el-button size="mini" type="danger" @click="delProcessfuns" :disabled="delStatusButPro">批量删除
+                </el-button>
             </div>
             <div class="QueryConditions QueryInput">
                 <div>
@@ -41,67 +42,48 @@
                 title="新建工艺单" :visible.sync="addprocess" :show-close="false"
         >
             <el-form style="text-align: left" :model="addprocessData" ref="addprocessData" :rules="addprocessrules"
-                     size="mini" label-width="100px" label-position="right">
+                     size="mini" inline label-width="100px" label-position="right">
 
-                <div style="display: flex;flex-wrap: nowrap;justify-content: space-between">
+                <div class="formInput">
                     <el-form-item label="工艺名称" prop="name">
                         <el-input v-model="addprocessData.name"></el-input>
                     </el-form-item>
-                    <el-form-item label="商家编码">
-                        <el-input v-model="addprocessData.merchantCode" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item label="品牌">
-                        <el-input v-model="addprocessData.brand" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item label="类别">
-                        <el-input v-model="addprocessData.category" disabled></el-input>
-                        <!--<el-select clearable v-model="addprocessData.category" placeholder="类别" disabled>-->
-                        <!--<el-option-->
-                        <!--v-for="item in categorySelect"-->
-                        <!--:key="item.value"-->
-                        <!--:label="item.label"-->
-                        <!--:value="item.value">-->
-                        <!--</el-option>-->
-                        <!--</el-select>-->
+
+                    <div class="x">
+                        <el-form-item label="生产工序">
+                            <el-select size="mini" multiple disabled
+                                       v-model="addprocessData.processNodeList">
+                                <el-option
+                                        v-for="item in ProcessFunction"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
 
 
-                    </el-form-item>
-                    <el-form-item label="颜色">
-                        <el-input v-model="addprocessData.colour"></el-input>
-                    </el-form-item>
-                </div>
-
-                <div style="display: flex;flex-wrap: nowrap" class="x">
-                    <el-form-item label="工艺设置" prop="processNodeList">
-                        <el-select placeholder="请选择" size="mini" multiple
-                                   v-model="addprocessData.processNodeList">
-                            <el-option
-                                    v-for="item in ProcessFunction"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-
+                    </div>
 
                 </div>
+
             </el-form>
 
-            <el-tabs shadow="never" type="border-card" v-model="activeName">
+            <el-tabs shadow="never" v-model="activeName">
                 <el-tab-pane label="新品管理" name="first">
                     <div class="QueryConditions">
 
                         <el-button size="mini" @click="addGoods">添加新品</el-button>
-
+                        <el-button size="mini" @click="batchGoodsRm">批量移除</el-button>
                     </div>
                     <el-table
                             :data="addprocessData.goodsList"
                             border
                             stripe
+                            @selection-change="addGoodsMulti"
                             style="width: 100%">
 
-
+                        <el-table-column type="selection" align="center"></el-table-column>
                         <el-table-column
                                 align="center"
                                 prop="merchantCode"
@@ -124,12 +106,13 @@
                                 width="180"
                         >
                         </el-table-column>
+
                         <el-table-column
                                 align="center"
-                                prop="type"
+                                prop="color"
                                 v-if="type"
-                                label="分类"
-                                width="180">
+                                label="颜色"
+                                width="80">
                         </el-table-column>
                         <el-table-column
                                 align="center"
@@ -137,7 +120,30 @@
                                 v-if="sku"
                                 width="180"
                                 label="盒装SKU">
-
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="unit"
+                                width="80"
+                                label="规格">
+                            <template slot-scope="scope">
+                                <el-input size="mini" oninput="value=value.replace(/[^\d]/g,'')"
+                                          v-model="scope.row.Specifications"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="unit"
+                                v-if="unit"
+                                width="80"
+                                label="基本单位">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="ingredients"
+                                v-if="ingredients"
+                                width="180"
+                                label="面料成份">
                         </el-table-column>
                         <el-table-column
                                 align="center"
@@ -146,34 +152,16 @@
                                 width="180"
                                 label="品牌">
                         </el-table-column>
-                        <el-table-column
-                                align="center"
-                                v-if="process"
-                                prop="process"
-                                width="180"
-                                label="工艺流程">
-                        </el-table-column>
-                        <el-table-column
-                                align="center"
-                                prop="season"
-                                v-if="season"
-                                width="180"
-                                label="季节">
-                        </el-table-column>
+
+
                         <el-table-column
                                 align="center"
                                 prop="costPrice"
                                 v-if="costPrice"
-                                width="180"
+                                width="100"
                                 label="商品成本价">
                         </el-table-column>
-                        <el-table-column
-                                align="center"
-                                prop="unit"
-                                v-if="unit"
-                                width="180"
-                                label="基本单位">
-                        </el-table-column>
+
                         <el-table-column
                                 align="center"
                                 v-if="packag"
@@ -185,47 +173,11 @@
                                 align="center"
                                 prop="weight"
                                 v-if="weight"
-                                width="180"
-                                label="重量">
+                                width="100"
+                                label="克重">
                         </el-table-column>
-                        <el-table-column
-                                align="center"
-                                prop="barCode"
-                                v-if="barCode"
-                                width="180"
-                                label="条形码">
-                        </el-table-column>
-                        <el-table-column
-                                align="center"
-                                prop="ingredients"
-                                v-if="ingredients"
-                                width="180"
-                                label="面料成份">
-                        </el-table-column>
-                        <el-table-column
-                                align="center"
-                                prop="standard"
-                                v-if="standard"
-                                width="180"
-                                label="执行工艺标准">
-                        </el-table-column>
-                        <el-table-column
 
-                                label="创建时间"
-                                prop="createTime"
-                                v-if="createTime"
-                                width="180"
-                                align="center"
-                                sortable
-                        ></el-table-column>
-                        <el-table-column
-                                label="修改时间"
-                                prop="updateTime"
-                                v-if="updateTime"
-                                width="180"
-                                align="center"
-                                sortable
-                        ></el-table-column>
+
                         <el-table-column
                                 align="center"
                                 prop="remark"
@@ -396,71 +348,53 @@
         <el-dialog
                 width="1100px"
                 style="padding: 0px;margin: 0px"
-                @closed="closeFun"
                 title="修改工艺单" :visible.sync="upaddprocess" :show-close="false"
         >
             <el-form style="text-align: left" :model="upaddprocessData" ref="upaddprocessData"
                      :rules="upaddprocessrules"
-                     size="mini" label-width="100px" label-position="right">
+                     size="mini" inline label-width="100px" label-position="right">
 
-                <div style="display: flex;flex-wrap: nowrap;justify-content: space-between">
+                <div class="formInput">
                     <el-form-item label="工艺名称" prop="name">
                         <el-input v-model="upaddprocessData.name"></el-input>
                     </el-form-item>
-                    <el-form-item label="商家编码">
-                        <el-input v-model="upaddprocessData.merchantCode" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item label="品牌">
-                        <el-input v-model="upaddprocessData.brand" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item label="类别">
-                        <el-input v-model="upaddprocessData.category" disabled></el-input>
-                        <!--<el-select clearable v-model="upaddprocessData.category" placeholder="类别" disabled>-->
-                        <!--<el-option-->
-                        <!--v-for="item in categorySelect"-->
-                        <!--:key="item.value"-->
-                        <!--:label="item.label"-->
-                        <!--:value="item.value">-->
-                        <!--</el-option>-->
-                        <!--</el-select>-->
 
-                    </el-form-item>
-                    <el-form-item label="颜色">
-                        <el-input v-model="upaddprocessData.colour"></el-input>
-                    </el-form-item>
-                </div>
+                    <div class="x">
+                        <el-form-item label="生产工序">
+                            <el-select size="mini" multiple disabled
+                                       v-model="upaddprocessData.processNodeList">
+                                <el-option
+                                        v-for="item in ProcessFunction"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
 
-                <div style="display: flex;flex-wrap: nowrap" class="x">
-                    <el-form-item label="工艺设置" prop="processNodeList">
-                        <el-select placeholder="请选择" size="mini" multiple
-                                   v-model="upaddprocessData.processNodeList">
-                            <el-option
-                                    v-for="item in ProcessFunction"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
 
+                    </div>
 
                 </div>
+
             </el-form>
 
-            <el-tabs shadow="never" type="border-card" v-model="upactiveName">
+            <el-tabs shadow="never" v-model="upactiveName">
                 <el-tab-pane label="新品管理" name="first">
                     <div class="QueryConditions">
 
                         <el-button size="mini" @click="upaddGoods">添加新品</el-button>
-
+                        <el-button size="mini" @click="upbatchGoodsRm">批量移除</el-button>
                     </div>
                     <el-table
+
                             :data="upaddprocessData.goodsList"
                             border
                             stripe
+                            @selection-change="upaddGoodsMulti"
                             style="width: 100%">
 
-
+                        <el-table-column type="selection" align="center"></el-table-column>
                         <el-table-column
                                 align="center"
                                 prop="merchantCode"
@@ -486,10 +420,10 @@
 
                         <el-table-column
                                 align="center"
-                                prop="type"
+                                prop="color"
                                 v-if="uptype"
-                                label="分类"
-                                width="180">
+                                label="颜色"
+                                width="80">
                         </el-table-column>
                         <el-table-column
                                 align="center"
@@ -497,7 +431,30 @@
                                 v-if="upsku"
                                 width="180"
                                 label="盒装SKU">
-
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="unit"
+                                width="80"
+                                label="规格">
+                            <template slot-scope="scope">
+                                <el-input size="mini" oninput="value=value.replace(/[^\d]/g,'')"
+                                          v-model="scope.row.Specifications"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="unit"
+                                v-if="upunit"
+                                width="80"
+                                label="基本单位">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                prop="ingredients"
+                                v-if="upingredients"
+                                width="180"
+                                label="面料成份">
                         </el-table-column>
                         <el-table-column
                                 align="center"
@@ -506,34 +463,16 @@
                                 width="180"
                                 label="品牌">
                         </el-table-column>
-                        <el-table-column
-                                align="center"
-                                v-if="upprocess"
-                                prop="process"
-                                width="180"
-                                label="工艺流程">
-                        </el-table-column>
-                        <el-table-column
-                                align="center"
-                                prop="season"
-                                v-if="upseason"
-                                width="180"
-                                label="季节">
-                        </el-table-column>
+
+
                         <el-table-column
                                 align="center"
                                 prop="costPrice"
                                 v-if="upcostPrice"
-                                width="180"
+                                width="100"
                                 label="商品成本价">
                         </el-table-column>
-                        <el-table-column
-                                align="center"
-                                prop="unit"
-                                v-if="upunit"
-                                width="180"
-                                label="基本单位">
-                        </el-table-column>
+
                         <el-table-column
                                 align="center"
                                 v-if="uppackag"
@@ -545,47 +484,11 @@
                                 align="center"
                                 prop="weight"
                                 v-if="upweight"
-                                width="180"
-                                label="重量">
+                                width="100"
+                                label="克重">
                         </el-table-column>
-                        <el-table-column
-                                align="center"
-                                prop="barCode"
-                                v-if="upbarCode"
-                                width="180"
-                                label="条形码">
-                        </el-table-column>
-                        <el-table-column
-                                align="center"
-                                prop="ingredients"
-                                v-if="upingredients"
-                                width="180"
-                                label="面料成份">
-                        </el-table-column>
-                        <el-table-column
-                                align="center"
-                                prop="standard"
-                                v-if="upstandard"
-                                width="180"
-                                label="执行工艺标准">
-                        </el-table-column>
-                        <el-table-column
 
-                                label="创建时间"
-                                prop="createTime"
-                                v-if="upcreateTime"
-                                width="180"
-                                align="center"
-                                sortable
-                        ></el-table-column>
-                        <el-table-column
-                                label="修改时间"
-                                prop="updateTime"
-                                v-if="upupdateTime"
-                                width="180"
-                                align="center"
-                                sortable
-                        ></el-table-column>
+
                         <el-table-column
                                 align="center"
                                 prop="remark"
@@ -602,8 +505,6 @@
                             </template>
                         </el-table-column>
                     </el-table>
-
-
                 </el-tab-pane>
 
                 <el-tab-pane label="原材料管理" name="second">
@@ -645,15 +546,6 @@
                                 align="center"
                         ></el-table-column>
 
-                        <!--<el-table-column-->
-                        <!--align="center"-->
-                        <!--prop="itemCode"-->
-                        <!--v-if="upitemCode"-->
-                        <!--label="货品编号"-->
-                        <!--width="180"-->
-                        <!--&gt;-->
-                        <!--</el-table-column>-->
-
                         <el-table-column
                                 prop="ingredients"
                                 label="成分配比(%)"
@@ -664,7 +556,7 @@
                                 <el-input-number size="mini" controls-position="right"
                                                  v-model="scope.row.distributionRatio"
                                                  :min="0.1"
-                                >
+                                                 :max="100">
 
                                     <template slot="append">%</template>
                                 </el-input-number>
@@ -703,11 +595,10 @@
                                 align="center"
                         ></el-table-column>
                         <el-table-column
-                                label="基本计量单位"
+                                label="计量单位"
                                 prop="unit"
-                                width="150"
+                                width="100"
                                 align="center"
-                                sortable
                         ></el-table-column>
                         <el-table-column
                                 label="成本价"
@@ -757,7 +648,7 @@
             </el-tabs>
 
             <div style="text-align: right;margin-top: 0.5em">
-                <el-button size="mini" type="primary" @click="upaddtechnology('upaddprocessData')">保存</el-button>
+                <el-button size="mini" type="primary" @click="addtechnology('addprocessData')">保存</el-button>
             </div>
 
         </el-dialog>
@@ -769,7 +660,7 @@
                 title="工艺明细" :visible.sync="ProcessDetails" :show-close="false"
         >
             <div class="Details">
-                <el-tag size="medium" >商品明细</el-tag>
+                <el-tag size="medium">商品明细</el-tag>
                 <el-table
                         :data="DetailsGoodsList"
                         border
@@ -893,8 +784,8 @@
 
                 </el-table>
             </div>
-            <div  class="Details">
-                <el-tag size="medium" >原材料明细</el-tag>
+            <div class="Details">
+                <el-tag size="medium">原材料明细</el-tag>
                 <el-table
                         border
                         stripe
@@ -977,36 +868,47 @@
         >
             <div style="display: flex;justify-content: left;flex-wrap: nowrap;margin-bottom: 0.5em">
                 <el-button icon="el-icon-view" type="primary" size="mini" @click="Settings=true">显示设置</el-button>
-                <el-button type="primary" size="mini"
-                           @click="queryother='',querysku='',queryitemCode='',queryname='',querymerchantCode=''">
-                    重置
-                </el-button>
-
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="queryGoods()">查询
+                <el-button icon="el-icon-back" type="primary" size="mini" @click="batchIntroductionGoods">批量引入
                 </el-button>
 
             </div>
-            <div style="display: flex;justify-content: space-around">
+            <div class=" QueryConditions QueryInput">
+                <div>
+                    <el-input size="mini" placeholder="商家编码" v-model="querymerchantCode"></el-input>
 
-                <el-input size="mini" placeholder="商家编码" v-model="querymerchantCode"></el-input>
+                    <el-input size="mini" placeholder="商品名称" v-model="queryname"></el-input>
 
-                <el-input size="mini" placeholder="商品名称" v-model="queryname"></el-input>
+                    <el-input size="mini" placeholder="货品编号" v-model="queryitemCode"></el-input>
 
-                <el-input size="mini" placeholder="货品编号" v-model="queryitemCode"></el-input>
+                    <el-input size="mini" placeholder="盒装SKU" v-model="querysku"></el-input>
 
-                <el-input size="mini" placeholder="盒装SKU" v-model="querysku"></el-input>
+                    <el-input size="mini" placeholder="其他" v-model="queryother"></el-input>
+                </div>
+                <div>
+                    <el-button type="primary" size="mini"
+                               @click="queryother='',querysku='',queryitemCode='',queryname='',querymerchantCode=''">
+                        重置
+                    </el-button>
 
-                <el-input size="mini" placeholder="其他" v-model="queryother"></el-input>
-
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="queryGoods()">查询
+                    </el-button>
+                </div>
             </div>
 
             <el-table
                     :data="quireGoodsData"
                     border
                     stripe
+                    ref="multipleTableGoods"
                     height="360px"
+                    @selection-change="goodsInselect"
                     style="width: 100%">
-
+                <el-table-column
+                        align="center"
+                        type="selection"
+                        :selectable="selectableGoods"
+                        width="50">
+                </el-table-column>
                 <el-table-column
                         align="center"
                         type="index"
@@ -1148,7 +1050,10 @@
                         fixed="right"
                         label="操作">
                     <template slot-scope="scope">
-                        <el-button type="text" @click="introductionGoods(scope.row)">引入</el-button>
+                        <!--introductionGoods(scope.row)-->
+                        <el-button type="text" @click="introductionGoods(scope.row)" :disabled="scope.row.show">引入
+                        </el-button>
+
                     </template>
                 </el-table-column>
             </el-table>
@@ -1170,40 +1075,51 @@
         <!--修改添加商品面板-->
         <el-dialog
                 width="1100px"
-                title="修改添加商品" :visible.sync="upaddGoodsPanel" :show-close="false"
+                title="添加商品" :visible.sync="upaddGoodsPanel" :show-close="false"
         >
             <div style="display: flex;justify-content: left;flex-wrap: nowrap;margin-bottom: 0.5em">
                 <el-button icon="el-icon-view" type="primary" size="mini" @click="upSettings=true">显示设置</el-button>
-                <el-button type="primary" size="mini"
-                           @click="queryother='',querysku='',queryitemCode='',queryname='',querymerchantCode=''">
-                    重置
-                </el-button>
-
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="queryGoods()">查询
+                <el-button icon="el-icon-back" type="primary" size="mini" @click="upbatchIntroductionGoods">批量引入
                 </el-button>
 
             </div>
-            <div style="display: flex;justify-content: space-around">
+            <div class=" QueryConditions QueryInput">
+                <div>
+                    <el-input size="mini" placeholder="商家编码" v-model="querymerchantCode"></el-input>
 
-                <el-input size="mini" placeholder="商家编码" v-model="querymerchantCode"></el-input>
+                    <el-input size="mini" placeholder="商品名称" v-model="queryname"></el-input>
 
-                <el-input size="mini" placeholder="商品名称" v-model="queryname"></el-input>
+                    <el-input size="mini" placeholder="货品编号" v-model="queryitemCode"></el-input>
 
-                <el-input size="mini" placeholder="货品编号" v-model="queryitemCode"></el-input>
+                    <el-input size="mini" placeholder="盒装SKU" v-model="querysku"></el-input>
 
-                <el-input size="mini" placeholder="盒装SKU" v-model="querysku"></el-input>
+                    <el-input size="mini" placeholder="其他" v-model="queryother"></el-input>
+                </div>
+                <div>
+                    <el-button type="primary" size="mini"
+                               @click="queryother='',querysku='',queryitemCode='',queryname='',querymerchantCode=''">
+                        重置
+                    </el-button>
 
-                <el-input size="mini" placeholder="其他" v-model="queryother"></el-input>
-
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="queryGoods()">查询
+                    </el-button>
+                </div>
             </div>
 
             <el-table
-                    :data="quireGoodsData"
+                    :data="upquireGoodsData"
                     border
                     stripe
+                    ref="upmultipleTableGoods"
                     height="360px"
+                    @selection-change="upgoodsInselect"
                     style="width: 100%">
-
+                <el-table-column
+                        align="center"
+                        type="selection"
+                        :selectable="selectableGoods"
+                        width="50">
+                </el-table-column>
                 <el-table-column
                         align="center"
                         type="index"
@@ -1213,7 +1129,7 @@
 
                         label="创建时间"
                         prop="createTime"
-                        v-if="upcreateTime"
+                        v-if="createTime"
                         width="180"
                         align="center"
                         sortable
@@ -1221,7 +1137,7 @@
                 <el-table-column
                         label="修改时间"
                         prop="updateTime"
-                        v-if="upupdateTime"
+                        v-if="updateTime"
                         width="180"
                         align="center"
                         sortable
@@ -1229,21 +1145,21 @@
                 <el-table-column
                         align="center"
                         prop="merchantCode"
-                        v-if="upmerchantCode"
+                        v-if="merchantCode"
                         label="商家编码"
                         width="180">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         prop="name"
-                        v-if="upname"
+                        v-if="name"
                         label="商品名称"
                         width="180">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         prop="itemCode"
-                        v-if="upitemCode"
+                        v-if="itemCode"
                         label="货品编号"
                         width="180"
                 >
@@ -1251,14 +1167,14 @@
                 <el-table-column
                         align="center"
                         prop="type"
-                        v-if="uptype"
+                        v-if="type"
                         label="分类"
                         width="180">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         prop="sku"
-                        v-if="upsku"
+                        v-if="sku"
                         width="180"
                         label="盒装SKU">
 
@@ -1266,13 +1182,13 @@
                 <el-table-column
                         align="center"
                         prop="brand"
-                        v-if="upbrand"
+                        v-if="brand"
                         width="180"
                         label="品牌">
                 </el-table-column>
                 <el-table-column
                         align="center"
-                        v-if="upprocess"
+                        v-if="process"
                         prop="process"
                         width="180"
                         label="工艺流程">
@@ -1280,27 +1196,27 @@
                 <el-table-column
                         align="center"
                         prop="season"
-                        v-if="upseason"
+                        v-if="season"
                         width="180"
                         label="季节">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         prop="costPrice"
-                        v-if="upcostPrice"
+                        v-if="costPrice"
                         width="180"
                         label="商品成本价">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         prop="unit"
-                        v-if="upunit"
+                        v-if="unit"
                         width="180"
                         label="基本单位">
                 </el-table-column>
                 <el-table-column
                         align="center"
-                        v-if="uppackag"
+                        v-if="packag"
                         prop="packag"
                         width="180"
                         label="包装材料">
@@ -1308,35 +1224,35 @@
                 <el-table-column
                         align="center"
                         prop="weight"
-                        v-if="upweight"
+                        v-if="weight"
                         width="180"
                         label="重量">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         prop="barCode"
-                        v-if="upbarCode"
+                        v-if="barCode"
                         width="180"
                         label="条形码">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         prop="ingredients"
-                        v-if="upingredients"
+                        v-if="ingredients"
                         width="180"
                         label="面料成份">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         prop="standard"
-                        v-if="upstandard"
+                        v-if="standard"
                         width="180"
                         label="执行工艺标准">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         prop="remark"
-                        v-if="upremark"
+                        v-if="remark"
                         width="180"
                         label="备注">
                 </el-table-column>
@@ -1345,7 +1261,10 @@
                         fixed="right"
                         label="操作">
                     <template slot-scope="scope">
-                        <el-button type="text" @click="upintroductionGoods(scope.row)">引入</el-button>
+                        <!--introductionGoods(scope.row)-->
+                        <el-button type="text" @click="upintroductionGoods(scope.row)" :disabled="scope.row.show">引入
+                        </el-button>
+
                     </template>
                 </el-table-column>
             </el-table>
@@ -1356,7 +1275,7 @@
                             @current-change="goodslistpag"
                             :page-size="5"
                             layout="prev, pager, next, jumper"
-                            :total="totalRecordNum">
+                            :total="uptotalRecordNum">
                     </el-pagination>
                 </el-col>
             </el-row>
@@ -1372,34 +1291,37 @@
         >
             <div style="display: flex;justify-content: left;flex-wrap: nowrap;margin-bottom: 0.5em">
                 <el-button icon="el-icon-view" type="primary" size="mini" @click="MaterSettings=true">显示设置</el-button>
-                <el-button type="primary" size="mini"
-                           @click="materialsNum='',VendorQueries='',materialsName=''">
-                    重置
-                </el-button>
-
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="introducedMater">批量引入</el-button>
 
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="queryMater()">查询
-                </el-button>
-
             </div>
-            <div style="display: flex;flex-wrap: nowrap">
+            <div class=" QueryConditions QueryInput">
+                <div style="display: flex;flex-wrap: nowrap">
 
-                <el-input clearable style="width: 150px" placeholder="物料编号" size="mini"
-                          v-model="materialsNum"></el-input>
+                    <el-input clearable style="width: 150px" placeholder="物料编号" size="mini"
+                              v-model="materialsNum"></el-input>
 
-                <el-input clearable style="width: 150px" placeholder="物料名称" size="mini"
-                          v-model="materialsName"></el-input>
-                <el-select clearable style="width: 180px" v-model="VendorQueries" placeholder="厂商" size="mini">
-                    <el-option
-                            v-for="item in factoryList"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                    >
-                    </el-option>
-                </el-select>
+                    <el-input clearable style="width: 150px" placeholder="物料名称" size="mini"
+                              v-model="materialsName"></el-input>
+                    <el-select clearable style="width: 180px" v-model="VendorQueries" placeholder="厂商" size="mini">
+                        <el-option
+                                v-for="item in factoryList"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value"
+                        >
+                        </el-option>
+                    </el-select>
+                </div>
+                <div>
+                    <el-button type="primary" size="mini"
+                               @click="materialsNum='',VendorQueries='',materialsName=''">
+                        重置
+                    </el-button>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="queryMater()">查询
+                    </el-button>
+                </div>
             </div>
+
 
             <el-table
                     border
@@ -1534,37 +1456,40 @@
                 width="1100px"
                 title="修改添加原材料" :visible.sync="upaddMaterPanel" :show-close="false"
         >
+
             <div style="display: flex;justify-content: left;flex-wrap: nowrap;margin-bottom: 0.5em">
                 <el-button icon="el-icon-view" type="primary" size="mini" @click="upMaterSettings=true">显示设置</el-button>
-                <el-button type="primary" size="mini"
-                           @click="materialsNum='',VendorQueries='',materialsName=''">
-                    重置
-                </el-button>
-
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="upintroducedMater">批量引入</el-button>
 
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="queryMater()">查询
-                </el-button>
-
             </div>
-            <div style="display: flex;flex-wrap: nowrap">
+            <div class=" QueryConditions QueryInput">
+                <div style="display: flex;flex-wrap: nowrap">
+                    <el-input clearable style="width: 150px" placeholder="物料编号" size="mini"
+                              v-model="materialsNum"></el-input>
 
-                <el-input clearable style="width: 150px" placeholder="物料编号" size="mini"
-                          v-model="materialsNum"></el-input>
+                    <el-input clearable style="width: 150px" placeholder="物料名称" size="mini"
+                              v-model="materialsName"></el-input>
+                    <el-select clearable style="width: 180px" v-model="VendorQueries" placeholder="厂商" size="mini">
+                        <el-option
+                                v-for="item in factoryList"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value"
+                        >
+                        </el-option>
+                    </el-select>
+                </div>
+                <div>
+                    <el-button type="primary" size="mini"
+                               @click="materialsNum='',VendorQueries='',materialsName=''">
+                        重置
+                    </el-button>
 
-                <el-input clearable style="width: 150px" placeholder="物料名称" size="mini"
-                          v-model="materialsName"></el-input>
-                <el-select clearable style="width: 180px" v-model="VendorQueries" placeholder="厂商" size="mini">
-                    <el-option
-                            v-for="item in factoryList"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                    >
-                    </el-option>
-                </el-select>
+
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="queryMater()">查询
+                    </el-button>
+                </div>
             </div>
-
             <el-table
                     border
                     stripe
@@ -2092,8 +2017,10 @@
                     fixed="right"
             >
                 <template slot-scope="scope">
-                    <el-button type="text"   @click="upProcessBot(scope.row)">修改</el-button>
-                    <el-button type="text" :disabled="scope.row.recordState=='1'?(true):(false)" @click="delPro(scope.row)">删除</el-button>
+                    <el-button type="text" @click="upProcessBot(scope.row)">修改</el-button>
+                    <el-button type="text" :disabled="scope.row.recordState=='1'?(true):(false)"
+                               @click="delPro(scope.row)">删除
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -2126,23 +2053,35 @@
                 ProcessDetails: false,//工艺明细面板
                 upaddprocess: false,//修改工艺单面板
                 upprocessSet: false,//修改节点设置面板
-                delStatusButPro:true,//批量删除按钮控制
+                delStatusButPro: true,//批量删除按钮控制
                 styleCodeQuery: '',//款式编号
                 merchantCodeQuery: '',//商家编码
                 nameQuery: '',//工艺名称
                 categoryQuery: '',//类别
-
+                processSpecification: [
+                    //工艺规格
+                    {label: '2双装', value: '2双装',},
+                    {label: '3双装', value: '3双装',},
+                    {label: '4双装', value: '4双装',},
+                    {label: '5双装', value: '5双装',},
+                    {label: '6双装', value: '6双装',},
+                    {label: '7双装', value: '7双装',},
+                    {label: '8双装', value: '8双装',},
+                    {label: '9双装', value: '9双装',},
+                    {label: '10双装', value: '10双装',},
+                ],
                 addprocessData: {
                     //新建工艺单数据
                     merchantCode: '',//商家编码
                     colour: '',//颜色
                     processFlow: '',//工艺流程（用于展示）
-                    processNodeList: [],//流程节点
+                    processNodeList: ['weave', 'seamHead', 'stereoType', 'pack'],//流程节点
                     name: '',//工艺名称
                     brand: '',//品牌
                     category: '',//类别
                     goodsList: [],//商品信息
                     materialsList: [],//原材料信息
+                    specifications: '',//规格
                 },
                 addprocessrules: {
                     //新建工艺单表单验证
@@ -2158,8 +2097,8 @@
                     category: [
                         {required: true, message: '请选择类别', trigger: 'change'}
                     ],
-                    processNodeList: [
-                        {required: true, message: '请选择工艺设置', trigger: 'change'},
+                    specifications: [
+                        {required: true, message: '请选择规格', trigger: 'change'}
                     ],
                 },
                 upaddprocessData: {
@@ -2167,12 +2106,13 @@
                     merchantCode: '',//商家编码
                     colour: '',//颜色
                     processFlow: '',//工艺流程（用于展示）
-                    processNode: [],//流程节点
+                    processNodeList: ['weave', 'seamHead', 'stereoType', 'pack'],//流程节点
                     name: '',//工艺名称
                     brand: '',//品牌
                     category: '',//类别
                     goodsList: [],//商品信息
                     materialsList: [],//原材料信息
+                    specifications: '',//规格
                 },
                 upaddprocessrules: {
                     //修改工艺单表单验证
@@ -2188,9 +2128,10 @@
                     category: [
                         {required: true, message: '请选择类别', trigger: 'change'}
                     ],
-                    processNodeList: [
-                        {required: true, message: '请选择工艺设置', trigger: 'change'},
+                    specifications: [
+                        {required: true, message: '请选择规格', trigger: 'change'}
                     ],
+
                 },
 
 
@@ -2259,7 +2200,9 @@
                 quireGoodspagesize: 5,//商品信息分页大小
                 quireGoodspageNum: 1,//商品信息分页页数
                 quireGoodsData: [],//商品信息
+                upquireGoodsData: [],//修改时需要添加商品信息
                 totalRecordNum: 0,//总条目数
+                uptotalRecordNum: 0,//总条目数
                 activeName: 'first',//新建tabs默认页
                 upactiveName: 'first',//tabs默认页
 
@@ -2281,6 +2224,7 @@
                 remark: true,//备注
                 standard: true,//执行工艺标准
                 type: true,//分类
+                color: true,//颜色
                 unit: true,//基本单位
                 weight: true,//重量
                 createTime: true,//创建时间
@@ -2357,12 +2301,18 @@
                 addMaterList: [],//添加原材料信息多选数据
                 addMaterMultiList: [],//新建工艺单原材料列表多选数据
 
+                addGoodsMultiList: [],//新建工艺单商品列表多选数据
+                upaddGoodsMultiList: [],//修改工艺单商品列表多选数据
+
                 upaddMaterMultiList: [],//修改新建工艺单原材料列表多选数据
                 typedata: '',//用于储存数据，当表单发生改变时校验
                 uuidList: [],//工艺单多选IDS
 
                 DetailsGoodsList: [],//工艺明细（商品）
                 DetailsMaterList: [],//工艺明细（原材料）
+                goodsListSelect: [],//多选时选中的商品信息
+
+                upgoodsListSelect: [],//修改多选时选中的商品信息
             }
         },
         mounted() {
@@ -2390,7 +2340,7 @@
             }
         },
         methods: {
-            size(){
+            size() {
                 //监听窗口函数
                 setTimeout(() => {
                     this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 150;
@@ -2465,17 +2415,17 @@
                     this.uuidList.push(item.uuid)
                 })
 
-                    /**
-                     *工艺单信息多选，如果与其他模块进行了数据交互
-                     * 即使选中也无法删除
-                     * **/
-                let a=data.map(item=>{
-                    return item.recordState=='1'
+                /**
+                 *工艺单信息多选，如果与其他模块进行了数据交互
+                 * 即使选中也无法删除
+                 * **/
+                let a = data.map(item => {
+                    return item.recordState == '1'
                 })
-                if (a.indexOf(true)!=-1||data.length == 0){
-                    this.delStatusButPro=true
-                }else{
-                    this.delStatusButPro=false
+                if (a.indexOf(true) != -1 || data.length == 0) {
+                    this.delStatusButPro = true
+                } else {
+                    this.delStatusButPro = false
                 }
 
             },
@@ -2488,9 +2438,9 @@
                 }).then(res => {
                     this.upaddprocessData = res.data.data
                     this.typedata = JSON.stringify(this.upaddprocessData)//将数据转为字符串，进行修改验证
-
+                    console.log(res)
                 })
-                // this.upaddprocessData = data
+
             },
             Processlistpag(val) {
                 //工艺单信息分页
@@ -2580,6 +2530,44 @@
                 });
 
             },
+            upbatchGoodsRm() {
+                //修改批量移除商品信息
+                /**
+                 * 1.当匹配到想同数据时，进行删除
+                 * 2.先将原材料数据全部选中，再取消选中，从而达到刷新效果
+                 * **/
+
+                this.upaddGoodsMultiList.forEach(item => {
+                    this.upaddprocessData.goodsList.forEach(j => {
+                        if (item == j) {
+                            this.upaddprocessData.goodsList[this.upaddprocessData.goodsList.indexOf(item)].show = false
+                            this.upaddprocessData.goodsList.splice(this.upaddprocessData.goodsList.indexOf(item), 1)
+                            this.$refs.upmultipleTableGoods.toggleRowSelection();
+                            this.$refs.upmultipleTableGoods.clearSelection();
+                        }
+
+                    })
+                })
+            },
+            batchGoodsRm() {
+                //批量移除商品信息
+                /**
+                 * 1.当匹配到想同数据时，进行删除
+                 * 2.先将原材料数据全部选中，再取消选中，从而达到刷新效果
+                 * **/
+
+                this.addGoodsMultiList.forEach(item => {
+                    this.addprocessData.goodsList.forEach(j => {
+                        if (item == j) {
+                            this.addprocessData.goodsList[this.addprocessData.goodsList.indexOf(item)].show = false
+                            this.addprocessData.goodsList.splice(this.addprocessData.goodsList.indexOf(item), 1)
+                            this.$refs.multipleTableGoods.toggleRowSelection();
+                            this.$refs.multipleTableGoods.clearSelection();
+                        }
+
+                    })
+                })
+            },
             batchMaterRm() {
                 //批量移除原材料信息
                 /**
@@ -2661,6 +2649,14 @@
                 console.log(listArr)
 
             },
+            selectableGoods(row, index) {
+                //判断是否可选
+                if (row.show !== true) {
+                    return true
+                } else {
+                    return false
+                }
+            },
             selectable(row, index) {
                 //判断是否可选
                 if (row.show !== true) {
@@ -2679,7 +2675,6 @@
             },
             introducedMater() {
                 //原材料批量引入
-
                 this.addMaterList.forEach(item => {
                     if (item.show != true) {
                         this.addprocessData.materialsList.push(item)
@@ -2715,6 +2710,14 @@
                 //新建工艺单原材料列表多选
                 console.log(data)
                 this.addMaterMultiList = data
+            },
+            addGoodsMulti(data) {
+                //新建工艺单商品列表多选
+                this.addGoodsMultiList = data
+            },
+            upaddGoodsMulti(data) {
+                //修改工艺单商品列表多选
+                this.upaddGoodsMultiList = data
             },
             addMaterDetails(data) {
                 //添加原材料面板多选
@@ -2775,34 +2778,96 @@
                 })
 
             },
-            introductionGoods(data) {
-                //引入商品信息
-                this.addprocessData.goodsList.length = 0;
-                this.addprocessData.merchantCode = data.merchantCode //商家编码
-                this.addprocessData.category = data.type//类别
-                this.addprocessData.brand = data.brand//品牌
+            goodsInselect(data) {
+                //商品信息多选
+                this.goodsListSelect = data
+            },
+            upgoodsInselect(data) {
+                //修改商品信息多选
+                this.upgoodsListSelect = data
+            },
+            upbatchIntroductionGoods() {
+                //修改批量引入商品信息
 
-                this.addGoodsPanel = false
+                this.upgoodsListSelect.forEach(item => {
+                    if (item.show != true) {
+                        this.upaddprocessData.goodsList.push(item)
+                        item.show = true
+                    } else {
+                        this.$message.error('同一条记录无法重复添加哦！');
+                    }
+                })
+
+                //取消选中状态
+                this.$refs.upmultipleTableGoods.clearSelection();
+            },
+            batchIntroductionGoods() {
+                //批量引入商品信息
+
+
+                this.goodsListSelect.forEach(item => {
+                    if (item.show != true) {
+                        this.addprocessData.goodsList.push(item)
+                        item.show = true
+                    } else {
+                        this.$message.error('同一条记录无法重复添加哦！');
+                    }
+
+                })
+
+                //取消选中状态
+                this.$refs.multipleTableGoods.clearSelection();
+            },
+
+            introductionGoods(data) {
+                //引入原材料
+                data.show = true
                 this.addprocessData.goodsList.push(data)
-                // this.addprocessData.goodsList
+                console.log(data)
             },
             upintroductionGoods(data) {
                 //修改引入商品信息
-                this.upaddprocessData.goodsList.length = 0;
-                this.upaddprocessData.merchantCode = data.merchantCode//商家编码
-                this.upaddprocessData.category = data.type//类别
-                this.upaddprocessData.brand = data.brand//品牌
-                this.upaddGoodsPanel = false
+                data.show = true
+                // this.upaddGoodsPanel = false
                 this.upaddprocessData.goodsList.push(data)
                 // this.addprocessData.goodsList
             },
-            rmGoods() {
+            rmGoods(data) {
                 //移除商品信息
-                this.addprocessData.goodsList = [];
+
+
+                let index = this.addprocessData.goodsList.indexOf(data)
+                delete data.show
+                this.addprocessData.goodsList.splice(index, 1)
+
+                let listArr = this.quireGoodsData.filter(item => {
+                    return data.itemCode === item.itemCode
+                })
+                listArr.forEach(item => {
+                    item.show = false
+                })
+                this.$refs.multipleTableGoods.toggleRowSelection();
+                this.$refs.multipleTableGoods.clearSelection();
+                console.log(this.materialsList)
+                console.log(listArr)
+
             },
             uprmGoods() {
                 //修改移除商品信息
-                this.upaddprocessData.goodsList = [];
+                let index = this.upaddprocessData.goodsList.indexOf(data)
+                delete data.show
+                this.upaddprocessData.goodsList.splice(index, 1)
+
+                let listArr = this.upquireGoodsData.filter(item => {
+                    return data.itemCode === item.itemCode
+                })
+                listArr.forEach(item => {
+                    item.show = false
+                })
+                this.$refs.upmultipleTableGoods.toggleRowSelection();
+                this.$refs.upmultipleTableGoods.clearSelection();
+                console.log(this.materialsList)
+                console.log(listArr)
             },
             goodslistpag(val) {
                 //商品信息分页
@@ -2832,8 +2897,43 @@
                             }
                     }).then(res => {
                     this.quireGoodsData = res.data.list
+                    this.upquireGoodsData = res.data.list
                     this.totalRecordNum = res.data.totalRecord
-                    console.log(res.data.list)
+                    this.uptotalRecordNum = res.data.totalRecord
+                    /**
+                     * 新建部分
+                     * */
+
+                    let materArr = this.quireGoodsData
+                    let mArr = this.addprocessData.goodsList
+                    let items = []
+                    mArr.forEach(item => {
+                        items.push(item.itemCode)
+                    })
+                    let list = materArr.filter(item => {
+                        return items.indexOf(item.itemCode) != -1
+                    });
+
+                    console.log(list)
+                    list.forEach(item => {
+                        item.show = true
+                    })
+
+                    /**
+                     * 修改部分
+                     * **/
+                    let upmaterArr = this.upquireGoodsData
+                    let upmArr = this.upaddprocessData.goodsList
+                    let upitems = []
+                    upmArr.forEach(item => {
+                        upitems.push(item.materialCode)
+                    })
+                    let uplist = upmaterArr.filter(item => {
+                        return upitems.indexOf(item.materialCode) != -1
+                    });
+                    uplist.forEach(item => {
+                        item.show = true
+                    })
                 })
             },
             supplierQuery() {
@@ -2910,13 +3010,16 @@
     .el-tag {
         margin: 0em 0.1em 0em 0.1em;
     }
-    .Details{
-       text-align: left;
+
+    .Details {
+        text-align: left;
         margin-top: 1em;
     }
-    .Details .el-tag{
+
+    .Details .el-tag {
         margin-bottom: 0.5em;
     }
+
     .selectBox {
         display: flex;
         justify-content: space-between;
@@ -2934,5 +3037,10 @@
 
     .x .el-select {
         width: 260px;
+    }
+
+    .formInput {
+        display: flex;
+        flex-wrap: nowrap
     }
 </style>

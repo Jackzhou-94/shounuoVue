@@ -642,11 +642,9 @@
                                 this.$message({
                                     message: '添加成功',
                                     type: 'success',
-                                    onClose() {
-                                        that.factoryquery();
-                                        that.addfactory = false
-                                    }
                                 });
+                                this.factoryquery();
+                                this.addfactory = false
                             } else {
                                 this.$message.error(res.data.msg);
                             }
@@ -662,7 +660,6 @@
             upsubmitForm(upfactoryForm) {
                 this.typedata = JSON.stringify(this.upfactoryForm)
                 //修改厂商信息
-                let that = this
                 this.$refs[upfactoryForm].validate((valid) => {
                     if (valid) {
                         this.$axios.post(this.$store.state.upfactory, this.upfactoryForm).then(res => {
@@ -670,11 +667,10 @@
                                 this.$message({
                                     message: '修改成功',
                                     type: 'success',
-                                    onClose() {
-                                        that.factoryquery()
-                                        that.upfactory = false
-                                    }
+
                                 });
+                                this.factoryquery()
+                                this.upfactory = false
                             } else {
                                 this.$message.error(res.data.msg);
                             }
@@ -705,7 +701,6 @@
 
                 this.typedata = JSON.stringify(data) //将数据转为字符串，进行修改验证
 
-                console.log(data)
             },
             delfactoryspanel(val) {
                 //删除单条工厂信息
@@ -715,16 +710,14 @@
             },
             delfactory() {
                 //删除工厂信息
-                let that = this
                 this.$axios.post(this.$store.state.delfactory, {ids: this.factoryIds}).then(res => {
                     if (res.data.code == 200) {
                         this.$message({
                             message: '删除成功',
                             type: 'success',
-                            onClose() {
-                                that.factoryquery()
-                            }
+
                         });
+                        this.factoryquery()
                     }
                     else {
                         this.$message.error('删除失败！');

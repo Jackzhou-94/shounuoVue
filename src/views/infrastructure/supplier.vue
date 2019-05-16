@@ -1250,10 +1250,8 @@
                                 this.$message({
                                     message: '操作成功',
                                     type: 'success',
-                                    onClose() {
-                                        that.querySupplier()
-                                    }
                                 });
+                                that.querySupplier()
                             } else {
                                 this.$message.error(res.data.msg);
                             }
@@ -1279,10 +1277,8 @@
                                 this.$message({
                                     message: '操作成功',
                                     type: 'success',
-                                    onClose() {
-                                        that.querySupplier()
-                                    }
                                 });
+                                that.querySupplier()
                             } else {
                                 this.$message.error(res.data.msg);
                             }
@@ -1318,10 +1314,9 @@
                         this.$message({
                             message: '删除成功',
                             type: 'success',
-                            onClose() {
-                                that.querySupplier()
-                            }
+
                         });
+                        that.querySupplier()
                     }
                     else {
                         this.$message.error(res.data.msg);

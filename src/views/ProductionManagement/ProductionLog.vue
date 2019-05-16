@@ -896,11 +896,8 @@
                         this.$message({
                             message: '删除成功',
                             type: 'success',
-                            onClose() {
-                                that.producelogQuery()//分页(生产日志)
-
-                            }
                         });
+                        that.producelogQuery()//分页(生产日志)
                     } else {
                         this.$message.error(res.data.msg);
                     }
@@ -989,11 +986,9 @@
                                     this.$message({
                                         message: '修改成功',
                                         type: 'success',
-                                        onClose() {
-                                            that.producelogQuery()
-                                            that.upProLog = false
-                                        }
                                     });
+                                    that.producelogQuery()
+                                    that.upProLog = false
                                 } else {
                                     this.$message.error(res.data.msg);
                                 }
@@ -1022,11 +1017,9 @@
                                     this.$message({
                                         message: '添加成功',
                                         type: 'success',
-                                        onClose() {
-                                            that.producelogQuery()
-                                            that.ProLog = false
-                                        }
                                     });
+                                    that.producelogQuery()
+                                    that.ProLog = false
                                 } else {
                                     this.$message.error(res.data.msg);
                                 }
