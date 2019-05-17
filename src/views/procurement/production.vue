@@ -116,9 +116,10 @@
                 :show-close="false"
                 width="1100px">
             <div class="QueryConditions">
+                <!--:disabled="stateButton"-->
                 <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
-                <el-button type="primary" icon="el-icon-view" size="mini" :disabled="stateButton"
-                           @click="workerSettingsBtn">派工设置
+                <el-button type="primary" icon="el-icon-view" size="mini"
+                           @click="batcworkerSettingsBtn">派工设置
                 </el-button>
             </div>
 
@@ -126,6 +127,7 @@
                     border
                     stripe
                     :data="DetailsPlanList"
+                    @cell-click="dispatchingDetailsButton"
                     @selection-change="selectionDetailsPlanList"
             >
                 <el-table-column align="center" fixed="left" type="selection"></el-table-column>
@@ -143,10 +145,12 @@
                         v-if="processShow"
                         align="center">
                     <template slot-scope="scope">
-                        <el-tag type="danger" @click="factoryQueryProduction(scope.row.processNodeList,index,scope.row)"
-                                v-for="(item,index) in scope.row.processNodeList">
-                            {{item=='weave'?'织造':item=='seamHead'?'缝头':item=='stereoType'?'定型':'包装'}}
+
+                        <el-tag v-for="(item,index) in scope.row.processNodeList" :type="item.state===1?'success':''"
+                                @click="factoryQueryProduction(scope.row.processNodeList[index].node,index,scope.row)">
+                            {{item.node=='weave'?'织造':item.node=='seamHead'?'缝头':item.node=='stereoType'?'定型':'包装'}}
                         </el-tag>
+
                     </template>
                 </el-table-column>
                 <el-table-column align="center" v-if="specificationsShow" label="规格(颜色)" prop="colour"
@@ -203,7 +207,7 @@
                 <el-table-column align="center" v-if="styleNumberShow" label="派工单号" prop="produceCode"
                                  width="170px"></el-table-column>
                 <el-table-column align="center" v-if="MerchantNumberShow" label="款式编号" prop="styleCode"
-                                 width="160px"></el-table-column>
+                                 width="170px"></el-table-column>
                 <el-table-column
                         align="center"
                         prop="submitStatus"
@@ -225,13 +229,14 @@
                 </el-table-column>
                 <el-table-column align="center" v-if="MerchantNameShow" label="工厂" prop="factoryName"></el-table-column>
                 <el-table-column
-                        label="工艺流程"
+                        label="工序"
                         width="120"
+                        prop="processNode"
                         v-if="processShow"
                         align="center">
                     <template slot-scope="scope">
-                        <el-tag type="danger" v-for="item in scope.row.processNodeList">
-                            {{item=='weave'?'织造':item=='seamHead'?'缝头':item=='stereoType'?'定型':'包装'}}
+                        <el-tag type="danger">
+                            {{scope.row.processNode=='weave'?'织造':scope.row.processNode=='seamHead'?'缝头':scope.row.processNode=='stereoType'?'定型':'包装'}}
                         </el-tag>
                     </template>
                 </el-table-column>
@@ -332,7 +337,7 @@
         </el-dialog>
 
 
-        <!--生产计划单派工设置-->
+        <!--生产计划单 单条派工设置-->
         <el-dialog
                 title="派工设置"
                 :visible.sync="workerSettings"
@@ -490,223 +495,167 @@
 
 
         </el-dialog>
-        <!--<el-dialog-->
-        <!--title="派工设置"-->
-        <!--:visible.sync="workerSettings"-->
-        <!--width="1000px"-->
-        <!--:show-close="false"-->
-        <!--&gt;-->
-        <!--<div class="QueryConditions QueryInput">-->
-        <!--<el-button type="primary" size="mini" @click="generateDispatch">确认派工</el-button>-->
-        <!--</div>-->
-        <!--&lt;!&ndash;选中的派工单详情信息&ndash;&gt;-->
-        <!--<el-table-->
-        <!--:data="Dispatched"-->
-        <!--border-->
-        <!--stripe-->
-        <!--row-key="uuid"-->
-        <!--style="width: 100%">-->
-        <!--<el-table-column type="expand">-->
-        <!--<template slot-scope="props">-->
-        <!--&lt;!&ndash;<el-checkbox v-for="city in  props.row.dispatchedDetailList.keys()"&ndash;&gt;-->
-        <!--&lt;!&ndash;:label="city" :key="city">&ndash;&gt;-->
-        <!--&lt;!&ndash;{{city=='weave'?'织造':city=='seamHead'?'缝头':city=='stereoType'?'定型':'包装'}}&ndash;&gt;-->
-        <!--&lt;!&ndash;&ndash;&gt;-->
-        <!--&lt;!&ndash;</el-checkbox>&ndash;&gt;-->
-        <!--<el-table-->
-        <!--border-->
-        <!--stripe-->
-        <!--:data="props.row.dispatchedDetailList"-->
-        <!--&gt;-->
-        <!--<el-table-column prop="processNode" label="工艺流程">-->
-        <!--<template slot-scope="aaa">-->
-        <!--{{aaa.row.processNode=='weave'?'织造':aaa.row.processNode=='seamHead'?'缝头':aaa.row.processNode=='stereoType'?'定型':'包装'}}-->
-        <!--</template>-->
-        <!--&lt;!&ndash;<template>&ndash;&gt;-->
-        <!--&lt;!&ndash;{{item=='weave'?'织造':item=='seamHead'?'缝头':item=='stereoType'?'定型':'包装'}}&ndash;&gt;-->
-        <!--&lt;!&ndash;</template>&ndash;&gt;-->
-        <!--</el-table-column>-->
-        <!--<el-table-column prop="factoryName" label="工厂"></el-table-column>-->
-        <!--</el-table>-->
 
 
-        <!--</template>-->
-        <!--</el-table-column>-->
-        <!--<el-table-column align="center" label="款式编号" prop="styleCode"-->
-        <!--width="170px"></el-table-column>-->
-        <!--<el-table-column align="center" label="商家编号" prop="merchantCode"-->
-        <!--width="160px"></el-table-column>-->
-        <!--<el-table-column align="center" label="商品名称" prop="goodsName"></el-table-column>-->
+        <!--生产计划单 批量派工设置-->
+        <el-dialog
+                title="派工设置"
+                :visible.sync="batchworkerSettings"
+                width="1000px"
+                :show-close="false"
+        >
+            <div class="QueryConditions QueryInput">
 
-        <!--<el-table-column align="center" label="单位" prop="unit"></el-table-column>-->
+                <div>
+                    <el-input size="mini" placeholder="所属公司" v-model="querycompany"></el-input>
 
-        <!--<el-table-column-->
-        <!--label="工艺流程"-->
-        <!--width="230"-->
-        <!--v-if="processShow"-->
-        <!--align="center">-->
-        <!--<template slot-scope="scope">-->
-        <!--<el-tag type="danger" v-for="item in scope.row.processNodeList">-->
-        <!--{{item=='weave'?'织造':item=='seamHead'?'缝头':item=='stereoType'?'定型':'包装'}}-->
-        <!--</el-tag>-->
-        <!--</template>-->
-        <!--</el-table-column>-->
+                    <el-input size="mini" placeholder="名称" v-model="queryname"></el-input>
 
+                    <el-input size="mini" placeholder="其他" v-model="queryspare01"></el-input>
+                </div>
 
-        <!--</el-table>-->
+                <div>
+                    <el-button size="mini" type="primary" @click="factorySettings=true">显示设置</el-button>
+                    <el-button type="primary" size="mini"
+                               @click="queryspare01='',queryname='',querycompany=''">
+                        重置
+                    </el-button>
 
-        <!--<el-divider content-position="right"></el-divider>-->
-        <!--<div class="QueryConditions QueryInput">-->
-
-        <!--<div>-->
-        <!--<el-input size="mini" placeholder="所属公司" v-model="querycompany"></el-input>-->
-
-        <!--<el-input size="mini" placeholder="名称" v-model="queryname"></el-input>-->
-
-        <!--<el-input size="mini" placeholder="其他" v-model="queryspare01"></el-input>-->
-        <!--</div>-->
-
-        <!--<div>-->
-        <!--<el-button size="mini" type="primary" @click="factorySettings=true">显示设置</el-button>-->
-        <!--<el-button type="primary" size="mini"-->
-        <!--@click="queryspare01='',queryname='',querycompany=''">-->
-        <!--重置-->
-        <!--</el-button>-->
-
-        <!--<el-button type="primary" size="mini" icon="el-icon-search"-->
-        <!--@click="factoryquery()">查询-->
-        <!--</el-button>-->
-        <!--</div>-->
+                    <el-button type="primary" size="mini" icon="el-icon-search"
+                               @click="factoryquery()">查询
+                    </el-button>
+                </div>
 
 
-        <!--</div>-->
-        <!--<el-table-->
-        <!--:data="factoryList"-->
-        <!--border-->
-        <!--stripe-->
-        <!--style="width: 100%">-->
+            </div>
+            <el-table
+                    :data="factoryList"
+                    border
+                    stripe
+                    style="width: 100%">
 
-        <!--<el-table-column-->
-        <!--align="center"-->
-        <!--type="index"-->
-        <!--width="50">-->
-        <!--</el-table-column>-->
-        <!--<el-table-column-->
-        <!--align="center"-->
-        <!--prop="name"-->
-        <!--v-if="nameShow"-->
-        <!--width="150"-->
-        <!--label="名称">-->
-        <!--</el-table-column>-->
-        <!--<el-table-column-->
-        <!--align="center"-->
-        <!--prop="code"-->
-        <!--v-if="codeShow"-->
-        <!--label="编码"-->
-        <!--width="100"-->
-        <!--&gt;-->
-        <!--</el-table-column>-->
-        <!--<el-table-column-->
-        <!--label="工厂职能"-->
-        <!--v-if="functionShow"-->
-        <!--width="230"-->
-        <!--align="center">-->
-        <!--<template slot-scope="scope">-->
-        <!--<el-tag type="danger" v-for="item in scope.row.technologys">-->
-        <!--{{item=='weave'?'织造':item=='seamHead'?'缝头':item=='stereoType'?'定型':'包装'}}-->
-        <!--</el-tag>-->
-        <!--</template>-->
-        <!--</el-table-column>-->
-        <!--<el-table-column-->
-        <!--align="center"-->
-        <!--prop="address"-->
-        <!--v-if="addressShow"-->
-        <!--label="城市"-->
-        <!--width="180"-->
-        <!--&gt;-->
-        <!--</el-table-column>-->
-        <!--<el-table-column-->
-        <!--align="center"-->
-        <!--v-if="detailedAddressShow"-->
-        <!--prop="detailedAddress"-->
-        <!--label="详细地址"-->
-        <!--width="180"-->
-        <!--&gt;-->
-        <!--</el-table-column>-->
+                <el-table-column
+                        align="center"
+                        type="index"
+                        width="50">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="name"
+                        v-if="nameShow"
+                        width="150"
+                        label="名称">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="code"
+                        v-if="codeShow"
+                        label="编码"
+                        width="100"
+                >
+                </el-table-column>
+                <el-table-column
+                        label="工厂职能"
+                        v-if="functionShow"
+                        width="230"
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-tag type="danger" v-for="item in scope.row.technologys">
+                            {{item=='weave'?'织造':item=='seamHead'?'缝头':item=='stereoType'?'定型':'包装'}}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="address"
+                        v-if="addressShow"
+                        label="城市"
+                        width="180"
+                >
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        v-if="detailedAddressShow"
+                        prop="detailedAddress"
+                        label="详细地址"
+                        width="180"
+                >
+                </el-table-column>
 
-        <!--<el-table-column-->
-        <!--align="center"-->
-        <!--prop="company"-->
-        <!--v-if="companyShow"-->
-        <!--label="所属公司"-->
+                <el-table-column
+                        align="center"
+                        prop="company"
+                        v-if="companyShow"
+                        label="所属公司"
 
-        <!--&gt;-->
-        <!--</el-table-column>-->
-        <!--<el-table-column-->
-        <!--align="center"-->
-        <!--prop="contact"-->
-        <!--v-if="contactShow"-->
-        <!--label="联系人"-->
-        <!--&gt;-->
-        <!--</el-table-column>-->
-        <!--<el-table-column-->
-        <!--align="center"-->
-        <!--prop="phoneNumber"-->
-        <!--width="150"-->
-        <!--v-if="phoneNumberShow"-->
-        <!--label="手机号码">-->
-        <!--</el-table-column>-->
-        <!--<el-table-column-->
-        <!--label="创建时间"-->
-        <!--prop="createTime"-->
-        <!--width="180"-->
-        <!--v-if="createTimeShow"-->
-        <!--align="center"-->
-        <!--sortable-->
-        <!--&gt;</el-table-column>-->
-        <!--<el-table-column-->
-        <!--label="修改时间"-->
-        <!--prop="updateTime"-->
-        <!--width="180"-->
-        <!--v-if="updateTimeShow"-->
-        <!--align="center"-->
-        <!--sortable-->
-        <!--&gt;</el-table-column>-->
-        <!--<el-table-column-->
-        <!--align="center"-->
-        <!--prop="remark"-->
-        <!--width="100"-->
-        <!--v-if="remarkShow"-->
-        <!--label="备注">-->
-        <!--</el-table-column>-->
-        <!--<el-table-column-->
-        <!--align="center"-->
-        <!--label="操作"-->
-        <!--width="120"-->
-        <!--fixed="right"-->
-        <!--&gt;-->
-        <!--<template slot-scope="scope">-->
-        <!--<el-button type="text" @click="plantSelection(scope.row)">选择</el-button>-->
+                >
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="contact"
+                        v-if="contactShow"
+                        label="联系人"
+                >
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="phoneNumber"
+                        width="150"
+                        v-if="phoneNumberShow"
+                        label="手机号码">
+                </el-table-column>
+                <el-table-column
+                        label="创建时间"
+                        prop="createTime"
+                        width="180"
+                        v-if="createTimeShow"
+                        align="center"
+                        sortable
+                ></el-table-column>
+                <el-table-column
+                        label="修改时间"
+                        prop="updateTime"
+                        width="180"
+                        v-if="updateTimeShow"
+                        align="center"
+                        sortable
+                ></el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="remark"
+                        width="100"
+                        v-if="remarkShow"
+                        label="备注">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        label="操作"
+                        width="120"
+                        fixed="right"
+                >
+                    <template slot-scope="scope">
+                        <el-button type="text" @click="batchplantSelection(scope.row)">选择</el-button>
 
-        <!--</template>-->
-        <!--</el-table-column>-->
-
-
-        <!--</el-table>-->
-        <!--&lt;!&ndash;分页&ndash;&gt;-->
-        <!--<el-row>-->
-        <!--<el-col :span="10" :offset="14">-->
-        <!--<el-pagination-->
-        <!--@current-change="factorylistpag"-->
-        <!--:page-size="5"-->
-        <!--layout="prev, pager, next, jumper"-->
-        <!--:total="totalRecordNumFactory">-->
-        <!--</el-pagination>-->
-        <!--</el-col>-->
-        <!--</el-row>-->
+                    </template>
+                </el-table-column>
 
 
-        <!--</el-dialog>-->
+            </el-table>
+            <!--分页-->
+            <el-row>
+                <el-col :span="10" :offset="14">
+                    <el-pagination
+                            @current-change="factorylistpag"
+                            :page-size="5"
+                            layout="prev, pager, next, jumper"
+                            :total="totalRecordNumFactory">
+                    </el-pagination>
+                </el-col>
+            </el-row>
+
+
+        </el-dialog>
+
 
 
         <!--派工单选择工厂职能-->
@@ -719,8 +668,6 @@
             <!--technologys-->
             <el-checkbox-group v-model="checkList" v-for="city in  DispatchedFactory.technologys" :key="city">
 
-                <!--<el-checkbox-->
-                <!--:label="city=='weave'?'织造':city=='seamHead'?'缝头':city=='stereoType'?'定型':'包装'">-->
                 <el-checkbox
                         :label="city=='weave'?'织造':city=='seamHead'?'缝头':city=='stereoType'?'定型':'包装'">
                 </el-checkbox>
@@ -1365,7 +1312,8 @@
                 ProcessIntroduction: false,//工艺引入面板
                 upProcessIntroduction: false,//修改工艺引入面板
                 Settings: false,//显示设置面板
-                workerSettings: false,//派工设置面板
+                workerSettings: false,//单条派工设置面板
+                batchworkerSettings: false,//批量派工设置面板
                 DetailsPlan: false,//生产计划详情面板
                 DetailsPlanList: [],//生产计划详情数据
 
@@ -1491,7 +1439,7 @@
 
 
                 stateButton: false,//派工按钮
-                selectProcessData:[],//需要派单的信息
+                selectProcessData: [],//需要派单的信息
             }
         },
         mounted() {
@@ -1519,15 +1467,21 @@
             }
         },
         methods: {
-            factoryQueryProduction(list, index,data) {
+            dispatchingDetailsButton(data) {
+                //获取当前工艺派单信息
+                console.log(data)
+                this.dispatchingDetailsData = data.dispatchedDetailList
+            },
+            factoryQueryProduction(list, index, data) {
+                //工序标签点击事件
                 /**
                  * list 当前工艺单所有工艺
                  * index 当前选择工艺索引
                  * data 当前选中工艺单所有信息
                  * **/
                 this.workerSettings = true
-                this.technologyQuery = list[index]
-                this.selectProcessData=data
+                this.technologyQuery = list
+                this.selectProcessData.push(data)
                 this.factoryquery()
 
             },
@@ -1750,61 +1704,96 @@
                 //保存选中的工厂职能
                 let dataArr = []
                 // dataArr = this.checkList//选中工厂职能数据转换
+                let that=this
                 this.checkList.forEach(l => {
                     let a = l === '织造' ? 'weave' : l === '缝头' ? 'seamHead' : l === '定型' ? 'stereoType' : 'pack'
                     dataArr.push(a)
                 })
-                console.log(dataArr)
+
                 this.functionsSelect = false
-                let data = this.Dispatched//选择的派工单信息
+                let data = this.Dispatched//选择需要派单的信息
+
                 let factory = this.DispatchedFactory//选择的工厂数据
-                data.forEach(item => {
-                    console.log(item.processNodeList)
-                    item.processNodeList.forEach(k => {
-                        console.log(k)
 
-                        if (item.dispatchedDetailList.length < item.processNodeList.length) {
-                            let param = {processNode: '', factoryUuid: '', factoryName: ''};
-                            // param['processType'] = '';
-                            dataArr.forEach(j => {
-                                if (k === j) {
-                                    param.processNode = j;
-                                    param.factoryUuid = factory.uuid;//此时param对象的键名字为id而不是idNa
-                                    param.factoryName = factory.name;
-                                    item.dispatchedDetailList.push(param)
-                                }
 
-                            })
+                this.Dispatched.forEach(item => {
+                    item.dispatchedDetailList = []
 
-                        }
-
+                    console.log(item)
+                    dataArr.forEach(j=>{
+                        let param = {processNode: j, factoryUuid: factory.uuid};
+                        item.dispatchedDetailList.push(param)
                     })
+                })
 
-
+                this.$axios.post(this.$store.state.addDispatch, this.Dispatched).then(res => {
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            onClose() {
+                                that.batchworkerSettings = false;
+                                that.detailedQuery()
+                            }
+                        });
+                    }
+                    else {
+                        this.$message.error(res.data.msg);
+                    }
                 })
 
 
+
+                console.log(this.Dispatched)
+            },
+            batchplantSelection(data) {
+                //批量派工
+                this.functionsSelect = true
+                this.DispatchedFactory = data
                 console.log(data)
-            }
-            ,
+            },
             plantSelection(data) {
                 console.log(data)
-                //派工设置选择工厂
-                // this.DispatchedFactory = data
-                // this.functionsSelect = true
-                let logy=this.technologyQuery=='weave '?'织造':this.technologyQuery=='seamHead'?'缝头':this.technologyQuery=='stereoType'?'定型':'包装'
+                //派工设置选择工厂,单条派工
+
+                let that = this
+                let logy = this.technologyQuery == 'weave' ? '织造' : this.technologyQuery == 'seamHead' ? '缝头' : this.technologyQuery == 'stereoType' ? '定型' : '包装'
                 this.$confirm(`是否将工序 ${logy} 派给该工厂？`, '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    console.log(this.selectProcessData)
-                    let val={}
-                    val[this.technologyQuery]=data.uuid
-                    console.log(val)
-                    this.selectProcessData.dispatchedDetailList.push(val)
-                })
+                    let val = {
+                        factoryUuid: data.uuid,
+                        processNode: this.technologyQuery
+                    }
 
+                    this.selectProcessData.forEach(item => {
+                        item.dispatchedDetailList = []
+                        item.dispatchedDetailList.push(val)
+                    })
+
+
+                    console.log(this.selectProcessData)
+                    this.$axios.post(this.$store.state.addDispatch, this.selectProcessData).then(res => {
+                        if (res.data.code == 200) {
+                            this.$message({
+                                message: '操作成功',
+                                type: 'success',
+                                onClose() {
+                                    that.workerSettings = false;
+                                    that.detailedQuery()
+                                }
+                            });
+                            console.log(res.data)
+                        }
+                        else {
+                            this.$message.error(res.data.msg);
+                        }
+                    })
+
+
+                })
 
 
             }
@@ -1846,8 +1835,45 @@
                     }
                 }
             },
+
+            batcworkerSettingsBtn() {
+                //批量派工设置按钮
+
+                /**
+                 * 先判断选中的信息是否有包含已经派过单的
+                 * **/
+                let arr = []
+                let that = this
+                let isTrue = true
+                this.Dispatched.forEach((item, index) => {
+                    item.processNodeList.forEach(j => {
+                        arr.push(j.state)
+                    })
+                })
+                /**
+                 * 判断选中的数据，需要派工的工艺是否一样
+                 * */
+                for (let i = 0; i < arr.length; i++) {
+                    if (arr.indexOf(arr[i]) != 0) {
+                        isTrue = false
+                        break
+                    }
+                }
+
+                if (isTrue) {
+                    this.batchworkerSettings = true
+                    this.factoryquery()
+                } else {
+                    this.$message.error('所选择的工艺单不符合派单规则');
+                }
+
+                console.log(this.Dispatched)
+
+
+            }
+            ,
             workerSettingsBtn() {
-                //派工设置按钮
+                //单个派工设置按钮
                 if (this.Dispatched.length != 0) {
                     this.workerSettings = true;
                     console.log(this.Dispatched)
@@ -1867,8 +1893,11 @@
             ,
             detailedQuery(data) {
                 //生产计划单双击事件
-                this.producitonUUID = data.uuid
-                this.DetailsPlan = true
+                if (data) {
+                    this.producitonUUID = data.uuid
+                    this.DetailsPlan = true
+                }
+
 
                 /**
                  *
@@ -1885,9 +1914,19 @@
                         this.stateButton = false
                     }
                     this.DetailsPlanList = res.data.data.producePlanDetailBeanList
-                    console.log(this.DetailsPlanList)
+                    // let arr=[]
+                    // this.DetailsPlanList.forEach((item,i)=>{
+                    //     let data={}
+                    //     arr=item.processNodeList.filter(j=>{
+                    //         return j===item.dispatchedDetailList[i].processNode
+                    //     })
+                    //
+                    // })
+                    // // console.log(arr)
+                    // console.log(this.DetailsPlanList)
+
                 })
-                this.dispatchingDetailsFun()
+                // this.dispatchingDetailsFun()
             }
             ,
             dispatchingDetailsFun() {
