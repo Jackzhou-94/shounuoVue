@@ -648,7 +648,7 @@
             </el-tabs>
 
             <div style="text-align: right;margin-top: 0.5em">
-                <el-button size="mini" type="primary" @click="addtechnology('addprocessData')">保存</el-button>
+                <el-button size="mini" type="primary" @click="upaddtechnology('upaddprocessData')">保存</el-button>
             </div>
 
         </el-dialog>
@@ -1970,15 +1970,14 @@
 
             <el-table-column
                     label="工艺编号"
-                    width="200"
                     prop="styleCode"
                     align="center">
             </el-table-column>
-            <el-table-column
-                    label="商家编码"
-                    prop="merchantCode"
-                    align="center">
-            </el-table-column>
+            <!--<el-table-column-->
+                    <!--label="商家编码"-->
+                    <!--prop="merchantCode"-->
+                    <!--align="center">-->
+            <!--</el-table-column>-->
             <el-table-column
                     prop="name"
                     label="工艺名称"
@@ -1986,7 +1985,6 @@
             </el-table-column>
             <el-table-column
                     label="流程节点"
-                    width="230"
                     align="center">
                 <template slot-scope="scope">
                     <el-tag type="danger" v-for="item in scope.row.processNodeList">
@@ -1995,21 +1993,21 @@
                 </template>
             </el-table-column>
 
-            <el-table-column
-                    label="颜色"
-                    prop="colour"
-                    align="center">
-            </el-table-column>
-            <el-table-column
-                    label="品牌"
-                    prop="brand"
-                    align="center">
-            </el-table-column>
-            <el-table-column
-                    label="类别"
-                    prop="category"
-                    align="center">
-            </el-table-column>
+            <!--<el-table-column-->
+                    <!--label="颜色"-->
+                    <!--prop="colour"-->
+                    <!--align="center">-->
+            <!--</el-table-column>-->
+            <!--<el-table-column-->
+                    <!--label="品牌"-->
+                    <!--prop="brand"-->
+                    <!--align="center">-->
+            <!--</el-table-column>-->
+            <!--<el-table-column-->
+                    <!--label="类别"-->
+                    <!--prop="category"-->
+                    <!--align="center">-->
+            <!--</el-table-column>-->
             <el-table-column
                     align="center"
                     width="100"
@@ -2072,16 +2070,16 @@
                 ],
                 addprocessData: {
                     //新建工艺单数据
-                    merchantCode: '',//商家编码
-                    colour: '',//颜色
-                    processFlow: '',//工艺流程（用于展示）
+                    // merchantCode: '',//商家编码
+                    // colour: '',//颜色
+                    // processFlow: '',//工艺流程（用于展示）
                     processNodeList: ['weave', 'seamHead', 'stereoType', 'pack'],//流程节点
                     name: '',//工艺名称
-                    brand: '',//品牌
-                    category: '',//类别
+                    // brand: '',//品牌
+                    // category: '',//类别
                     goodsList: [],//商品信息
                     materialsList: [],//原材料信息
-                    specifications: '',//规格
+                    // specifications: '',//规格
                 },
                 addprocessrules: {
                     //新建工艺单表单验证
@@ -2509,7 +2507,7 @@
                         if (this.upaddprocessData.goodsList.length === 0 || this.upaddprocessData.materialsList.length === 0) {
                             this.$message.error('信息填写不完全');
                         } else {
-                            this.$axios.post(this.$store.state.AddPricess, this.upaddprocessData).then(res => {
+                            this.$axios.post(this.$store.state.upPricess, this.upaddprocessData).then(res => {
                                 if (res.data.code == 200) {
                                     this.$message({
                                         message: '修改成功',

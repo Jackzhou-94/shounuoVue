@@ -119,7 +119,7 @@
                 <!--:disabled="stateButton"-->
                 <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
                 <el-button type="primary" icon="el-icon-view" size="mini"
-                           @click="batcworkerSettingsBtn">派工设置
+                           :disabled="produState" @click="batcworkerSettingsBtn">派工设置
                 </el-button>
             </div>
 
@@ -134,7 +134,7 @@
                 <el-table-column align="center" type="index"></el-table-column>
                 <el-table-column align="center" v-if="ProductionOrderShow" label="生产计划单编号" prop="produceCode"
                                  width="160px"></el-table-column>
-                <el-table-column align="center" v-if="styleNumberShow" label="款式编号" prop="styleCode"
+                <el-table-column align="center" v-if="styleNumberShow" label="工艺编号" prop="styleCode"
                                  width="170px"></el-table-column>
                 <el-table-column align="center" v-if="MerchantNumberShow" label="商家编号" prop="merchantCode"
                                  width="160px"></el-table-column>
@@ -146,8 +146,8 @@
                         align="center">
                     <template slot-scope="scope">
 
-                        <el-tag v-for="(item,index) in scope.row.processNodeList" :type="item.state===1?'success':''"
-                                @click="factoryQueryProduction(scope.row.processNodeList[index].node,index,scope.row)">
+                        <el-tag v-for="(item,index) in scope.row.processNodeMapList" :type="item.state===1?'success':''"
+                                @click="factoryQueryProduction(scope.row.processNodeMapList[index].node,index,scope.row)">
                             {{item.node=='weave'?'织造':item.node=='seamHead'?'缝头':item.node=='stereoType'?'定型':'包装'}}
                         </el-tag>
 
@@ -657,7 +657,6 @@
         </el-dialog>
 
 
-
         <!--派工单选择工厂职能-->
         <el-dialog
                 title="工厂职能选择"
@@ -666,10 +665,12 @@
                 :visible.sync="functionsSelect"
                 width="400px">
             <!--technologys-->
-            <el-checkbox-group v-model="checkList" v-for="city in  DispatchedFactory.technologys" :key="city">
+            <el-checkbox-group  v-model="checkList" v-for="city in  DispatchedFactory.selectState">
 
                 <el-checkbox
-                        :label="city=='weave'?'织造':city=='seamHead'?'缝头':city=='stereoType'?'定型':'包装'">
+                        style="display: flex;justify-content: space-between"
+                        :disabled="city.state"
+                        :label="city.technology=='weave'?'织造':city.technology=='seamHead'?'缝头':city.technology=='stereoType'?'定型':'包装'">
                 </el-checkbox>
 
             </el-checkbox-group>
@@ -1312,6 +1313,7 @@
                 ProcessIntroduction: false,//工艺引入面板
                 upProcessIntroduction: false,//修改工艺引入面板
                 Settings: false,//显示设置面板
+                produState: true,//派工状态
                 workerSettings: false,//单条派工设置面板
                 batchworkerSettings: false,//批量派工设置面板
                 DetailsPlan: false,//生产计划详情面板
@@ -1440,6 +1442,8 @@
 
                 stateButton: false,//派工按钮
                 selectProcessData: [],//需要派单的信息
+
+                proNodeMapList: [],//选中需要派单的单据需要的工艺
             }
         },
         mounted() {
@@ -1467,6 +1471,29 @@
             }
         },
         methods: {
+            selectionDetailsPlanList(data) {
+                //选中需要派单的信息
+                this.Dispatched = data
+                this.proNodeMapList = []
+                this.Dispatched.forEach(item => {
+                    // 0不可以派工，1可以派工
+                    console.log(item.processNodeMapList)
+                    /**
+                     * 选择需要派单的信息
+                     * 并记录下选中这些信息所需的工艺
+                     * proNodeMapList
+                     * **/
+                    item.processNodeMapList.forEach(j => {
+                        if (j.auditState !== 0) {
+                            this.produState = false
+                            console.log()
+                            this.proNodeMapList.push(j.node)//选中需要派单的单据需要的工艺
+                        } else {
+                            this.produState = true
+                        }
+                    })
+                })
+            },
             dispatchingDetailsButton(data) {
                 //获取当前工艺派单信息
                 console.log(data)
@@ -1665,46 +1692,11 @@
                     }
                 })
 
-            },
-
-
-            generateDispatch() {
-                //生成派工单
-                let that = this
-                let stateArr = this.Dispatched.every(item => {
-
-                    return item.dispatchedDetailList.length === item.processNodeList.length
-
-                })
-                if (stateArr) {
-                    this.$axios.post(this.$store.state.addDispatch, this.Dispatched).then(res => {
-                        if (res.data.code == 200) {
-                            this.$message({
-                                message: '操作成功',
-                                type: 'success',
-                                onClose() {
-                                    that.DetailsPlan = false;
-                                    that.workerSettings = false;
-                                }
-                            });
-                        }
-                        else {
-                            this.$message.error(res.data.msg);
-                        }
-                    })
-                } else {
-                    this.$message.error('还有单据未选择派工派工！');
-                }
-
-
-            },
-
-
-            seave() {
+            }, seave() {
                 //保存选中的工厂职能
                 let dataArr = []
                 // dataArr = this.checkList//选中工厂职能数据转换
-                let that=this
+                let that = this
                 this.checkList.forEach(l => {
                     let a = l === '织造' ? 'weave' : l === '缝头' ? 'seamHead' : l === '定型' ? 'stereoType' : 'pack'
                     dataArr.push(a)
@@ -1720,12 +1712,14 @@
                     item.dispatchedDetailList = []
 
                     console.log(item)
-                    dataArr.forEach(j=>{
+                    dataArr.forEach(j => {
                         let param = {processNode: j, factoryUuid: factory.uuid};
                         item.dispatchedDetailList.push(param)
                     })
                 })
-
+                /**
+                 * 生成派工单
+                 * **/
                 this.$axios.post(this.$store.state.addDispatch, this.Dispatched).then(res => {
                     if (res.data.code == 200) {
                         this.$message({
@@ -1741,7 +1735,6 @@
                         this.$message.error(res.data.msg);
                     }
                 })
-
 
 
                 console.log(this.Dispatched)
@@ -1798,11 +1791,7 @@
 
             }
             ,
-            selectionDetailsPlanList(data) {
-                //选中需要派单的信息
-                this.Dispatched = data
-                console.log(data)
-            },
+
             dispatchingDetails(data) {
                 //选择派工详情
                 //采购单多选
@@ -1846,7 +1835,7 @@
                 let that = this
                 let isTrue = true
                 this.Dispatched.forEach((item, index) => {
-                    item.processNodeList.forEach(j => {
+                    item.processNodeMapList.forEach(j => {
                         arr.push(j.state)
                     })
                 })
@@ -1861,6 +1850,7 @@
                 }
 
                 if (isTrue) {
+
                     this.batchworkerSettings = true
                     this.factoryquery()
                 } else {
@@ -1872,19 +1862,7 @@
 
             }
             ,
-            workerSettingsBtn() {
-                //单个派工设置按钮
-                if (this.Dispatched.length != 0) {
-                    this.workerSettings = true;
-                    console.log(this.Dispatched)
-                    // this.Dispatched=
-                    this.factoryquery()
-                } else {
-                    this.$message.error('还未选择需要派工的信息！');
-                }
 
-            }
-            ,
             dispatchingDetailspag(val) {
                 //派工详情分页按钮
                 this.dispatchingDetailsPageNum = val
@@ -1897,8 +1875,6 @@
                     this.producitonUUID = data.uuid
                     this.DetailsPlan = true
                 }
-
-
                 /**
                  *
                  * 生产计划单明细
@@ -1914,19 +1890,8 @@
                         this.stateButton = false
                     }
                     this.DetailsPlanList = res.data.data.producePlanDetailBeanList
-                    // let arr=[]
-                    // this.DetailsPlanList.forEach((item,i)=>{
-                    //     let data={}
-                    //     arr=item.processNodeList.filter(j=>{
-                    //         return j===item.dispatchedDetailList[i].processNode
-                    //     })
-                    //
-                    // })
-                    // // console.log(arr)
-                    // console.log(this.DetailsPlanList)
-
                 })
-                // this.dispatchingDetailsFun()
+                this.dispatchingDetailsFun()
             }
             ,
             dispatchingDetailsFun() {
@@ -1960,22 +1925,46 @@
                     console.log(res)
                     this.factoryList = res.data.list
                     this.totalRecordNumFactory = res.data.totalRecord
+                    // proNodeMapList
+                    console.log(this.proNodeMapList)
+                    /**
+                     * 根据派工单工序选择派工工厂，给最后派单选择工厂时做限定
+                     * 没有改条工序的无法选择对应这条工厂的工序
+                     * false 可选
+                     * true 禁用，不可选
+                     * **/
+                    this.factoryList.forEach(item => {
+                        item.selectState = []
+                        item.technologys.forEach(j => {
+                            let data
+                            if (this.proNodeMapList.indexOf(j) != -1) {
+                                data = {
+                                    technology: j,
+                                    state: false
+                                }
+                            } else {
+                                data = {
+                                    technology: j,
+                                    state: true
+                                }
+                            }
+                            item.selectState.push(data)
+                        })
+                    })
+                    console.log(this.factoryList)
                 })
-            }
-            ,
+            },
             upTimeFun() {
                 //修改生产计划单时，时间选择控件值发生变化时回调
                 this.upScheduleList.expectProcessTime = this.upTime[0]
                 this.upScheduleList.expectCompleteTime = this.upTime[1]
-            }
-            ,
+            },
             productionpag(val) {
                 //工艺单信息分页
 
                 this.pageNumQuery = val
                 this.ProduQueryPage()
-            }
-            ,
+            },
             closeFun() {
                 //数据修改验证
 
@@ -1998,8 +1987,7 @@
                 }
 
 
-            }
-            ,
+            },
             delProduction() {
                 //删除生产计划单
                 let that = this
@@ -2027,8 +2015,7 @@
 
 
                 })
-            }
-            ,
+            },
             upProceBtn(data) {
 
                 //生产计划单修改按钮
@@ -2052,8 +2039,7 @@
                     console.log(res.data)
                     this.typedata = JSON.stringify(this.upScheduleList)//将数据转为字符串，进行修改验证
                 })
-            }
-            ,
+            },
             ProduQueryPage() {
                 //生产计划单分页查询
 
@@ -2079,8 +2065,7 @@
                     this.totalRecordNum = res.data.totalRecord
                     console.log(res)
                 })
-            }
-            ,
+            },
             addProductiondata() {
                 //添加生产计划单
 
@@ -2110,13 +2095,9 @@
                     })
                 }
 
-            }
-            ,
-
-
+            },
             upaddProductiondata() {
                 //修改生产计划单
-
                 let that = this
                 this.$axios.post(this.$store.state.upProduction, this.upScheduleList).then(res => {
                     if (res.data.code == 200) {
@@ -2135,8 +2116,7 @@
                 })
 
                 console.log(this.upScheduleList)
-            }
-            ,
+            },
             delProdufuns() {
                 //批量移除  新建生产计单 工艺单信息多选
                 //批量移除原材料信息
@@ -2156,8 +2136,7 @@
 
                     })
                 })
-            }
-            ,
+            },
             updelProdufuns() {
                 //批量移除  新建生产计单 工艺单信息多选
                 //批量移除原材料信息
@@ -2185,20 +2164,17 @@
                     //判断要修改的数据，工艺单数据是否为空，为空就无法保存
                     this.upsaveShow = true
                 }
-            }
-            ,
+            },
             addProductionMultiple(data) {
                 //新建生产计单 工艺单信息多选
                 this.addProductionMultipleList = []
                 this.addProductionMultipleList = data
-            }
-            ,
+            },
             upaddProductionMultiple(data) {
                 //新建生产计单 工艺单信息多选
                 this.upaddProductionMultipleList = []
                 this.upaddProductionMultipleList = data
-            }
-            ,
+            },
             rmproduction(data) {
                 //移除工艺单信息（单个移除）
                 let index = this.ScheduleList.indexOf(data)
@@ -2215,8 +2191,7 @@
                 this.$refs.multipleTable.clearSelection();
 
 
-            }
-            ,
+            },
             uprmproduction(data) {
                 //移除工艺单信息（单个移除）
                 let index = this.upScheduleList.producePlanDetailBeanList.indexOf(data)
@@ -2236,8 +2211,7 @@
                     this.upsaveShow = true
                 }
 
-            }
-            ,
+            },
             MultiplePro(data) {
                 //多选工艺单信息
                 this.MultipleProList = []
@@ -2245,8 +2219,7 @@
 
                 console.log(this.MultipleProList)
 
-            }
-            ,
+            },
             upMultiplePro(data) {
                 //修改多选工艺单信息
                 this.upMultipleProList = []
@@ -2254,8 +2227,7 @@
 
                 console.log(this.upMultipleProList)
 
-            }
-            ,
+            },
             //
             BatchIntroduction() {
                 //批量引入
