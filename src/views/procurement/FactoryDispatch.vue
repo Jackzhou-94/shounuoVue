@@ -56,7 +56,7 @@
             <el-table-column label="派工单编号" width="160px" prop="dispatchCode" v-if="DistributionNumberShow"
                              align="center"></el-table-column>
             <el-table-column label="工厂" v-if="factoryShow" prop="factoryName" align="center"></el-table-column>
-            <el-table-column label="款式编号" width="170px" v-if="styleCodeShow" prop="styleCode" align="center"></el-table-column>
+            <el-table-column label="工艺编号" width="170px" v-if="styleCodeShow" prop="styleCode" align="center"></el-table-column>
             <el-table-column
                     label="工艺"
                     width="100"

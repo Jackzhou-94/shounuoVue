@@ -27,9 +27,9 @@ export default new Router({
                 },
                 {
                     //操作员设置
-                    path:'/operator',
-                    name:'operator',
-                    component:require('./views/SystemSettings/operator').default
+                    path: '/operator',
+                    name: 'operator',
+                    component: require('./views/SystemSettings/operator').default
                 },
                 {
                     // 生产计划单
@@ -39,9 +39,9 @@ export default new Router({
                 },
                 {
                     // 生产计划单明细
-                    path:'/productionDetail',
-                    name:'productionDetail',
-                    component:require('./views/procurement/productionDetail').default,
+                    path: '/productionDetail',
+                    name: 'productionDetail',
+                    component: require('./views/procurement/productionDetail').default,
                 },
                 {
                     //原材料信息
@@ -85,10 +85,15 @@ export default new Router({
                     name: 'ProcessManagement',
                     component: require('./views/infrastructure/ProcessManagement').default,
                 }, {
-                    //工厂派单
+                    //工厂派单查询
                     path: '/FactoryDispatch',
                     name: 'FactoryDispatch',
                     component: require('./views/procurement/FactoryDispatch').default,
+                }, {
+                    //工厂派单管理
+                    path: '/dispatchManagement',
+                    name: 'dispatchManagement',
+                    component: require('./views/procurement/dispatchManagement').default,
                 }, {
                     //生产日志
                     path: '/ProductionLog',

@@ -439,7 +439,7 @@
                                 label="规格">
                             <template slot-scope="scope">
                                 <el-input size="mini" oninput="value=value.replace(/[^\d]/g,'')"
-                                          v-model="scope.row.Specifications"></el-input>
+                                          v-model="scope.row.specifications"></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column
@@ -1045,17 +1045,19 @@
                         width="180"
                         label="备注">
                 </el-table-column>
+                <!--introductionGoods(scope.row)"-->
                 <el-table-column
                         align="center"
                         fixed="right"
                         label="操作">
                     <template slot-scope="scope">
-                        <!--introductionGoods(scope.row)-->
-                        <el-button type="text" @click="introductionGoods(scope.row)" :disabled="scope.row.show">引入
-                        </el-button>
 
+                        <el-button type="text" @click="introductionGoods(scope.row)" :disabled="scope.row.show">引入</el-button>
+                        <!--<el-button type="text" @click="scope.row.show=true" :disabled="scope.row.show">引入-->
+                        <!--</el-button>-->
                     </template>
                 </el-table-column>
+
             </el-table>
             <!--分页-->
             <el-row>
@@ -1075,7 +1077,7 @@
         <!--修改添加商品面板-->
         <el-dialog
                 width="1100px"
-                title="添加商品" :visible.sync="upaddGoodsPanel" :show-close="false"
+                title="添加商品1" :visible.sync="upaddGoodsPanel" :show-close="false"
         >
             <div style="display: flex;justify-content: left;flex-wrap: nowrap;margin-bottom: 0.5em">
                 <el-button icon="el-icon-view" type="primary" size="mini" @click="upSettings=true">显示设置</el-button>
@@ -1269,10 +1271,12 @@
                 </el-table-column>
             </el-table>
             <!--分页-->
+            <!--upqueryMater-->
             <el-row>
                 <el-col :span="10" :offset="14">
                     <el-pagination
-                            @current-change="goodslistpag"
+
+                            @current-change="upgoodslistpag"
                             :page-size="5"
                             layout="prev, pager, next, jumper"
                             :total="uptotalRecordNum">
@@ -1605,10 +1609,10 @@
                 <el-col :span="16" :offset="8"></el-col>
                 <el-col :span="8" :offset="16">
                     <el-pagination
-                            @current-change="MaterPage"
+                            @current-change="upMaterPage"
                             :page-size="5"
                             layout="prev, pager, next, jumper"
-                            :total="totalRecord">
+                            :total="uptotalRecord">
                     </el-pagination>
                 </el-col>
 
@@ -2197,6 +2201,7 @@
                 Settings: false,//商品信息显示设置
                 quireGoodspagesize: 5,//商品信息分页大小
                 quireGoodspageNum: 1,//商品信息分页页数
+                upquireGoodspageNum: 1,//商品信息分页页数(修改)
                 quireGoodsData: [],//商品信息
                 upquireGoodsData: [],//修改时需要添加商品信息
                 totalRecordNum: 0,//总条目数
@@ -2253,6 +2258,7 @@
 
 
                 totalRecord: 0,//总条目数
+                uptotalRecord:0,//修改时总条目数
                 materialsList: [],//原材料数据
                 upmaterialsList: [],//修改时原材料数据
                 materialsNum: '',//物料编码
@@ -2752,17 +2758,20 @@
                  * */
                 this.queryMater(val, 5)
             },
+            upMaterPage(){
+                this.upqueryMater(val, 5)
+            },
             addMater() {
                 //新建工艺单添加原材料按钮
                 this.addMaterPanel = true
                 this.factoryList = []
-                this.supplierQuery();//工厂信息查询
+                this.queryMater();//原材料信息查询
             },
             upaddMater() {
                 //修改工艺单添加原材料按钮
                 this.upaddMaterPanel = true
                 this.factoryList = []
-                this.supplierQuery();//工厂信息查询
+                this.upqueryMater();//工厂信息查询
                 /***
                  *
                  * 将已有的数据与查询到的数据进行匹配，如匹配到相同数据将状态改为true
@@ -2818,9 +2827,10 @@
             },
 
             introductionGoods(data) {
-                //引入原材料
+                //引入商品信息
                 data.show = true
                 this.addprocessData.goodsList.push(data)
+
                 console.log(data)
             },
             upintroductionGoods(data) {
@@ -2850,7 +2860,7 @@
                 console.log(listArr)
 
             },
-            uprmGoods() {
+            uprmGoods(data) {
                 //修改移除商品信息
                 let index = this.upaddprocessData.goodsList.indexOf(data)
                 delete data.show
@@ -2868,9 +2878,14 @@
                 console.log(listArr)
             },
             goodslistpag(val) {
-                //商品信息分页
+                //商品信息分页(新建)
                 this.quireGoodspageNum = val
                 this.queryGoods()
+            },
+            upgoodslistpag(val) {
+                //商品信息分页（修改）
+                this.upquireGoodspageNum = val
+                this.upqueryGoods()
             },
             addGoods() {
                 //新建工艺单添加商品按钮
@@ -2880,10 +2895,10 @@
             upaddGoods() {
                 //修改工艺单添加商品按钮
                 this.upaddGoodsPanel = true
-                this.queryGoods()
+                this.upqueryGoods()
             },
             queryGoods() {
-                //商品信息分页查询
+                //商品信息分页查询(新建)
                 this.$axios.get(this.$store.state.goodsmessage,
                     {
                         params:
@@ -2895,27 +2910,7 @@
                             }
                     }).then(res => {
                     this.quireGoodsData = res.data.list
-                    this.upquireGoodsData = res.data.list
                     this.totalRecordNum = res.data.totalRecord
-                    this.uptotalRecordNum = res.data.totalRecord
-                    /**
-                     * 新建部分
-                     * */
-
-                    let materArr = this.quireGoodsData
-                    let mArr = this.addprocessData.goodsList
-                    let items = []
-                    mArr.forEach(item => {
-                        items.push(item.itemCode)
-                    })
-                    let list = materArr.filter(item => {
-                        return items.indexOf(item.itemCode) != -1
-                    });
-
-                    console.log(list)
-                    list.forEach(item => {
-                        item.show = true
-                    })
 
                     /**
                      * 修改部分
@@ -2924,14 +2919,54 @@
                     let upmArr = this.upaddprocessData.goodsList
                     let upitems = []
                     upmArr.forEach(item => {
-                        upitems.push(item.materialCode)
+                        upitems.push(item.merchantCode)
                     })
                     let uplist = upmaterArr.filter(item => {
-                        return upitems.indexOf(item.materialCode) != -1
+                        return upitems.indexOf(item.merchantCode) != -1
                     });
+
+
                     uplist.forEach(item => {
                         item.show = true
                     })
+                    console.log(this.upquireGoodsData)
+
+                })
+            },
+            upqueryGoods() {
+                //商品信息分页查询(修改)
+                this.$axios.get(this.$store.state.goodsmessage,
+                    {
+                        params:
+                            {
+                                pageSize: this.quireGoodspagesize, pageNum: this.upquireGoodspageNum,
+                                name: this.queryname, sku: this.querysku,
+                                itemCode: this.queryitemCode, merchantCode: this.querymerchantCode,
+                                other: this.queryother
+                            }
+                    }).then(res => {
+                    this.upquireGoodsData = res.data.list
+                    this.uptotalRecordNum = res.data.totalRecord
+
+                    /**
+                     * 修改部分
+                     * **/
+                    let upmaterArr = this.upquireGoodsData
+                    let upmArr = this.upaddprocessData.goodsList
+                    let upitems = []
+                    upmArr.forEach(item => {
+                        upitems.push(item.merchantCode)
+                    })
+                    let uplist = upmaterArr.filter(item => {
+                        return upitems.indexOf(item.merchantCode) != -1
+                    });
+
+
+                    uplist.forEach(item => {
+                        item.show = true
+                    })
+                    console.log(this.upquireGoodsData)
+
                 })
             },
             supplierQuery() {
@@ -2947,7 +2982,7 @@
                 })
             },
             queryMater(Num = 1, Size = 5, type = '全部') {
-                //原材料信息查询
+                //原材料信息查询（新建）
                 let data = {
                     pageNum: Num, pageSize: Size, type: type,
                     materialCode: this.materialsNum, name: this.materialsName,
@@ -2958,9 +2993,7 @@
                     params: data
                 }).then(res => {
                     this.materialsList = res.data.list
-                    this.upmaterialsList = res.data.list
                     this.totalRecord = res.data.totalRecord//总条数
-
                     /**
                      * 新建部分
                      * */
@@ -2977,6 +3010,26 @@
                     list.forEach(item => {
                         item.show = true
                     })
+
+                })
+
+            },
+            upqueryMater(Num = 1, Size = 5, type = '全部') {
+                //原材料信息查询（修改）
+                let data = {
+                    pageNum: Num, pageSize: Size, type: type,
+                    materialCode: this.materialsNum, name: this.materialsName,
+                    manufacturer: this.VendorQueries
+                }
+
+                this.$axios.get(this.$store.state.queryPage, {
+                    params: data
+                }).then(res => {
+
+                    this.upmaterialsList = res.data.list
+                    this.uptotalRecord = res.data.totalRecord//总条数
+
+
                     /**
                      * 修改部分
                      * **/

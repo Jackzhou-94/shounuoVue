@@ -18,19 +18,19 @@
             <div class=" QueryConditions QueryInput">
                 <div>
                     <el-input size="mini" clearable v-model="conditionproduceCode" placeholder="生产计划单编号"></el-input>
-                    <!--<el-input size="mini" clearable v-model="conditionsstyleCode" placeholder="款式编号"></el-input>-->
-                    <!--<el-input size="mini" clearable v-model="conditionmerchantCode" placeholder="商家编号"></el-input>-->
-                    <!--<el-input size="mini" clearable v-model="conditionName" placeholder="商品名称"></el-input>-->
-                    <!--<div class="produ">-->
-                        <!--<el-select clearable placeholder="工艺流程" multiple size="mini" v-model="conditionprocessNode">-->
-                            <!--<el-option-->
-                                    <!--v-for="item in ProcessFunction"-->
-                                    <!--:key="item.value"-->
-                                    <!--:label="item.label"-->
-                                    <!--:value="item.value">-->
-                            <!--</el-option>-->
-                        <!--</el-select>-->
-                    <!--</div>-->
+                    <el-input size="mini" clearable v-model="conditionsstyleCode" placeholder="款式编号"></el-input>
+                    <el-input size="mini" clearable v-model="conditionmerchantCode" placeholder="商家编号"></el-input>
+                    <el-input size="mini" clearable v-model="conditionName" placeholder="商品名称"></el-input>
+                    <div class="produ">
+                        <el-select clearable placeholder="工艺流程" multiple size="mini" v-model="conditionprocessNode">
+                            <el-option
+                                    v-for="item in ProcessFunction"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </div>
 
                 </div>
 
@@ -54,7 +54,7 @@
                 ref="table"
                 :height="tableHeight"
                 @selection-change="ProductionSelect">
-
+            >
             <el-table-column align="center" type="selection"></el-table-column>
             <el-table-column align="center" type="index"></el-table-column>
             <el-table-column align="center" label="生产计划单编号" prop="produceCode"
@@ -118,9 +118,9 @@
             <div class="QueryConditions">
                 <!--:disabled="stateButton"-->
                 <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
-                <!--<el-button type="primary" icon="el-icon-view" size="mini"-->
-                           <!--:disabled="produState" @click="batcworkerSettingsBtn">派工设置-->
-                <!--</el-button>-->
+                <el-button type="primary" icon="el-icon-view" size="mini"
+                           :disabled="produState" @click="batcworkerSettingsBtn">派工设置
+                </el-button>
             </div>
 
             <el-table
@@ -146,7 +146,8 @@
                         align="center">
                     <template slot-scope="scope">
 
-                        <el-tag v-for="(item,index) in scope.row.processNodeMapList" :type="item.state===1?'success':''">
+                        <el-tag v-for="(item,index) in scope.row.processNodeMapList" :type="item.state===1?'success':''"
+                                @click="factoryQueryProduction(scope.row.processNodeMapList[index].node,index,scope.row)">
                             {{item.node=='weave'?'织造':item.node=='seamHead'?'缝头':item.node=='stereoType'?'定型':'包装'}}
                         </el-tag>
 
@@ -173,84 +174,84 @@
                 <!--</template>-->
                 <!--</el-table-column>-->
             </el-table>
-            <!--<el-divider>派工详情</el-divider>-->
+            <el-divider>派工详情</el-divider>
 
-            <!--<div class="QueryConditions">-->
+            <div class="QueryConditions">
 
 
-                <!--<el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>-->
-                <!--&lt;!&ndash;:disabled="auditStatusBut" 提交审核显示控制&ndash;&gt;-->
-                <!--<el-button size="mini" :disabled="pruauditStatusBut" type="primary" @click="dispatchSubmitAudit">提交审核-->
-                <!--</el-button>-->
+                <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
+                <!--:disabled="auditStatusBut" 提交审核显示控制-->
+                <el-button size="mini" :disabled="pruauditStatusBut" type="primary" @click="dispatchSubmitAudit">提交审核
+                </el-button>
 
-                <!--&lt;!&ndash;:disabled="submitStatusBut" 审核通过显示控制&ndash;&gt;-->
-                <!--<el-button size="mini" :disabled="prusubmitStatusBut" type="primary" @click="dispatchapproved">审核通过-->
-                <!--</el-button>-->
-                <!--&lt;!&ndash;:disabled="submitStatusBut" 审核驳回显示控制&ndash;&gt;-->
-                <!--<el-button size="mini" :disabled="prusubmitStatusBut" type="primary" @click="dispatchapprovedRejected">-->
-                    <!--审核驳回-->
-                <!--</el-button>-->
-                <!--<el-button type="danger" size="mini" class="el-icon-delete" :disabled="prudelStatusBut"-->
-                           <!--@click="batchDel">批量删除-->
-                <!--</el-button>-->
-            <!--</div>-->
-            <!--<el-table-->
-                    <!--border-->
-                    <!--stripe-->
-                    <!--:data="dispatchingDetailsData"-->
-                    <!--@selection-change="dispatchingDetails"-->
+                <!--:disabled="submitStatusBut" 审核通过显示控制-->
+                <el-button size="mini" :disabled="prusubmitStatusBut" type="primary" @click="dispatchapproved">审核通过
+                </el-button>
+                <!--:disabled="submitStatusBut" 审核驳回显示控制-->
+                <el-button size="mini" :disabled="prusubmitStatusBut" type="primary" @click="dispatchapprovedRejected">
+                    审核驳回
+                </el-button>
+                <el-button type="danger" size="mini" class="el-icon-delete" :disabled="prudelStatusBut"
+                           @click="batchDel">批量删除
+                </el-button>
+            </div>
+            <el-table
+                    border
+                    stripe
+                    :data="dispatchingDetailsData"
+                    @selection-change="dispatchingDetails"
 
-            <!--&gt;-->
-                <!--<el-table-column align="center" fixed="right" label="操作">-->
-                    <!--<template slot-scope="scope">-->
-                        <!--<el-button type="text" :disabled="scope.row.submitState=='tj01'?(true):(false)" @click="singledelRepairOrder(scope.row)">删除</el-button>-->
-                    <!--</template>-->
-                <!--</el-table-column>-->
-                <!--<el-table-column align="center" type="index"></el-table-column>-->
-                <!--<el-table-column align="center" type="selection"></el-table-column>-->
-                <!--<el-table-column align="center" v-if="ProductionOrderShow" label="生产计划单编号" prop="produceCode"-->
-                                 <!--width="160px"></el-table-column>-->
-                <!--<el-table-column align="center" v-if="styleNumberShow" label="派工单号" prop="produceCode"-->
-                                 <!--width="170px"></el-table-column>-->
-                <!--<el-table-column align="center" v-if="MerchantNumberShow" label="款式编号" prop="styleCode"-->
-                                 <!--width="170px"></el-table-column>-->
-                <!--<el-table-column-->
-                        <!--align="center"-->
-                        <!--prop="submitStatus"-->
-                        <!--label="提交状态"-->
-                        <!--width="150"-->
-                <!--&gt;-->
-                    <!--<template slot-scope="scope">-->
-                        <!--<span>{{scope.row.submitState=='tj01'?'已提交':'未提交'}}</span>-->
-                    <!--</template>-->
-                <!--</el-table-column>-->
-                <!--<el-table-column-->
-                        <!--align="center"-->
-                        <!--prop="auditStatus"-->
-                        <!--label="审核状态"-->
-                <!--&gt;-->
-                    <!--<template slot-scope="scope">-->
-                        <!--<span>{{scope.row.auditState=='sh01'?'已审核':scope.row.auditState=='sh02'?'未审核':'审核驳回'}}</span>-->
-                    <!--</template>-->
-                <!--</el-table-column>-->
-                <!--<el-table-column align="center" v-if="MerchantNameShow" label="工厂" prop="factoryName"></el-table-column>-->
-                <!--<el-table-column-->
-                        <!--label="工序"-->
-                        <!--width="120"-->
-                        <!--prop="processNode"-->
-                        <!--v-if="processShow"-->
-                        <!--align="center">-->
-                    <!--<template slot-scope="scope">-->
-                        <!--<el-tag type="danger">-->
-                            <!--{{scope.row.processNode=='weave'?'织造':scope.row.processNode=='seamHead'?'缝头':scope.row.processNode=='stereoType'?'定型':'包装'}}-->
-                        <!--</el-tag>-->
-                    <!--</template>-->
-                <!--</el-table-column>-->
-                <!--<el-table-column align="center" v-if="CreationTimeShow" label="创建时间" prop="createTime"-->
-                                 <!--width="180px"></el-table-column>-->
-                <!--<el-table-column align="center" v-if="noteShow" label="备注" prop="remark"></el-table-column>-->
+            >
+                <el-table-column align="center" fixed="right" label="操作">
+                    <template slot-scope="scope">
+                        <el-button type="text" :disabled="scope.row.submitState=='tj01'?(true):(false)" @click="singledelRepairOrder(scope.row)">删除</el-button>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" type="index"></el-table-column>
+                <el-table-column align="center" type="selection"></el-table-column>
+                <el-table-column align="center" v-if="ProductionOrderShow" label="生产计划单编号" prop="produceCode"
+                                 width="160px"></el-table-column>
+                <el-table-column align="center" v-if="styleNumberShow" label="派工单号" prop="produceCode"
+                                 width="170px"></el-table-column>
+                <el-table-column align="center" v-if="MerchantNumberShow" label="款式编号" prop="styleCode"
+                                 width="170px"></el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="submitStatus"
+                        label="提交状态"
+                        width="150"
+                >
+                    <template slot-scope="scope">
+                        <span>{{scope.row.submitState=='tj01'?'已提交':'未提交'}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="auditStatus"
+                        label="审核状态"
+                >
+                    <template slot-scope="scope">
+                        <span>{{scope.row.auditState=='sh01'?'已审核':scope.row.auditState=='sh02'?'未审核':'审核驳回'}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" v-if="MerchantNameShow" label="工厂" prop="factoryName"></el-table-column>
+                <el-table-column
+                        label="工序"
+                        width="120"
+                        prop="processNode"
+                        v-if="processShow"
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-tag type="danger">
+                            {{scope.row.processNode=='weave'?'织造':scope.row.processNode=='seamHead'?'缝头':scope.row.processNode=='stereoType'?'定型':'包装'}}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" v-if="CreationTimeShow" label="创建时间" prop="createTime"
+                                 width="180px"></el-table-column>
+                <el-table-column align="center" v-if="noteShow" label="备注" prop="remark"></el-table-column>
 
-            <!--</el-table>-->
+            </el-table>
 
 
 
@@ -905,16 +906,16 @@
                         align="center">
                 </el-table-column>
                 <el-table-column
-                        label="工艺编号"
+                        label="款式编号"
                         width="165"
                         prop="styleCode"
                         align="center">
                 </el-table-column>
-                <!--<el-table-column-->
-                        <!--label="商家编码"-->
-                        <!--prop="merchantCode"-->
-                        <!--align="center">-->
-                <!--</el-table-column>-->
+                <el-table-column
+                        label="商家编码"
+                        prop="merchantCode"
+                        align="center">
+                </el-table-column>
                 <el-table-column
                         prop="name"
                         label="工艺名称"
@@ -944,22 +945,22 @@
                     </template>
                 </el-table-column>
 
-                <!--<el-table-column-->
-                        <!--label="颜色"-->
-                        <!--prop="colour"-->
-                        <!--align="center">-->
-                <!--</el-table-column>-->
-                <!--<el-table-column-->
-                        <!--label="品牌"-->
-                        <!--prop="brand"-->
-                        <!--align="center">-->
-                <!--</el-table-column>-->
-                <!--<el-table-column-->
-                        <!--label="类别"-->
-                        <!--prop="category"-->
-                        <!--width="90"-->
-                        <!--align="center">-->
-                <!--</el-table-column>-->
+                <el-table-column
+                        label="颜色"
+                        prop="colour"
+                        align="center">
+                </el-table-column>
+                <el-table-column
+                        label="品牌"
+                        prop="brand"
+                        align="center">
+                </el-table-column>
+                <el-table-column
+                        label="类别"
+                        prop="category"
+                        width="90"
+                        align="center">
+                </el-table-column>
                 <el-table-column
                         align="center"
                         label="操作"
@@ -1019,16 +1020,16 @@
                         align="center">
                 </el-table-column>
                 <el-table-column
-                        label="工艺编号"
+                        label="款式编号"
                         width="165"
                         prop="styleCode"
                         align="center">
                 </el-table-column>
-                <!--<el-table-column-->
-                        <!--label="商家编码"-->
-                        <!--prop="merchantCode"-->
-                        <!--align="center">-->
-                <!--</el-table-column>-->
+                <el-table-column
+                        label="商家编码"
+                        prop="merchantCode"
+                        align="center">
+                </el-table-column>
                 <el-table-column
                         prop="name"
                         label="工艺名称"
@@ -1058,22 +1059,22 @@
                     </template>
                 </el-table-column>
 
-                <!--<el-table-column-->
-                        <!--label="颜色"-->
-                        <!--prop="colour"-->
-                        <!--align="center">-->
-                <!--</el-table-column>-->
-                <!--<el-table-column-->
-                        <!--label="品牌"-->
-                        <!--prop="brand"-->
-                        <!--align="center">-->
-                <!--</el-table-column>-->
-                <!--<el-table-column-->
-                        <!--label="类别"-->
-                        <!--prop="category"-->
-                        <!--width="90"-->
-                        <!--align="center">-->
-                <!--</el-table-column>-->
+                <el-table-column
+                        label="颜色"
+                        prop="colour"
+                        align="center">
+                </el-table-column>
+                <el-table-column
+                        label="品牌"
+                        prop="brand"
+                        align="center">
+                </el-table-column>
+                <el-table-column
+                        label="类别"
+                        prop="category"
+                        width="90"
+                        align="center">
+                </el-table-column>
                 <el-table-column
                         align="center"
                         label="操作"
@@ -1917,7 +1918,7 @@
                     }
                     this.DetailsPlanList = res.data.data.producePlanDetailBeanList
                     console.log(this.DetailsPlanList)
-                    // this.dispatchingDetailsFun(this.DetailsPlanList[0].uuid)
+                    this.dispatchingDetailsFun(this.DetailsPlanList[0].uuid)
                 })
                 // this.dispatchingDetailsFun()
                 console.log(data)
@@ -2415,7 +2416,6 @@
         flex-wrap: nowrap;
         justify-content: space-between;
         padding: 10px;
-
     }
 
     .el-select, .el-input {

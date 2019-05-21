@@ -17,9 +17,9 @@
             <div class=" QueryConditions QueryInput">
                 <div>
                     <el-input size="mini" clearable v-model="conditionproduceCode" placeholder="生产计划单编号"></el-input>
-                    <el-input size="mini" clearable v-model="conditionsstyleCode" placeholder="款式编号"></el-input>
-                    <el-input size="mini" clearable v-model="conditionmerchantCode" placeholder="商家编号"></el-input>
-                    <el-input size="mini" clearable v-model="conditionName" placeholder="商品名称"></el-input>
+                    <el-input size="mini" clearable v-model="conditionsstyleCode" placeholder="工艺编号"></el-input>
+                    <!--<el-input size="mini" clearable v-model="conditionmerchantCode" placeholder="商家编号"></el-input>-->
+                    <!--<el-input size="mini" clearable v-model="conditionName" placeholder="商品名称"></el-input>-->
                     <div class="produ">
                         <el-select clearable placeholder="工艺流程" multiple size="mini" v-model="conditionprocessNode">
                             <el-option
@@ -57,18 +57,18 @@
             <el-table-column align="center" type="index"></el-table-column>
             <el-table-column align="center" v-if="ProductionOrderShow" label="生产计划单编号" prop="produceCode"
                              width="160px"></el-table-column>
-            <el-table-column align="center" v-if="styleNumberShow" label="款式编号" prop="styleCode"
+            <el-table-column align="center" v-if="styleNumberShow" label="工艺编号" prop="styleCode"
                              width="170px"></el-table-column>
-            <el-table-column align="center" v-if="MerchantNumberShow" label="商家编号" prop="merchantCode"
-                             width="160px"></el-table-column>
-            <el-table-column align="center" v-if="MerchantNameShow" label="商品名称" prop="goodsName"></el-table-column>
-            <el-table-column align="center" v-if="specificationsShow" label="规格(颜色)" prop="colour"
-                             width="100px"></el-table-column>
+            <!--<el-table-column align="center" v-if="MerchantNumberShow" label="商家编号" prop="merchantCode"-->
+            <!--width="160px"></el-table-column>-->
+            <!--<el-table-column align="center" v-if="MerchantNameShow" label="商品名称" prop="goodsName"></el-table-column>-->
+            <!--<el-table-column align="center" v-if="specificationsShow" label="规格(颜色)" prop="colour"-->
+            <!--width="100px"></el-table-column>-->
             <el-table-column align="center" v-if="NumberShow" label="数量" prop="craftNumber"></el-table-column>
-            <el-table-column align="center" v-if="unitShow" label="单位" prop="unit"></el-table-column>
-            <el-table-column align="center" v-if="bandShow" label="品牌" prop="brand"></el-table-column>
-            <el-table-column align="center" width="100px" v-if="categoryShow" label="类别"
-                             prop="category"></el-table-column>
+            <!--<el-table-column align="center" v-if="unitShow" label="单位" prop="unit"></el-table-column>-->
+            <!--<el-table-column align="center" v-if="bandShow" label="品牌" prop="brand"></el-table-column>-->
+            <!--<el-table-column align="center" width="100px" v-if="categoryShow" label="类别"-->
+            <!--prop="category"></el-table-column>-->
             <el-table-column
                     label="工艺流程"
                     width="230"
@@ -88,10 +88,15 @@
                              width="180px"></el-table-column>
             <el-table-column align="center" v-if="noteShow" label="备注" prop="remark"></el-table-column>
             <!--<el-table-column align="center" label="操作" fixed="right">-->
-                <!--<template slot-scope="scope">-->
-                    <!--<el-button type="text" @click="upProceBtn(scope.row)">修改</el-button>-->
-                <!--</template>-->
+            <!--<template slot-scope="scope">-->
+            <!--<el-button type="text" @click="upProceBtn(scope.row)">修改</el-button>-->
+            <!--</template>-->
             <!--</el-table-column>-->
+            <el-table-column align="center" label="操作" fixed="right">
+                <template slot-scope="scope">
+                    <el-button type="text" @click="ProcedetailsBtn(scope.row)">详情</el-button>
+                </template>
+            </el-table-column>
         </el-table>
         <!--分页-->
         <el-row>
@@ -118,40 +123,43 @@
                     </el-col>
 
                     <el-col :span="12">
-                        <el-checkbox v-model="styleNumberShow">款式编号</el-checkbox>
+                        <el-checkbox v-model="styleNumberShow">工艺编号</el-checkbox>
                     </el-col>
                 </el-row>
 
-                <el-row>
-                    <el-col :span="12">
-                        <el-checkbox v-model="MerchantNumberShow">商家编号</el-checkbox>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-checkbox v-model="MerchantNameShow">商品名称</el-checkbox>
-                    </el-col>
-                </el-row>
+                <!--<el-row>-->
+                <!--<el-col :span="12">-->
+                <!--<el-checkbox v-model="MerchantNumberShow">商家编号</el-checkbox>-->
+                <!--</el-col>-->
+                <!--<el-col :span="12">-->
+                <!--<el-checkbox v-model="MerchantNameShow">商品名称</el-checkbox>-->
+                <!--</el-col>-->
+                <!--</el-row>-->
+
+                <!--<el-row>-->
+                <!--&lt;!&ndash;<el-col :span="12">&ndash;&gt;-->
+                <!--&lt;!&ndash;<el-checkbox v-model="specificationsShow">规格(颜色)</el-checkbox>&ndash;&gt;-->
+                <!--&lt;!&ndash;</el-col>&ndash;&gt;-->
+                <!--<el-col :span="12">-->
+                <!--<el-checkbox v-model="NumberShow">数量</el-checkbox>-->
+                <!--</el-col>-->
+                <!--</el-row>-->
+
+                <!--<el-row>-->
+                <!--<el-col :span="12">-->
+                <!--<el-checkbox v-model="unitShow">单位</el-checkbox>-->
+                <!--</el-col>-->
+                <!--<el-col :span="12">-->
+                <!--<el-checkbox v-model="bandShow">品牌</el-checkbox>-->
+                <!--</el-col>-->
+                <!--</el-row>-->
 
                 <el-row>
-                    <el-col :span="12">
-                        <el-checkbox v-model="specificationsShow">规格(颜色)</el-checkbox>
-                    </el-col>
+                    <!--<el-col :span="12">-->
+                    <!--&lt;!&ndash;<el-checkbox v-model="categoryShow">类别</el-checkbox>&ndash;&gt;-->
+                    <!--</el-col>-->
                     <el-col :span="12">
                         <el-checkbox v-model="NumberShow">数量</el-checkbox>
-                    </el-col>
-                </el-row>
-
-                <el-row>
-                    <el-col :span="12">
-                        <el-checkbox v-model="unitShow">单位</el-checkbox>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-checkbox v-model="bandShow">品牌</el-checkbox>
-                    </el-col>
-                </el-row>
-
-                <el-row>
-                    <el-col :span="12">
-                        <el-checkbox v-model="categoryShow">类别</el-checkbox>
                     </el-col>
                     <el-col :span="12">
                         <el-checkbox v-model="processShow">工艺流程</el-checkbox>
@@ -849,7 +857,18 @@
             }
         },
         methods: {
-            size(){
+            ProcedetailsBtn(data){
+                // 查询明细详情
+                console.log(data)
+
+                this.$axios.get(this.$store.state.PricessDetails, {
+                    params: {uuid: data.uuid}
+                }).then(res => {
+
+                    console.log(res)
+                })
+            },
+            size() {
                 //监听窗口函数
                 setTimeout(() => {
                     this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 150;
@@ -927,11 +946,11 @@
                     this.upaddProduction = true
                     this.upScheduleList.producePlanDetailBeanList = res.data.data.producePlanDetailBeanList
                     this.upScheduleList.id = data.produceId
-                    this.upScheduleList.expectProcessTime=res.data.data.expectProcessTime//预计加工时间
-                    this.upScheduleList.expectCompleteTime=res.data.data.expectCompleteTime//预计完工时间
+                    this.upScheduleList.expectProcessTime = res.data.data.expectProcessTime//预计加工时间
+                    this.upScheduleList.expectCompleteTime = res.data.data.expectCompleteTime//预计完工时间
 
 
-                    if(res.data.data.expectProcessTime!=null&&res.data.data.expectCompleteTime!=null){
+                    if (res.data.data.expectProcessTime != null && res.data.data.expectCompleteTime != null) {
                         this.upTime.push(res.data.data.expectProcessTime)//预计加工时间控件绑定值
                         this.upTime.push(res.data.data.expectCompleteTime)//预计完工时间绑定值
                     }
