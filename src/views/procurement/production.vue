@@ -22,14 +22,14 @@
                     <!--<el-input size="mini" clearable v-model="conditionmerchantCode" placeholder="商家编号"></el-input>-->
                     <!--<el-input size="mini" clearable v-model="conditionName" placeholder="商品名称"></el-input>-->
                     <!--<div class="produ">-->
-                        <!--<el-select clearable placeholder="工艺流程" multiple size="mini" v-model="conditionprocessNode">-->
-                            <!--<el-option-->
-                                    <!--v-for="item in ProcessFunction"-->
-                                    <!--:key="item.value"-->
-                                    <!--:label="item.label"-->
-                                    <!--:value="item.value">-->
-                            <!--</el-option>-->
-                        <!--</el-select>-->
+                    <!--<el-select clearable placeholder="工艺流程" multiple size="mini" v-model="conditionprocessNode">-->
+                    <!--<el-option-->
+                    <!--v-for="item in ProcessFunction"-->
+                    <!--:key="item.value"-->
+                    <!--:label="item.label"-->
+                    <!--:value="item.value">-->
+                    <!--</el-option>-->
+                    <!--</el-select>-->
                     <!--</div>-->
 
                 </div>
@@ -119,7 +119,7 @@
                 <!--:disabled="stateButton"-->
                 <el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>
                 <!--<el-button type="primary" icon="el-icon-view" size="mini"-->
-                           <!--:disabled="produState" @click="batcworkerSettingsBtn">派工设置-->
+                <!--:disabled="produState" @click="batcworkerSettingsBtn">派工设置-->
                 <!--</el-button>-->
             </div>
 
@@ -136,9 +136,7 @@
                                  width="160px"></el-table-column>
                 <el-table-column align="center" v-if="styleNumberShow" label="工艺编号" prop="styleCode"
                                  width="170px"></el-table-column>
-                <el-table-column align="center" v-if="MerchantNumberShow" label="商家编号" prop="merchantCode"
-                                 width="160px"></el-table-column>
-                <el-table-column align="center" v-if="MerchantNameShow" label="商品名称" prop="goodsName"></el-table-column>
+
                 <el-table-column
                         label="工艺流程"
                         width="230"
@@ -146,19 +144,20 @@
                         align="center">
                     <template slot-scope="scope">
 
-                        <el-tag v-for="(item,index) in scope.row.processNodeMapList" :type="item.state===1?'success':''">
+                        <el-tag v-for="(item,index) in scope.row.processNodeMapList"
+                                :type="item.state===1?'success':''">
                             {{item.node=='weave'?'织造':item.node=='seamHead'?'缝头':item.node=='stereoType'?'定型':'包装'}}
                         </el-tag>
 
                     </template>
                 </el-table-column>
-                <el-table-column align="center" v-if="specificationsShow" label="规格(颜色)" prop="colour"
-                                 width="100px"></el-table-column>
+<!--                <el-table-column align="center" v-if="specificationsShow" label="规格" prop="specifications"-->
+<!--                                 width="100px"></el-table-column>-->
                 <el-table-column align="center" v-if="NumberShow" label="数量" prop="craftNumber"></el-table-column>
-                <el-table-column align="center" v-if="unitShow" label="单位" prop="unit"></el-table-column>
-                <el-table-column align="center" v-if="bandShow" label="品牌" prop="brand"></el-table-column>
-                <el-table-column align="center" width="100px" v-if="categoryShow" label="类别"
-                                 prop="category"></el-table-column>
+<!--                <el-table-column align="center" v-if="unitShow" label="单位" prop="unit"></el-table-column>-->
+<!--                <el-table-column align="center" v-if="bandShow" label="品牌" prop="brand"></el-table-column>-->
+<!--                <el-table-column align="center" width="100px" v-if="categoryShow" label="类别"-->
+<!--                                 prop="category"></el-table-column>-->
 
                 <!--<el-table-column align="center" v-if="processShow" label="工艺流程" prop="processNodeList"-->
                 <!--width="150px"></el-table-column>-->
@@ -178,80 +177,79 @@
             <!--<div class="QueryConditions">-->
 
 
-                <!--<el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>-->
-                <!--&lt;!&ndash;:disabled="auditStatusBut" 提交审核显示控制&ndash;&gt;-->
-                <!--<el-button size="mini" :disabled="pruauditStatusBut" type="primary" @click="dispatchSubmitAudit">提交审核-->
-                <!--</el-button>-->
+            <!--<el-button type="primary" icon="el-icon-view" size="mini" @click="Settings=true">显示设置</el-button>-->
+            <!--&lt;!&ndash;:disabled="auditStatusBut" 提交审核显示控制&ndash;&gt;-->
+            <!--<el-button size="mini" :disabled="pruauditStatusBut" type="primary" @click="dispatchSubmitAudit">提交审核-->
+            <!--</el-button>-->
 
-                <!--&lt;!&ndash;:disabled="submitStatusBut" 审核通过显示控制&ndash;&gt;-->
-                <!--<el-button size="mini" :disabled="prusubmitStatusBut" type="primary" @click="dispatchapproved">审核通过-->
-                <!--</el-button>-->
-                <!--&lt;!&ndash;:disabled="submitStatusBut" 审核驳回显示控制&ndash;&gt;-->
-                <!--<el-button size="mini" :disabled="prusubmitStatusBut" type="primary" @click="dispatchapprovedRejected">-->
-                    <!--审核驳回-->
-                <!--</el-button>-->
-                <!--<el-button type="danger" size="mini" class="el-icon-delete" :disabled="prudelStatusBut"-->
-                           <!--@click="batchDel">批量删除-->
-                <!--</el-button>-->
+            <!--&lt;!&ndash;:disabled="submitStatusBut" 审核通过显示控制&ndash;&gt;-->
+            <!--<el-button size="mini" :disabled="prusubmitStatusBut" type="primary" @click="dispatchapproved">审核通过-->
+            <!--</el-button>-->
+            <!--&lt;!&ndash;:disabled="submitStatusBut" 审核驳回显示控制&ndash;&gt;-->
+            <!--<el-button size="mini" :disabled="prusubmitStatusBut" type="primary" @click="dispatchapprovedRejected">-->
+            <!--审核驳回-->
+            <!--</el-button>-->
+            <!--<el-button type="danger" size="mini" class="el-icon-delete" :disabled="prudelStatusBut"-->
+            <!--@click="batchDel">批量删除-->
+            <!--</el-button>-->
             <!--</div>-->
             <!--<el-table-->
-                    <!--border-->
-                    <!--stripe-->
-                    <!--:data="dispatchingDetailsData"-->
-                    <!--@selection-change="dispatchingDetails"-->
+            <!--border-->
+            <!--stripe-->
+            <!--:data="dispatchingDetailsData"-->
+            <!--@selection-change="dispatchingDetails"-->
 
             <!--&gt;-->
-                <!--<el-table-column align="center" fixed="right" label="操作">-->
-                    <!--<template slot-scope="scope">-->
-                        <!--<el-button type="text" :disabled="scope.row.submitState=='tj01'?(true):(false)" @click="singledelRepairOrder(scope.row)">删除</el-button>-->
-                    <!--</template>-->
-                <!--</el-table-column>-->
-                <!--<el-table-column align="center" type="index"></el-table-column>-->
-                <!--<el-table-column align="center" type="selection"></el-table-column>-->
-                <!--<el-table-column align="center" v-if="ProductionOrderShow" label="生产计划单编号" prop="produceCode"-->
-                                 <!--width="160px"></el-table-column>-->
-                <!--<el-table-column align="center" v-if="styleNumberShow" label="派工单号" prop="produceCode"-->
-                                 <!--width="170px"></el-table-column>-->
-                <!--<el-table-column align="center" v-if="MerchantNumberShow" label="款式编号" prop="styleCode"-->
-                                 <!--width="170px"></el-table-column>-->
-                <!--<el-table-column-->
-                        <!--align="center"-->
-                        <!--prop="submitStatus"-->
-                        <!--label="提交状态"-->
-                        <!--width="150"-->
-                <!--&gt;-->
-                    <!--<template slot-scope="scope">-->
-                        <!--<span>{{scope.row.submitState=='tj01'?'已提交':'未提交'}}</span>-->
-                    <!--</template>-->
-                <!--</el-table-column>-->
-                <!--<el-table-column-->
-                        <!--align="center"-->
-                        <!--prop="auditStatus"-->
-                        <!--label="审核状态"-->
-                <!--&gt;-->
-                    <!--<template slot-scope="scope">-->
-                        <!--<span>{{scope.row.auditState=='sh01'?'已审核':scope.row.auditState=='sh02'?'未审核':'审核驳回'}}</span>-->
-                    <!--</template>-->
-                <!--</el-table-column>-->
-                <!--<el-table-column align="center" v-if="MerchantNameShow" label="工厂" prop="factoryName"></el-table-column>-->
-                <!--<el-table-column-->
-                        <!--label="工序"-->
-                        <!--width="120"-->
-                        <!--prop="processNode"-->
-                        <!--v-if="processShow"-->
-                        <!--align="center">-->
-                    <!--<template slot-scope="scope">-->
-                        <!--<el-tag type="danger">-->
-                            <!--{{scope.row.processNode=='weave'?'织造':scope.row.processNode=='seamHead'?'缝头':scope.row.processNode=='stereoType'?'定型':'包装'}}-->
-                        <!--</el-tag>-->
-                    <!--</template>-->
-                <!--</el-table-column>-->
-                <!--<el-table-column align="center" v-if="CreationTimeShow" label="创建时间" prop="createTime"-->
-                                 <!--width="180px"></el-table-column>-->
-                <!--<el-table-column align="center" v-if="noteShow" label="备注" prop="remark"></el-table-column>-->
+            <!--<el-table-column align="center" fixed="right" label="操作">-->
+            <!--<template slot-scope="scope">-->
+            <!--<el-button type="text" :disabled="scope.row.submitState=='tj01'?(true):(false)" @click="singledelRepairOrder(scope.row)">删除</el-button>-->
+            <!--</template>-->
+            <!--</el-table-column>-->
+            <!--<el-table-column align="center" type="index"></el-table-column>-->
+            <!--<el-table-column align="center" type="selection"></el-table-column>-->
+            <!--<el-table-column align="center" v-if="ProductionOrderShow" label="生产计划单编号" prop="produceCode"-->
+            <!--width="160px"></el-table-column>-->
+            <!--<el-table-column align="center" v-if="styleNumberShow" label="派工单号" prop="produceCode"-->
+            <!--width="170px"></el-table-column>-->
+            <!--<el-table-column align="center" v-if="MerchantNumberShow" label="款式编号" prop="styleCode"-->
+            <!--width="170px"></el-table-column>-->
+            <!--<el-table-column-->
+            <!--align="center"-->
+            <!--prop="submitStatus"-->
+            <!--label="提交状态"-->
+            <!--width="150"-->
+            <!--&gt;-->
+            <!--<template slot-scope="scope">-->
+            <!--<span>{{scope.row.submitState=='tj01'?'已提交':'未提交'}}</span>-->
+            <!--</template>-->
+            <!--</el-table-column>-->
+            <!--<el-table-column-->
+            <!--align="center"-->
+            <!--prop="auditStatus"-->
+            <!--label="审核状态"-->
+            <!--&gt;-->
+            <!--<template slot-scope="scope">-->
+            <!--<span>{{scope.row.auditState=='sh01'?'已审核':scope.row.auditState=='sh02'?'未审核':'审核驳回'}}</span>-->
+            <!--</template>-->
+            <!--</el-table-column>-->
+            <!--<el-table-column align="center" v-if="MerchantNameShow" label="工厂" prop="factoryName"></el-table-column>-->
+            <!--<el-table-column-->
+            <!--label="工序"-->
+            <!--width="120"-->
+            <!--prop="processNode"-->
+            <!--v-if="processShow"-->
+            <!--align="center">-->
+            <!--<template slot-scope="scope">-->
+            <!--<el-tag type="danger">-->
+            <!--{{scope.row.processNode=='weave'?'织造':scope.row.processNode=='seamHead'?'缝头':scope.row.processNode=='stereoType'?'定型':'包装'}}-->
+            <!--</el-tag>-->
+            <!--</template>-->
+            <!--</el-table-column>-->
+            <!--<el-table-column align="center" v-if="CreationTimeShow" label="创建时间" prop="createTime"-->
+            <!--width="180px"></el-table-column>-->
+            <!--<el-table-column align="center" v-if="noteShow" label="备注" prop="remark"></el-table-column>-->
 
             <!--</el-table>-->
-
 
 
         </el-dialog>
@@ -911,9 +909,9 @@
                         align="center">
                 </el-table-column>
                 <!--<el-table-column-->
-                        <!--label="商家编码"-->
-                        <!--prop="merchantCode"-->
-                        <!--align="center">-->
+                <!--label="商家编码"-->
+                <!--prop="merchantCode"-->
+                <!--align="center">-->
                 <!--</el-table-column>-->
                 <el-table-column
                         prop="name"
@@ -945,20 +943,20 @@
                 </el-table-column>
 
                 <!--<el-table-column-->
-                        <!--label="颜色"-->
-                        <!--prop="colour"-->
-                        <!--align="center">-->
+                <!--label="颜色"-->
+                <!--prop="colour"-->
+                <!--align="center">-->
                 <!--</el-table-column>-->
                 <!--<el-table-column-->
-                        <!--label="品牌"-->
-                        <!--prop="brand"-->
-                        <!--align="center">-->
+                <!--label="品牌"-->
+                <!--prop="brand"-->
+                <!--align="center">-->
                 <!--</el-table-column>-->
                 <!--<el-table-column-->
-                        <!--label="类别"-->
-                        <!--prop="category"-->
-                        <!--width="90"-->
-                        <!--align="center">-->
+                <!--label="类别"-->
+                <!--prop="category"-->
+                <!--width="90"-->
+                <!--align="center">-->
                 <!--</el-table-column>-->
                 <el-table-column
                         align="center"
@@ -1025,9 +1023,9 @@
                         align="center">
                 </el-table-column>
                 <!--<el-table-column-->
-                        <!--label="商家编码"-->
-                        <!--prop="merchantCode"-->
-                        <!--align="center">-->
+                <!--label="商家编码"-->
+                <!--prop="merchantCode"-->
+                <!--align="center">-->
                 <!--</el-table-column>-->
                 <el-table-column
                         prop="name"
@@ -1059,20 +1057,20 @@
                 </el-table-column>
 
                 <!--<el-table-column-->
-                        <!--label="颜色"-->
-                        <!--prop="colour"-->
-                        <!--align="center">-->
+                <!--label="颜色"-->
+                <!--prop="colour"-->
+                <!--align="center">-->
                 <!--</el-table-column>-->
                 <!--<el-table-column-->
-                        <!--label="品牌"-->
-                        <!--prop="brand"-->
-                        <!--align="center">-->
+                <!--label="品牌"-->
+                <!--prop="brand"-->
+                <!--align="center">-->
                 <!--</el-table-column>-->
                 <!--<el-table-column-->
-                        <!--label="类别"-->
-                        <!--prop="category"-->
-                        <!--width="90"-->
-                        <!--align="center">-->
+                <!--label="类别"-->
+                <!--prop="category"-->
+                <!--width="90"-->
+                <!--align="center">-->
                 <!--</el-table-column>-->
                 <el-table-column
                         align="center"
@@ -1494,8 +1492,7 @@
                                 that.dispatchingDetailsFun(that.DetailsPlanList[0].uuid)
                             }
                         });
-                    }
-                    else {
+                    } else {
                         this.$message.error(res.data.msg);
                     }
                 })
@@ -1603,8 +1600,7 @@
                                 that.ProduQueryPage()
                             }
                         });
-                    }
-                    else {
+                    } else {
                         this.$message.error(res.data.msg);
                     }
                 })
@@ -1626,8 +1622,7 @@
                                 that.ProduQueryPage()
                             }
                         });
-                    }
-                    else {
+                    } else {
                         this.$message.error(res.data.msg);
                     }
                 })
@@ -1648,8 +1643,7 @@
                                 that.ProduQueryPage()
                             }
                         });
-                    }
-                    else {
+                    } else {
                         this.$message.error(res.data.msg);
                     }
                 })
@@ -1671,8 +1665,7 @@
                                 that.detailedQuery()
                             }
                         });
-                    }
-                    else {
+                    } else {
                         this.$message.error(res.data.msg);
                     }
                 })
@@ -1694,8 +1687,7 @@
                                 that.detailedQuery()
                             }
                         });
-                    }
-                    else {
+                    } else {
                         this.$message.error(res.data.msg);
                     }
                 })
@@ -1716,8 +1708,7 @@
                                 that.detailedQuery()
                             }
                         });
-                    }
-                    else {
+                    } else {
                         this.$message.error(res.data.msg);
                     }
                 })
@@ -1761,8 +1752,7 @@
                                 that.detailedQuery()
                             }
                         });
-                    }
-                    else {
+                    } else {
                         this.$message.error(res.data.msg);
                     }
                 })
@@ -1807,8 +1797,7 @@
                                 }
                             });
                             console.log(res.data)
-                        }
-                        else {
+                        } else {
                             this.$message.error(res.data.msg);
                         }
                     })

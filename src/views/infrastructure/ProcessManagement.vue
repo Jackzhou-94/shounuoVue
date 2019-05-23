@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div class="ProcessManagement">
         <div class="menuBox">
             <div class="QueryConditions">
@@ -11,17 +11,10 @@
                 <div>
 
                     <el-input clearable size="mini" v-model="styleCodeQuery" placeholder="工艺编号"></el-input>
-                    <el-input clearable size="mini" v-model="merchantCodeQuery" placeholder="商家编码"></el-input>
+                   
                     <el-input clearable size="mini" v-model="nameQuery" placeholder="名称"></el-input>
 
-                    <el-select size="mini" clearable v-model="categoryQuery" placeholder="类别">
-                        <el-option
-                                v-for="item in categorySelect"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                        </el-option>
-                    </el-select>
+                 
 
                 </div>
 
@@ -128,7 +121,7 @@
                                 label="规格">
                             <template slot-scope="scope">
                                 <el-input size="mini" oninput="value=value.replace(/[^\d]/g,'')"
-                                          v-model="scope.row.Specifications"></el-input>
+                                          v-model="scope.row.specifications"></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column
@@ -384,7 +377,7 @@
                     <div class="QueryConditions">
 
                         <el-button size="mini" @click="upaddGoods">添加新品</el-button>
-                        <el-button size="mini" @click="upbatchGoodsRm">批量移除</el-button>
+                        <el-button size="mini" @click="upbatchGoodsRm" :disabled="goodsRemoveBtn">批量移除</el-button>
                     </div>
                     <el-table
 
@@ -501,7 +494,9 @@
                                 fixed="right"
                                 label="操作">
                             <template slot-scope="scope">
-                                <el-button type="text" @click="uprmGoods(scope.row)">移除</el-button>
+                                <el-button type="text" @click="uprmGoods(scope.row)">
+                                    {{scope.row.craftUuid?'删除':'移除'}}
+                                </el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -510,7 +505,7 @@
                 <el-tab-pane label="原材料管理" name="second">
                     <div class="QueryConditions">
                         <el-button size="mini" @click="upaddMater">添加原材料</el-button>
-                        <el-button size="mini" @click="upbatchMaterRm">批量移除</el-button>
+                        <el-button size="mini" @click="upbatchMaterRm" :disabled="materRemoveBtn" >批量移除</el-button>
                     </div>
 
                     <el-table
@@ -636,8 +631,10 @@
                                 width="120"
                         >
                             <template slot-scope="scope">
-                                <el-button type="text" @click="uprmMater(scope.row)">移除</el-button>
 
+                                <el-button type="text" @click="uprmMater(scope.row)">
+                                    {{scope.row.craftUuid?'删除':'移除'}}
+                                </el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -1052,7 +1049,8 @@
                         label="操作">
                     <template slot-scope="scope">
 
-                        <el-button type="text" @click="introductionGoods(scope.row)" :disabled="scope.row.show">引入</el-button>
+                        <el-button type="text" @click="introductionGoods(scope.row)" :disabled="scope.row.show">引入
+                        </el-button>
                         <!--<el-button type="text" @click="scope.row.show=true" :disabled="scope.row.show">引入-->
                         <!--</el-button>-->
                     </template>
@@ -1978,9 +1976,9 @@
                     align="center">
             </el-table-column>
             <!--<el-table-column-->
-                    <!--label="商家编码"-->
-                    <!--prop="merchantCode"-->
-                    <!--align="center">-->
+            <!--label="商家编码"-->
+            <!--prop="merchantCode"-->
+            <!--align="center">-->
             <!--</el-table-column>-->
             <el-table-column
                     prop="name"
@@ -1998,19 +1996,19 @@
             </el-table-column>
 
             <!--<el-table-column-->
-                    <!--label="颜色"-->
-                    <!--prop="colour"-->
-                    <!--align="center">-->
+            <!--label="颜色"-->
+            <!--prop="colour"-->
+            <!--align="center">-->
             <!--</el-table-column>-->
             <!--<el-table-column-->
-                    <!--label="品牌"-->
-                    <!--prop="brand"-->
-                    <!--align="center">-->
+            <!--label="品牌"-->
+            <!--prop="brand"-->
+            <!--align="center">-->
             <!--</el-table-column>-->
             <!--<el-table-column-->
-                    <!--label="类别"-->
-                    <!--prop="category"-->
-                    <!--align="center">-->
+            <!--label="类别"-->
+            <!--prop="category"-->
+            <!--align="center">-->
             <!--</el-table-column>-->
             <el-table-column
                     align="center"
@@ -2019,7 +2017,9 @@
                     fixed="right"
             >
                 <template slot-scope="scope">
-                    <el-button type="text" @click="upProcessBot(scope.row)">修改</el-button>
+                    <el-button type="text" :disabled="scope.row.recordState=='1'?(true):(false)"
+                               @click="upProcessBot(scope.row)">修改
+                    </el-button>
                     <el-button type="text" :disabled="scope.row.recordState=='1'?(true):(false)"
                                @click="delPro(scope.row)">删除
                     </el-button>
@@ -2258,7 +2258,7 @@
 
 
                 totalRecord: 0,//总条目数
-                uptotalRecord:0,//修改时总条目数
+                uptotalRecord: 0,//修改时总条目数
                 materialsList: [],//原材料数据
                 upmaterialsList: [],//修改时原材料数据
                 materialsNum: '',//物料编码
@@ -2317,6 +2317,12 @@
                 goodsListSelect: [],//多选时选中的商品信息
 
                 upgoodsListSelect: [],//修改多选时选中的商品信息
+
+                goodsRemoveBtn: true,//修改工艺时批量移除按钮状态(商品)
+                materRemoveBtn: true,//修改工艺时批量移除按钮状态（原材料）
+                goodsRemoveuuidList: [],//批量移除商品信息uuid
+                materRemoveuuidList:[],//批量移除原材料uuid
+                Processid:'',//查询工艺详情id
             }
         },
         mounted() {
@@ -2436,9 +2442,13 @@
             upProcessBot(data) {
                 //修改按钮
                 console.log(data)
+
+                if (data){
+                    this.Processid=data.uuid
+                }
                 this.upaddprocess = true
                 this.$axios.get(this.$store.state.PricessDetails, {
-                    params: {uuid: data.uuid}
+                    params: {uuid:this.Processid}
                 }).then(res => {
                     this.upaddprocessData = res.data.data
                     this.typedata = JSON.stringify(this.upaddprocessData)//将数据转为字符串，进行修改验证
@@ -2540,18 +2550,23 @@
                  * 1.当匹配到想同数据时，进行删除
                  * 2.先将原材料数据全部选中，再取消选中，从而达到刷新效果
                  * **/
+                // console.log(this.goodsRemoveuuidList)
+                if (this.goodsRemoveuuidList !== []) {
+                    this.updateGoodsFun()
+                } else {
+                    this.upaddGoodsMultiList.forEach(item => {
 
-                this.upaddGoodsMultiList.forEach(item => {
-                    this.upaddprocessData.goodsList.forEach(j => {
-                        if (item == j) {
-                            this.upaddprocessData.goodsList[this.upaddprocessData.goodsList.indexOf(item)].show = false
-                            this.upaddprocessData.goodsList.splice(this.upaddprocessData.goodsList.indexOf(item), 1)
-                            this.$refs.upmultipleTableGoods.toggleRowSelection();
-                            this.$refs.upmultipleTableGoods.clearSelection();
-                        }
-
+                        this.upaddprocessData.goodsList.forEach(j => {
+                            if (item == j) {
+                                this.upaddprocessData.goodsList[this.upaddprocessData.goodsList.indexOf(item)].show = false
+                                this.upaddprocessData.goodsList.splice(this.upaddprocessData.goodsList.indexOf(item), 1)
+                                this.$refs.upmultipleTableGoods.toggleRowSelection();
+                                this.$refs.upmultipleTableGoods.clearSelection();
+                            }
+                        })
                     })
-                })
+                }
+
             },
             batchGoodsRm() {
                 //批量移除商品信息
@@ -2594,17 +2609,26 @@
 
             },
             upbatchMaterRm() {
+                /**
+                 * 1.当匹配到想同数据时，进行删除
+                 * 2.先将原材料数据全部选中，再取消选中，从而达到刷新效果
+                 * **/
                 //修改批量移除原材料信息
-                this.upaddMaterMultiList.forEach(item => {
-                    this.upaddprocessData.materialsList.forEach(j => {
-                        if (item == j) {
-                            this.upaddprocessData.materialsList[this.upaddprocessData.materialsList.indexOf(item)].show = false
-                            this.upaddprocessData.materialsList.splice(this.upaddprocessData.materialsList.indexOf(item), 1)
-                            // this.$refs.upmultipleTable.toggleRowSelection();
-                            // this.$refs.upmultipleTable.clearSelection();
-                        }
+                if (this.materRemoveuuidList !== []) {
+                    this.updateMaterFun()
+                }else {
+                    this.upaddMaterMultiList.forEach(item => {
+                        this.upaddprocessData.materialsList.forEach(j => {
+                            if (item == j) {
+                                this.upaddprocessData.materialsList[this.upaddprocessData.materialsList.indexOf(item)].show = false
+                                this.upaddprocessData.materialsList.splice(this.upaddprocessData.materialsList.indexOf(item), 1)
+                                // this.$refs.upmultipleTable.toggleRowSelection();
+                                // this.$refs.upmultipleTable.clearSelection();
+                            }
+                        })
                     })
-                })
+                }
+
 
 
                 // let indexList = this.upaddMaterMultiList.map((item, index) => {
@@ -2637,20 +2661,27 @@
             },
             uprmMater(data) {
                 //移除原材料信息
-                let index = this.upaddprocessData.materialsList.indexOf(data)
-                delete data.show
-                this.upaddprocessData.materialsList.splice(index, 1)
+                if (data.craftUuid) {
+                    this.materRemoveuuidList=[]
+                    this.materRemoveuuidList.push(data.uuid)
+                    this.updateMaterFun()
+                }else {
+                    let index = this.upaddprocessData.materialsList.indexOf(data)
+                    delete data.show
+                    this.upaddprocessData.materialsList.splice(index, 1)
 
-                let listArr = this.materialsList.filter(item => {
-                    return data.materialCode === item.materialCode
-                })
-                listArr.forEach(item => {
-                    item.show = false
-                })
-                // this.$refs.upmultipleTable.toggleRowSelection();
-                // this.$refs.upmultipleTable.clearSelection();
-                console.log(this.upmaterialsList)
-                console.log(listArr)
+                    let listArr = this.materialsList.filter(item => {
+                        return data.materialCode === item.materialCode
+                    })
+                    listArr.forEach(item => {
+                        item.show = false
+                    })
+                    // this.$refs.upmultipleTable.toggleRowSelection();
+                    // this.$refs.upmultipleTable.clearSelection();
+                    console.log(this.upmaterialsList)
+                    console.log(listArr)
+                }
+
 
             },
             selectableGoods(row, index) {
@@ -2722,6 +2753,31 @@
             upaddGoodsMulti(data) {
                 //修改工艺单商品列表多选
                 this.upaddGoodsMultiList = data
+                this.goodsRemoveuuidList = []
+                let state = data.filter(item => {
+                    return item.craftUuid
+                })
+
+                /**
+                 * 先获取选择的数据是否包含craftUuid字段（代表存在数据库）
+                 * 如果选择的数据不一样，无法进行一起批量移除
+                 *
+                 * **/
+                if (state != []) {
+                    state.forEach(item => {
+                        this.goodsRemoveuuidList.push(item.uuid)
+                    })
+                }
+                    let selectState = data.map(item => {
+                        return item.craftUuid!=null
+                    })
+
+                if (selectState.indexOf(true)!=-1&&selectState.indexOf(false)!=-1) {
+                    this.goodsRemoveBtn=true
+                }else {
+                    this.goodsRemoveBtn=false
+                }
+
             },
             addMaterDetails(data) {
                 //添加原材料面板多选
@@ -2732,6 +2788,30 @@
                 //修改工艺单原材料列表多选
                 console.log(data)
                 this.upaddMaterMultiList = data
+                this.materRemoveuuidList = []
+                let state = data.filter(item => {
+                    return item.craftUuid
+                })
+
+                /**
+                 * 先获取选择的数据是否包含craftUuid字段（代表存在数据库）
+                 * 如果选择的数据不一样，无法进行一起批量移除
+                 *
+                 * **/
+                if (state != []) {
+                    state.forEach(item => {
+                        this.materRemoveuuidList.push(item.uuid)
+                    })
+                }
+                let selectState = data.map(item => {
+                    return item.craftUuid!=null
+                })
+
+                if (selectState.indexOf(true)!=-1&&selectState.indexOf(false)!=-1) {
+                    this.materRemoveBtn=true
+                }else {
+                    this.materRemoveBtn=false
+                }
             },
             upaddMaterDetails(data) {
                 //修改原材料面板多选
@@ -2758,7 +2838,7 @@
                  * */
                 this.queryMater(val, 5)
             },
-            upMaterPage(){
+            upMaterPage() {
                 this.upqueryMater(val, 5)
             },
             addMater() {
@@ -2860,22 +2940,89 @@
                 console.log(listArr)
 
             },
+            updateGoodsFun() {
+                let that=this
+                this.$confirm('此操作将永久删除该条记录, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$axios.post(this.$store.state.deletedetail, {
+                        uuidList: this.goodsRemoveuuidList
+                    }).then(res => {
+                        if (res.data.code == 200) {
+                            this.$message({
+                                message: '删除成功',
+                                type: 'success',
+                                onClose() {
+                                that.upProcessBot()
+                                }
+                            });
+                        }
+                        else {
+                            this.$message.error(res.data.msg);
+                        }
+                    })
+                })
+
+
+                // goodsRemoveuuidList
+
+            },
+            updateMaterFun() {
+                let that=this
+                this.$confirm('此操作将永久删除该条记录, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$axios.post(this.$store.state.deletedetail, {
+                        uuidList: this.materRemoveuuidList
+                    }).then(res => {
+                        if (res.data.code == 200) {
+                            this.$message({
+                                message: '删除成功',
+                                type: 'success',
+                                onClose() {
+                                    that.upProcessBot()
+                                }
+                            });
+                        }
+                        else {
+                            this.$message.error(res.data.msg);
+                        }
+                    })
+                })
+
+
+                // goodsRemoveuuidList
+
+            },
             uprmGoods(data) {
                 //修改移除商品信息
-                let index = this.upaddprocessData.goodsList.indexOf(data)
-                delete data.show
-                this.upaddprocessData.goodsList.splice(index, 1)
+                // deletedetail
+                console.log(data)
+                if (data.craftUuid) {
+                    this.goodsRemoveuuidList=[]
+                    this.goodsRemoveuuidList.push(data.uuid)
+                    this.updateGoodsFun()
+                } else {
+                    let index = this.upaddprocessData.goodsList.indexOf(data)
+                    delete data.show
+                    this.upaddprocessData.goodsList.splice(index, 1)
 
-                let listArr = this.upquireGoodsData.filter(item => {
-                    return data.itemCode === item.itemCode
-                })
-                listArr.forEach(item => {
-                    item.show = false
-                })
-                this.$refs.upmultipleTableGoods.toggleRowSelection();
-                this.$refs.upmultipleTableGoods.clearSelection();
-                console.log(this.materialsList)
-                console.log(listArr)
+                    let listArr = this.upquireGoodsData.filter(item => {
+                        return data.itemCode === item.itemCode
+                    })
+                    listArr.forEach(item => {
+                        item.show = false
+                    })
+                    // this.$refs.upmultipleTableGoods.toggleRowSelection();
+                    // this.$refs.upmultipleTableGoods.clearSelection();
+                    console.log(this.materialsList)
+                    console.log(listArr)
+                }
+
             },
             goodslistpag(val) {
                 //商品信息分页(新建)
@@ -3033,7 +3180,7 @@
                     /**
                      * 修改部分
                      * **/
-                    let upmaterArr = this.materialsList
+                    let upmaterArr = this.upmaterialsList
                     let upmArr = this.upaddprocessData.materialsList
                     let upitems = []
                     upmArr.forEach(item => {

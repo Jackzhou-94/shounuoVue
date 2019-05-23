@@ -99,12 +99,12 @@
                              align="center"></el-table-column>
             <el-table-column label="审批人" v-if="ApproverShow" prop="approver" align="center"></el-table-column>
             <el-table-column label="备注" v-if="RemarksShow" prop="remark" align="center"></el-table-column>
-            <el-table-column label="操作" width="100" align="center" fixed="right">
-                <template slot-scope="scope">
-                    <!--<el-button size="mini" type="text">修改</el-button>-->
-                    <el-button size="mini" type="text" @click="delFadis(scope.row)">删除</el-button>
-                </template>
-            </el-table-column>
+            <!--<el-table-column label="操作" width="100" align="center" fixed="right">-->
+                <!--<template slot-scope="scope">-->
+                    <!--&lt;!&ndash;<el-button size="mini" type="text">修改</el-button>&ndash;&gt;-->
+                    <!--<el-button size="mini" type="text" @click="delFadis(scope.row)">删除</el-button>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
         </el-table>
         <!--分页-->
         <el-row>
@@ -1020,7 +1020,8 @@
                         dispatchCode: this.dispatchCode,
                         factoryName: this.factoryName,
                         processNode: this.str,
-                        produceCode: this.produceCode
+                        produceCode: this.produceCode,
+                        auditState:'sh01'
                     }
                 }).then(res => {
                     console.log(res.data.list)

@@ -687,6 +687,12 @@
             }
         },
         methods: {
+            singledelRepairOrder(data) {
+                //单个删除
+                this.uuidListArr = []
+                this.uuidListArr.push(data.uuid)
+                this.delRepairOrder()
+            },
             batchplantSelection(data) {
                 //批量派工
                 this.functionsSelect = true
@@ -1079,9 +1085,7 @@
                 this.$axios.get(this.$store.state.dispatchPage, {
                     params: {produceDeatailUuid: uuid}
                 }).then(res => {
-                    console.log(res)
                     this.dispatchingDetailsData = res.data.list
-
                     // this.dispatchingDetailsNum = res.data.totalRecord
                 })
             },
@@ -1122,7 +1126,7 @@
                         produceCode: this.conditionproduceCode,
                         merchantCode: this.conditionmerchantCode,
                         name: this.conditionName,
-                        auditStatus:'sh02',
+                        auditStatus:'sh01',
                     }
                 }).then(res => {
                     this.ProductionList = res.data.list

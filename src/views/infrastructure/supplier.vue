@@ -30,21 +30,21 @@
 
                     <div class="QueryConditions QueryInput">
                         <div>
-                        <el-input size="mini" placeholder="手机号码" v-model="queryphoneNumber"></el-input>
+                            <el-input size="mini" placeholder="手机号码" v-model="queryphoneNumber"></el-input>
 
-                        <el-input size="mini" placeholder="单位名称" v-model="queryname"></el-input>
+                            <el-input size="mini" placeholder="单位名称" v-model="queryname"></el-input>
 
-                        <el-input size="mini" placeholder="其他" v-model="queryspare01"></el-input>
+                            <el-input size="mini" placeholder="其他" v-model="queryspare01"></el-input>
                         </div>
                         <div>
-                        <el-button type="primary" size="mini"
-                                   @click="queryspare01='',queryname='',queryphoneNumber=''">
-                            重置
-                        </el-button>
+                            <el-button type="primary" size="mini"
+                                       @click="queryspare01='',queryname='',queryphoneNumber=''">
+                                重置
+                            </el-button>
 
-                        <el-button type="primary" size="mini" icon="el-icon-search"
-                                   @click="querySupplierData()">查询
-                        </el-button>
+                            <el-button type="primary" size="mini" icon="el-icon-search"
+                                       @click="querySupplierData()">查询
+                            </el-button>
                         </div>
                     </div>
 
@@ -70,15 +70,27 @@
                             </el-form-item>
                         </el-col>
                         <el-col :span="6">
+                            <!--                            <el-col :span="6">-->
+                            <el-form-item label="类别名称" size="mini" prop="className">
+                                <!--                                <el-input size="mini" v-model="addSupplierList.className"></el-input>-->
+                                <el-select v-model="addSupplierList.className" placeholder="请选择">
+                                    <el-option
+                                            v-for="item in options"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                            <!--                            </el-col>-->
+
+                        </el-col>
+                        <el-col :span="6">
                             <el-form-item label="主联系人">
                                 <el-input size="mini" v-model="addSupplierList.mainContact"></el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="6">
-                            <el-form-item label="类别代码">
-                                <el-input size="mini" v-model="addSupplierList.classCode"></el-input>
-                            </el-form-item>
-                        </el-col>
+
                     </el-row>
 
                     <el-row>
@@ -88,10 +100,13 @@
                             </el-form-item>
                         </el-col>
                         <el-col :span="6">
-                            <el-form-item label="类别名称">
-                                <el-input size="mini" v-model="addSupplierList.className"></el-input>
+                            <el-form-item label="类别代码">
+                                <el-input size="mini" v-model="addSupplierList.classCode"></el-input>
                             </el-form-item>
+
                         </el-col>
+
+
                         <el-col :span="6">
                             <el-form-item label="手机号码">
                                 <el-input size="mini" v-model="addSupplierList.phoneNumber"></el-input>
@@ -257,9 +272,19 @@
                             </el-form-item>
                         </el-col>
                         <el-col :span="6">
-                            <el-form-item label="主联系人">
-                                <el-input size="mini" v-model="upSupplierList.mainContact"></el-input>
+
+                            <el-form-item label="类别名称" size="mini" prop="className">
+                                <!--                                <el-input size="mini" v-model="addSupplierList.className"></el-input>-->
+                                <el-select v-model="upSupplierList.className" placeholder="请选择">
+                                    <el-option
+                                            v-for="item in options"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
                             </el-form-item>
+
                         </el-col>
                         <el-col :span="6">
                             <el-form-item label="类别代码">
@@ -275,9 +300,15 @@
                             </el-form-item>
                         </el-col>
                         <el-col :span="6">
-                            <el-form-item label="类别名称">
-                                <el-input size="mini" v-model="upSupplierList.className"></el-input>
+
+                            <el-form-item label="主联系人">
+                                <el-input size="mini" v-model="upSupplierList.mainContact"></el-input>
                             </el-form-item>
+
+
+                            <!--                            <el-form-item label="类别名称">-->
+                            <!--                                <el-input size="mini" v-model="upSupplierList.className"></el-input>-->
+                            <!--                            </el-form-item>-->
                         </el-col>
                         <el-col :span="6">
                             <el-form-item label="手机号码">
@@ -1037,6 +1068,13 @@
                     children: 'children',
                     label: 'label'
                 },
+                options: [{
+                    value: '原材料供应商',
+                    label: '原材料供应商'
+                }, {
+                    value: '辅料供应商',
+                    label: '辅料供应商'
+                }],
                 addSupplierList: {
                     //新建供应商
                     unitName: '',//单位名称
@@ -1077,6 +1115,9 @@
                     ],
                     unitCode: [
                         {required: true, message: '请输入单位编码', trigger: 'blur'}
+                    ],
+                    className: [
+                        {required: true, message: '请选择供应商类别', trigger: 'blur'}
                     ]
                 },
                 upSupplierList: {
@@ -1119,6 +1160,9 @@
                     ],
                     unitCode: [
                         {required: true, message: '请输入单位编码', trigger: 'blur'}
+                    ],
+                    className: [
+                        {required: true, message: '请选择供应商类别', trigger: 'blur'}
                     ]
                 },
                 suppllierPageNum: 1,//默认显示页数
@@ -1198,7 +1242,7 @@
             }
         },
         methods: {
-            size(){
+            size() {
                 //监听窗口函数
                 setTimeout(() => {
                     this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 150;
@@ -1251,6 +1295,7 @@
                                     message: '操作成功',
                                     type: 'success',
                                 });
+                                that.addSupplier = false
                                 that.querySupplier()
                             } else {
                                 this.$message.error(res.data.msg);
@@ -1279,6 +1324,7 @@
                                     type: 'success',
                                 });
                                 that.querySupplier()
+                                that.upSupplier = false
                             } else {
                                 this.$message.error(res.data.msg);
                             }
@@ -1317,8 +1363,7 @@
 
                         });
                         that.querySupplier()
-                    }
-                    else {
+                    } else {
                         this.$message.error(res.data.msg);
                     }
                 })

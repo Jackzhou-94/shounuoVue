@@ -66,7 +66,7 @@
             <el-table-column type="selection" align="center"></el-table-column>
             <el-table-column type="index" align="center"></el-table-column>
             <el-table-column prop="username" label="登录账号" align="center"></el-table-column>
-            <el-table-column prop="niacname" label="用户姓名" align="center"></el-table-column>
+            <el-table-column prop="nickname" label="用户姓名" align="center"></el-table-column>
             <el-table-column prop="role" label="角色" align="center">
                 <template slot-scope="scope">
                     {{scope.row.role=='MANAGER'?'管理员':scope.row.role=='GENERAL'?'一般用户':'超级管理员'}}
