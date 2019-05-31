@@ -11,10 +11,10 @@
                 <div>
 
                     <el-input clearable size="mini" v-model="styleCodeQuery" placeholder="工艺编号"></el-input>
-                   
+
                     <el-input clearable size="mini" v-model="nameQuery" placeholder="名称"></el-input>
 
-                 
+
 
                 </div>
 
@@ -677,6 +677,12 @@
                             v-if="name"
                             label="商品名称"
                             width="180">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="specifications"
+                            label="规格(双)"
+                            >
                     </el-table-column>
                     <el-table-column
                             align="center"
